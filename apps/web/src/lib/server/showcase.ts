@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getSharePreviewMeta } from "../share/preview";
 import { compareShowcaseActivityRank } from "../showcase/activity";
+import { fetchShowcaseActivityMap } from "./showcase-activity";
 import { createSupabaseServerClient } from "../supabase/server";
 import type { Database } from "../../../../../types/database";
 import {
@@ -23,6 +24,7 @@ export type ShowcaseSnapshot = {
 
 export type ShowcaseSnapshotItem = ShowcaseSnapshot & {
   previewMeta: ReturnType<typeof getSharePreviewMeta>;
+  activity: import("../showcase/activity").ShowcasePersistedActivity | null;
 };
 export type ShowcaseSnapshotFeed = {
   items: ShowcaseSnapshotItem[];
@@ -147,8 +149,9 @@ export function resolveShowcaseThumbnailSource(
 export function buildShowcaseSnapshotItem(input: {
   sharedProject: ShowcaseShareLike;
   thumbnail?: string;
+  activity?: import("../showcase/activity").ShowcasePersistedActivity | null;
 }): ShowcaseSnapshotItem {
-  const { sharedProject, thumbnail } = input;
+  const { sharedProject, thumbnail, activity } = input;
   return {
     id: sharedProject.id,
     token: sharedProject.token,
@@ -157,7 +160,8 @@ export function buildShowcaseSnapshotItem(input: {
     preview_meta: sharedProject.preview_meta,
     published_at: sharedProject.published_at,
     thumbnail,
-    previewMeta: getSharePreviewMeta(sharedProject.preview_meta)
+    previewMeta: getSharePreviewMeta(sharedProject.preview_meta),
+    activity: activity ?? null
   };
 }
 
@@ -324,6 +328,7 @@ async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeSh
   let matchingTotal = 0;
   let batchCursor: ShowcaseCursorPayload | null = null;
   let featuredRow: ShowcaseBatchRow | null = null;
+  let featuredActivity: import("../showcase/activity").ShowcasePersistedActivity | null = null;
   let latestPublishedAt: string | null = null;
   const collectionCounts = new Map<string, number>();
   const batchSize = 120;
@@ -333,11 +338,19 @@ async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeSh
     if (batch.length === 0) {
       break;
     }
+    const matchingRows: ShowcaseBatchRow[] = [];
 
     for (const row of batch) {
       if (!matchesFilters(row, filters)) {
         continue;
       }
+      matchingRows.push(row);
+    }
+
+    const activityMap = await fetchShowcaseActivityMap(matchingRows.map((row) => row.id));
+
+    for (const row of matchingRows) {
+      const rowActivity = activityMap.get(row.id) ?? null;
 
       matchingTotal += 1;
       latestPublishedAt ??= row.published_at;
@@ -347,16 +360,19 @@ async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeSh
           {
             id: row.id,
             published_at: row.published_at,
-            previewMeta: getSharePreviewMeta(row.preview_meta)
+            previewMeta: getSharePreviewMeta(row.preview_meta),
+            activity: rowActivity
           },
           {
             id: featuredRow.id,
             published_at: featuredRow.published_at,
-            previewMeta: getSharePreviewMeta(featuredRow.preview_meta)
+            previewMeta: getSharePreviewMeta(featuredRow.preview_meta),
+            activity: featuredActivity
           }
         ) < 0
       ) {
         featuredRow = row;
+        featuredActivity = rowActivity;
       }
 
       const assetSummary = getSharePreviewMeta(row.preview_meta)?.assetSummary;
@@ -376,7 +392,23 @@ async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeSh
     Array.from(collectionCounts.entries())
       .map(([label, count]) => ({ label, count }))
       .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label))[0] ?? null;
-  const featuredItem = featuredRow ? (await mapShowcaseRows([featuredRow]))[0] ?? null : null;
+  const featuredItem = featuredRow
+    ? (
+        await mapShowcaseRows(
+          [featuredRow],
+          new Map([
+            [
+              featuredRow.id,
+              featuredActivity ?? {
+                viewCount: 0,
+                productFocusCount: 0,
+                lastEventAt: null
+              }
+            ]
+          ])
+        )
+      )[0] ?? null
+    : null;
 
   return {
     matchingTotal,
@@ -386,7 +418,13 @@ async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeSh
   };
 }
 
-async function mapShowcaseRows(rows: ShowcaseBatchRow[]) {
+async function mapShowcaseRows(
+  rows: ShowcaseBatchRow[],
+  activityMap?: Map<string, import("../showcase/activity").ShowcasePersistedActivity>
+) {
+  const resolvedActivityMap =
+    activityMap ?? (await fetchShowcaseActivityMap(rows.map((row) => row.id)));
+
   return Promise.all(
     rows.map(async (item) => {
       const project = resolveProjectRow(item.projects);
@@ -395,7 +433,8 @@ async function mapShowcaseRows(rows: ShowcaseBatchRow[]) {
 
       return buildShowcaseSnapshotItem({
         sharedProject: item,
-        thumbnail
+        thumbnail,
+        activity: resolvedActivityMap.get(item.id) ?? null
       });
     })
   );

@@ -55,6 +55,7 @@ export default async function SharedProjectPage({ params, searchParams }: Shared
 
   return (
     <SharedProjectClient
+      shareToken={scene.token}
       projectName={scene.projectName}
       projectDescription={scene.projectDescription}
       sceneBootstrap={scene.sceneBootstrap}

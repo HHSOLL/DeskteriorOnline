@@ -106,6 +106,18 @@ Updated:
 Removed/Deprecated:
 - community page가 reply/like 수치를 화면 안에서 ad-hoc 식으로 따로 계산하던 상태.
 
+## 2026-04-20 변경 동기화 (Showcase Activity Ranking Phase 2)
+Added:
+- shared viewer read-only 진입에서 `view`, 제품 핫스팟 선택에서 `product_focus`를 기록하는 persisted activity 계약을 추가했다.
+- `shared_project_activity_events`를 community ranking과 conversation card 지표의 canonical source로 사용하는 규칙을 추가했다.
+
+Updated:
+- P3 활동성 지표 작업 상태를 “phase 1: derived ranking baseline 완료, phase 2: persisted events 대기”에서 “phase 2 persisted events 완료”로 갱신한다.
+- community 지표 언어를 추정 `reply/like`에서 실제 `포커스/조회` 기준으로 수정한다.
+
+Removed/Deprecated:
+- community 활동성을 derived estimate만으로 장기 운영하는 가정.
+
 ## 2026-04-14 변경 동기화 (IKEA Kreativ Pivot Hard Cleanup)
 Added:
 - IKEA Kreativ 스타일 room-first + deskterior + community 3D viewing을 canonical 제품 정의로 고정.

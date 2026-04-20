@@ -788,3 +788,16 @@ Updated:
 
 Removed/Deprecated:
 - community page가 화면 로컬 휴리스틱 like/reply 계산에만 의존하던 상태.
+
+## 2026-04-20 변경 동기화 (Showcase Activity Ranking Phase 2)
+Added:
+- `shared_project_activity_events` 테이블과 shared viewer activity route를 추가해 `view`, `product_focus`를 session dedupe 기준으로 저장한다.
+- shared viewer가 mount 시 `view`, 제품 선택 시 `product_focus`를 best-effort로 기록하고, community/feed가 persisted count를 ranking과 카드 지표에 반영하도록 확장했다.
+
+Updated:
+- `P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선` 상태를 “phase 1 derived baseline 완료, phase 2 persisted activity events 완료”로 갱신한다.
+- community conversation card 지표를 추정 `reply/like` 표기에서 persisted `포커스/조회` 표기로 전환한다.
+- 다음 후보를 `showcase polish phase 2(카메라/lighting fine-tune)`, `presence / broadcast` 순서로 재정렬한다.
+
+Removed/Deprecated:
+- persisted activity 없이 `preview_meta + published_at` 추정치만으로 P3 활동성 지표를 마감할 수 있다는 이전 상태 설명.

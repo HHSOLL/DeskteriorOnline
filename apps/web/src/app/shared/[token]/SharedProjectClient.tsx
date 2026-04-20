@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { ProductHotspotDrawer } from "../../../components/viewer/ProductHotspotDrawer";
@@ -25,6 +25,7 @@ import type { ProductHotspot } from "../../../lib/viewer/hotspots";
 import type { SharedViewerPresentation } from "../../../lib/viewer/presentation";
 
 type SharedProjectClientProps = {
+  shareToken: string;
   projectName: string;
   projectDescription: string | null;
   sceneBootstrap: SceneDocumentBootstrap | null;
@@ -112,7 +113,25 @@ function readMetadataPrice(record: Record<string, unknown> | null) {
   return null;
 }
 
+function getSharedViewerSessionKey() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const storageKey = "plan2space:shared-viewer-session";
+  const existing = window.sessionStorage.getItem(storageKey);
+  if (existing) {
+    return existing;
+  }
+
+  const generated =
+    window.crypto?.randomUUID?.() ?? `p2s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  window.sessionStorage.setItem(storageKey, generated);
+  return generated;
+}
+
 export function SharedProjectClient({
+  shareToken,
   projectName,
   projectDescription,
   sceneBootstrap,
@@ -285,6 +304,66 @@ export function SharedProjectClient({
     [assetHotspots, selectedAssetId]
   );
   const selectedHotspotLabel = selectedHotspot?.name ?? null;
+  const trackedFocusKeysRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (isVersionMappingFailed) {
+      return;
+    }
+
+    const sessionKey = getSharedViewerSessionKey();
+    if (!sessionKey) {
+      return;
+    }
+
+    void fetch(`/api/v1/public-scenes/${encodeURIComponent(shareToken)}/activity`, {
+      method: "POST",
+      keepalive: true,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        eventType: "view",
+        sessionKey,
+        source: viewerPresentation
+      })
+    }).catch(() => {
+      // Shared viewer activity is best-effort and must not block rendering.
+    });
+  }, [isVersionMappingFailed, shareToken, viewerPresentation]);
+
+  useEffect(() => {
+    if (!selectedHotspot?.id) {
+      return;
+    }
+
+    const sessionKey = getSharedViewerSessionKey();
+    if (!sessionKey) {
+      return;
+    }
+
+    const focusKey = `${shareToken}:${selectedHotspot.id}`;
+    if (trackedFocusKeysRef.current.has(focusKey)) {
+      return;
+    }
+    trackedFocusKeysRef.current.add(focusKey);
+
+    void fetch(`/api/v1/public-scenes/${encodeURIComponent(shareToken)}/activity`, {
+      method: "POST",
+      keepalive: true,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        eventType: "product_focus",
+        sessionKey,
+        source: viewerPresentation,
+        assetId: selectedHotspot.id
+      })
+    }).catch(() => {
+      trackedFocusKeysRef.current.delete(focusKey);
+    });
+  }, [selectedHotspot?.id, shareToken, viewerPresentation]);
 
   if (isVersionMappingFailed) {
     return (

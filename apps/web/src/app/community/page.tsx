@@ -118,12 +118,14 @@ export default async function CommunityPage({ searchParams }: { searchParams?: S
       {
         id: left.id,
         published_at: left.published_at,
-        previewMeta: left.previewMeta
+        previewMeta: left.previewMeta,
+        activity: left.activity
       },
       {
         id: right.id,
         published_at: right.published_at,
-        previewMeta: right.previewMeta
+        previewMeta: right.previewMeta,
+        activity: right.activity
       }
     )
   );
@@ -131,7 +133,8 @@ export default async function CommunityPage({ searchParams }: { searchParams?: S
     const profile = getShowcaseSnapshotProfileFromPreviewMeta(snapshot.previewMeta);
     const activity = buildShowcaseActivityMetrics({
       previewMeta: snapshot.previewMeta,
-      publishedAt: snapshot.published_at
+      publishedAt: snapshot.published_at,
+      persistedActivity: snapshot.activity
     });
     return {
       id: snapshot.id,
@@ -140,9 +143,8 @@ export default async function CommunityPage({ searchParams }: { searchParams?: S
       excerpt:
         snapshot.previewMeta?.projectDescription ??
         `${buildConversationTone(profile.room)}에 대한 의견을 나누는 스레드입니다.`,
-      replyCount: activity.estimatedReplies,
-      likeCount: activity.estimatedLikes,
-      viewCount: activity.estimatedViews,
+      focusCount: activity.productFocusCount,
+      viewCount: activity.viewCount,
       toneLabel: buildConversationTone(profile.room)
     };
   });
@@ -240,8 +242,7 @@ export default async function CommunityPage({ searchParams }: { searchParams?: S
                     <div className="mt-3 text-lg font-semibold leading-7 text-[#171411]">{card.title}</div>
                     <p className="mt-3 line-clamp-3 text-sm leading-6 text-[#625a51]">{card.excerpt}</p>
                     <div className="mt-5 flex items-center gap-3 text-[11px] text-[#625a51]">
-                      <span>답글 {card.replyCount}</span>
-                      <span>좋아요 {card.likeCount}</span>
+                      <span>포커스 {card.focusCount}</span>
                       <span>조회 {card.viewCount}</span>
                     </div>
                   </Link>

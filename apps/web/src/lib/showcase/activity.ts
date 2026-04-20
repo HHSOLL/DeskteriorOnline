@@ -1,11 +1,23 @@
 import type { SharePreviewMeta } from "../share/preview";
 
+export type ShowcaseActivityEventType = "view" | "product_focus";
+
+export type ShowcasePersistedActivity = {
+  viewCount: number;
+  productFocusCount: number;
+  lastEventAt: string | null;
+};
+
 export type ShowcaseActivityMetrics = {
   activityScore: number;
   recencyScore: number;
   richnessScore: number;
   diversityScore: number;
   editorialScore: number;
+  persistedViewScore: number;
+  persistedFocusScore: number;
+  viewCount: number;
+  productFocusCount: number;
   estimatedViews: number;
   estimatedLikes: number;
   estimatedReplies: number;
@@ -14,6 +26,7 @@ export type ShowcaseActivityMetrics = {
 type ShowcaseActivityInput = {
   previewMeta: SharePreviewMeta | null;
   publishedAt: string;
+  persistedActivity?: ShowcasePersistedActivity | null;
   now?: Date;
 };
 
@@ -21,6 +34,7 @@ type ShowcaseActivityRankable = {
   id: string;
   published_at: string;
   previewMeta: SharePreviewMeta | null;
+  activity?: ShowcasePersistedActivity | null;
 };
 
 function clamp(value: number, min: number, max: number) {
@@ -38,6 +52,7 @@ function resolveAgeHours(publishedAt: string, now: Date) {
 export function buildShowcaseActivityMetrics({
   previewMeta,
   publishedAt,
+  persistedActivity,
   now = new Date()
 }: ShowcaseActivityInput): ShowcaseActivityMetrics {
   const assetSummary = previewMeta?.assetSummary;
@@ -54,8 +69,16 @@ export function buildShowcaseActivityMetrics({
   const richnessScore = clamp(totalAssets * 4, 0, 28);
   const diversityScore = clamp(collectionCount * 6, 0, 18);
   const editorialScore = clamp(highlightedCount * 3 + (hasDescription ? 5 : 0), 0, 17);
+  const actualViewCount = persistedActivity?.viewCount ?? 0;
+  const actualFocusCount = persistedActivity?.productFocusCount ?? 0;
+  const persistedViewScore = clamp(Math.round(Math.log2(actualViewCount + 1) * 8), 0, 28);
+  const persistedFocusScore = clamp(actualFocusCount * 5, 0, 30);
 
-  const activityScore = recencyScore + richnessScore + diversityScore + editorialScore;
+  const activityScore =
+    recencyScore + richnessScore + diversityScore + editorialScore + persistedViewScore + persistedFocusScore;
+  const estimatedViews = Math.max(24, Math.round((recencyScore + richnessScore + diversityScore + editorialScore) * 3.6 + totalAssets * 8));
+  const estimatedLikes = Math.max(8, Math.round(activityScore * 0.55 + collectionCount * 4));
+  const estimatedReplies = Math.max(4, Math.round(activityScore * 0.26 + totalAssets * 1.4));
 
   return {
     activityScore,
@@ -63,9 +86,13 @@ export function buildShowcaseActivityMetrics({
     richnessScore,
     diversityScore,
     editorialScore,
-    estimatedViews: Math.max(24, Math.round(activityScore * 3.6 + totalAssets * 8)),
-    estimatedLikes: Math.max(8, Math.round(activityScore * 0.55 + collectionCount * 4)),
-    estimatedReplies: Math.max(4, Math.round(activityScore * 0.26 + totalAssets * 1.4))
+    persistedViewScore,
+    persistedFocusScore,
+    viewCount: actualViewCount > 0 ? actualViewCount : estimatedViews,
+    productFocusCount: actualFocusCount,
+    estimatedViews,
+    estimatedLikes,
+    estimatedReplies
   };
 }
 
@@ -77,11 +104,13 @@ export function compareShowcaseActivityRank(
   const leftMetrics = buildShowcaseActivityMetrics({
     previewMeta: left.previewMeta,
     publishedAt: left.published_at,
+    persistedActivity: left.activity,
     now
   });
   const rightMetrics = buildShowcaseActivityMetrics({
     previewMeta: right.previewMeta,
     publishedAt: right.published_at,
+    persistedActivity: right.activity,
     now
   });
 

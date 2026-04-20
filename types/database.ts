@@ -303,6 +303,54 @@ export interface Database {
           }
         ];
       };
+      shared_project_activity_events: {
+        Row: {
+          id: UUID;
+          shared_project_id: UUID;
+          project_id: UUID;
+          event_type: "view" | "product_focus";
+          asset_id: string | null;
+          source: string | null;
+          session_key: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: UUID;
+          shared_project_id: UUID;
+          project_id: UUID;
+          event_type: "view" | "product_focus";
+          asset_id?: string | null;
+          source?: string | null;
+          session_key: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: UUID;
+          shared_project_id?: UUID;
+          project_id?: UUID;
+          event_type?: "view" | "product_focus";
+          asset_id?: string | null;
+          source?: string | null;
+          session_key?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "shared_project_activity_events_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "shared_project_activity_events_shared_project_id_fkey";
+            columns: ["shared_project_id"];
+            isOneToOne: false;
+            referencedRelation: "shared_projects";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       assets: {
         Row: {
           id: UUID;

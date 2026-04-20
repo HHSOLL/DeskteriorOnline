@@ -81,6 +81,17 @@ const olderSparse = {
   })
 };
 
+const persistedFocus = {
+  id: "share-persisted",
+  published_at: "2026-04-12T08:00:00.000Z",
+  previewMeta: olderSparse.previewMeta,
+  activity: {
+    viewCount: 18,
+    productFocusCount: 3,
+    lastEventAt: "2026-04-20T11:20:00.000Z"
+  }
+};
+
 try {
   const recentMetrics = buildShowcaseActivityMetrics({
     previewMeta: recentDense.previewMeta,
@@ -107,13 +118,39 @@ try {
   );
   assert(ranked[0]?.id === "share-recent", `unexpected top-ranked showcase item: ${ranked[0]?.id}`);
 
+  const persistedMetrics = buildShowcaseActivityMetrics({
+    previewMeta: persistedFocus.previewMeta,
+    publishedAt: persistedFocus.published_at,
+    persistedActivity: persistedFocus.activity,
+    now
+  });
+  assert(
+    persistedMetrics.activityScore > olderMetrics.activityScore,
+    `persisted activity should boost rank (${persistedMetrics.activityScore} <= ${olderMetrics.activityScore})`
+  );
+  assert(persistedMetrics.viewCount === 18, `expected persisted view count to win over estimate (${persistedMetrics.viewCount})`);
+  assert(
+    persistedMetrics.productFocusCount === 3,
+    `expected persisted product focus count to be preserved (${persistedMetrics.productFocusCount})`
+  );
+
+  const persistedRanked = [olderSparse, persistedFocus].sort((left, right) =>
+    compareShowcaseActivityRank(left, right, now)
+  );
+  assert(
+    persistedRanked[0]?.id === "share-persisted",
+    `persisted activity should outrank equal derived baseline (${persistedRanked[0]?.id})`
+  );
+
   console.log("showcase activity ranking ok");
   console.log(
     JSON.stringify(
       {
         topRankedId: ranked[0]?.id,
+        persistedTopRankedId: persistedRanked[0]?.id,
         recentMetrics,
-        olderMetrics
+        olderMetrics,
+        persistedMetrics
       },
       null,
       2

@@ -1,4 +1,5 @@
 import { getSharePreviewMeta } from "../share/preview";
+import type { ShowcasePersistedActivity } from "../showcase/activity";
 
 export type ShowcaseSnapshot = {
   id: string;
@@ -12,6 +13,7 @@ export type ShowcaseSnapshot = {
 
 export type ShowcaseSnapshotItem = ShowcaseSnapshot & {
   previewMeta: ReturnType<typeof getSharePreviewMeta>;
+  activity: ShowcasePersistedActivity | null;
 };
 
 export type ShowcaseRoomFilter = "all" | "living" | "workspace" | "bedroom" | "flex";
@@ -113,7 +115,12 @@ export async function fetchShowcaseSnapshots(
   });
 
   const payload = (await response.json().catch(() => null)) as
-    | { items?: ShowcaseSnapshot[]; total?: number; nextCursor?: string | null; hasMore?: boolean }
+    | {
+        items?: Array<ShowcaseSnapshot & { activity?: ShowcasePersistedActivity | null }>;
+        total?: number;
+        nextCursor?: string | null;
+        hasMore?: boolean;
+      }
     | null;
 
   if (!response.ok) {
@@ -122,7 +129,8 @@ export async function fetchShowcaseSnapshots(
 
   const items = (payload?.items ?? []).map((item) => ({
     ...item,
-    previewMeta: getSharePreviewMeta(item.preview_meta)
+    previewMeta: getSharePreviewMeta(item.preview_meta),
+    activity: item.activity ?? null
   }));
   const total = typeof payload?.total === "number" && Number.isFinite(payload.total) ? payload.total : items.length;
   const nextCursor = typeof payload?.nextCursor === "string" && payload.nextCursor.length > 0 ? payload.nextCursor : null;

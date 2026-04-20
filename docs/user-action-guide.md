@@ -113,6 +113,16 @@ Updated:
 Removed/Deprecated:
 - community 활동 지표를 페이지 내부 ad-hoc 숫자로만 판단하던 QA 방식.
 
+## 2026-04-20 변경 동기화 (Showcase Activity Persisted Events QA)
+Added:
+- shared viewer를 연 뒤 `view` 이벤트가 session 기준으로 1회만 쌓이고, 제품 핫스팟 선택 시 `product_focus`가 asset/session 기준으로 dedupe 되는지 확인하는 QA 항목을 추가한다.
+
+Updated:
+- community QA 기준을 “derived ranking이 맞는지”에서 “persisted `포커스/조회` count가 ranking/card 지표에 반영되는지”까지 확장한다.
+
+Removed/Deprecated:
+- persisted activity 경로 없이 `verify:showcase-activity` 한 항목만으로 P3를 닫는 QA 기준.
+
 실행 명령:
 
 ```bash
