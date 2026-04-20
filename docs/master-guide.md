@@ -25,6 +25,7 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - 제품 메타데이터는 실측 규격(`dimensionsMm`)과 마감(`finishColor`, `finishMaterial`, `detailNotes`)을 유지해야 한다.
 - curated deskterior 제품 메타데이터는 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 manifest와 sceneDocument roundtrip에서 같이 유지해야 한다.
 - `lodProfile`는 문서용 필드에만 머물지 않고 room mode / desk precision / walk / builder preview 런타임 LOD 전환 거리 정책으로 실제 소비되어야 한다.
+- 반복된 `single_mesh` deskterior 자산은 read-only top/walk와 builder preview에서 instanced cluster로 묶을 수 있어야 하며, 선택 중이거나 편집 가능한 자산은 개별 오브젝트 경로를 유지해야 한다.
 - `sceneDocument` 저장 계약은 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, meter float 좌표는 그 스냅샷에서 파생된 호환 필드로만 유지한다.
 - `desk precision mode`에서는 선택한 제품의 위치/회전을 `mm/deg` 기준 numeric inspector와 measurement overlay로 노출한다.
 - `desk precision mode`에서는 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 surface lock 상태 카드로 노출한다.
@@ -68,6 +69,7 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - `npm --workspace apps/web run lint`
 - `npm --workspace apps/web run build`
 - `npm --workspace apps/web run verify:scene-document`
+- `npm --workspace apps/web run verify:asset-instancing`
 - `npm --workspace apps/web run verify:public-scene`
 - `npm --workspace apps/web run verify:showcase-scene`
 
@@ -440,6 +442,17 @@ Updated:
 
 Removed/Deprecated:
 - room shell texture set이 KTX2 산출물이 생겨도 런타임에서 계속 원본 JPG/PNG만 직접 읽는다는 가정.
+
+## 2026-04-20 변경 동기화 (Scene Instancing Phase 1)
+Added:
+- read-only top/walk와 builder preview에서 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶는 운영 규칙을 추가한다.
+- `verify:asset-instancing` 스크립트로 editable top mode 제외, selected 제외, dynamic light 제외, manual LOD 제외 정책을 회귀 검증하는 품질 게이트를 추가한다.
+
+Updated:
+- 원문 보고서 기준 남은 `instancing/LOD 운영화`를 “LOD policy 완료, read-only/builder instancing 1차 완료, editor-side/native pass만 남음” 상태로 갱신한다.
+
+Removed/Deprecated:
+- 반복 자산이 있는 read-only/builder 장면도 항상 개별 mesh clone만 사용해야 한다는 가정.
 
 ## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement)
 Added:

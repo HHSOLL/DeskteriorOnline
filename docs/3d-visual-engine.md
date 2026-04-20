@@ -50,6 +50,7 @@
 - walk view 진입 시 기본 시선은 room center/entrance target을 향해야 한다.
 - room mode, desk precision mode, builder preview는 idle 상태에서 `frameloop="demand"`를 기본으로 사용하고, camera zoom/rotate, hover highlight, direct drag, gizmo transform에서만 `invalidate()`를 호출한다.
 - deskterior 자산은 `lodProfile.maxDrawCalls/maxTriangleCount` 기준으로 complexity를 나누고, room mode는 더 이른 box proxy fallback, desk precision/walk는 더 늦은 fallback을 사용한다.
+- read-only top/walk와 builder preview에서는 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶어 draw call을 줄이고, selected/editable 경로는 개별 오브젝트를 유지한다.
 
 ## 뷰어 규칙
 - `apps/web/src/components/viewer/ReadOnlySceneViewport.tsx`
@@ -72,6 +73,7 @@
 - loaded GLB 자산의 hover/select raycast는 `three-mesh-bvh` bounds tree를 우선 사용해 작은 desk asset 다수 배치 시 raycast 비용을 낮춘다.
 - loaded GLB 자산의 large non-interleaved geometry는 BVH 생성 자체를 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync 경로를 유지한다.
 - KTX2 encoder(`toktx`)가 없는 환경에서도 runtime decode path와 public transcoder sync는 유지해야 한다.
+- `verify:asset-instancing`는 read-only top/walk + builder preview instancing eligibility와 cluster grouping 정책을 회귀 검증해야 한다.
 
 ## Scene 데이터 소비 규칙
 - `apps/web/src/lib/domain/scene-document.ts`를 scene 복원의 canonical 매핑 계층으로 사용
@@ -379,6 +381,17 @@ Updated:
 
 Removed/Deprecated:
 - `lodProfile`가 문서용 메타 필드에만 머물고 런타임은 고정 거리만 사용한다는 가정.
+
+## 2026-04-20 변경 동기화 (Scene Instancing Phase 1)
+Added:
+- read-only top/walk와 builder preview에서 반복된 `single_mesh` low/medium complexity 자산을 instanced cluster로 렌더링하는 품질 기준을 추가했다.
+- `verify:asset-instancing` 스크립트로 editable top mode 제외, selected 제외, dynamic light 제외, manual LOD 제외 정책을 검증하는 기준을 추가했다.
+
+Updated:
+- `instancing/LOD 운영화` 상태를 `LOD policy만 적용`에서 `LOD policy + non-editable repeated asset instancing`까지 확장했다.
+
+Removed/Deprecated:
+- read-only/builder 장면에서도 반복 자산을 항상 개별 mesh clone으로만 유지해야 한다는 가정.
 
 ## 2026-04-18 변경 동기화 (Opening Asset + Top-Entry Optimization)
 Added:

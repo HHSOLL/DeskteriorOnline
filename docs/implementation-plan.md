@@ -358,6 +358,18 @@ Updated:
 Removed/Deprecated:
 - `lodProfile`가 문서/manifest에만 있고 런타임이 고정 거리 box proxy만 사용하는 상태라는 서술.
 
+## 2026-04-20 변경 동기화 (Scene Instancing Phase 1)
+Added:
+- read-only top/walk와 builder preview에서 반복된 `single_mesh` low/medium complexity 자산을 instanced cluster로 묶는 첫 운영 단계를 추가했다.
+- `verify:asset-instancing` 스크립트로 editable top mode 제외, selected 제외, dynamic light 제외, manual LOD 제외, repeated cluster grouping 정책을 회귀 검증하도록 했다.
+
+Updated:
+- 원문 보고서 기준 남은 `instancing/LOD 운영화`를 “LOD policy 완료, read-only/builder instancing 1차 완료, editor-side/native pass만 남음” 상태로 갱신한다.
+- 다음 후보를 `native gltfpack pass`, `editor-side instancing 확대`, `실사 강화 2차` 중심으로 재정렬한다.
+
+Removed/Deprecated:
+- 반복 자산 instancing이 아직 전혀 런타임에 적용되지 않았다는 서술.
+
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:
 - desk precision mode에서 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector와 overlay에 추가했다.

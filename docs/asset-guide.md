@@ -59,6 +59,7 @@ npm --workspace apps/web run assets:verify:deskterior
 - generated asset은 Supabase Storage(`assets-glb`)를 사용한다.
 - curated deskterior manifest는 이제 실측/마감 메타뿐 아니라 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약도 같이 유지한다.
 - `lodProfile`는 검증용 메타에만 머물지 않고 room/desk precision/walk 런타임 LOD fallback 거리 정책에도 사용된다.
+- `lodProfile.strategy="single_mesh"`인 low/medium complexity 반복 자산은 read-only top/walk와 builder preview에서 instanced cluster 후보로 소비된다.
 - KTX2 runtime decode 경로는 준비됐고, `assets:sync:ktx2-transcoder`가 three basis transcoder를 public 경로에 동기화한다.
 - room shell floor/wall texture set은 `textures:encode:room-shell:ktx2` / `textures:check:room-shell:ktx2`로 `.ktx2` 산출물을 관리하고, 런타임 전환은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`로 제어한다.
 - room shell texture set의 첫 `.ktx2` encode pass는 완료됐고, 현재 저장소에는 16개 room shell `.ktx2` 산출물이 포함된다.

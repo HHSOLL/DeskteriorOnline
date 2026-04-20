@@ -2,12 +2,13 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { RigidBody } from "@react-three/rapier";
+import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { useThree, type ThreeEvent } from "@react-three/fiber";
 import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
 import { normalizeSceneAnchorType } from "../../../lib/scene/anchor-types";
+import { groupAssetsForInstancing } from "../../../lib/scene/asset-instancing";
 import { resolveAssetLodPlan, type AssetLodPlan } from "../../../lib/scene/asset-lod";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
@@ -52,6 +53,11 @@ type FinishMetadata = {
   finishColor: string | null | undefined;
   finishMaterial: string | null | undefined;
   detailNotes: string | null | undefined;
+};
+
+type InstancedMeshEntry = {
+  key: string;
+  mesh: THREE.InstancedMesh;
 };
 
 type SlotFinishPolicy = {
@@ -406,6 +412,160 @@ function PlaceholderFurniture() {
   );
 }
 
+function measureColliderHalfExtents(asset: SceneAsset) {
+  const width = asset.product?.dimensionsMm?.width
+    ? (asset.product.dimensionsMm.width / 1000) * Math.max(asset.scale[0], 0.001)
+    : 0.8 * Math.max(asset.scale[0], 0.001);
+  const depth = asset.product?.dimensionsMm?.depth
+    ? (asset.product.dimensionsMm.depth / 1000) * Math.max(asset.scale[2], 0.001)
+    : 0.8 * Math.max(asset.scale[2], 0.001);
+  const height = asset.product?.dimensionsMm?.height
+    ? (asset.product.dimensionsMm.height / 1000) * Math.max(asset.scale[1], 0.001)
+    : 0.6 * Math.max(asset.scale[1], 0.001);
+
+  return {
+    halfWidth: Math.max(0.1, width / 2),
+    halfHeight: Math.max(0.1, height / 2),
+    halfDepth: Math.max(0.1, depth / 2)
+  };
+}
+
+function ClusteredWalkCollider({ asset }: { asset: SceneAsset }) {
+  const collider = useMemo(() => measureColliderHalfExtents(asset), [asset]);
+
+  return (
+    <RigidBody type="fixed" colliders={false} position={asset.position} rotation={asset.rotation}>
+      <CuboidCollider
+        args={[collider.halfWidth, collider.halfHeight, collider.halfDepth]}
+        position={[0, collider.halfHeight, 0]}
+      />
+    </RigidBody>
+  );
+}
+
+function InstancedFurnitureCluster({
+  assets,
+  readOnly
+}: {
+  assets: SceneAsset[];
+  readOnly: boolean;
+}) {
+  const invalidate = useThree((state) => state.invalidate);
+  const viewMode = useEditorStore((state) => state.viewMode);
+  const topMode = useEditorStore((state) => state.topMode);
+  const setSelectedAssetId = useSelectionSelector((slice) => slice.setSelectedAssetId);
+  const gltf = useGLBAsset(assets[0]!.assetId);
+  const finishMetadata = useMemo<FinishMetadata>(
+    () => ({
+      finishColor: assets[0]?.product?.finishColor,
+      finishMaterial: assets[0]?.product?.finishMaterial,
+      detailNotes: assets[0]?.product?.detailNotes
+    }),
+    [assets]
+  );
+  const finishAppearance = useMemo(
+    () => resolveFinishAppearance(finishMetadata),
+    [finishMetadata]
+  );
+  const instancedMeshes = useMemo<InstancedMeshEntry[]>(() => {
+    const template = gltf.scene.clone(true);
+    applyFinishAppearanceToObject(template, finishAppearance);
+    template.updateWorldMatrix(true, true);
+
+    const clusterMeshes: InstancedMeshEntry[] = [];
+    const assetMatrix = new THREE.Matrix4();
+    const instanceMatrix = new THREE.Matrix4();
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+
+    template.traverse((child) => {
+      if (!(child instanceof THREE.Mesh)) return;
+
+      const mesh = new THREE.InstancedMesh(child.geometry, child.material, assets.length);
+      mesh.name = `instanced:${assets[0]!.assetId}:${child.uuid}`;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.instanceMatrix.needsUpdate = true;
+
+      assets.forEach((asset, index) => {
+        position.fromArray(asset.position);
+        quaternion.setFromEuler(
+          new THREE.Euler(asset.rotation[0], asset.rotation[1], asset.rotation[2])
+        );
+        scale.fromArray(asset.scale);
+        assetMatrix.compose(position, quaternion, scale);
+        instanceMatrix.multiplyMatrices(assetMatrix, child.matrixWorld);
+        mesh.setMatrixAt(index, instanceMatrix);
+      });
+
+      clusterMeshes.push({
+        key: child.uuid,
+        mesh
+      });
+    });
+
+    return clusterMeshes;
+  }, [assets, finishAppearance, gltf.scene]);
+
+  useEffect(() => {
+    return () => {
+      instancedMeshes.forEach(({ mesh }) => {
+        const material = mesh.material;
+        if (Array.isArray(material)) {
+          material.forEach((entry) => entry.dispose());
+        } else {
+          material?.dispose();
+        }
+      });
+    };
+  }, [instancedMeshes]);
+
+  const handlePointerDown = (event: ThreeEvent<PointerEvent>) => {
+    if (!readOnly) return;
+    const instanceId = event.instanceId;
+    if (instanceId === undefined || instanceId === null) return;
+    const targetAsset = assets[instanceId];
+    if (!targetAsset) return;
+    event.stopPropagation();
+    const startedAt = performance.now();
+    setSelectedAssetId(targetAsset.id);
+    invalidate();
+    scheduleInteractionLatency("select", startedAt, {
+      viewMode,
+      topMode,
+      targetId: targetAsset.id
+    });
+  };
+
+  const handlePointerOver = () => {
+    if (!readOnly || typeof document === "undefined") return;
+    document.body.style.cursor = "pointer";
+  };
+
+  const handlePointerOut = () => {
+    if (!readOnly || typeof document === "undefined") return;
+    document.body.style.cursor = "default";
+  };
+
+  return (
+    <group>
+      {instancedMeshes.map(({ key, mesh }) => (
+        <primitive
+          key={key}
+          object={mesh}
+          onPointerDown={handlePointerDown}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
+        />
+      ))}
+      {readOnly && viewMode === "walk"
+        ? assets.map((asset) => <ClusteredWalkCollider key={`collider:${asset.id}`} asset={asset} />)
+        : null}
+    </group>
+  );
+}
+
 function ModelInstance({ asset, lodPlan }: { asset: SceneAsset; lodPlan: AssetLodPlan }) {
   const gltf = useGLBAsset(asset.assetId);
   const finishMetadata = useMemo<FinishMetadata>(
@@ -710,6 +870,10 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
 export default function Furniture({ allowDynamicLights }: { allowDynamicLights: boolean }) {
   const assets = useAssetSelector((slice) => slice.assets);
+  const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
+  const viewMode = useEditorStore((state) => state.viewMode);
+  const topMode = useEditorStore((state) => state.topMode);
+  const readOnly = useEditorStore((state) => state.readOnly);
   const emitterAssetIds = useMemo(() => {
     if (!allowDynamicLights) {
       return new Set<string>();
@@ -724,12 +888,40 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
     }
     return ids;
   }, [allowDynamicLights, assets]);
+  const instancingClusters = useMemo(
+    () =>
+      groupAssetsForInstancing({
+        assets,
+        viewMode,
+        topMode,
+        readOnly,
+        selectedAssetId,
+        emitterAssetIds
+      }),
+    [assets, emitterAssetIds, readOnly, selectedAssetId, topMode, viewMode]
+  );
+  const instancedAssetIds = useMemo(() => {
+    const ids = new Set<string>();
+    instancingClusters.forEach((cluster) => {
+      cluster.assets.forEach((asset) => ids.add(asset.id));
+    });
+    return ids;
+  }, [instancingClusters]);
 
   return (
     <group>
-      {assets.map((asset) => (
-        <FurnitureItem key={asset.id} asset={asset} enableDynamicLight={emitterAssetIds.has(asset.id)} />
+      {instancingClusters.map((cluster) => (
+        <InstancedFurnitureCluster key={cluster.key} assets={cluster.assets} readOnly={readOnly} />
       ))}
+      {assets.map((asset) =>
+        instancedAssetIds.has(asset.id) ? null : (
+          <FurnitureItem
+            key={asset.id}
+            asset={asset}
+            enableDynamicLight={emitterAssetIds.has(asset.id)}
+          />
+        )
+      )}
     </group>
   );
 }

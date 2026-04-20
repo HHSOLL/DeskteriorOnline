@@ -88,6 +88,7 @@
 40. `assets:verify:deskterior` 실행 시 curated `p2s_*` 자산이 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약까지 모두 통과하는지 확인하기
 41. `verify:scene-document`, `verify:public-scene` 실행 시 위 product contract metadata가 save/load/share roundtrip에서 유지되는지 확인하기
 42. `verify:asset-lod` 실행 시 complex asset은 room mode에서 더 빨리 proxy fallback 되고, simple asset은 desk precision에서 full detail을 유지하는지 확인하기
+43. `verify:asset-instancing` 실행 시 read-only top/walk와 builder preview에서만 repeated `single_mesh` 자산이 cluster로 묶이고, editable room top / selected / dynamic light / manual LOD 자산은 개별 경로로 남는지 확인하기
 
 실행 명령:
 
@@ -618,3 +619,13 @@ Updated:
 
 Removed/Deprecated:
 - 런타임 LOD가 자산 complexity와 무관한 고정 거리 규칙만 쓰면 된다는 가정.
+
+## 2026-04-20 변경 동기화 (Scene Instancing Phase 1 QA)
+Added:
+- `verify:asset-instancing`로 read-only top/walk + builder preview instancing eligibility와 repeated cluster grouping을 검증하는 QA 항목을 추가했다.
+
+Updated:
+- 반복 자산 QA 기준을 “눈으로 draw call이 줄어든 것 같아 보이는지” 수준에서 `instancing policy script + build 회귀` 기준으로 강화했다.
+
+Removed/Deprecated:
+- instancing 적용 여부를 수동 viewer 확인만으로 판단하던 QA 방식.
