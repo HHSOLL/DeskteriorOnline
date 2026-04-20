@@ -1,19 +1,23 @@
 "use client";
 
-import { useMemo, useState, type PointerEvent } from "react";
+import { useEffect, useMemo, useState, type PointerEvent } from "react";
 import {
   Activity,
   BellRing,
+  BoxSelect,
   Copy,
   Crown,
   Crosshair,
   Link2,
+  Move,
   Monitor,
   Package,
   RadioTower,
   RefreshCcw,
+  ShieldAlert,
   Users
 } from "lucide-react";
+import { getRealtimeDraftCatalog } from "../../lib/experiments/realtime-draft";
 import type { RealtimeLabsConfig } from "../../lib/experiments/realtime-labs";
 import type { RealtimeViewMode } from "../../lib/experiments/realtime-presence";
 import { useRealtime } from "../../hooks/useRealtime";
@@ -25,12 +29,7 @@ const VIEW_MODE_OPTIONS: Array<{ id: RealtimeViewMode; label: string }> = [
   { id: "walk", label: "Walk" }
 ];
 
-const SAMPLE_ASSETS = [
-  { id: "p2s_desk_oak", label: "Desk Oak" },
-  { id: "p2s_desk_lamp_glow", label: "Desk Lamp Glow" },
-  { id: "p2s_ceramic_mug", label: "Ceramic Mug" },
-  { id: "p2s_desk_planter_pilea", label: "Planter Pilea" }
-] as const;
+const SAMPLE_ASSETS = getRealtimeDraftCatalog();
 
 function formatTimestamp(value: string | null) {
   if (!value) return "없음";
@@ -62,6 +61,7 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [pingState, setPingState] = useState<"idle" | "sent" | "error">("idle");
   const [roomError, setRoomError] = useState<string | null>(null);
+  const [draggingAssetId, setDraggingAssetId] = useState<string | null>(null);
   const realtimeSync = useRealtimeSync({ enabled: config.enabled });
   const realtime = useRealtime({
     enabled: config.enabled,
@@ -77,6 +77,21 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
   );
   const spotlightAssetLabel = formatAssetLabel(realtime.broadcastState.spotlightAssetId);
   const presenterLabel = realtime.currentPresenter?.label ?? "없음";
+  const orderedDraftAssets = useMemo(
+    () => realtime.draftState.order.map((assetId) => realtime.draftState.assets[assetId]).filter(Boolean),
+    [realtime.draftState]
+  );
+
+  useEffect(() => {
+    if (!draggingAssetId) {
+      return;
+    }
+
+    const activeLock = realtime.draftState.locks[draggingAssetId];
+    if (!activeLock || activeLock.ownerSessionKey !== realtime.sessionKey) {
+      setDraggingAssetId(null);
+    }
+  }, [draggingAssetId, realtime.draftState.locks, realtime.sessionKey]);
 
   const handleJoinRoom = () => {
     const joinedRoom = realtimeSync.joinRoom(realtimeSync.draftRoomId);
@@ -113,6 +128,56 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
     realtime.setCursor({ x, y });
   };
 
+  const handleDraftBoardPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (!draggingAssetId) {
+      return;
+    }
+
+    const asset = realtime.draftState.assets[draggingAssetId];
+    if (!asset) {
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return;
+    }
+
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    realtime.moveDraftAsset({
+      assetId: asset.id,
+      assetLabel: asset.label,
+      x,
+      y
+    });
+  };
+
+  const finishDraftDrag = () => {
+    if (!draggingAssetId) {
+      return;
+    }
+
+    const asset = realtime.draftState.assets[draggingAssetId];
+    if (asset) {
+      realtime.releaseDraftAsset({
+        assetId: asset.id,
+        assetLabel: asset.label
+      });
+    }
+    setDraggingAssetId(null);
+  };
+
+  const handleDraftAssetPointerDown = (assetId: string, assetLabel: string) => {
+    const accepted = realtime.claimDraftAsset({
+      assetId,
+      assetLabel
+    });
+    if (accepted) {
+      setDraggingAssetId(assetId);
+    }
+  };
+
   const handleAttentionPing = async (input: { message: string; targetSessionKey?: string | null; targetLabel?: string | null }) => {
     try {
       await realtime.sendAttentionPing(input);
@@ -128,15 +193,15 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
         <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
           <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
             <RadioTower className="h-4 w-4" />
-            <span>Phase 3 Broadcast State</span>
+            <span>Phase 4 Collaborative Draft</span>
           </div>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#171411]">
-            presenter / follow / spotlight / attention ping
+            lock / move / conflict / release
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[#625a51]">
-            Phase 2 presence basics 위에 presenter broadcast 상태를 얹었다. 같은 room 안에서 누가 presenter인지,
-            누가 presenter를 따라가는지, 어떤 asset이 spotlight인지, 마지막 attention ping이 무엇인지 공유하지만
-            scene write와 정식 협업 편집은 아직 다루지 않는다.
+            Phase 3 broadcast state 위에 sample asset collaborative draft를 얹었다. 같은 room 안에서 lock owner,
+            drag move intent, release, conflict banner까지 실험하지만, 이 보드는 local-only lab 상태일 뿐 저장도
+            publish도 하지 않는다.
           </p>
 
           <div className="mt-6 grid gap-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
@@ -457,6 +522,93 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
 
         <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
           <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
+            <BoxSelect className="h-4 w-4" />
+            <span>Collaborative Draft Board</span>
+          </div>
+          <p className="mt-3 text-sm leading-6 text-[#625a51]">
+            이 보드는 lab-only 공동 편집 draft다. asset을 잡으면 낙관적으로 lock을 선점하고, 드래그 이동 중에는
+            같은 room 참가자에게 move intent가 브로드캐스트된다. 이미 누가 잡고 있는 asset을 다시 잡으려 하면
+            conflict banner가 뜬다.
+          </p>
+
+          {realtime.draftState.lastConflict ? (
+            <div className="mt-4 flex items-start justify-between gap-4 rounded-[18px] border border-amber-500/25 bg-amber-50 p-4">
+              <div className="flex items-start gap-3 text-sm leading-6 text-[#7a4d17]">
+                <ShieldAlert className="mt-0.5 h-4 w-4 flex-none" />
+                <div>
+                  <div className="font-semibold">{realtime.draftState.lastConflict.assetLabel} lock conflict</div>
+                  <div>{realtime.draftState.lastConflict.message}</div>
+                  <div className="text-[11px] text-[#8a5c16]">
+                    holder {realtime.draftState.lastConflict.holderLabel} / challenger{" "}
+                    {realtime.draftState.lastConflict.challengerLabel}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={realtime.dismissDraftConflictBanner}
+                className="rounded-full border border-amber-500/25 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#7a4d17]"
+              >
+                dismiss
+              </button>
+            </div>
+          ) : null}
+
+          <div
+            onPointerMove={handleDraftBoardPointerMove}
+            onPointerUp={finishDraftDrag}
+            onPointerLeave={finishDraftDrag}
+            className="relative mt-5 h-[380px] overflow-hidden rounded-[24px] border border-black/10 bg-[linear-gradient(180deg,#faf7f1_0%,#efe6da_100%)]"
+          >
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(23,20,17,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(23,20,17,0.06)_1px,transparent_1px)] bg-[size:56px_56px]" />
+            <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-4 text-[10px] font-bold uppercase tracking-[0.16em] text-[#6b6157]">
+              <span>Optimistic Lock / Drag Intent</span>
+              <span>{draggingAssetId ? `dragging ${formatAssetLabel(draggingAssetId)}` : "idle"}</span>
+            </div>
+
+            {orderedDraftAssets.map((asset) => {
+              const lock = realtime.draftState.locks[asset.id];
+              const lockedBySelf = lock?.ownerSessionKey === realtime.sessionKey;
+              const lockedByOther = Boolean(lock && lock.ownerSessionKey !== realtime.sessionKey);
+
+              return (
+                <button
+                  key={asset.id}
+                  type="button"
+                  onPointerDown={() => handleDraftAssetPointerDown(asset.id, asset.label)}
+                  className={`absolute min-w-[150px] rounded-[18px] border px-4 py-3 text-left shadow-[0_14px_26px_rgba(0,0,0,0.12)] transition ${
+                    lockedBySelf
+                      ? "border-emerald-500/25 bg-emerald-50"
+                      : lockedByOther
+                        ? "border-amber-500/25 bg-amber-50"
+                        : "border-black/10 bg-white/92"
+                  }`}
+                  style={{
+                    left: `${asset.x * 100}%`,
+                    top: `${asset.y * 100}%`,
+                    transform: "translate(-50%, -50%)",
+                    cursor: lockedByOther ? "not-allowed" : draggingAssetId === asset.id ? "grabbing" : "grab"
+                  }}
+                >
+                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#7a7065]">
+                    <Move className="h-3.5 w-3.5" />
+                    <span>{lockedBySelf ? "locked by me" : lockedByOther ? "locked" : "available"}</span>
+                  </div>
+                  <div className="mt-2 text-sm font-semibold text-[#171411]">{asset.label}</div>
+                  <div className="mt-1 text-[11px] leading-5 text-[#625a51]">
+                    pos {Math.round(asset.x * 100)} / {Math.round(asset.y * 100)}
+                  </div>
+                  <div className="mt-1 text-[11px] leading-5 text-[#625a51]">
+                    owner {lock ? lock.ownerLabel : "none"}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
+          <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
             <BellRing className="h-4 w-4" />
             <span>Attention Ping</span>
           </div>
@@ -579,23 +731,23 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
         <div className="rounded-[24px] border border-black/10 bg-[#191512] p-5 text-[#f9f4ec] shadow-[0_18px_46px_rgba(0,0,0,0.18)]">
           <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] text-[#ccb59b]">
             <Activity className="h-4 w-4" />
-            <span>Phase 3 Scope</span>
+            <span>Phase 4 Scope</span>
           </div>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-[#e1d7cd]">
-            <li>presenter role claim / release</li>
-            <li>follow presenter local sync</li>
-            <li>spotlight asset broadcast</li>
-            <li>attention ping snapshot</li>
-            <li>still no scene write or collaborative edit</li>
+            <li>optimistic asset lock intent</li>
+            <li>drag move broadcast on sample board</li>
+            <li>lock collision / conflict banner</li>
+            <li>selection handoff through lock owner</li>
+            <li>still no persistence or production edit path</li>
           </ul>
         </div>
 
         <div className="rounded-[24px] border border-black/10 bg-white/82 p-5 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
-          <div className="text-[10px] font-semibold tracking-[0.2em] text-[#8a8177]">Phase 4 이후 범위</div>
+          <div className="text-[10px] font-semibold tracking-[0.2em] text-[#8a8177]">Phase 5 이후 범위</div>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-[#52483f]">
-            <li>lab-only collaborative edit draft</li>
             <li>reconnect / hardening / kill switch</li>
             <li>stale participant cleanup hardening</li>
+            <li>exit gate / go-no-go checklist</li>
           </ul>
         </div>
       </div>

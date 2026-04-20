@@ -354,6 +354,19 @@ Updated:
 Removed/Deprecated:
 - lab에서 presenter/follow/spotlight/ping이 전혀 다뤄지지 않고 presence basics까지만 있는 상태.
 
+## 2026-04-20 변경 동기화 (Presence/Broadcast Phase 4 Complete)
+Added:
+- `/labs/realtime`에 sample asset board를 추가해 optimistic lock, drag move intent, release, conflict banner를 갖는 lab-only collaborative draft를 구현했다.
+- collaborative draft helper를 도입해 `asset position`, `lock owner`, `last conflict`를 순수 함수로 전이시키고, `verify:realtime-lab`에서 lock/move/conflict/release 시퀀스를 검증한다.
+- selection handoff를 lock owner와 연결해 asset claim 시 presence selected asset도 같이 갱신되도록 정리했다.
+
+Updated:
+- `presence / broadcast` 남은 작업을 `Phase 4 collaborative draft 완료` 상태로 갱신한다.
+- 다음 후보를 `Phase 5 hardening` 하나로 축소한다.
+
+Removed/Deprecated:
+- lab이 presenter/follow/ping까지만 다루고 실제 collaborative draft 편집 보드는 없는 상태.
+
 완료 기준:
 - publish 후 shared viewer와 community 카드가 같은 장면 상태를 재현한다.
 - viewer에는 editor 전용 affordance가 남지 않는다.

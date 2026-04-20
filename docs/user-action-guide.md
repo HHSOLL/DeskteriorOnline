@@ -181,6 +181,9 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - 한 창에서 presenter를 claim하면 다른 창에서 presenter label과 spotlight 상태가 갱신되는지 확인
 - 다른 창에서 follow presenter를 켜면 presenter의 mode/selection/spotlight가 로컬 badge에 반영되는지 확인
 - attention ping을 보내면 다른 창에서 마지막 ping snapshot이 보이는지 확인
+- sample draft board에서 자산을 잡고 드래그하면 다른 창 보드의 자산 위치가 같이 이동하는지 확인
+- 이미 다른 창이 잡고 있는 자산을 다시 잡으려 하면 conflict banner가 노출되는지 확인
+- 드래그를 놓으면 lock이 해제되고, occupancy/draft board에서 owner 표시가 사라지는지 확인
 - 뷰어에 편집 affordance가 노출되지 않는지 확인
 - 갤러리/커뮤니티 카드가 `/shared/[token]` 읽기 전용 뷰어로 이동하는지 확인
 - 갤러리/커뮤니티 피드가 레퍼런스 8번 기준의 4열 카드 밀도와 상단 filter rail을 유지하는지 확인

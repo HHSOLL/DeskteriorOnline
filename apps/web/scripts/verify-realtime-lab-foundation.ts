@@ -1,4 +1,12 @@
 import {
+  buildRealtimeDraftConflictEvent,
+  buildRealtimeDraftLockEvent,
+  buildRealtimeDraftMoveEvent,
+  buildRealtimeDraftReleaseEvent,
+  createRealtimeDraftState,
+  transitionRealtimeDraftState
+} from "../src/lib/experiments/realtime-draft";
+import {
   buildRealtimeAttentionPing,
   buildRealtimeLabChannelName,
   buildRealtimePresenceMeta,
@@ -120,14 +128,92 @@ try {
   assert(ping.targetLabel === "guest-presenter", "attention ping target label should roundtrip");
   assert(ping.message === "presenter sync requested", "attention ping message should roundtrip");
 
-  console.log("realtime lab phase 3 ok");
+  let draftState = createRealtimeDraftState(now);
+  const lockEvent = buildRealtimeDraftLockEvent({
+    roomId: roomId ?? "demo-room-01",
+    assetId: "p2s_ceramic_mug",
+    assetLabel: "Ceramic Mug",
+    sessionKey: "session-self",
+    label: "guest-self",
+    accentColor: "hsl(355 76% 54%)",
+    now
+  });
+  const lockTransition = transitionRealtimeDraftState(draftState, lockEvent);
+  assert(lockTransition.accepted === true, "draft lock should be accepted");
+  draftState = lockTransition.state;
+
+  const moveEvent = buildRealtimeDraftMoveEvent({
+    roomId: roomId ?? "demo-room-01",
+    assetId: "p2s_ceramic_mug",
+    assetLabel: "Ceramic Mug",
+    sessionKey: "session-self",
+    label: "guest-self",
+    accentColor: "hsl(355 76% 54%)",
+    x: 0.81,
+    y: 0.22,
+    now: now + 1_000
+  });
+  const moveTransition = transitionRealtimeDraftState(draftState, moveEvent);
+  assert(moveTransition.accepted === true, "draft move should be accepted");
+  draftState = moveTransition.state;
+  assert(
+    draftState.assets["p2s_ceramic_mug"]?.x === 0.81 && draftState.assets["p2s_ceramic_mug"]?.y === 0.22,
+    "draft move position should roundtrip"
+  );
+
+  const conflictingLockEvent = buildRealtimeDraftLockEvent({
+    roomId: roomId ?? "demo-room-01",
+    assetId: "p2s_ceramic_mug",
+    assetLabel: "Ceramic Mug",
+    sessionKey: "session-presenter",
+    label: "guest-presenter",
+    accentColor: "hsl(105 76% 54%)",
+    now: now + 2_000
+  });
+  const conflictTransition = transitionRealtimeDraftState(draftState, conflictingLockEvent);
+  assert(conflictTransition.accepted === false, "later conflicting lock should be rejected");
+  assert(conflictTransition.conflict?.holderSessionKey === "session-self", "draft conflict holder should resolve");
+  draftState = conflictTransition.state;
+
+  const conflictEvent = buildRealtimeDraftConflictEvent({
+    roomId: roomId ?? "demo-room-01",
+    assetId: "p2s_ceramic_mug",
+    assetLabel: "Ceramic Mug",
+    holderSessionKey: "session-self",
+    holderLabel: "guest-self",
+    challengerSessionKey: "session-presenter",
+    challengerLabel: "guest-presenter",
+    message: "Ceramic Mug는 이미 guest-self가 잡고 있습니다.",
+    now: now + 2_000
+  });
+  const conflictEventTransition = transitionRealtimeDraftState(draftState, conflictEvent);
+  assert(conflictEventTransition.accepted === true, "explicit conflict event should be accepted");
+  draftState = conflictEventTransition.state;
+  assert(draftState.lastConflict?.assetId === "p2s_ceramic_mug", "draft conflict should persist");
+
+  const releaseEvent = buildRealtimeDraftReleaseEvent({
+    roomId: roomId ?? "demo-room-01",
+    assetId: "p2s_ceramic_mug",
+    assetLabel: "Ceramic Mug",
+    sessionKey: "session-self",
+    label: "guest-self",
+    accentColor: "hsl(355 76% 54%)",
+    now: now + 3_000
+  });
+  const releaseTransition = transitionRealtimeDraftState(draftState, releaseEvent);
+  assert(releaseTransition.accepted === true, "draft release should be accepted");
+  draftState = releaseTransition.state;
+  assert(!draftState.locks["p2s_ceramic_mug"], "draft lock should be cleared after release");
+
+  console.log("realtime lab phase 4 ok");
   console.log(
     JSON.stringify(
       {
         roomId,
         participants,
         broadcastState,
-        ping
+        ping,
+        draftState
       },
       null,
       2

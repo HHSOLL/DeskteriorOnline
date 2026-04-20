@@ -4,6 +4,18 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getSupabaseClient } from "../lib/supabase/client";
 import {
+  buildRealtimeDraftConflictEvent,
+  buildRealtimeDraftLockEvent,
+  buildRealtimeDraftMoveEvent,
+  buildRealtimeDraftReleaseEvent,
+  createRealtimeDraftState,
+  dismissRealtimeDraftConflict,
+  pruneRealtimeDraftLocks,
+  transitionRealtimeDraftState,
+  type RealtimeDraftEvent,
+  type RealtimeDraftState
+} from "../lib/experiments/realtime-draft";
+import {
   buildRealtimeAttentionPing,
   buildRealtimeLabChannelName,
   buildRealtimePresenceMeta,
@@ -52,11 +64,13 @@ export function useRealtime(input: {
   const [lastSyncAt, setLastSyncAt] = useState<string | null>(null);
   const [heartbeatAt, setHeartbeatAt] = useState<string | null>(null);
   const [lastAttentionPing, setLastAttentionPing] = useState<RealtimeAttentionPing | null>(null);
+  const [draftState, setDraftState] = useState<RealtimeDraftState>(() => createRealtimeDraftState());
   const [localPresence, setLocalPresence] = useState<LocalRealtimePresenceState>(() =>
     createDefaultRealtimeLocalPresenceState()
   );
   const selfJoinedAtRef = useRef<string | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const draftStateRef = useRef(draftState);
   const localPresenceRef = useRef(localPresence);
   const syncSnapshotRef = useRef<(() => void) | null>(null);
   const sendPresenceUpdateRef = useRef<(() => Promise<void>) | null>(null);
@@ -70,6 +84,17 @@ export function useRealtime(input: {
   useEffect(() => {
     localPresenceRef.current = localPresence;
   }, [localPresence]);
+
+  useEffect(() => {
+    draftStateRef.current = draftState;
+  }, [draftState]);
+
+  useEffect(() => {
+    const nextDraftState = createRealtimeDraftState();
+    draftStateRef.current = nextDraftState;
+    setDraftState(nextDraftState);
+    setLastAttentionPing(null);
+  }, [roomId]);
 
   const setViewMode = useCallback((viewMode: RealtimeViewMode) => {
     setLocalPresence((previous) => {
@@ -165,6 +190,145 @@ export function useRealtime(input: {
     });
   }, []);
 
+  const applyDraftEvent = useCallback((event: RealtimeDraftEvent) => {
+    const transition = transitionRealtimeDraftState(draftStateRef.current, event);
+    draftStateRef.current = transition.state;
+    setDraftState(transition.state);
+    return transition;
+  }, []);
+
+  const sendDraftEvent = useCallback((event: RealtimeDraftEvent) => {
+    const channel = channelRef.current;
+    if (!channel) {
+      return;
+    }
+
+    const eventName: RealtimeDraftEvent["type"] = event.type;
+    void channel
+      .send({
+        type: "broadcast",
+        event: eventName,
+        payload: event
+      })
+      .then((result) => {
+        if (result !== "ok") {
+          throw new Error(`Realtime draft broadcast failed: ${result}`);
+        }
+      })
+      .catch((draftError) => {
+        setStatus("error");
+        setError(draftError instanceof Error ? draftError.message : "Realtime draft broadcast failed.");
+      });
+  }, []);
+
+  const claimDraftAsset = useCallback(
+    (input: { assetId: string; assetLabel: string }) => {
+      if (!roomId || !selfSessionKey || !selfLabel) {
+        return false;
+      }
+
+      setSelectedAssetId(input.assetId);
+      const event = buildRealtimeDraftLockEvent({
+        roomId,
+        assetId: input.assetId,
+        assetLabel: input.assetLabel,
+        sessionKey: selfSessionKey,
+        label: selfLabel,
+        accentColor: buildRealtimePresenceMeta({
+          roomId,
+          sessionKey: selfSessionKey,
+          label: selfLabel,
+          localState: localPresenceRef.current
+        }).accentColor
+      });
+      const transition = applyDraftEvent(event);
+      if (transition.accepted) {
+        sendDraftEvent(event);
+      } else if (transition.conflict) {
+        sendDraftEvent(
+          buildRealtimeDraftConflictEvent({
+            roomId,
+            assetId: transition.conflict.assetId,
+            assetLabel: transition.conflict.assetLabel,
+            holderSessionKey: transition.conflict.holderSessionKey,
+            holderLabel: transition.conflict.holderLabel,
+            challengerSessionKey: transition.conflict.challengerSessionKey,
+            challengerLabel: transition.conflict.challengerLabel,
+            message: transition.conflict.message
+          })
+        );
+      }
+      return transition.accepted;
+    },
+    [applyDraftEvent, roomId, selfLabel, selfSessionKey, sendDraftEvent, setSelectedAssetId]
+  );
+
+  const moveDraftAsset = useCallback(
+    (input: { assetId: string; assetLabel: string; x: number; y: number }) => {
+      if (!roomId || !selfSessionKey || !selfLabel) {
+        return false;
+      }
+
+      const event = buildRealtimeDraftMoveEvent({
+        roomId,
+        assetId: input.assetId,
+        assetLabel: input.assetLabel,
+        sessionKey: selfSessionKey,
+        label: selfLabel,
+        accentColor: buildRealtimePresenceMeta({
+          roomId,
+          sessionKey: selfSessionKey,
+          label: selfLabel,
+          localState: localPresenceRef.current
+        }).accentColor,
+        x: input.x,
+        y: input.y
+      });
+      const transition = applyDraftEvent(event);
+      if (transition.accepted) {
+        sendDraftEvent(event);
+      }
+      return transition.accepted;
+    },
+    [applyDraftEvent, roomId, selfLabel, selfSessionKey, sendDraftEvent]
+  );
+
+  const releaseDraftAsset = useCallback(
+    (input: { assetId: string; assetLabel: string }) => {
+      if (!roomId || !selfSessionKey || !selfLabel) {
+        return false;
+      }
+
+      const event = buildRealtimeDraftReleaseEvent({
+        roomId,
+        assetId: input.assetId,
+        assetLabel: input.assetLabel,
+        sessionKey: selfSessionKey,
+        label: selfLabel,
+        accentColor: buildRealtimePresenceMeta({
+          roomId,
+          sessionKey: selfSessionKey,
+          label: selfLabel,
+          localState: localPresenceRef.current
+        }).accentColor
+      });
+      const transition = applyDraftEvent(event);
+      if (transition.accepted) {
+        sendDraftEvent(event);
+      }
+      return transition.accepted;
+    },
+    [applyDraftEvent, roomId, selfLabel, selfSessionKey, sendDraftEvent]
+  );
+
+  const dismissDraftConflictBanner = useCallback(() => {
+    setDraftState((previous) => {
+      const nextState = dismissRealtimeDraftConflict(previous);
+      draftStateRef.current = nextState;
+      return nextState;
+    });
+  }, []);
+
   useEffect(() => {
     if (!enabled) {
       setStatus("disabled");
@@ -239,6 +403,30 @@ export function useRealtime(input: {
       .on("presence", { event: "sync" }, syncSnapshot)
       .on("presence", { event: "join" }, syncSnapshot)
       .on("presence", { event: "leave" }, syncSnapshot)
+      .on("broadcast", { event: "draft-lock" }, ({ payload }) => {
+        if (cancelled || !payload || typeof payload !== "object") {
+          return;
+        }
+        applyDraftEvent(payload as RealtimeDraftEvent);
+      })
+      .on("broadcast", { event: "draft-move" }, ({ payload }) => {
+        if (cancelled || !payload || typeof payload !== "object") {
+          return;
+        }
+        applyDraftEvent(payload as RealtimeDraftEvent);
+      })
+      .on("broadcast", { event: "draft-release" }, ({ payload }) => {
+        if (cancelled || !payload || typeof payload !== "object") {
+          return;
+        }
+        applyDraftEvent(payload as RealtimeDraftEvent);
+      })
+      .on("broadcast", { event: "draft-conflict" }, ({ payload }) => {
+        if (cancelled || !payload || typeof payload !== "object") {
+          return;
+        }
+        applyDraftEvent(payload as RealtimeDraftEvent);
+      })
       .on("broadcast", { event: "attention-ping" }, ({ payload }) => {
         if (cancelled || !payload || typeof payload !== "object") {
           return;
@@ -311,7 +499,7 @@ export function useRealtime(input: {
         channelRef.current = null;
       }
     };
-  }, [channelName, enabled, roomId, selfLabel, selfSessionKey]);
+  }, [applyDraftEvent, channelName, enabled, roomId, selfLabel, selfSessionKey]);
 
   useEffect(() => {
     if (status !== "connected") {
@@ -340,6 +528,17 @@ export function useRealtime(input: {
     () => participants.filter((participant) => !participant.stale),
     [participants]
   );
+
+  useEffect(() => {
+    const activeSessionKeys = new Set(activeParticipants.map((participant) => participant.sessionKey));
+    const nextState = pruneRealtimeDraftLocks(draftStateRef.current, activeSessionKeys);
+    if (nextState === draftStateRef.current) {
+      return;
+    }
+    draftStateRef.current = nextState;
+    setDraftState(nextState);
+  }, [activeParticipants]);
+
   const broadcastState = useMemo(
     () => resolveRealtimeBroadcastState({ participants: activeParticipants }),
     [activeParticipants]
@@ -433,6 +632,7 @@ export function useRealtime(input: {
     currentPresenter,
     isFollowingPresenter,
     lastAttentionPing,
+    draftState,
     setViewMode,
     setSelectedAssetId,
     setCursor,
@@ -440,6 +640,10 @@ export function useRealtime(input: {
     setPresenterRole,
     setFollowingPresenterSessionKey,
     setSpotlightAssetId,
-    sendAttentionPing
+    sendAttentionPing,
+    claimDraftAsset,
+    moveDraftAsset,
+    releaseDraftAsset,
+    dismissDraftConflictBanner
   };
 }
