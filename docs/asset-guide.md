@@ -58,7 +58,7 @@ npm --workspace apps/web run assets:verify:deskterior
 - generated asset은 Supabase Storage(`assets-glb`)를 사용한다.
 - KTX2 runtime decode 경로는 준비됐고, `assets:sync:ktx2-transcoder`가 three basis transcoder를 public 경로에 동기화한다.
 - room shell floor/wall texture set은 `textures:encode:room-shell:ktx2` / `textures:check:room-shell:ktx2`로 `.ktx2` 산출물을 관리하고, 런타임 전환은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`로 제어한다.
-- 실제 첫 encode pass는 로컬 `ktx create` 또는 legacy `toktx` 같은 encoder가 있는 환경에서 실행해야 한다.
+- room shell texture set의 첫 `.ktx2` encode pass는 완료됐고, 현재 저장소에는 16개 room shell `.ktx2` 산출물이 포함된다.
 - 2026-04-18 정리에서 legacy floorplan/intake/revision live data와 `floor-plans` bucket이 제거되었고, active bucket은 `assets-glb`, `project-media`만 남는다.
 
 ## 4) 레거시/보조 경로: Worker 생성형 GLB

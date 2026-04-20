@@ -563,7 +563,7 @@ Added:
 - `textures:check:room-shell:ktx2`로 room shell texture set의 expected `.ktx2` 산출물 유무를 확인하는 QA 항목을 추가했다.
 
 Updated:
-- KTX2 QA 기준을 transcoder sync 확인에서 `transcoder sync + room shell ktx2 output check + runtime flag` 확인까지 확장했다.
+- KTX2 QA 기준을 transcoder sync 확인에서 `transcoder sync + committed room shell ktx2 output check + runtime flag` 확인까지 확장했다.
 
 Removed/Deprecated:
 - room shell texture KTX2 준비 상태를 수동 파일 탐색만으로 판단하던 QA 방식.

@@ -340,7 +340,7 @@ Added:
 - `textures:encode:room-shell:ktx2` / `textures:check:room-shell:ktx2`로 room shell KTX2 산출물 유무를 검증하는 운영 기준을 추가했다.
 
 Updated:
-- KTX2 준비 상태를 transcoder sync만이 아니라 room shell runtime wiring과 encode/check 파이프라인까지 포함하는 상태로 확장했다.
+- KTX2 준비 상태를 transcoder sync만이 아니라 room shell runtime wiring, encode/check 파이프라인, committed room shell `.ktx2` 산출물까지 포함하는 상태로 확장했다.
 
 Removed/Deprecated:
 - room shell texture KTX2 적용을 수동 파일 교체에만 의존하던 가정.

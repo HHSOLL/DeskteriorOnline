@@ -308,7 +308,7 @@ Removed/Deprecated:
 
 현재 착수:
 - 완료: Phase 1 / Slice 1, Phase 1 / Slice 2, Phase 1 / Slice 3, Phase 2 / Slice 1, Phase 2 / Slice 2, Phase 2 / Slice 3, Phase 3 / Slice 1, Phase 3 / Slice 2, Phase 3 / Slice 3, Phase 3 / Slice 4, Phase 4 / Slice 1, Phase 4 / Slice 2, Phase 4 / Slice 3, Phase 5 / Slice 1, Phase 5 / Slice 2, Phase 5 / Slice 3
-- 다음 후보: KTX2 첫 실제 encode pass 실행, worker offload, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
+- 다음 후보: worker offload, 자산 메타데이터 계약 보강, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
 
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:
@@ -328,7 +328,7 @@ Added:
 - `textures:encode:room-shell:ktx2`, `textures:check:room-shell:ktx2` 스크립트로 room shell texture set의 expected `.ktx2` 산출물을 encode/check 하는 파이프라인을 추가했다.
 
 Updated:
-- KTX2 남은 작업 범위를 "decode path 준비"에서 "room shell runtime wiring + encode/check 파이프라인 준비, 첫 실제 encode pass만 남은 상태"로 갱신한다.
+- KTX2 남은 작업 범위를 "decode path 준비"에서 "room shell runtime wiring + encode/check 파이프라인 + 첫 room shell encode pass 완료 상태"로 갱신한다.
 
 Removed/Deprecated:
 - room shell texture set이 KTX2 산출물이 생겨도 별도 런타임 전환 경로 없이 JPG/PNG만 직접 참조한다는 가정.
