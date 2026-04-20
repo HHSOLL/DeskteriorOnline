@@ -173,6 +173,9 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - shared viewer가 상단 light bar, 우측 zoom rail, 하단 readonly status pill 기준으로 노출되는지 확인
 - shared viewer와 builder preview는 lean light rig(no fill light)를 유지하고, constrained 환경에서는 directional shadow + bloom이 제거되는지 확인
 - realtime/presence 평가는 `/labs/realtime` hidden route에서만 노출되고, 홈/에디터/뷰어/갤러리/커뮤니티에는 진입 링크가 생기지 않는지 확인
+- `verify:realtime-lab` 실행 시 room id 정규화, channel name, stale participant snapshot 규칙이 통과하는지 확인
+- `/labs/realtime?room=...`에서 같은 room id를 두 창으로 열면 occupancy snapshot이 증가하고, heartbeat가 15초 간격으로 갱신되는지 확인
+- 한 창을 닫거나 heartbeat가 45초 이상 끊긴 참가자는 stale로 표시되는지 확인
 - 뷰어에 편집 affordance가 노출되지 않는지 확인
 - 갤러리/커뮤니티 카드가 `/shared/[token]` 읽기 전용 뷰어로 이동하는지 확인
 - 갤러리/커뮤니티 피드가 레퍼런스 8번 기준의 4열 카드 밀도와 상단 filter rail을 유지하는지 확인

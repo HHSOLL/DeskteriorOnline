@@ -32,6 +32,7 @@
     "verify:public-scene": "node --import tsx scripts/verify-public-scene-payload.ts",
     "verify:showcase-scene": "node --import tsx scripts/verify-showcase-scene-consistency.ts",
     "verify:showcase-activity": "node --import tsx scripts/verify-showcase-activity-ranking.ts",
+    "verify:realtime-lab": "node --import tsx scripts/verify-realtime-lab-foundation.ts",
     "perf:report:verify": "node --import tsx scripts/verify-performance-regression-report.ts",
     "smoke:preview-runtime": "node scripts/smoke-preview-runtime.mjs"
   },

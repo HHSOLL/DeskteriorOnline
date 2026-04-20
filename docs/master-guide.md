@@ -391,6 +391,18 @@ Updated:
 Removed/Deprecated:
 - presence/realtime 실험을 gallery/community/editor chrome 안에 바로 연결해도 된다는 가정.
 
+## 2026-04-20 변경 동기화 (Presence Lab Phase 1 Foundation)
+Added:
+- `/labs/realtime` 안에서 room query bootstrap, session key 기반 join, 15초 heartbeat, occupancy snapshot, 45초 stale participant 표시를 제공하는 local-only presence foundation을 추가한다.
+- `verify:realtime-lab`로 room id 정규화, channel naming, active/stale participant snapshot 규칙을 회귀 검증하는 기준을 추가한다.
+
+Updated:
+- presence/realtime 상태를 `lab isolation only`에서 `lab isolation + phase 1 foundation complete`로 갱신한다.
+- 남은 실험 범위를 `Phase 2 presence basics -> Phase 3 broadcast state -> Phase 4 lab-only collaborative draft -> Phase 5 hardening` 순으로 재정의한다.
+
+Removed/Deprecated:
+- `/labs/realtime`가 정적 설명 화면만 제공하고 실제 room/session foundation은 없는 상태.
+
 ## 2026-04-19 변경 동기화 (Desk Precision Measurements)
 Added:
 - desk precision mode에서 선택 자산의 X/Y/Z 위치와 Yaw 회전을 `mm/deg` 기준으로 보여주는 numeric inspector + measurement overlay 규칙을 추가한다.

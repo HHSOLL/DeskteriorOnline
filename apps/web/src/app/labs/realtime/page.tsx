@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { Activity, FlaskConical, RadioTower, ShieldAlert } from "lucide-react";
 import { getRealtimeLabsConfig } from "../../../lib/experiments/realtime-labs";
+import { RealtimeLabClient } from "../../../components/labs/RealtimeLabClient";
 
 const LAB_CHECKLIST = [
   "primary editor/shared/gallery/community에는 진입 링크를 두지 않는다.",
@@ -78,6 +80,10 @@ export default function RealtimeLabsPage() {
             </div>
           </div>
         </section>
+
+        <Suspense fallback={null}>
+          <RealtimeLabClient config={config} />
+        </Suspense>
       </div>
     </div>
   );
