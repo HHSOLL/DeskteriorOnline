@@ -382,6 +382,16 @@ Updated:
 Removed/Deprecated:
 - native gltfpack 적용이 저장소 밖 수동 명령에만 의존하던 상태.
 
+## 2026-04-20 변경 동기화 (Repo-local gltfpack Environment)
+Added:
+- `assets:setup:gltfpack` 스크립트를 추가해 공식 `meshoptimizer` release의 `gltfpack-macos.zip`을 `.tools/gltfpack/current/gltfpack` 경로에 설치하는 repo-local 환경 구성을 추가했다.
+
+Updated:
+- native gltfpack 남은 작업 상태를 “probe + wrapper만 있음”에서 “repo-local setup + probe + wrapper 완료, 실제 native optimize run/검증만 남음” 상태로 갱신한다.
+
+Removed/Deprecated:
+- native gltfpack 환경 준비가 개발자별 전역 설치나 PATH 수동 설정에만 의존하던 상태.
+
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:
 - desk precision mode에서 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector와 overlay에 추가했다.

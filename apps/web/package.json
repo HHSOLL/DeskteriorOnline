@@ -18,6 +18,7 @@
     "assets:export:deskterior": "node --import tsx scripts/export-deskterior-runtime.ts",
     "assets:sync:deskterior": "node --import tsx scripts/sync-deskterior-catalog.ts",
     "assets:sync:ktx2-transcoder": "node --import tsx scripts/sync-ktx2-transcoder.ts",
+    "assets:setup:gltfpack": "node ../../scripts/setup-gltfpack.mjs",
     "textures:encode:room-shell:ktx2": "node --import tsx scripts/encode-room-shell-textures-ktx2.ts",
     "textures:check:room-shell:ktx2": "node --import tsx scripts/encode-room-shell-textures-ktx2.ts --check",
     "assets:validate:deskterior": "node --import tsx scripts/validate-deskterior-gltf.ts",

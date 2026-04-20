@@ -50,6 +50,7 @@ npm --workspace apps/web run qa:primary
 npm --workspace apps/web run primary:e2e:room-flow
 npm --workspace apps/web run assets:sync:deskterior
 npm --workspace apps/web run assets:sync:ktx2-transcoder
+npm --workspace apps/web run assets:setup:gltfpack
 npm --workspace apps/web run assets:probe:gltfpack
 npm --workspace apps/web run textures:encode:room-shell:ktx2
 npm --workspace apps/web run textures:check:room-shell:ktx2

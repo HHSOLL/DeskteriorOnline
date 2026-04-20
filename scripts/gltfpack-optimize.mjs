@@ -50,6 +50,24 @@ async function resolveBinaryPath() {
     candidates.push(explicitBinary);
   }
 
+  const repoLocalCurrent = path.join(
+    repoRoot,
+    ".tools",
+    "gltfpack",
+    "current",
+    process.platform === "win32" ? "gltfpack.exe" : "gltfpack"
+  );
+  candidates.push(repoLocalCurrent);
+
+  const repoLocalVersioned = path.join(
+    repoRoot,
+    ".tools",
+    "gltfpack",
+    "v1.1",
+    process.platform === "win32" ? "gltfpack.exe" : "gltfpack"
+  );
+  candidates.push(repoLocalVersioned);
+
   const localBin = path.join(
     repoRoot,
     "node_modules",
@@ -138,9 +156,9 @@ async function probeBinary(binaryPath) {
     return;
   }
 
-  let helpPreview = "";
+  let version = "";
   try {
-    helpPreview = execFileSync(binaryPath, ["-h"], {
+    version = execFileSync(binaryPath, ["-v"], {
       encoding: "utf8",
       maxBuffer: 1024 * 1024 * 4
     })
@@ -148,7 +166,7 @@ async function probeBinary(binaryPath) {
       .map((line) => line.trim())
       .find(Boolean) ?? "";
   } catch (error) {
-    helpPreview =
+    version =
       error instanceof Error && "stdout" in error && typeof error.stdout === "string"
         ? error.stdout.split(/\r?\n/).map((line) => line.trim()).find(Boolean) ?? ""
         : "";
@@ -159,7 +177,7 @@ async function probeBinary(binaryPath) {
       {
         status: "available",
         binary: binaryPath,
-        helpPreview
+        version
       },
       null,
       2
