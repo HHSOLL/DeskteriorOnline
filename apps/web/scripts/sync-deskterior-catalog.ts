@@ -1,5 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { curatedDeskteriorAssets } from "./deskterior-curated-assets";
+import type { ProductContractMetadata } from "../src/lib/builder/catalog";
 
 type ProductDimensionsMm = {
   width: number;
@@ -24,6 +26,12 @@ type CatalogEntry = {
   finishMaterial?: string | null;
   detailNotes?: string | null;
   scaleLocked?: boolean;
+  source?: ProductContractMetadata["source"];
+  license?: ProductContractMetadata["license"];
+  pivot?: ProductContractMetadata["pivot"];
+  collisionProxy?: ProductContractMetadata["collisionProxy"];
+  textureSet?: ProductContractMetadata["textureSet"];
+  lodProfile?: ProductContractMetadata["lodProfile"];
   supportProfile?: {
     surfaces: Array<{
       id: string;
@@ -40,6 +48,18 @@ const MANIFEST_CANDIDATES = [
   path.join(process.cwd(), "public", "assets", "catalog", "manifest.json"),
   path.join(process.cwd(), "apps", "web", "public", "assets", "catalog", "manifest.json")
 ] as const;
+
+const curatedContractByManifestId = new Map(
+  curatedDeskteriorAssets.map((asset) => [asset.manifestId, asset.contractMetadata] as const)
+);
+
+function requireCuratedContract(manifestId: string) {
+  const contract = curatedContractByManifestId.get(manifestId);
+  if (!contract) {
+    throw new Error(`Missing curated contract metadata for ${manifestId}`);
+  }
+  return contract;
+}
 
 const CURATED_INSERTS: CatalogEntry[] = [
   {
@@ -63,6 +83,7 @@ const CURATED_INSERTS: CatalogEntry[] = [
     detailNotes:
       "Rectangular desk with a straight apron and slab top. Dimensions reflect Blender-measured envelope for runtime fidelity.",
     scaleLocked: true,
+    ...requireCuratedContract("p2s_desk_oak_140"),
     supportProfile: {
       surfaces: [
         {
@@ -97,6 +118,7 @@ const CURATED_INSERTS: CatalogEntry[] = [
     detailNotes:
       "Low-profile riser for one ultrawide or dual compact monitors. Dimensions reflect Blender-measured envelope.",
     scaleLocked: true,
+    ...requireCuratedContract("p2s_monitor_stand_wood"),
     supportProfile: {
       surfaces: [
         {
@@ -130,7 +152,8 @@ const CURATED_INSERTS: CatalogEntry[] = [
     finishMaterial: "Powder-coated steel with frosted acrylic diffuser",
     detailNotes:
       "Adjustable desk lamp with integrated warm emitter. Dimensions reflect Blender-measured envelope for accurate placement.",
-    scaleLocked: true
+    scaleLocked: true,
+    ...requireCuratedContract("p2s_desk_lamp_glow")
   },
   {
     id: "p2s_ceramic_mug_sand",
@@ -152,7 +175,8 @@ const CURATED_INSERTS: CatalogEntry[] = [
     finishMaterial: "Glazed ceramic",
     detailNotes:
       "Single handled mug with thick ceramic wall and soft satin glaze. Dimensions reflect Blender-measured envelope for shelf and desk placement.",
-    scaleLocked: true
+    scaleLocked: true,
+    ...requireCuratedContract("p2s_ceramic_mug_sand")
   },
   {
     id: "p2s_book_stack_warm",
@@ -174,7 +198,8 @@ const CURATED_INSERTS: CatalogEntry[] = [
     finishMaterial: "Laminated paper cover over board",
     detailNotes:
       "Three-book horizontal stack with a warm editorial palette for desk, shelf, and side table styling.",
-    scaleLocked: true
+    scaleLocked: true,
+    ...requireCuratedContract("p2s_book_stack_warm")
   },
   {
     id: "p2s_desk_tray_oak",
@@ -197,6 +222,7 @@ const CURATED_INSERTS: CatalogEntry[] = [
     detailNotes:
       "Low organizer tray with shallow walls sized for stationery, earbuds, or keys. The inner base acts as a furniture support surface.",
     scaleLocked: true,
+    ...requireCuratedContract("p2s_desk_tray_oak"),
     supportProfile: {
       surfaces: [
         {
@@ -230,7 +256,8 @@ const CURATED_INSERTS: CatalogEntry[] = [
     finishMaterial: "Powder-coated metal with woven grille",
     detailNotes:
       "Single compact desktop speaker with two front drivers and rounded cabinet edges for modern desk setups.",
-    scaleLocked: true
+    scaleLocked: true,
+    ...requireCuratedContract("p2s_compact_speaker")
   },
   {
     id: "p2s_desk_planter_pilea",
@@ -252,7 +279,8 @@ const CURATED_INSERTS: CatalogEntry[] = [
     finishMaterial: "Unglazed ceramic pot with plant foliage",
     detailNotes:
       "Compact pilea planter with terracotta pot, soil insert, and layered leaves sized for desk corners and shelf styling.",
-    scaleLocked: true
+    scaleLocked: true,
+    ...requireCuratedContract("p2s_desk_planter_pilea")
   }
 ];
 
@@ -261,49 +289,137 @@ const CURATED_UPDATES: Record<string, Partial<CatalogEntry>> = {
     category: "Tables",
     brand: "Poly Haven (CC0)",
     options: "오픈소스 3D 자산 · school desk",
-    externalUrl: "https://polyhaven.com/"
+    externalUrl: "https://polyhaven.com/",
+    source: {
+      kind: "open_source",
+      name: "Poly Haven",
+      path: null,
+      url: "https://polyhaven.com/"
+    },
+    license: {
+      spdx: "CC0-1.0",
+      label: "Creative Commons Zero v1.0 Universal",
+      requiresAttribution: false
+    }
   },
   SchoolChair_01: {
     category: "Seating",
     brand: "Poly Haven (CC0)",
     options: "오픈소스 3D 자산 · school chair",
-    externalUrl: "https://polyhaven.com/"
+    externalUrl: "https://polyhaven.com/",
+    source: {
+      kind: "open_source",
+      name: "Poly Haven",
+      path: null,
+      url: "https://polyhaven.com/"
+    },
+    license: {
+      spdx: "CC0-1.0",
+      label: "Creative Commons Zero v1.0 Universal",
+      requiresAttribution: false
+    }
   },
   desk_lamp_arm_01: {
     category: "Lighting",
     brand: "Poly Haven (CC0)",
     options: "오픈소스 3D 자산 · articulated lamp · light-emitter",
-    externalUrl: "https://polyhaven.com/a/desk_lamp_arm_01"
+    externalUrl: "https://polyhaven.com/a/desk_lamp_arm_01",
+    source: {
+      kind: "open_source",
+      name: "Poly Haven",
+      path: null,
+      url: "https://polyhaven.com/a/desk_lamp_arm_01"
+    },
+    license: {
+      spdx: "CC0-1.0",
+      label: "Creative Commons Zero v1.0 Universal",
+      requiresAttribution: false
+    }
   },
   book_encyclopedia_set_01: {
     category: "Decor",
     brand: "Poly Haven (CC0)",
     options: "오픈소스 3D 자산 · books · desk decor",
-    externalUrl: "https://polyhaven.com/a/book_encyclopedia_set_01"
+    externalUrl: "https://polyhaven.com/a/book_encyclopedia_set_01",
+    source: {
+      kind: "open_source",
+      name: "Poly Haven",
+      path: null,
+      url: "https://polyhaven.com/a/book_encyclopedia_set_01"
+    },
+    license: {
+      spdx: "CC0-1.0",
+      label: "Creative Commons Zero v1.0 Universal",
+      requiresAttribution: false
+    }
   },
   wooden_bookshelf_worn: {
     category: "Storage",
     brand: "Poly Haven (CC0)",
     options: "오픈소스 3D 자산 · bookshelf",
-    externalUrl: "https://polyhaven.com/a/wooden_bookshelf_worn"
+    externalUrl: "https://polyhaven.com/a/wooden_bookshelf_worn",
+    source: {
+      kind: "open_source",
+      name: "Poly Haven",
+      path: null,
+      url: "https://polyhaven.com/a/wooden_bookshelf_worn"
+    },
+    license: {
+      spdx: "CC0-1.0",
+      label: "Creative Commons Zero v1.0 Universal",
+      requiresAttribution: false
+    }
   },
   boombox: {
     category: "Electronics",
     brand: "Poly Haven (CC0)",
     options: "오픈소스 3D 자산 · speaker",
-    externalUrl: "https://polyhaven.com/a/boombox"
+    externalUrl: "https://polyhaven.com/a/boombox",
+    source: {
+      kind: "open_source",
+      name: "Poly Haven",
+      path: null,
+      url: "https://polyhaven.com/a/boombox"
+    },
+    license: {
+      spdx: "CC0-1.0",
+      label: "Creative Commons Zero v1.0 Universal",
+      requiresAttribution: false
+    }
   },
   gamepad: {
     category: "Electronics",
     brand: "Poly Haven (CC0)",
     options: "오픈소스 3D 자산 · gamepad",
-    externalUrl: "https://polyhaven.com/a/gamepad"
+    externalUrl: "https://polyhaven.com/a/gamepad",
+    source: {
+      kind: "open_source",
+      name: "Poly Haven",
+      path: null,
+      url: "https://polyhaven.com/a/gamepad"
+    },
+    license: {
+      spdx: "CC0-1.0",
+      label: "Creative Commons Zero v1.0 Universal",
+      requiresAttribution: false
+    }
   },
   gaming_console: {
     category: "Electronics",
     brand: "Poly Haven (CC0)",
     options: "오픈소스 3D 자산 · console",
-    externalUrl: "https://polyhaven.com/a/gaming_console"
+    externalUrl: "https://polyhaven.com/a/gaming_console",
+    source: {
+      kind: "open_source",
+      name: "Poly Haven",
+      path: null,
+      url: "https://polyhaven.com/a/gaming_console"
+    },
+    license: {
+      spdx: "CC0-1.0",
+      label: "Creative Commons Zero v1.0 Universal",
+      requiresAttribution: false
+    }
   }
 };
 

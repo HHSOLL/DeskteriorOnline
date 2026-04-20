@@ -85,6 +85,8 @@
 37. community에서 최신 게시, featured 장면, 주요 컬렉션 summary가 현재 페이지 카드 조각이 아니라 active filter scope 전체 기준으로 유지되는지 확인하기
 38. shared viewer와 builder preview가 constrained 환경에서 fill light + bloom 없이도 읽기 흐름을 유지하고, walk/showcase에서만 richer shadow/bloom이 유지되는지 확인하기
 39. `NEXT_PUBLIC_ENABLE_REALTIME_LABS=1`로 로컬 실행 시 `/labs/realtime`만 열리고, primary navigation에는 realtime/presence 진입점이 생기지 않는지 확인하기
+40. `assets:verify:deskterior` 실행 시 curated `p2s_*` 자산이 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약까지 모두 통과하는지 확인하기
+41. `verify:scene-document`, `verify:public-scene` 실행 시 위 product contract metadata가 save/load/share roundtrip에서 유지되는지 확인하기
 
 실행 명령:
 
@@ -578,3 +580,14 @@ Updated:
 
 Removed/Deprecated:
 - BVH generation path를 코드 추측만으로 판단하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement QA)
+Added:
+- `assets:verify:deskterior`가 curated `p2s_*` 자산의 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약까지 검증하는 QA 항목을 추가했다.
+- `verify:scene-document`, `verify:public-scene`가 위 product contract metadata roundtrip을 확인하는 QA 항목을 추가했다.
+
+Updated:
+- 자산 QA 기준을 source/runtime/manifest/surface metadata 확인에서 `source/runtime/manifest/surface metadata + asset contract metadata + save/share roundtrip`까지 확장했다.
+
+Removed/Deprecated:
+- curated deskterior 자산 메타 검증이 물리 메타와 supportProfile까지만 확인하면 충분하다는 가정.

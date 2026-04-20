@@ -77,7 +77,38 @@ const payload = {
         finishColor: "oak",
         finishMaterial: "veneered wood",
         detailNotes: "Rounded front edge",
-        scaleLocked: true
+        scaleLocked: true,
+        source: {
+          kind: "plan2space_blender",
+          name: "Plan2Space Blender Deskterior",
+          path: "assets/blender/deskterior/p2s_desk_oak.blend",
+          url: null
+        },
+        license: {
+          spdx: "LicenseRef-Plan2Space-Internal",
+          label: "Plan2Space Internal Catalog",
+          requiresAttribution: false
+        },
+        pivot: {
+          x: "center",
+          y: "floor",
+          z: "center"
+        },
+        collisionProxy: {
+          kind: "box",
+          derivesFrom: "dimensionsMm"
+        },
+        textureSet: {
+          workflow: "pbr_metallic_roughness",
+          authored: "procedural",
+          ktx2Ready: false
+        },
+        lodProfile: {
+          strategy: "single_mesh",
+          levelCount: 1,
+          maxDrawCalls: 16,
+          maxTriangleCount: 2000
+        }
       }
     },
     {
@@ -107,7 +138,38 @@ const payload = {
         finishColor: "cream",
         finishMaterial: "powder coated steel",
         detailNotes: "Emitter head with soft glow",
-        scaleLocked: true
+        scaleLocked: true,
+        source: {
+          kind: "plan2space_blender",
+          name: "Plan2Space Blender Deskterior",
+          path: "assets/blender/deskterior/p2s_desk_lamp_glow.blend",
+          url: null
+        },
+        license: {
+          spdx: "LicenseRef-Plan2Space-Internal",
+          label: "Plan2Space Internal Catalog",
+          requiresAttribution: false
+        },
+        pivot: {
+          x: "center",
+          y: "floor",
+          z: "center"
+        },
+        collisionProxy: {
+          kind: "box",
+          derivesFrom: "dimensionsMm"
+        },
+        textureSet: {
+          workflow: "pbr_metallic_roughness",
+          authored: "procedural",
+          ktx2Ready: false
+        },
+        lodProfile: {
+          strategy: "single_mesh",
+          levelCount: 1,
+          maxDrawCalls: 12,
+          maxTriangleCount: 6000
+        }
       }
     }
   ],
@@ -157,6 +219,12 @@ try {
     `lamp dimensions mismatch: ${JSON.stringify(lampAsset.product?.dimensionsMm)}`
   );
   assert(lampAsset.product?.scaleLocked === true, "lamp scaleLocked flag missing");
+  assert(lampAsset.product?.source?.kind === "plan2space_blender", "lamp source metadata missing");
+  assert(lampAsset.product?.license?.spdx === "LicenseRef-Plan2Space-Internal", "lamp license metadata missing");
+  assert(lampAsset.product?.pivot?.y === "floor", "lamp pivot metadata missing");
+  assert(lampAsset.product?.collisionProxy?.kind === "box", "lamp collision proxy metadata missing");
+  assert(lampAsset.product?.textureSet?.workflow === "pbr_metallic_roughness", "lamp textureSet metadata missing");
+  assert(lampAsset.product?.lodProfile?.maxTriangleCount === 6000, "lamp lodProfile metadata missing");
   assert(deskAsset.supportProfile?.surfaces[0]?.id === "desk-top", "desk supportProfile surface missing");
 
   const savedDeskPlacement = deskNode.placement;

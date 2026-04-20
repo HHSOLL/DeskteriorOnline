@@ -26,9 +26,10 @@ npm --workspace apps/web run assets:verify:deskterior
 - basis transcoder public sync(`apps/web/public/assets/transcoders/basis`)
 - Meshopt 최적화와 budget re-check
 - curated supportProfile surface/anchor metadata 검증
+- curated `p2s_*` source/license/pivot/collisionProxy/textureSet/lodProfile metadata 검증
 - Khronos glTF Validator 기반 구조/리소스 검증
-- 오픈소스 desk/chair/lamp 메타데이터(brand/options/externalUrl) 보강
-- 제품 인스펙터 표준 필드(thumbnail/price/options/externalUrl/brand) 유지
+- 오픈소스 desk/chair/lamp 메타데이터(brand/options/externalUrl/source/license) 보강
+- 제품 인스펙터 표준 필드(thumbnail/price/options/externalUrl/brand)와 자산 계약 메타(source/license/pivot/collisionProxy/textureSet/lodProfile) 유지
 
 운영 규칙:
 - 신규 curated binary를 `apps/web/public/assets/*`에 직접 추가하지 않는다.
@@ -56,6 +57,7 @@ npm --workspace apps/web run assets:verify:deskterior
 현재 상태:
 - curated catalog는 아직 `apps/web/public/assets/*`를 fallback runtime으로 사용한다.
 - generated asset은 Supabase Storage(`assets-glb`)를 사용한다.
+- curated deskterior manifest는 이제 실측/마감 메타뿐 아니라 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약도 같이 유지한다.
 - KTX2 runtime decode 경로는 준비됐고, `assets:sync:ktx2-transcoder`가 three basis transcoder를 public 경로에 동기화한다.
 - room shell floor/wall texture set은 `textures:encode:room-shell:ktx2` / `textures:check:room-shell:ktx2`로 `.ktx2` 산출물을 관리하고, 런타임 전환은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`로 제어한다.
 - room shell texture set의 첫 `.ktx2` encode pass는 완료됐고, 현재 저장소에는 16개 room shell `.ktx2` 산출물이 포함된다.

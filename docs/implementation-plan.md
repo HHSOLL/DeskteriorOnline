@@ -309,7 +309,7 @@ Removed/Deprecated:
 
 현재 착수:
 - 완료: Phase 1 / Slice 1, Phase 1 / Slice 2, Phase 1 / Slice 3, Phase 2 / Slice 1, Phase 2 / Slice 2, Phase 2 / Slice 3, Phase 3 / Slice 1, Phase 3 / Slice 2, Phase 3 / Slice 3, Phase 3 / Slice 4, Phase 4 / Slice 1, Phase 4 / Slice 2, Phase 4 / Slice 3, Phase 5 / Slice 1, Phase 5 / Slice 2, Phase 5 / Slice 3
-- 다음 후보: 자산 메타데이터 계약 보강, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선, 실사 강화 2차
+- 다음 후보: P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선, 실사 강화 2차
 
 ## 2026-04-20 변경 동기화 (BVH Worker Offload)
 Added:
@@ -322,6 +322,18 @@ Updated:
 
 Removed/Deprecated:
 - loaded GLB bounds tree 생성이 항상 main thread sync compute에만 의존한다는 가정.
+
+## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement)
+Added:
+- curated `p2s_*` 자산에 `source/license/pivot/collisionProxy/textureSet/lodProfile` 메타데이터 계약을 추가했다.
+- `assets:sync:deskterior`, `assets:verify:deskterior`가 위 계약을 manifest 기준으로 강제하고, `verify:scene-document`, `verify:public-scene`가 save/load/share roundtrip 보존 여부를 점검하도록 확장했다.
+
+Updated:
+- 원문 보고서 기준 남은 작업에서 `자산 메타데이터 계약 보강`을 완료 상태로 갱신한다.
+- 자산 품질 기준을 `supportProfile + physical metadata`에서 `supportProfile + physical metadata + source/license/pivot/collisionProxy/textureSet/lodProfile`까지 확장한다.
+
+Removed/Deprecated:
+- curated deskterior 자산 계약이 물리 메타데이터만 보장하면 충분하다는 가정.
 
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:

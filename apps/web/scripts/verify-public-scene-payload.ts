@@ -75,7 +75,38 @@ const savePayload = {
         finishColor: "oak",
         finishMaterial: "veneered wood",
         detailNotes: "Rounded front edge",
-        scaleLocked: true
+        scaleLocked: true,
+        source: {
+          kind: "plan2space_blender",
+          name: "Plan2Space Blender Deskterior",
+          path: "assets/blender/deskterior/p2s_desk_oak.blend",
+          url: null
+        },
+        license: {
+          spdx: "LicenseRef-Plan2Space-Internal",
+          label: "Plan2Space Internal Catalog",
+          requiresAttribution: false
+        },
+        pivot: {
+          x: "center",
+          y: "floor",
+          z: "center"
+        },
+        collisionProxy: {
+          kind: "box",
+          derivesFrom: "dimensionsMm"
+        },
+        textureSet: {
+          workflow: "pbr_metallic_roughness",
+          authored: "procedural",
+          ktx2Ready: false
+        },
+        lodProfile: {
+          strategy: "single_mesh",
+          levelCount: 1,
+          maxDrawCalls: 16,
+          maxTriangleCount: 2000
+        }
       }
     },
     {
@@ -105,7 +136,38 @@ const savePayload = {
         finishColor: "cream",
         finishMaterial: "powder coated steel",
         detailNotes: "Emitter head with soft glow",
-        scaleLocked: true
+        scaleLocked: true,
+        source: {
+          kind: "plan2space_blender",
+          name: "Plan2Space Blender Deskterior",
+          path: "assets/blender/deskterior/p2s_desk_lamp_glow.blend",
+          url: null
+        },
+        license: {
+          spdx: "LicenseRef-Plan2Space-Internal",
+          label: "Plan2Space Internal Catalog",
+          requiresAttribution: false
+        },
+        pivot: {
+          x: "center",
+          y: "floor",
+          z: "center"
+        },
+        collisionProxy: {
+          kind: "box",
+          derivesFrom: "dimensionsMm"
+        },
+        textureSet: {
+          workflow: "pbr_metallic_roughness",
+          authored: "procedural",
+          ktx2Ready: false
+        },
+        lodProfile: {
+          strategy: "single_mesh",
+          levelCount: 1,
+          maxDrawCalls: 12,
+          maxTriangleCount: 6000
+        }
       }
     }
   ],
@@ -211,6 +273,12 @@ try {
   assert(deskAsset.supportProfile?.surfaces[0]?.id === "desk-top", "desk support profile missing");
   assert(lampAsset.product?.scaleLocked === true, "lamp scaleLocked missing");
   assert(lampAsset.product?.finishMaterial === "powder coated steel", "lamp finishMaterial missing");
+  assert(lampAsset.product?.source?.path === "assets/blender/deskterior/p2s_desk_lamp_glow.blend", "lamp source metadata missing");
+  assert(lampAsset.product?.license?.spdx === "LicenseRef-Plan2Space-Internal", "lamp license metadata missing");
+  assert(lampAsset.product?.pivot?.y === "floor", "lamp pivot metadata missing");
+  assert(lampAsset.product?.collisionProxy?.kind === "box", "lamp collisionProxy metadata missing");
+  assert(lampAsset.product?.textureSet?.ktx2Ready === false, "lamp textureSet metadata missing");
+  assert(lampAsset.product?.lodProfile?.maxDrawCalls === 12, "lamp lodProfile metadata missing");
 
   const loadedLampPlacement = serializeScenePlacement({
     position: lampAsset.position,

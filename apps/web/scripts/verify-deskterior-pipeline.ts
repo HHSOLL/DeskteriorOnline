@@ -17,6 +17,12 @@ type ManifestEntry = Record<string, unknown> & {
   finishMaterial?: unknown;
   detailNotes?: unknown;
   scaleLocked?: unknown;
+  source?: unknown;
+  license?: unknown;
+  pivot?: unknown;
+  collisionProxy?: unknown;
+  textureSet?: unknown;
+  lodProfile?: unknown;
   supportProfile?: unknown;
 };
 
@@ -80,8 +86,16 @@ function isPositiveNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value) && value > 0;
 }
 
+function isPositiveInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value > 0;
+}
+
 function isNonNegativeNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+function isBoolean(value: unknown): value is boolean {
+  return typeof value === "boolean";
 }
 
 function isWithinTolerance(actual: number, expected: number, tolerance = 0.005) {
@@ -352,6 +366,324 @@ async function buildSummary(): Promise<Summary> {
           path: manifestPath
         }
       );
+    }
+
+    const source = entry.source;
+    if (!isObjectRecord(source)) {
+      metadataValid = false;
+      createError(
+        errors,
+        "manifest.contract_metadata_missing",
+        'Manifest field "source" must be an object for curated assets.',
+        {
+          assetKey: asset.key,
+          manifestId: asset.manifestId,
+          path: manifestPath
+        }
+      );
+    } else {
+      const expectedSource = asset.contractMetadata.source;
+      if (source.kind !== expectedSource.kind) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "source.kind" must be "${expectedSource.kind}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (!isNonEmptyString(source.name) || source.name !== expectedSource.name) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "source.name" must be "${expectedSource.name}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (!isNonEmptyString(source.path) || source.path !== expectedSource.path) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "source.path" must be "${expectedSource.path}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+    }
+
+    const license = entry.license;
+    if (!isObjectRecord(license)) {
+      metadataValid = false;
+      createError(
+        errors,
+        "manifest.contract_metadata_missing",
+        'Manifest field "license" must be an object for curated assets.',
+        {
+          assetKey: asset.key,
+          manifestId: asset.manifestId,
+          path: manifestPath
+        }
+      );
+    } else {
+      const expectedLicense = asset.contractMetadata.license;
+      if (!isNonEmptyString(license.spdx) || license.spdx !== expectedLicense.spdx) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "license.spdx" must be "${expectedLicense.spdx}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (!isNonEmptyString(license.label) || license.label !== expectedLicense.label) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "license.label" must be "${expectedLicense.label}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (!isBoolean(license.requiresAttribution) || license.requiresAttribution !== expectedLicense.requiresAttribution) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "license.requiresAttribution" must be ${String(expectedLicense.requiresAttribution)} for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+    }
+
+    const pivot = entry.pivot;
+    if (!isObjectRecord(pivot)) {
+      metadataValid = false;
+      createError(
+        errors,
+        "manifest.contract_metadata_missing",
+        'Manifest field "pivot" must be an object for curated assets.',
+        {
+          assetKey: asset.key,
+          manifestId: asset.manifestId,
+          path: manifestPath
+        }
+      );
+    } else {
+      const expectedPivot = asset.contractMetadata.pivot;
+      for (const axis of ["x", "y", "z"] as const) {
+        if (!isNonEmptyString(pivot[axis]) || pivot[axis] !== expectedPivot[axis]) {
+          metadataValid = false;
+          createError(
+            errors,
+            "manifest.contract_metadata_invalid",
+            `Manifest field "pivot.${axis}" must be "${expectedPivot[axis]}" for curated assets.`,
+            {
+              assetKey: asset.key,
+              manifestId: asset.manifestId,
+              path: manifestPath
+            }
+          );
+        }
+      }
+    }
+
+    const collisionProxy = entry.collisionProxy;
+    if (!isObjectRecord(collisionProxy)) {
+      metadataValid = false;
+      createError(
+        errors,
+        "manifest.contract_metadata_missing",
+        'Manifest field "collisionProxy" must be an object for curated assets.',
+        {
+          assetKey: asset.key,
+          manifestId: asset.manifestId,
+          path: manifestPath
+        }
+      );
+    } else {
+      const expectedCollisionProxy = asset.contractMetadata.collisionProxy;
+      if (collisionProxy.kind !== expectedCollisionProxy.kind) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "collisionProxy.kind" must be "${expectedCollisionProxy.kind}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (collisionProxy.derivesFrom !== expectedCollisionProxy.derivesFrom) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "collisionProxy.derivesFrom" must be "${expectedCollisionProxy.derivesFrom}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+    }
+
+    const textureSet = entry.textureSet;
+    if (!isObjectRecord(textureSet)) {
+      metadataValid = false;
+      createError(
+        errors,
+        "manifest.contract_metadata_missing",
+        'Manifest field "textureSet" must be an object for curated assets.',
+        {
+          assetKey: asset.key,
+          manifestId: asset.manifestId,
+          path: manifestPath
+        }
+      );
+    } else {
+      const expectedTextureSet = asset.contractMetadata.textureSet;
+      if (textureSet.workflow !== expectedTextureSet.workflow) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "textureSet.workflow" must be "${expectedTextureSet.workflow}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (textureSet.authored !== expectedTextureSet.authored) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "textureSet.authored" must be "${expectedTextureSet.authored}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (!isBoolean(textureSet.ktx2Ready) || textureSet.ktx2Ready !== expectedTextureSet.ktx2Ready) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "textureSet.ktx2Ready" must be ${String(expectedTextureSet.ktx2Ready)} for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+    }
+
+    const lodProfile = entry.lodProfile;
+    if (!isObjectRecord(lodProfile)) {
+      metadataValid = false;
+      createError(
+        errors,
+        "manifest.contract_metadata_missing",
+        'Manifest field "lodProfile" must be an object for curated assets.',
+        {
+          assetKey: asset.key,
+          manifestId: asset.manifestId,
+          path: manifestPath
+        }
+      );
+    } else {
+      const expectedLodProfile = asset.contractMetadata.lodProfile;
+      if (lodProfile.strategy !== expectedLodProfile.strategy) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "lodProfile.strategy" must be "${expectedLodProfile.strategy}" for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (!isPositiveInteger(lodProfile.levelCount) || lodProfile.levelCount !== expectedLodProfile.levelCount) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "lodProfile.levelCount" must be ${expectedLodProfile.levelCount} for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (
+        !isPositiveInteger(lodProfile.maxDrawCalls) ||
+        lodProfile.maxDrawCalls !== expectedLodProfile.maxDrawCalls
+      ) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "lodProfile.maxDrawCalls" must be ${expectedLodProfile.maxDrawCalls} for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
+      if (
+        !isPositiveInteger(lodProfile.maxTriangleCount) ||
+        lodProfile.maxTriangleCount !== expectedLodProfile.maxTriangleCount
+      ) {
+        metadataValid = false;
+        createError(
+          errors,
+          "manifest.contract_metadata_invalid",
+          `Manifest field "lodProfile.maxTriangleCount" must be ${expectedLodProfile.maxTriangleCount} for curated assets.`,
+          {
+            assetKey: asset.key,
+            manifestId: asset.manifestId,
+            path: manifestPath
+          }
+        );
+      }
     }
 
     result.metadataValid = metadataValid;

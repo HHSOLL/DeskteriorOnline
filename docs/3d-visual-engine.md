@@ -77,6 +77,7 @@
 - scene 저장/복원은 `project_versions.customization.sceneDocument`를 우선 source로 사용
 - 저장 경계에서는 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, renderer/store는 meter float 파생값만 소비한다.
 - 제품 물리 메타데이터(`dimensionsMm`, `finishColor`, `finishMaterial`, `detailNotes`, `scaleLocked`)를 누락 없이 전달한다.
+- curated deskterior 자산은 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 product metadata와 함께 save/load/public payload roundtrip에서 유지한다.
 - `verify:scene-document`는 save payload -> sceneDocument -> parse/load roundtrip에서 placement/support metadata/product metadata가 유지되는지 점검한다.
 - `verify:public-scene`는 shared_projects + pinned version + preview meta에서 shared viewer payload가 같은 placement/support/product metadata를 재현하는지 점검한다.
 - `verify:showcase-scene`는 gallery/community 카드 projection이 shared viewer public payload와 같은 version/preview asset summary를 유지하는지 점검한다.
@@ -355,6 +356,17 @@ Updated:
 
 Removed/Deprecated:
 - room shell texture KTX2 적용을 수동 파일 교체에만 의존하던 가정.
+
+## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement)
+Added:
+- curated deskterior manifest에 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 추가했다.
+- `verify:scene-document`, `verify:public-scene`가 위 계약을 포함한 product metadata roundtrip을 점검하는 기준을 추가했다.
+
+Updated:
+- scene data product metadata 기준을 실측/마감 중심에서 `실측/마감 + asset contract metadata`까지 확장했다.
+
+Removed/Deprecated:
+- save/load/public payload에서 source/license/pivot/collision/texture/lod 메타가 누락돼도 무방하다는 가정.
 
 ## 2026-04-18 변경 동기화 (Opening Asset + Top-Entry Optimization)
 Added:

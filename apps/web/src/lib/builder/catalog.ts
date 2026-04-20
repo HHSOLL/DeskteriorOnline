@@ -29,6 +29,52 @@ export type ProductPhysicalMetadata = {
   scaleLocked: boolean;
 };
 
+export type ProductSourceMetadata = {
+  kind: "plan2space_blender" | "open_source";
+  name: string;
+  path: string | null;
+  url: string | null;
+};
+
+export type ProductLicenseMetadata = {
+  spdx: string;
+  label: string;
+  requiresAttribution: boolean;
+};
+
+export type ProductPivotMetadata = {
+  x: "left" | "center" | "right";
+  y: "floor" | "center" | "top";
+  z: "front" | "center" | "back";
+};
+
+export type ProductCollisionProxyMetadata = {
+  kind: "box";
+  derivesFrom: "dimensionsMm";
+};
+
+export type ProductTextureSetMetadata = {
+  workflow: "pbr_metallic_roughness";
+  authored: "procedural" | "image_based";
+  ktx2Ready: boolean;
+};
+
+export type ProductLodProfileMetadata = {
+  strategy: "single_mesh" | "manual_lod";
+  levelCount: number;
+  maxDrawCalls: number;
+  maxTriangleCount: number;
+};
+
+export type ProductContractMetadata = {
+  source: ProductSourceMetadata | null;
+  license: ProductLicenseMetadata | null;
+  pivot: ProductPivotMetadata | null;
+  collisionProxy: ProductCollisionProxyMetadata | null;
+  textureSet: ProductTextureSetMetadata | null;
+  lodProfile: ProductLodProfileMetadata | null;
+};
+
 export type LibraryCatalogItem = {
   id: string;
   label: string;
@@ -45,7 +91,8 @@ export type LibraryCatalogItem = {
   externalUrl: string | null;
   brand: string | null;
   supportProfile?: AssetSupportProfile | null;
-} & ProductPhysicalMetadata;
+} & ProductPhysicalMetadata &
+  ProductContractMetadata;
 
 export type CatalogProductSnapshot = {
   id: string;
@@ -56,7 +103,8 @@ export type CatalogProductSnapshot = {
   options: string | null;
   externalUrl: string | null;
   thumbnail: string | null;
-} & ProductPhysicalMetadata;
+} & ProductPhysicalMetadata &
+  ProductContractMetadata;
 
 export type ProjectAssetSummaryItem = {
   catalogItemId: string | null;
@@ -280,9 +328,26 @@ function normalizeCatalogBoolean(value: unknown) {
   return false;
 }
 
+function normalizeCatalogStrictBoolean(value: unknown) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "true") return true;
+    if (normalized === "false") return false;
+  }
+  return null;
+}
+
 function normalizeCatalogDimensionValue(value: unknown) {
   const numeric = typeof value === "string" ? Number(value) : value;
   return typeof numeric === "number" && Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+}
+
+function normalizeCatalogPositiveInteger(value: unknown) {
+  const numeric = typeof value === "string" ? Number(value) : value;
+  return typeof numeric === "number" && Number.isInteger(numeric) && numeric > 0 ? numeric : null;
 }
 
 function normalizeCatalogDimensionsMm(value: unknown): ProductDimensionsMm | null {
@@ -323,6 +388,129 @@ function normalizeCatalogImageUrl(record: Record<string, unknown>) {
     normalizeCatalogUrl(record.imageUrl) ??
     normalizeCatalogUrl(record.previewImageUrl)
   );
+}
+
+function normalizeCatalogSource(value: unknown): ProductSourceMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  const kind =
+    record.kind === "plan2space_blender" || record.kind === "open_source" ? record.kind : null;
+  const name = normalizeCatalogText(record.name);
+  const metadataPath = normalizeCatalogText(record.path);
+  const url = normalizeCatalogUrl(record.url);
+
+  if (!kind || !name || (!metadataPath && !url)) {
+    return null;
+  }
+
+  return {
+    kind,
+    name,
+    path: metadataPath,
+    url
+  };
+}
+
+function normalizeCatalogLicense(value: unknown): ProductLicenseMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  const spdx = normalizeCatalogText(record.spdx);
+  const label = normalizeCatalogText(record.label);
+  const requiresAttribution = normalizeCatalogStrictBoolean(record.requiresAttribution);
+
+  if (!spdx || !label || requiresAttribution === null) {
+    return null;
+  }
+
+  return {
+    spdx,
+    label,
+    requiresAttribution
+  };
+}
+
+function normalizeCatalogPivot(value: unknown): ProductPivotMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  const x = record.x === "left" || record.x === "center" || record.x === "right" ? record.x : null;
+  const y = record.y === "floor" || record.y === "center" || record.y === "top" ? record.y : null;
+  const z = record.z === "front" || record.z === "center" || record.z === "back" ? record.z : null;
+
+  if (!x || !y || !z) {
+    return null;
+  }
+
+  return { x, y, z };
+}
+
+function normalizeCatalogCollisionProxy(value: unknown): ProductCollisionProxyMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  if (record.kind !== "box" || record.derivesFrom !== "dimensionsMm") {
+    return null;
+  }
+
+  return {
+    kind: "box",
+    derivesFrom: "dimensionsMm"
+  };
+}
+
+function normalizeCatalogTextureSet(value: unknown): ProductTextureSetMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  const workflow = record.workflow === "pbr_metallic_roughness" ? record.workflow : null;
+  const authored =
+    record.authored === "procedural" || record.authored === "image_based" ? record.authored : null;
+  const ktx2Ready = normalizeCatalogStrictBoolean(record.ktx2Ready);
+
+  if (!workflow || !authored || ktx2Ready === null) {
+    return null;
+  }
+
+  return {
+    workflow,
+    authored,
+    ktx2Ready
+  };
+}
+
+function normalizeCatalogLodProfile(value: unknown): ProductLodProfileMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return null;
+  }
+
+  const record = value as Record<string, unknown>;
+  const strategy = record.strategy === "single_mesh" || record.strategy === "manual_lod" ? record.strategy : null;
+  const levelCount = normalizeCatalogPositiveInteger(record.levelCount);
+  const maxDrawCalls = normalizeCatalogPositiveInteger(record.maxDrawCalls);
+  const maxTriangleCount = normalizeCatalogPositiveInteger(record.maxTriangleCount);
+
+  if (!strategy || levelCount === null || maxDrawCalls === null || maxTriangleCount === null) {
+    return null;
+  }
+
+  return {
+    strategy,
+    levelCount,
+    maxDrawCalls,
+    maxTriangleCount
+  };
 }
 
 function resolveCategoryId(record: Record<string, unknown>) {
@@ -390,6 +578,12 @@ function normalizeCatalogItem(item: unknown): LibraryCatalogItem | null {
     finishMaterial: normalizeCatalogText(record.finishMaterial),
     detailNotes: normalizeCatalogText(record.detailNotes),
     scaleLocked: normalizeCatalogBoolean(record.scaleLocked),
+    source: normalizeCatalogSource(record.source),
+    license: normalizeCatalogLicense(record.license),
+    pivot: normalizeCatalogPivot(record.pivot),
+    collisionProxy: normalizeCatalogCollisionProxy(record.collisionProxy),
+    textureSet: normalizeCatalogTextureSet(record.textureSet),
+    lodProfile: normalizeCatalogLodProfile(record.lodProfile),
     supportProfile:
       normalizeAssetSupportProfile(record.supportProfile) ??
       inferAssetSupportProfile({
@@ -421,7 +615,13 @@ export function toCatalogProductSnapshot(item: LibraryCatalogItem): CatalogProdu
     finishColor: item.finishColor,
     finishMaterial: item.finishMaterial,
     detailNotes: item.detailNotes,
-    scaleLocked: item.scaleLocked
+    scaleLocked: item.scaleLocked,
+    source: item.source,
+    license: item.license,
+    pivot: item.pivot,
+    collisionProxy: item.collisionProxy,
+    textureSet: item.textureSet,
+    lodProfile: item.lodProfile
   };
 }
 
