@@ -28,6 +28,7 @@
 - top-view는 floor/wall full PBR texture load를 지연하고, flat material/footprint strip으로 먼저 렌더한다.
 - builder-preview/walk만 active finish texture set을 1종씩 로드한다. 선택되지 않은 texture set preload를 기본값으로 두지 않는다.
 - GLB runtime loader는 `KTX2Loader`를 기본 연결하고, basis transcoder는 `/assets/transcoders/basis/` 또는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`에서 읽는다.
+- room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 없으면 JPG/PNG 원본으로 fallback 한다.
 - 알려진 Blender 슬롯(`DeskWood`, `DeskMetal`, `StandWood`, `StandPad`, `LampBody`, `LampAccent`, `LampBulb`)은 slot-aware finish를 우선 적용한다.
 
 ## 카메라/모드
@@ -332,6 +333,17 @@ Updated:
 
 Removed/Deprecated:
 - support surface 위 제품의 수직 관계를 top height 숫자 하나로만 확인하던 기준.
+
+## 2026-04-20 변경 동기화 (Room Shell KTX2 Wiring)
+Added:
+- room shell floor/wall texture set의 `.ktx2` 우선 로드와 JPG/PNG fallback 품질 기준을 추가했다.
+- `textures:encode:room-shell:ktx2` / `textures:check:room-shell:ktx2`로 room shell KTX2 산출물 유무를 검증하는 운영 기준을 추가했다.
+
+Updated:
+- KTX2 준비 상태를 transcoder sync만이 아니라 room shell runtime wiring과 encode/check 파이프라인까지 포함하는 상태로 확장했다.
+
+Removed/Deprecated:
+- room shell texture KTX2 적용을 수동 파일 교체에만 의존하던 가정.
 
 ## 2026-04-18 변경 동기화 (Opening Asset + Top-Entry Optimization)
 Added:

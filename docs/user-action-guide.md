@@ -22,6 +22,7 @@
 - `E2E_ROOM_FLOW_PROJECT_ID`
 - `E2E_ROOM_FLOW_SHARED_TOKEN`
 - `NEXT_PUBLIC_ENABLE_REALTIME_LABS` (`1`일 때 local-only `/labs/realtime` 실험 게이트 노출)
+- `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES` (`1`일 때 room shell floor/wall texture set이 `.ktx2` 우선 로드)
 - `NEXT_PUBLIC_KTX2_TRANSCODER_PATH` (기본값 `/assets/transcoders/basis/`, 필요 시만 override)
 
 ### API (`apps/api/.env`)
@@ -243,7 +244,15 @@ npm --workspace apps/web run assets:sync:deskterior
 npm --workspace apps/web run assets:sync:ktx2-transcoder
 ```
 
-6. Meshopt 최적화와 budget re-check를 수행한다.
+6. 필요 시 room shell texture set의 `.ktx2` 산출물 유무를 확인하거나 인코딩한다.
+
+```bash
+PATH="/Users/sol/.nvm/versions/node/v20.11.1/bin:$PATH" npm --workspace apps/web run textures:check:room-shell:ktx2
+# encoder(ktx 또는 toktx)가 설치된 환경에서만:
+PATH="/Users/sol/.nvm/versions/node/v20.11.1/bin:$PATH" npm --workspace apps/web run textures:encode:room-shell:ktx2
+```
+
+7. Meshopt 최적화와 budget re-check를 수행한다.
 
 ```bash
 npm --workspace apps/web run assets:optimize:deskterior
@@ -548,3 +557,13 @@ Updated:
 
 Removed/Deprecated:
 - runtime transcoder 동기화 없이도 KTX2 준비 상태를 추정만으로 확인하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (Room Shell KTX2 Wiring QA)
+Added:
+- `textures:check:room-shell:ktx2`로 room shell texture set의 expected `.ktx2` 산출물 유무를 확인하는 QA 항목을 추가했다.
+
+Updated:
+- KTX2 QA 기준을 transcoder sync 확인에서 `transcoder sync + room shell ktx2 output check + runtime flag` 확인까지 확장했다.
+
+Removed/Deprecated:
+- room shell texture KTX2 준비 상태를 수동 파일 탐색만으로 판단하던 QA 방식.

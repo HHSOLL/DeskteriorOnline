@@ -2,59 +2,21 @@
 
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
-import { useTexture } from "@react-three/drei";
+import { useLoader, useThree } from "@react-three/fiber";
+import { RuntimeTextureLoader } from "../../../lib/loaders/RuntimeTextureLoader";
+import { configureRuntimeAssetLoaders } from "../../../lib/loaders/AssetLoader";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useShellSelector } from "../../../lib/stores/scene-slices";
 import { buildExteriorPolygon, buildFallbackShape } from "../../../lib/geometry/floor-shape";
+import {
+  FLOOR_TEXTURE_PRESETS,
+  resolveRuntimeTextureSet
+} from "../../../lib/textures/room-shell-textures";
 
 type FloorGeometryEntry = {
   id: string;
   geometry: THREE.ShapeGeometry;
 };
-
-type FloorTextureConfig = {
-  topColor: string;
-  map: string;
-  roughnessMap: string;
-  normalMap: string;
-  bumpMap: string;
-  roughness: number;
-  bumpScale: number;
-  normalScale: number;
-};
-
-const FLOOR_TEXTURES: FloorTextureConfig[] = [
-  {
-    topColor: "#b79a75",
-    map: "/assets/textures/weathered_brown_planks_2k.blend/textures/weathered_brown_planks_diff_2k.jpg",
-    roughnessMap: "/assets/textures/weathered_brown_planks_2k.blend/textures/weathered_brown_planks_rough_2k.jpg",
-    normalMap: "/assets/textures/weathered_brown_planks_2k.blend/textures/weathered_brown_planks_disp_2k.png",
-    bumpMap: "/assets/textures/weathered_brown_planks_2k.blend/textures/weathered_brown_planks_disp_2k.png",
-    roughness: 0.7,
-    bumpScale: 0.012,
-    normalScale: 0.35
-  },
-  {
-    topColor: "#8f8479",
-    map: "/assets/textures/concrete_floor_worn_001_2k.blend/textures/concrete_floor_worn_001_diff_2k.jpg",
-    roughnessMap: "/assets/textures/concrete_floor_worn_001_2k.blend/textures/concrete_floor_worn_001_rough_2k.jpg",
-    normalMap: "/assets/textures/concrete_floor_worn_001_2k.blend/textures/concrete_floor_worn_001_disp_2k.png",
-    bumpMap: "/assets/textures/concrete_floor_worn_001_2k.blend/textures/concrete_floor_worn_001_disp_2k.png",
-    roughness: 0.9,
-    bumpScale: 0.015,
-    normalScale: 0.35
-  },
-  {
-    topColor: "#cbc4ba",
-    map: "/assets/textures/marble_01_2k.blend/textures/marble_01_diff_2k.jpg",
-    roughnessMap: "/assets/textures/marble_01_2k.blend/textures/marble_01_rough_2k.jpg",
-    normalMap: "/assets/textures/marble_01_2k.blend/textures/marble_01_disp_2k.png",
-    bumpMap: "/assets/textures/marble_01_2k.blend/textures/marble_01_disp_2k.png",
-    roughness: 0.5,
-    bumpScale: 0.01,
-    normalScale: 0.3
-  }
-];
 
 function computeBounds(walls: { start: [number, number]; end: [number, number] }[], scale: number) {
   if (walls.length === 0) {
@@ -92,13 +54,26 @@ function DetailedFloorMeshes({
   depth: number;
   floorMaterialIndex: number;
 }) {
-  const textureConfig = FLOOR_TEXTURES[floorMaterialIndex % FLOOR_TEXTURES.length] ?? FLOOR_TEXTURES[0];
-  const textures = useTexture({
-    map: textureConfig.map,
-    roughnessMap: textureConfig.roughnessMap,
-    normalMap: textureConfig.normalMap,
-    bumpMap: textureConfig.bumpMap
-  });
+  const gl = useThree((state) => state.gl);
+  const textureConfig =
+    FLOOR_TEXTURE_PRESETS[floorMaterialIndex % FLOOR_TEXTURE_PRESETS.length] ?? FLOOR_TEXTURE_PRESETS[0];
+  configureRuntimeAssetLoaders(gl);
+  const textureUrls = useMemo(() => resolveRuntimeTextureSet(textureConfig), [textureConfig]);
+  const [map, roughnessMap, normalMap, bumpMap] = useLoader(RuntimeTextureLoader, [
+    textureUrls.map,
+    textureUrls.roughnessMap,
+    textureUrls.normalMap,
+    textureUrls.bumpMap
+  ]) as THREE.Texture[];
+  const textures = useMemo(
+    () => ({
+      map,
+      roughnessMap,
+      normalMap,
+      bumpMap
+    }),
+    [bumpMap, map, normalMap, roughnessMap]
+  );
 
   useEffect(() => {
     Object.values(textures).forEach((texture) => {
@@ -207,7 +182,8 @@ export default function ProceduralFloor() {
   }, [geometries]);
 
   if (viewMode === "top") {
-    const topMaterial = FLOOR_TEXTURES[floorMaterialIndex % FLOOR_TEXTURES.length] ?? FLOOR_TEXTURES[0];
+    const topMaterial =
+      FLOOR_TEXTURE_PRESETS[floorMaterialIndex % FLOOR_TEXTURE_PRESETS.length] ?? FLOOR_TEXTURE_PRESETS[0];
 
     return geometries.map((entry) => (
       <mesh key={entry.id} name={`floor:${entry.id}`} geometry={entry.geometry} receiveShadow={false}>

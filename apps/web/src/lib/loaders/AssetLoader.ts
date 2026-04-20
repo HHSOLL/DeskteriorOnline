@@ -30,16 +30,31 @@ let activeKtx2Renderer: THREE.WebGLRenderer | null = null;
 dracoLoader.setDecoderPath(decoderPath);
 dracoLoader.setWorkerLimit(workerLimit);
 dracoLoader.preload();
-ktx2Loader.setTranscoderPath(ktx2TranscoderPath);
-ktx2Loader.setWorkerLimit(workerLimit);
+
+export function configureKtx2LoaderInstance(
+  loader: KTX2Loader,
+  renderer?: THREE.WebGLRenderer | null
+) {
+  loader.setTranscoderPath(ktx2TranscoderPath);
+  loader.setWorkerLimit(workerLimit);
+  if (renderer) {
+    loader.detectSupport(renderer);
+    void loader.init();
+  }
+}
+
+export function getActiveKtx2Renderer() {
+  return activeKtx2Renderer;
+}
+
+configureKtx2LoaderInstance(ktx2Loader);
 
 export function configureRuntimeAssetLoaders(renderer: THREE.WebGLRenderer) {
   if (activeKtx2Renderer === renderer) {
     return;
   }
 
-  ktx2Loader.detectSupport(renderer);
-  void ktx2Loader.init();
+  configureKtx2LoaderInstance(ktx2Loader, renderer);
   activeKtx2Renderer = renderer;
 }
 

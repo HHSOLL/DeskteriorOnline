@@ -54,6 +54,7 @@
 - 오픈소스/공식문서/논문 기반 개선안은 `docs/research-roadmap.md`를 기준으로 추적
 - loaded GLB 자산에 `three-mesh-bvh` bounds tree를 생성해 hover/select raycast 비용을 완화
 - `KTX2Loader` + local basis transcoder sync 경로를 runtime decode 기본선으로 추가
+- room shell floor/wall texture set에 `KTX2 우선 + JPG/PNG fallback` 경로와 encode/check 스크립트를 추가
 - shared viewport에 mode-aware render quality ladder 적용(top/builder 경량화, walk/viewer 품질 유지)
 - top-view 자산 drag를 local preview 후 commit 방식으로 전환해 pointer-move store churn 완화
 - physics/runtime shadow/contact shadow/post FX를 walk/viewer 중심으로 재배치해 furnished scene headroom 확보
@@ -307,7 +308,7 @@ Removed/Deprecated:
 
 현재 착수:
 - 완료: Phase 1 / Slice 1, Phase 1 / Slice 2, Phase 1 / Slice 3, Phase 2 / Slice 1, Phase 2 / Slice 2, Phase 2 / Slice 3, Phase 3 / Slice 1, Phase 3 / Slice 2, Phase 3 / Slice 3, Phase 3 / Slice 4, Phase 4 / Slice 1, Phase 4 / Slice 2, Phase 4 / Slice 3, Phase 5 / Slice 1, Phase 5 / Slice 2, Phase 5 / Slice 3
-- 다음 후보: KTX2 실제 encoder(`toktx`) 연결, worker offload, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
+- 다음 후보: KTX2 첫 실제 encode pass 실행, worker offload, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
 
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:
@@ -320,6 +321,17 @@ Updated:
 
 Removed/Deprecated:
 - side/front helper view를 아직 미구현인 다음 후보로 유지하던 서술.
+
+## 2026-04-20 변경 동기화 (Room Shell KTX2 Wiring)
+Added:
+- room shell floor/wall procedural texture set에 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 로드하고, 없으면 기존 JPG/PNG 경로를 유지하는 runtime wiring을 추가했다.
+- `textures:encode:room-shell:ktx2`, `textures:check:room-shell:ktx2` 스크립트로 room shell texture set의 expected `.ktx2` 산출물을 encode/check 하는 파이프라인을 추가했다.
+
+Updated:
+- KTX2 남은 작업 범위를 "decode path 준비"에서 "room shell runtime wiring + encode/check 파이프라인 준비, 첫 실제 encode pass만 남은 상태"로 갱신한다.
+
+Removed/Deprecated:
+- room shell texture set이 KTX2 산출물이 생겨도 별도 런타임 전환 경로 없이 JPG/PNG만 직접 참조한다는 가정.
 
 ## 2026-04-19 변경 동기화 (Phase 3 Slice 4 Sub-slice 1)
 Added:
