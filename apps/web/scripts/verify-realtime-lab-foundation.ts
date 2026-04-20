@@ -1,8 +1,10 @@
 import {
+  buildRealtimeAttentionPing,
   buildRealtimeLabChannelName,
   buildRealtimePresenceMeta,
   createDefaultRealtimeLocalPresenceState,
   normalizeRealtimeLabRoomId,
+  resolveRealtimeBroadcastState,
   resolveRealtimeParticipantsFromPresenceState
 } from "../src/lib/experiments/realtime-presence";
 
@@ -28,6 +30,7 @@ try {
     label: "guest-self",
     now,
     localState: {
+      ...createDefaultRealtimeLocalPresenceState(),
       viewMode: "desk",
       selectedAssetId: "p2s_desk_oak",
       cursor: {
@@ -44,36 +47,87 @@ try {
     localState: {
       ...createDefaultRealtimeLocalPresenceState(),
       viewMode: "walk",
-      selectedAssetId: "p2s_ceramic_mug"
+      selectedAssetId: "p2s_ceramic_mug",
+      followingPresenterSessionKey: "session-self"
+    }
+  });
+  const presenterMeta = buildRealtimePresenceMeta({
+    roomId: roomId ?? "demo-room-01",
+    sessionKey: "session-presenter",
+    label: "guest-presenter",
+    now: now - 10_000,
+    localState: {
+      viewMode: "walk",
+      selectedAssetId: "p2s_desk_lamp_glow",
+      cursor: {
+        x: 0.77,
+        y: 0.33
+      },
+      role: "presenter",
+      followingPresenterSessionKey: null,
+      spotlightAssetId: "p2s_desk_lamp_glow"
     }
   });
 
   const participants = resolveRealtimeParticipantsFromPresenceState({
     presenceState: {
       "session-self": { metas: [selfMeta] },
-      "session-stale": { metas: [staleMeta] }
+      "session-stale": { metas: [staleMeta] },
+      "session-presenter": { metas: [presenterMeta] }
     },
     selfSessionKey: "session-self",
     now
   });
 
-  assert(participants.length === 2, `expected 2 participants, received ${participants.length}`);
+  assert(participants.length === 3, `expected 3 participants, received ${participants.length}`);
   assert(participants[0]?.isSelf === true, "self participant should be ranked first");
   assert(participants[0]?.stale === false, "self participant should be active");
   assert(participants[0]?.viewMode === "desk", "self participant view mode should roundtrip");
   assert(participants[0]?.selectedAssetId === "p2s_desk_oak", "self selection should roundtrip");
   assert(participants[0]?.cursor?.x === 0.24, "self cursor x should roundtrip");
   assert(participants[0]?.cursor?.y === 0.61, "self cursor y should roundtrip");
-  assert(participants[1]?.stale === true, "stale participant should be marked stale");
-  assert(participants[1]?.viewMode === "walk", "stale participant view mode should roundtrip");
-  assert(participants[1]?.selectedAssetId === "p2s_ceramic_mug", "stale selection should roundtrip");
+  const presenter = participants.find((participant) => participant.role === "presenter");
+  assert(presenter?.sessionKey === "session-presenter", "presenter participant should roundtrip");
+  assert(presenter?.spotlightAssetId === "p2s_desk_lamp_glow", "presenter spotlight should roundtrip");
+  const staleParticipant = participants.find((participant) => participant.sessionKey === "session-stale");
+  assert(staleParticipant?.stale === true, "stale participant should be marked stale");
+  assert(staleParticipant?.viewMode === "walk", "stale participant view mode should roundtrip");
+  assert(staleParticipant?.selectedAssetId === "p2s_ceramic_mug", "stale selection should roundtrip");
+  assert(
+    staleParticipant?.followingPresenterSessionKey === "session-self",
+    "following presenter session key should roundtrip"
+  );
 
-  console.log("realtime lab phase 2 ok");
+  const broadcastState = resolveRealtimeBroadcastState({
+    participants: participants.filter((participant) => !participant.stale)
+  });
+  assert(broadcastState.presenter?.sessionKey === "session-presenter", "broadcast presenter should resolve");
+  assert(
+    broadcastState.spotlightAssetId === "p2s_desk_lamp_glow",
+    "broadcast spotlight asset should resolve"
+  );
+
+  const ping = buildRealtimeAttentionPing({
+    roomId: roomId ?? "demo-room-01",
+    fromSessionKey: "session-self",
+    fromLabel: "guest-self",
+    targetSessionKey: "session-presenter",
+    targetLabel: "guest-presenter",
+    message: "presenter sync requested",
+    now
+  });
+  assert(ping.targetSessionKey === "session-presenter", "attention ping target should roundtrip");
+  assert(ping.targetLabel === "guest-presenter", "attention ping target label should roundtrip");
+  assert(ping.message === "presenter sync requested", "attention ping message should roundtrip");
+
+  console.log("realtime lab phase 3 ok");
   console.log(
     JSON.stringify(
       {
         roomId,
-        participants
+        participants,
+        broadcastState,
+        ping
       },
       null,
       2

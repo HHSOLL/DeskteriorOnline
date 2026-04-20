@@ -341,6 +341,19 @@ Updated:
 Removed/Deprecated:
 - lab이 active/stale occupancy만 보여주고 participant ephemeral state는 표현하지 않는 상태.
 
+## 2026-04-20 변경 동기화 (Presence/Broadcast Phase 3 Complete)
+Added:
+- `/labs/realtime`에 presenter claim/release, follow presenter, spotlight asset, attention ping snapshot을 추가해 broadcast state 실험 범위를 닫았다.
+- realtime presence contract를 `role`, `followingPresenterSessionKey`, `spotlightAssetId`까지 확장하고, active participant 기준으로 current presenter/spotlight를 파생한다.
+- `verify:realtime-lab`를 Phase 3 기준으로 확장해 presenter resolution, spotlight, attention ping payload roundtrip을 검증한다.
+
+Updated:
+- `presence / broadcast` 남은 작업을 `Phase 3 broadcast state 완료` 상태로 갱신한다.
+- 다음 후보를 `Phase 4 lab-only collaborative edit draft`, `Phase 5 hardening` 순으로 재정렬한다.
+
+Removed/Deprecated:
+- lab에서 presenter/follow/spotlight/ping이 전혀 다뤄지지 않고 presence basics까지만 있는 상태.
+
 완료 기준:
 - publish 후 shared viewer와 community 카드가 같은 장면 상태를 재현한다.
 - viewer에는 editor 전용 affordance가 남지 않는다.

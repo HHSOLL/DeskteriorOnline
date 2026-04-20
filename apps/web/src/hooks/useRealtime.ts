@@ -4,16 +4,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getSupabaseClient } from "../lib/supabase/client";
 import {
+  buildRealtimeAttentionPing,
   buildRealtimeLabChannelName,
   buildRealtimePresenceMeta,
   createDefaultRealtimeLocalPresenceState,
   createRealtimeLabLabel,
   REALTIME_LAB_STALE_AFTER_MS,
+  resolveRealtimeBroadcastState,
   resolveRealtimeParticipantsFromPresenceState,
   type LocalRealtimePresenceState,
+  type RealtimeAttentionPing,
   type RealtimeParticipant
 } from "../lib/experiments/realtime-presence";
-import type { RealtimeViewMode } from "../lib/experiments/realtime-presence";
+import type { RealtimePresenterRole, RealtimeViewMode } from "../lib/experiments/realtime-presence";
 
 type RealtimeStatus = "idle" | "disabled" | "connecting" | "connected" | "error";
 
@@ -48,6 +51,7 @@ export function useRealtime(input: {
   const [error, setError] = useState<string | null>(null);
   const [lastSyncAt, setLastSyncAt] = useState<string | null>(null);
   const [heartbeatAt, setHeartbeatAt] = useState<string | null>(null);
+  const [lastAttentionPing, setLastAttentionPing] = useState<RealtimeAttentionPing | null>(null);
   const [localPresence, setLocalPresence] = useState<LocalRealtimePresenceState>(() =>
     createDefaultRealtimeLocalPresenceState()
   );
@@ -121,6 +125,45 @@ export function useRealtime(input: {
   const clearCursor = useCallback(() => {
     setCursor(null);
   }, [setCursor]);
+
+  const setPresenterRole = useCallback((role: RealtimePresenterRole) => {
+    setLocalPresence((previous) => {
+      if (previous.role === role) {
+        return previous;
+      }
+
+      return {
+        ...previous,
+        role,
+        followingPresenterSessionKey: role === "presenter" ? null : previous.followingPresenterSessionKey,
+        spotlightAssetId: role === "presenter" ? previous.spotlightAssetId : null
+      };
+    });
+  }, []);
+
+  const setFollowingPresenterSessionKey = useCallback((followingPresenterSessionKey: string | null) => {
+    setLocalPresence((previous) => {
+      if (previous.followingPresenterSessionKey === followingPresenterSessionKey) {
+        return previous;
+      }
+      return {
+        ...previous,
+        followingPresenterSessionKey
+      };
+    });
+  }, []);
+
+  const setSpotlightAssetId = useCallback((spotlightAssetId: string | null) => {
+    setLocalPresence((previous) => {
+      if (previous.spotlightAssetId === spotlightAssetId) {
+        return previous;
+      }
+      return {
+        ...previous,
+        spotlightAssetId
+      };
+    });
+  }, []);
 
   useEffect(() => {
     if (!enabled) {
@@ -196,6 +239,32 @@ export function useRealtime(input: {
       .on("presence", { event: "sync" }, syncSnapshot)
       .on("presence", { event: "join" }, syncSnapshot)
       .on("presence", { event: "leave" }, syncSnapshot)
+      .on("broadcast", { event: "attention-ping" }, ({ payload }) => {
+        if (cancelled || !payload || typeof payload !== "object") {
+          return;
+        }
+        const ping = payload as Partial<RealtimeAttentionPing> & Record<string, unknown>;
+        if (
+          typeof ping.roomId !== "string" ||
+          typeof ping.fromSessionKey !== "string" ||
+          typeof ping.fromLabel !== "string" ||
+          typeof ping.message !== "string" ||
+          typeof ping.sentAt !== "string"
+        ) {
+          return;
+        }
+        setLastAttentionPing({
+          roomId,
+          fromSessionKey: ping.fromSessionKey,
+          fromLabel: ping.fromLabel,
+          fromAccentColor:
+            typeof ping.fromAccentColor === "string" ? ping.fromAccentColor : "hsl(32 76% 54%)",
+          targetSessionKey: typeof ping.targetSessionKey === "string" ? ping.targetSessionKey : null,
+          targetLabel: typeof ping.targetLabel === "string" ? ping.targetLabel : null,
+          message: ping.message,
+          sentAt: ping.sentAt
+        });
+      })
       .subscribe(async (nextStatus) => {
         if (cancelled) {
           return;
@@ -233,6 +302,7 @@ export function useRealtime(input: {
       window.clearInterval(heartbeatTimer);
       selfJoinedAtRef.current = null;
       setParticipants([]);
+      setLastAttentionPing(null);
       syncSnapshotRef.current = null;
       sendPresenceUpdateRef.current = null;
       void channel.untrack().catch(() => undefined);
@@ -270,6 +340,82 @@ export function useRealtime(input: {
     () => participants.filter((participant) => !participant.stale),
     [participants]
   );
+  const broadcastState = useMemo(
+    () => resolveRealtimeBroadcastState({ participants: activeParticipants }),
+    [activeParticipants]
+  );
+  const currentPresenter = broadcastState.presenter;
+  const isFollowingPresenter = Boolean(
+    currentPresenter &&
+      !currentPresenter.isSelf &&
+      localPresence.followingPresenterSessionKey === currentPresenter.sessionKey
+  );
+
+  useEffect(() => {
+    if (!currentPresenter) {
+      return;
+    }
+    if (!isFollowingPresenter) {
+      return;
+    }
+
+    const nextSelectedAssetId = currentPresenter.spotlightAssetId ?? currentPresenter.selectedAssetId;
+    setLocalPresence((previous) => {
+      if (
+        previous.viewMode === currentPresenter.viewMode &&
+        previous.selectedAssetId === nextSelectedAssetId
+      ) {
+        return previous;
+      }
+
+      return {
+        ...previous,
+        viewMode: currentPresenter.viewMode,
+        selectedAssetId: nextSelectedAssetId
+      };
+    });
+  }, [currentPresenter, isFollowingPresenter]);
+
+  useEffect(() => {
+    if (!localPresence.followingPresenterSessionKey) {
+      return;
+    }
+    if (currentPresenter && currentPresenter.sessionKey === localPresence.followingPresenterSessionKey) {
+      return;
+    }
+    setFollowingPresenterSessionKey(null);
+  }, [currentPresenter, localPresence.followingPresenterSessionKey, setFollowingPresenterSessionKey]);
+
+  const sendAttentionPing = useCallback(
+    async (input: { message: string; targetSessionKey?: string | null; targetLabel?: string | null }) => {
+      if (!roomId || !selfSessionKey || !selfLabel || !channelRef.current) {
+        return false;
+      }
+
+      const ping = buildRealtimeAttentionPing({
+        roomId,
+        fromSessionKey: selfSessionKey,
+        fromLabel: selfLabel,
+        targetSessionKey: input.targetSessionKey,
+        targetLabel: input.targetLabel,
+        message: input.message
+      });
+
+      const result = await channelRef.current.send({
+        type: "broadcast",
+        event: "attention-ping",
+        payload: ping
+      });
+
+      if (result !== "ok") {
+        throw new Error(`Realtime attention ping failed: ${result}`);
+      }
+
+      setLastAttentionPing(ping);
+      return true;
+    },
+    [roomId, selfLabel, selfSessionKey]
+  );
 
   return {
     status,
@@ -283,9 +429,17 @@ export function useRealtime(input: {
     heartbeatAt,
     lastSyncAt,
     localPresence,
+    broadcastState,
+    currentPresenter,
+    isFollowingPresenter,
+    lastAttentionPing,
     setViewMode,
     setSelectedAssetId,
     setCursor,
-    clearCursor
+    clearCursor,
+    setPresenterRole,
+    setFollowingPresenterSessionKey,
+    setSpotlightAssetId,
+    sendAttentionPing
   };
 }

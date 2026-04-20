@@ -416,6 +416,19 @@ Updated:
 Removed/Deprecated:
 - `/labs/realtime`가 occupancy snapshot만 보여주고 실제 ephemeral participant state(cursor/view/selection)는 전혀 노출하지 않는 상태.
 
+## 2026-04-20 변경 동기화 (Presence Lab Phase 3 Broadcast State)
+Added:
+- `/labs/realtime` 안에서 presenter role, follow presenter, spotlight asset, attention ping snapshot을 제공하는 Phase 3 broadcast state를 추가한다.
+- realtime presence contract에 `role`, `followingPresenterSessionKey`, `spotlightAssetId`를 추가하고, active participant 기준으로 current presenter / spotlight를 파생하는 규칙을 도입한다.
+- attention ping은 realtime broadcast event로만 다루고, persistence 없이 마지막 ping snapshot만 노출하는 규칙을 추가한다.
+
+Updated:
+- presence/realtime 상태를 `phase 2 presence basics complete`에서 `phase 3 broadcast state complete`로 갱신한다.
+- 남은 실험 범위를 `Phase 4 lab-only collaborative draft -> Phase 5 hardening` 순으로 축소한다.
+
+Removed/Deprecated:
+- presenter/follow/spotlight가 다음 단계로만 남아 있고 현재 lab에서는 다룰 수 없다는 상태.
+
 ## 2026-04-19 변경 동기화 (Desk Precision Measurements)
 Added:
 - desk precision mode에서 선택 자산의 X/Y/Z 위치와 Yaw 회전을 `mm/deg` 기준으로 보여주는 numeric inspector + measurement overlay 규칙을 추가한다.

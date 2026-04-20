@@ -1,4 +1,5 @@
 export type RealtimeViewMode = "room" | "desk" | "walk";
+export type RealtimePresenterRole = "participant" | "presenter";
 
 export type RealtimeCursor = {
   x: number;
@@ -13,6 +14,9 @@ export type LocalRealtimePresenceState = {
     x: number;
     y: number;
   } | null;
+  role: RealtimePresenterRole;
+  followingPresenterSessionKey: string | null;
+  spotlightAssetId: string | null;
 };
 
 export type RealtimePresenceMeta = {
@@ -25,6 +29,9 @@ export type RealtimePresenceMeta = {
   viewMode: RealtimeViewMode;
   selectedAssetId: string | null;
   cursor: RealtimeCursor | null;
+  role: RealtimePresenterRole;
+  followingPresenterSessionKey: string | null;
+  spotlightAssetId: string | null;
 };
 
 export type RealtimeParticipant = {
@@ -39,11 +46,31 @@ export type RealtimeParticipant = {
   viewMode: RealtimeViewMode;
   selectedAssetId: string | null;
   cursor: RealtimeCursor | null;
+  role: RealtimePresenterRole;
+  followingPresenterSessionKey: string | null;
+  spotlightAssetId: string | null;
+};
+
+export type RealtimeBroadcastState = {
+  presenter: RealtimeParticipant | null;
+  spotlightAssetId: string | null;
+};
+
+export type RealtimeAttentionPing = {
+  roomId: string;
+  fromSessionKey: string;
+  fromLabel: string;
+  fromAccentColor: string;
+  targetSessionKey: string | null;
+  targetLabel: string | null;
+  message: string;
+  sentAt: string;
 };
 
 export const REALTIME_LAB_STALE_AFTER_MS = 45_000;
 const REALTIME_ROOM_ID_PATTERN = /^[a-z0-9-]{4,32}$/;
 const REALTIME_VIEW_MODES = new Set<RealtimeViewMode>(["room", "desk", "walk"]);
+const REALTIME_PRESENTER_ROLES = new Set<RealtimePresenterRole>(["participant", "presenter"]);
 
 function toIsoString(value: number) {
   return new Date(value).toISOString();
@@ -55,6 +82,10 @@ function clampNormalizedCoordinate(value: number) {
 
 function isRealtimeViewMode(value: unknown): value is RealtimeViewMode {
   return typeof value === "string" && REALTIME_VIEW_MODES.has(value as RealtimeViewMode);
+}
+
+function isRealtimePresenterRole(value: unknown): value is RealtimePresenterRole {
+  return typeof value === "string" && REALTIME_PRESENTER_ROLES.has(value as RealtimePresenterRole);
 }
 
 export function normalizeRealtimeLabRoomId(value: string | null | undefined) {
@@ -80,7 +111,10 @@ export function createDefaultRealtimeLocalPresenceState(): LocalRealtimePresence
   return {
     viewMode: "room",
     selectedAssetId: null,
-    cursor: null
+    cursor: null,
+    role: "participant",
+    followingPresenterSessionKey: null,
+    spotlightAssetId: null
   };
 }
 
@@ -95,6 +129,14 @@ export function createRealtimeLabAccentColor(sessionKey: string) {
   }
   const hue = hash % 360;
   return `hsl(${hue} 76% 54%)`;
+}
+
+function normalizeOptionalAssetId(value: unknown) {
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function normalizeOptionalSessionKey(value: unknown) {
+  return typeof value === "string" && value.length > 0 ? value : null;
 }
 
 export function buildRealtimePresenceMeta(input: {
@@ -115,17 +157,40 @@ export function buildRealtimePresenceMeta(input: {
     heartbeatAt: toIsoString(now),
     accentColor: createRealtimeLabAccentColor(input.sessionKey),
     viewMode: isRealtimeViewMode(localState.viewMode) ? localState.viewMode : "room",
-    selectedAssetId:
-      typeof localState.selectedAssetId === "string" && localState.selectedAssetId.length > 0
-        ? localState.selectedAssetId
-        : null,
+    selectedAssetId: normalizeOptionalAssetId(localState.selectedAssetId),
     cursor: localState.cursor
       ? {
           x: clampNormalizedCoordinate(localState.cursor.x),
           y: clampNormalizedCoordinate(localState.cursor.y),
           updatedAt: toIsoString(now)
         }
-      : null
+      : null,
+    role: isRealtimePresenterRole(localState.role) ? localState.role : "participant",
+    followingPresenterSessionKey: normalizeOptionalSessionKey(localState.followingPresenterSessionKey),
+    spotlightAssetId:
+      localState.role === "presenter" ? normalizeOptionalAssetId(localState.spotlightAssetId) : null
+  };
+}
+
+export function buildRealtimeAttentionPing(input: {
+  roomId: string;
+  fromSessionKey: string;
+  fromLabel: string;
+  targetSessionKey?: string | null;
+  targetLabel?: string | null;
+  message: string;
+  now?: number;
+}): RealtimeAttentionPing {
+  const now = input.now ?? Date.now();
+  return {
+    roomId: input.roomId,
+    fromSessionKey: input.fromSessionKey,
+    fromLabel: input.fromLabel,
+    fromAccentColor: createRealtimeLabAccentColor(input.fromSessionKey),
+    targetSessionKey: normalizeOptionalSessionKey(input.targetSessionKey),
+    targetLabel: typeof input.targetLabel === "string" && input.targetLabel.length > 0 ? input.targetLabel : null,
+    message: input.message,
+    sentAt: toIsoString(now)
   };
 }
 
@@ -195,9 +260,11 @@ function normalizeParticipantMeta(
       ? entry.accentColor
       : createRealtimeLabAccentColor(sessionKey);
   const viewMode = isRealtimeViewMode(entry.viewMode) ? entry.viewMode : "room";
-  const selectedAssetId =
-    typeof entry.selectedAssetId === "string" && entry.selectedAssetId.length > 0 ? entry.selectedAssetId : null;
+  const role = isRealtimePresenterRole(entry.role) ? entry.role : "participant";
+  const selectedAssetId = normalizeOptionalAssetId(entry.selectedAssetId);
   const cursor = normalizeRealtimeCursor(entry.cursor);
+  const followingPresenterSessionKey = normalizeOptionalSessionKey(entry.followingPresenterSessionKey);
+  const spotlightAssetId = role === "presenter" ? normalizeOptionalAssetId(entry.spotlightAssetId) : null;
 
   return {
     sessionKey,
@@ -208,7 +275,10 @@ function normalizeParticipantMeta(
     accentColor,
     viewMode,
     selectedAssetId,
-    cursor
+    cursor,
+    role,
+    followingPresenterSessionKey,
+    spotlightAssetId
   };
 }
 
@@ -259,4 +329,19 @@ export function resolveRealtimeParticipantsFromPresenceState(input: {
     }
     return left.label.localeCompare(right.label);
   });
+}
+
+export function resolveRealtimeBroadcastState(input: {
+  participants: RealtimeParticipant[];
+}) {
+  const presenters = input.participants.filter((participant) => !participant.stale && participant.role === "presenter");
+  const presenter =
+    presenters.sort(
+      (left, right) => new Date(right.heartbeatAt).getTime() - new Date(left.heartbeatAt).getTime()
+    )[0] ?? null;
+
+  return {
+    presenter,
+    spotlightAssetId: presenter?.spotlightAssetId ?? null
+  } satisfies RealtimeBroadcastState;
 }
