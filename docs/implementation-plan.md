@@ -776,3 +776,15 @@ Updated:
 
 Removed/Deprecated:
 - `room mode direct-drag와 공존하는 editor instancing feasibility`가 아직 미해결이라는 이전 상태 설명.
+
+## 2026-04-20 변경 동기화 (Showcase Activity Ranking Phase 1)
+Added:
+- `preview_meta + published_at` 기반 derived activity baseline과 community ranking helper를 추가했다.
+- `verify:showcase-activity`로 recent/rich scene이 older/sparse scene보다 높은 rank를 받는지 회귀 검증하는 항목을 추가했다.
+
+Updated:
+- `P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선` 상태를 “phase 1 derived ranking baseline 완료, phase 2 persisted engagement events 남음”으로 갱신한다.
+- 다음 후보를 `P3 phase 2 persisted activity events`, `showcase polish phase 2(카메라/lighting fine-tune)`, `presence / broadcast` 순서로 재정렬한다.
+
+Removed/Deprecated:
+- community page가 화면 로컬 휴리스틱 like/reply 계산에만 의존하던 상태.

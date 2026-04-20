@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getSharePreviewMeta } from "../share/preview";
+import { compareShowcaseActivityRank } from "../showcase/activity";
 import { createSupabaseServerClient } from "../supabase/server";
 import type { Database } from "../../../../../types/database";
 import {
@@ -323,6 +324,7 @@ async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeSh
   let matchingTotal = 0;
   let batchCursor: ShowcaseCursorPayload | null = null;
   let featuredRow: ShowcaseBatchRow | null = null;
+  let latestPublishedAt: string | null = null;
   const collectionCounts = new Map<string, number>();
   const batchSize = 120;
 
@@ -338,7 +340,24 @@ async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeSh
       }
 
       matchingTotal += 1;
-      featuredRow ??= row;
+      latestPublishedAt ??= row.published_at;
+      if (
+        !featuredRow ||
+        compareShowcaseActivityRank(
+          {
+            id: row.id,
+            published_at: row.published_at,
+            previewMeta: getSharePreviewMeta(row.preview_meta)
+          },
+          {
+            id: featuredRow.id,
+            published_at: featuredRow.published_at,
+            previewMeta: getSharePreviewMeta(featuredRow.preview_meta)
+          }
+        ) < 0
+      ) {
+        featuredRow = row;
+      }
 
       const assetSummary = getSharePreviewMeta(row.preview_meta)?.assetSummary;
       for (const collection of assetSummary?.collections ?? []) {
@@ -361,7 +380,7 @@ async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeSh
 
   return {
     matchingTotal,
-    latestPublishedAt: featuredRow?.published_at ?? null,
+    latestPublishedAt,
     topCollection,
     featuredItem
   };

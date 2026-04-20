@@ -91,6 +91,7 @@
 43. `verify:asset-instancing` 실행 시 read-only top/walk와 builder preview, editor `desk precision`, editor `room mode` idle에서 repeated `single_mesh` 자산이 cluster로 묶이고, room mode dragging 중에는 selected asset이 cluster 안에서 live drag 되다가 pointer-up 후 개별 경로로 빠지는지 확인하기
 44. desk precision / builder preview / richer showcase 경로는 Neutral tone mapping으로, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping으로 읽히며 하이라이트 clipping과 white balance가 mode 목적에 맞게 유지되는지 확인하기
 45. editor walk와 richer showcase 경로에서만 SSR이 보수적으로 올라오고, shared viewer / top-view / builder preview에서는 SSR이 꺼져 있는지 확인하기
+46. `verify:showcase-activity` 실행 시 recent/rich scene이 older/sparse scene보다 높은 activity rank를 받고, community featured / conversation link가 showcase presentation 경로를 유지하는지 확인하기
 
 ## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing QA)
 Added:
@@ -101,6 +102,16 @@ Updated:
 
 Removed/Deprecated:
 - editor room top은 repeated asset instancing 대상이 아니라는 QA 가정.
+
+## 2026-04-20 변경 동기화 (Showcase Activity Ranking QA)
+Added:
+- `verify:showcase-activity`로 derived activity score / estimated engagement / ranking order를 회귀 검증하는 QA 항목을 추가했다.
+
+Updated:
+- community QA 기준을 “카드가 보이는지”에서 “featured/conversation ordering이 derived activity baseline을 따르고 showcase presentation 링크를 유지하는지”까지 확장했다.
+
+Removed/Deprecated:
+- community 활동 지표를 페이지 내부 ad-hoc 숫자로만 판단하던 QA 방식.
 
 실행 명령:
 

@@ -76,6 +76,7 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - `npm --workspace apps/web run verify:asset-instancing`
 - `npm --workspace apps/web run verify:public-scene`
 - `npm --workspace apps/web run verify:showcase-scene`
+- `npm --workspace apps/web run verify:showcase-activity`
 
 ## 필수 참조 문서
 - `docs/implementation-plan.md`
@@ -93,6 +94,17 @@ Updated:
 
 Removed/Deprecated:
 - editor room top은 direct-drag 때문에 항상 per-instance만 사용해야 한다는 가정.
+
+## 2026-04-20 변경 동기화 (Showcase Activity Ranking Phase 1)
+Added:
+- persisted engagement 테이블 없이도 `preview_meta + published_at`만으로 일관된 `activity score / estimated views / likes / replies`를 계산하는 파생 지표 기준을 추가했다.
+- community featured scene과 conversation card가 이 파생 activity score를 기준으로 정렬되는 제품 규칙을 추가했다.
+
+Updated:
+- P3 활동성 지표 작업 상태를 “미착수”에서 “phase 1: derived ranking baseline 완료, phase 2: persisted events 대기”로 갱신한다.
+
+Removed/Deprecated:
+- community page가 reply/like 수치를 화면 안에서 ad-hoc 식으로 따로 계산하던 상태.
 
 ## 2026-04-14 변경 동기화 (IKEA Kreativ Pivot Hard Cleanup)
 Added:

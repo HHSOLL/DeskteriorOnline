@@ -14,6 +14,8 @@ import {
   type ShowcaseFilters,
   type ShowcaseSnapshotItem
 } from "../../lib/api/showcase";
+import { buildShowcaseActivityMetrics, compareShowcaseActivityRank } from "../../lib/showcase/activity";
+import { buildShowcaseViewerHref } from "../../lib/viewer/presentation";
 import { fetchShowcaseArchiveSummary, fetchShowcaseSnapshotFeed } from "../../lib/server/showcase";
 
 export const revalidate = 0;
@@ -111,17 +113,36 @@ export default async function CommunityPage({ searchParams }: { searchParams?: S
   const loadMoreHref = nextCursor ? buildPageHref("/community", filters, nextCursor, matchingTotal) : null;
   const featuredSnapshot = archiveSummary?.featuredItem ?? snapshots[0] ?? null;
   const topCollection = archiveSummary?.topCollection ?? collectionFallback;
-  const conversationCards = snapshots.slice(0, 3).map((snapshot, index) => {
+  const rankedSnapshots = [...snapshots].sort((left, right) =>
+    compareShowcaseActivityRank(
+      {
+        id: left.id,
+        published_at: left.published_at,
+        previewMeta: left.previewMeta
+      },
+      {
+        id: right.id,
+        published_at: right.published_at,
+        previewMeta: right.previewMeta
+      }
+    )
+  );
+  const conversationCards = rankedSnapshots.slice(0, 3).map((snapshot) => {
     const profile = getShowcaseSnapshotProfileFromPreviewMeta(snapshot.previewMeta);
+    const activity = buildShowcaseActivityMetrics({
+      previewMeta: snapshot.previewMeta,
+      publishedAt: snapshot.published_at
+    });
     return {
       id: snapshot.id,
-      href: `/shared/${snapshot.token}`,
+      href: buildShowcaseViewerHref(snapshot.token),
       title: `${snapshot.previewMeta?.projectName ?? "공유 공간"} 배치 피드백`,
       excerpt:
         snapshot.previewMeta?.projectDescription ??
         `${buildConversationTone(profile.room)}에 대한 의견을 나누는 스레드입니다.`,
-      replyCount: Math.max(6, profile.totalAssets * 3 + index * 2),
-      likeCount: Math.max(12, profile.collectionCount * 9 + 8),
+      replyCount: activity.estimatedReplies,
+      likeCount: activity.estimatedLikes,
+      viewCount: activity.estimatedViews,
       toneLabel: buildConversationTone(profile.room)
     };
   });
@@ -221,6 +242,7 @@ export default async function CommunityPage({ searchParams }: { searchParams?: S
                     <div className="mt-5 flex items-center gap-3 text-[11px] text-[#625a51]">
                       <span>답글 {card.replyCount}</span>
                       <span>좋아요 {card.likeCount}</span>
+                      <span>조회 {card.viewCount}</span>
                     </div>
                   </Link>
                 ))}
@@ -250,13 +272,13 @@ export default async function CommunityPage({ searchParams }: { searchParams?: S
                     {featuredSnapshot.previewMeta?.projectName ?? "가장 최근 공개된 장면"}
                   </div>
                   <p className="mt-3 text-sm leading-6 text-[#e1d7cd]">
-                    최근 공개된 장면을 열고 같은 공간을 보며 바로 피드백을 남길 수 있습니다.
+                    최근성과 구성 밀도를 함께 반영한 추천 장면을 열고 같은 공간을 보며 바로 피드백을 남길 수 있습니다.
                   </p>
                   <Link
-                    href={`/shared/${featuredSnapshot.token}`}
+                    href={buildShowcaseViewerHref(featuredSnapshot.token)}
                     className="mt-5 inline-flex rounded-full border border-white/15 px-4 py-2 text-[11px] font-semibold text-white transition hover:bg-white/10"
                   >
-                    최신 장면 열기
+                    추천 장면 열기
                   </Link>
                 </div>
               ) : null}
