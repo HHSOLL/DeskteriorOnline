@@ -370,6 +370,18 @@ Updated:
 Removed/Deprecated:
 - 반복 자산 instancing이 아직 전혀 런타임에 적용되지 않았다는 서술.
 
+## 2026-04-20 변경 동기화 (Native gltfpack Optional Chain)
+Added:
+- `assets:probe:gltfpack`와 `assets:optimize:deskterior:native` 스크립트를 추가해 native gltfpack binary를 저장소 파이프라인에서 직접 probe/run할 수 있게 했다.
+- `assets:optimize:deskterior -- --native-gltfpack [--gltfpack-bin /path/to/gltfpack]` 경로를 추가해 기존 glTF Transform optimize 뒤에 optional native pass를 연결했다.
+
+Updated:
+- 원문 보고서 기준 남은 `native gltfpack pass`를 “probe + wrapper + pipeline wiring 완료, binary provision 후 실제 run만 남음” 상태로 갱신한다.
+- 다음 후보를 `native gltfpack 실 run`, `editor-side instancing 확대`, `실사 강화 2차` 순서로 재정렬한다.
+
+Removed/Deprecated:
+- native gltfpack 적용이 저장소 밖 수동 명령에만 의존하던 상태.
+
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:
 - desk precision mode에서 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector와 overlay에 추가했다.

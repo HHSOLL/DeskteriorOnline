@@ -269,6 +269,15 @@ npm --workspace apps/web run assets:optimize:deskterior
 npm --workspace apps/web run assets:optimize:deskterior -- --force --level high
 ```
 
+native gltfpack binary가 있으면 먼저 probe한 뒤 optional pass를 붙일 수 있다.
+
+```bash
+npm --workspace apps/web run assets:probe:gltfpack
+npm --workspace apps/web run assets:optimize:deskterior:native -- --gltfpack-bin /absolute/path/to/gltfpack
+# 또는 기존 체인 뒤에 바로 연결
+npm --workspace apps/web run assets:optimize:deskterior -- --native-gltfpack --gltfpack-bin /absolute/path/to/gltfpack
+```
+
 7. Khronos glTF Validator로 런타임 GLB를 검증한다.
 
 ```bash
@@ -299,6 +308,7 @@ npm --workspace apps/web run assets:verify:deskterior
 실패 대응:
 - `assets:export:deskterior` 실패 시 `--report`로 누락/stale 원인을 먼저 확인한다.
 - `assets:optimize:deskterior`가 실패하면 draw call, triangle, runtime size budget 초과 asset부터 확인한다.
+- native gltfpack pass가 필요하면 먼저 `assets:probe:gltfpack`로 binary 경로를 확인하고, 없으면 `GLTFPACK_BIN` 또는 `--gltfpack-bin`으로 절대 경로를 준다.
 - `assets:validate:deskterior`가 실패하면 해당 GLB의 구조 오류, 경고, draw call 수치를 먼저 확인한다.
 - `assets:verify:deskterior`가 실패하면 manifest의 `assetId`/필수 메타(`brand`, `externalUrl`, `description`, `category`, `options`)를 우선 수정한다.
 - support surface 자산에서 `assets:verify:deskterior`가 실패하면 `supportProfile.surfaces[].{id,anchorTypes,center,size,top,margin}` 계약을 먼저 맞춘다.
@@ -629,3 +639,13 @@ Updated:
 
 Removed/Deprecated:
 - instancing 적용 여부를 수동 viewer 확인만으로 판단하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (Native gltfpack Optional Chain QA)
+Added:
+- `assets:probe:gltfpack`로 native binary availability를 확인하고, `assets:optimize:deskterior:native` 또는 `assets:optimize:deskterior -- --native-gltfpack` 경로를 점검하는 QA 항목을 추가했다.
+
+Updated:
+- 고급 asset optimize QA 기준을 glTF Transform only에서 `glTF Transform baseline + optional native gltfpack pass + validate/verify/build`까지 확장했다.
+
+Removed/Deprecated:
+- native gltfpack 적용 여부를 로컬 개인 alias나 수동 메모에만 의존하던 QA 방식.

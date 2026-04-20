@@ -23,6 +23,8 @@
     "assets:validate:deskterior": "node --import tsx scripts/validate-deskterior-gltf.ts",
     "assets:verify:deskterior": "node --import tsx scripts/verify-deskterior-pipeline.ts",
     "assets:optimize:deskterior": "node --import tsx scripts/optimize-deskterior-runtime.ts",
+    "assets:optimize:deskterior:native": "node --import tsx scripts/optimize-deskterior-runtime.ts --native-gltfpack",
+    "assets:probe:gltfpack": "node --import tsx scripts/optimize-deskterior-runtime.ts --gltfpack-probe",
     "verify:scene-document": "node --import tsx scripts/verify-scene-document-roundtrip.ts",
     "verify:asset-instancing": "node --import tsx scripts/verify-asset-instancing-policy.ts",
     "verify:asset-lod": "node --import tsx scripts/verify-asset-lod-policy.ts",

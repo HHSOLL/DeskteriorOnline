@@ -38,6 +38,7 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - loaded GLB 자산의 bounds tree 생성은 large non-interleaved geometry에 한해 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync fallback을 사용한다.
 - loaded GLB runtime decode는 `KTX2Loader` + local basis transcoder(`apps/web/public/assets/transcoders/basis`)를 기본 경로로 준비하고, 경로 override는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`만 사용한다.
 - room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 산출물이 없거나 플래그가 꺼져 있으면 JPG/PNG 원본으로 fallback 한다.
+- curated deskterior optimize chain은 기본 `glTF Transform dedup + prune + meshopt`를 사용하고, native `gltfpack`은 `GLTFPACK_BIN` 또는 `--gltfpack-bin`이 있을 때만 optional pass로 추가한다.
 - editor top-view(room / desk precision)와 builder preview는 기본적으로 `frameloop="demand"`를 사용하고, 카메라/hover/drag/gizmo 변경에서만 explicit invalidation 한다.
 - 실측 고정 제품(`scaleLocked=true`)은 에디터에서 임의 스케일 변경을 허용하지 않는다.
 - 데스크/선반 표면 배치는 실측 규격이 있으면 해당 값 기반으로 support surface를 계산한다.
@@ -453,6 +454,17 @@ Updated:
 
 Removed/Deprecated:
 - 반복 자산이 있는 read-only/builder 장면도 항상 개별 mesh clone만 사용해야 한다는 가정.
+
+## 2026-04-20 변경 동기화 (Native gltfpack Optional Chain)
+Added:
+- `assets:probe:gltfpack`와 `assets:optimize:deskterior:native` 운영 경로를 추가한다.
+- native gltfpack pass는 `-cc -mi -kn -km -ke` 보수 플래그를 사용해 named node/material/extras 보존을 우선하는 기준을 추가한다.
+
+Updated:
+- 원문 보고서 기준 남은 `native gltfpack pass`를 “probe + wrapper + optimize chain wiring 완료, 실제 binary run만 남음” 상태로 갱신한다.
+
+Removed/Deprecated:
+- native gltfpack 적용이 수동 일회성 로컬 명령에만 의존하고 저장소 스크립트/문서 기준이 없던 상태.
 
 ## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement)
 Added:

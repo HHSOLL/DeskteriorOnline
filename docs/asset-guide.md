@@ -14,7 +14,9 @@ npm --workspace apps/web run assets:export:deskterior -- --report
 npm --workspace apps/web run assets:export:deskterior
 npm --workspace apps/web run assets:sync:deskterior
 npm --workspace apps/web run assets:sync:ktx2-transcoder
+npm --workspace apps/web run assets:probe:gltfpack
 npm --workspace apps/web run assets:optimize:deskterior
+npm --workspace apps/web run assets:optimize:deskterior:native -- --gltfpack-bin /absolute/path/to/gltfpack
 npm --workspace apps/web run assets:validate:deskterior
 npm --workspace apps/web run assets:verify:deskterior
 ```
@@ -25,6 +27,7 @@ npm --workspace apps/web run assets:verify:deskterior
 - Plan2Space 제작 deskterior 자산(p2s_*) upsert
 - basis transcoder public sync(`apps/web/public/assets/transcoders/basis`)
 - glTF Transform 기반 `dedup + prune + meshopt(내부 reorder/quantize 포함)` 최적화와 budget re-check
+- optional native `gltfpack -cc -mi -kn -km -ke` 패스와 probe/wrapper 체인
 - curated supportProfile surface/anchor metadata 검증
 - curated `p2s_*` source/license/pivot/collisionProxy/textureSet/lodProfile metadata 검증
 - Khronos glTF Validator 기반 구조/리소스 검증
@@ -60,6 +63,7 @@ npm --workspace apps/web run assets:verify:deskterior
 - curated deskterior manifest는 이제 실측/마감 메타뿐 아니라 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약도 같이 유지한다.
 - `lodProfile`는 검증용 메타에만 머물지 않고 room/desk precision/walk 런타임 LOD fallback 거리 정책에도 사용된다.
 - `lodProfile.strategy="single_mesh"`인 low/medium complexity 반복 자산은 read-only top/walk와 builder preview에서 instanced cluster 후보로 소비된다.
+- native gltfpack pass는 기본 비활성이고, `GLTFPACK_BIN` 또는 `--gltfpack-bin`으로 바이너리를 지정했을 때만 실행한다.
 - KTX2 runtime decode 경로는 준비됐고, `assets:sync:ktx2-transcoder`가 three basis transcoder를 public 경로에 동기화한다.
 - room shell floor/wall texture set은 `textures:encode:room-shell:ktx2` / `textures:check:room-shell:ktx2`로 `.ktx2` 산출물을 관리하고, 런타임 전환은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`로 제어한다.
 - room shell texture set의 첫 `.ktx2` encode pass는 완료됐고, 현재 저장소에는 16개 room shell `.ktx2` 산출물이 포함된다.
