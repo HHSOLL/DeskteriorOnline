@@ -1,13 +1,16 @@
 import { notFound } from "next/navigation";
 import { fetchPublicSceneByToken, PublicSceneError } from "../../../lib/server/public-scenes";
 import { reportSceneError, reportSceneEvent } from "../../../lib/telemetry/scene-events";
+import { resolveSharedViewerPresentation } from "../../../lib/viewer/presentation";
 import { SharedProjectClient } from "./SharedProjectClient";
 
 interface SharedProjectPageProps {
   params: { token: string };
+  searchParams?: { source?: string | string[] };
 }
 
-export default async function SharedProjectPage({ params }: SharedProjectPageProps) {
+export default async function SharedProjectPage({ params, searchParams }: SharedProjectPageProps) {
+  const viewerPresentation = resolveSharedViewerPresentation(searchParams?.source);
   let scene: Awaited<ReturnType<typeof fetchPublicSceneByToken>> | null = null;
   let isExpired = false;
   try {
@@ -59,6 +62,7 @@ export default async function SharedProjectPage({ params }: SharedProjectPagePro
       expiresAt={scene.expiresAt}
       pinnedVersionNumber={scene.pinnedVersionNumber}
       previewAssetSummary={scene.previewAssetSummary}
+      viewerPresentation={viewerPresentation}
     />
   );
 }

@@ -27,6 +27,7 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - `lodProfile`는 문서용 필드에만 머물지 않고 room mode / desk precision / walk / builder preview 런타임 LOD 전환 거리 정책으로 실제 소비되어야 한다.
 - 반복된 `single_mesh` deskterior 자산은 read-only top/walk와 builder preview, editor `desk precision` top-view에서 instanced cluster로 묶을 수 있어야 하며, 선택 중이거나 `room mode` direct-drag 대상 자산은 개별 오브젝트 경로를 유지해야 한다.
 - 렌더 품질 사다리는 mode-aware tone mapping을 포함해야 하며, `room mode` / `viewer-shared` / 기본 walk-viewer는 ACES, `desk precision` / `builder preview` / `viewer-showcase`는 Neutral tone mapping을 사용한다.
+- 실사 강화 2차의 SSR은 `editor walk`와 `viewer-showcase`의 non-constrained profile에서만 보수적으로 허용하고, `viewer-shared`와 top-view/builder preview에는 적용하지 않는다.
 - `sceneDocument` 저장 계약은 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, meter float 좌표는 그 스냅샷에서 파생된 호환 필드로만 유지한다.
 - `desk precision mode`에서는 선택한 제품의 위치/회전을 `mm/deg` 기준 numeric inspector와 measurement overlay로 노출한다.
 - `desk precision mode`에서는 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 surface lock 상태 카드로 노출한다.
@@ -488,6 +489,16 @@ Updated:
 Removed/Deprecated:
 - renderer tone mapping이 SceneViewport 기본값 하나로만 고정되어 mode-aware 품질 ladder를 제대로 반영하지 못하던 상태.
 
+## 2026-04-20 변경 동기화 (SSR Feasibility Phase 1)
+Added:
+- `editor walk`와 `viewer-showcase`의 non-constrained profile에 한해 보수적 SSR을 허용하는 운영 기준을 추가한다.
+
+Updated:
+- 실사 강화 2차 상태를 `PBR Neutral tone mapping phase 1`에서 `PBR Neutral + selective SSR feasibility phase 1`로 확장한다.
+
+Removed/Deprecated:
+- SSR이 향후 별도 branch에서만 검토되고 현재 render ladder에는 아무 연결이 없다는 가정.
+
 ## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement)
 Added:
 - curated `p2s_*` 자산에 `source/license/pivot/collisionProxy/textureSet/lodProfile` 메타데이터 계약을 추가한다.
@@ -598,3 +609,14 @@ Updated:
 
 Removed/Deprecated:
 - 첫 HDRI 항목을 무조건 사용하던 비결정적 환경 선택 가정.
+
+## 2026-04-20 변경 동기화 (Showcase Viewer Presentation Phase 1)
+Added:
+- gallery/community 카드가 shared viewer를 `showcase presentation`으로 여는 진입 규칙을 추가했다.
+- shared page가 `source=showcase` 쿼리를 받으면 `viewer-showcase` 렌더 프로파일을 사용하고, 일반 공유 링크는 기존 `viewer-shared` lean 프로파일을 유지하는 기준을 추가했다.
+
+Updated:
+- `viewer-showcase`를 문서 전용 렌더 슬롯이 아니라 gallery/community 유입 경로에서 실제로 소비되는 presentation mode로 갱신한다.
+
+Removed/Deprecated:
+- `viewer-showcase` 프로파일이 제품 경로에 연결되지 않은 dead configuration 상태.

@@ -1,5 +1,6 @@
 import type { LibraryCatalogItem } from "../builder/catalog";
 import type { SharePreviewMeta } from "../share/preview";
+import { buildShowcaseViewerHref } from "../viewer/presentation";
 
 export type PublishedSnapshotCardModel = {
   projectName: string;
@@ -29,4 +30,8 @@ export function buildPublishedSnapshotCardModel(input: {
     publishedAtLabel: new Date(publishedAt).toLocaleDateString("ko-KR"),
     primaryTone: previewMeta?.assetSummary?.primaryTone ?? "sand"
   };
+}
+
+export function buildPublishedSnapshotCardHref(token: string) {
+  return buildShowcaseViewerHref(token);
 }

@@ -22,6 +22,7 @@ import { useAuthStore } from "../../../lib/stores/useAuthStore";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useCameraStore, useSelectionStore, useShellStore } from "../../../lib/stores/scene-slices";
 import type { ProductHotspot } from "../../../lib/viewer/hotspots";
+import type { SharedViewerPresentation } from "../../../lib/viewer/presentation";
 
 type SharedProjectClientProps = {
   projectName: string;
@@ -31,6 +32,7 @@ type SharedProjectClientProps = {
   expiresAt: string | null;
   pinnedVersionNumber: number | null;
   previewAssetSummary: ProjectAssetSummary | null;
+  viewerPresentation: SharedViewerPresentation;
 };
 
 function toMetadataRecord(value: unknown): Record<string, unknown> | null {
@@ -117,7 +119,8 @@ export function SharedProjectClient({
   linkPermission,
   expiresAt,
   pinnedVersionNumber,
-  previewAssetSummary
+  previewAssetSummary,
+  viewerPresentation
 }: SharedProjectClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -559,6 +562,7 @@ export function SharedProjectClient({
               viewMode={viewMode === "walk" ? "walk" : "top"}
               selectedLabel={selectedHotspotLabel}
               showReadOnlyNotice={shareCapabilities.showPreviewNotice}
+              presentation={viewerPresentation}
             />
           </StudioWorkspaceShell>
         </div>

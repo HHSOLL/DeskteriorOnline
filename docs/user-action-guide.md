@@ -90,6 +90,7 @@
 42. `verify:asset-lod` 실행 시 complex asset은 room mode에서 더 빨리 proxy fallback 되고, simple asset은 desk precision에서 full detail을 유지하는지 확인하기
 43. `verify:asset-instancing` 실행 시 read-only top/walk와 builder preview, editor `desk precision`에서 repeated `single_mesh` 자산이 cluster로 묶이고, editable room top / selected / dynamic light / manual LOD 자산은 개별 경로로 남는지 확인하기
 44. desk precision / builder preview / richer showcase 경로는 Neutral tone mapping으로, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping으로 읽히며 하이라이트 clipping과 white balance가 mode 목적에 맞게 유지되는지 확인하기
+45. editor walk와 richer showcase 경로에서만 SSR이 보수적으로 올라오고, shared viewer / top-view / builder preview에서는 SSR이 꺼져 있는지 확인하기
 
 실행 명령:
 
@@ -120,6 +121,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - 상단뷰 하단 pill toolbar에서 `룸 배치` / `데스크 정밀` 토글이 보이고, 워크뷰에서는 사라지는지 확인
 - room mode와 desk precision mode 전환 시 체감 화질과 idle 비용이 달라지고, 워크뷰 품질에는 영향을 주지 않는지 확인
 - desk precision / builder preview / showcase 계열은 Neutral tone mapping, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping을 사용해도 surface/material 읽기 흐름이 어색해지지 않는지 확인
+- editor walk와 richer showcase 경로에서만 selective SSR이 반사 하이라이트를 보강하고, shared viewer / top-view / builder preview에는 비용이 전파되지 않는지 확인
 - room mode, desk precision mode, builder preview는 조작을 멈췄을 때 continuous redraw 없이 idle이 안정화되는지 확인
 - editor `desk precision` top-view에서는 반복 자산이 instanced cluster로 합쳐져도 단일 클릭 선택 후 gizmo 편집이 계속 가능하고, room mode direct drag는 계속 개별 오브젝트로 동작하는지 확인
 - desk precision mode에서 선택 자산의 inspector와 measurement overlay가 동일한 X/Z/Y(mm), Yaw(deg), 실측 W/D/H(mm) 기준으로 동기화되는지 확인
@@ -664,3 +666,13 @@ Updated:
 
 Removed/Deprecated:
 - 전역 PATH에 우연히 있는 gltfpack을 바로 쓰는 방식만 가정하던 QA 절차.
+
+## 2026-04-20 변경 동기화 (Showcase Viewer Presentation QA)
+Added:
+- gallery/community 카드 클릭 시 `/shared/[token]?source=showcase`로 이동하고, 해당 진입에서만 richer showcase presentation이 적용되는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- shared viewer QA 기준을 단일 `viewer-shared` 확인에서 “plain shared link는 lean profile 유지, showcase card 진입은 `viewer-showcase` 프로파일 사용”까지 확장했다.
+
+Removed/Deprecated:
+- gallery/community 유입과 일반 shared 링크를 같은 viewer profile로만 확인하던 QA 방식.

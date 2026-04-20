@@ -70,6 +70,7 @@
 - builder preview는 walk/viewer보다 가벼운 품질 프로필을 사용하고, walk/viewer만 shadow + post FX를 보수적으로 유지한다.
 - builder preview와 `viewer-shared`는 fill directional light를 기본으로 올리지 않고, constrained profile에서는 directional shadow와 bloom을 먼저 제거한다.
 - `viewer-shared`는 subtle vignette/noise까지만 허용하고, bloom은 `desk precision` 또는 richer walk/showcase preset에서만 선택적으로 사용한다.
+- `editor walk`와 `viewer-showcase`는 non-constrained profile에서만 보수적 SSR을 사용할 수 있고, `viewer-shared`, top-view, builder preview는 SSR을 올리지 않는다.
 - 가구 drag는 local preview 후 pointer-up 시점에 store commit을 우선 적용해 전역 scene 재직렬화를 매 pointer move마다 유발하지 않는다.
 - loaded GLB 자산의 hover/select raycast는 `three-mesh-bvh` bounds tree를 우선 사용해 작은 desk asset 다수 배치 시 raycast 비용을 낮춘다.
 - loaded GLB 자산의 large non-interleaved geometry는 BVH 생성 자체를 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync 경로를 유지한다.
@@ -427,6 +428,16 @@ Updated:
 Removed/Deprecated:
 - `SceneViewport`의 고정 exposure 기본값이 모드별 tone mapping/exposure ladder를 덮어쓰던 상태.
 
+## 2026-04-20 변경 동기화 (SSR Feasibility Phase 1)
+Added:
+- `editor walk`와 `viewer-showcase` 슬롯에만 보수적 SSR(intensity/maxRoughness/thickness 제한, temporal resolve on)을 연결하는 기준을 추가했다.
+
+Updated:
+- 실사 강화 2차 범위를 “tone mapping split only”에서 `tone mapping split + selective SSR feasibility`까지 확장한다.
+
+Removed/Deprecated:
+- SSR feasibility가 문서 계획에만 있고 실제 render ladder에는 전혀 연결되지 않은 상태.
+
 ## 2026-04-18 변경 동기화 (Opening Asset + Top-Entry Optimization)
 Added:
 - builder/editor opening render에 Blender 기반 경량 GLB(`single/double/french door`, `single/wide window`) 자산 사용 기준을 추가.
@@ -464,3 +475,13 @@ Updated:
 
 Removed/Deprecated:
 - Blender source만 추가하고 runtime/export/metadata/verify는 수동으로 맞춘다는 운영 가정.
+
+## 2026-04-20 변경 동기화 (Showcase Viewer Presentation Phase 1)
+Added:
+- gallery/community 카드 진입은 `/shared/[token]?source=showcase`로 통일하고, 해당 경로에서만 `viewer-showcase` 품질 ladder를 실제 사용하도록 기준을 추가했다.
+
+Updated:
+- SSR / Neutral tone mapping / richer post FX가 적용되는 `viewer-showcase` 슬롯을 “잠재 프로파일”이 아니라 “showcase 진입 전용 shared viewer presentation”으로 구체화했다.
+
+Removed/Deprecated:
+- gallery/community 카드와 일반 shared 링크가 항상 같은 lean viewer profile만 사용해야 한다는 가정.

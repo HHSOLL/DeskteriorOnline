@@ -1,6 +1,6 @@
 "use client";
 
-import { Bloom, EffectComposer, Noise, Vignette, SSAO } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, Noise, Vignette, SSAO, SSR } from "@react-three/postprocessing";
 import { useThree } from "@react-three/fiber";
 import { Suspense, useMemo } from "react";
 import type { SceneRenderQuality } from "../../../lib/scene/render-quality";
@@ -8,7 +8,11 @@ import type { SceneRenderQuality } from "../../../lib/scene/render-quality";
 export default function PostEffects({ quality }: { quality: SceneRenderQuality }) {
   const { size, gl, scene, camera } = useThree();
   const hasVisibleEffects =
-    quality.enableSsao || quality.enableBloom || quality.vignetteDarkness > 0 || quality.noiseOpacity > 0;
+    quality.enableSsao ||
+    quality.enableSSR ||
+    quality.enableBloom ||
+    quality.vignetteDarkness > 0 ||
+    quality.noiseOpacity > 0;
 
   const isReady = useMemo(() => {
     return (
@@ -47,6 +51,29 @@ export default function PostEffects({ quality }: { quality: SceneRenderQuality }
             worldProximityFalloff={0.2}
             samples={10}
             rings={3}
+          />
+        ) : null}
+        {quality.enableSSR ? (
+          <SSR
+            temporalResolve
+            temporalResolveMix={0.72}
+            temporalResolveCorrectionMix={0.42}
+            intensity={quality.ssrIntensity}
+            maxRoughness={quality.ssrMaxRoughness}
+            thickness={quality.ssrThickness}
+            blurMix={0.36}
+            blurSharpness={8}
+            blurKernelSize={1}
+            rayStep={0.32}
+            maxSamples={12}
+            ENABLE_BLUR
+            ENABLE_JITTERING={false}
+            MAX_STEPS={20}
+            NUM_BINARY_SEARCH_STEPS={5}
+            STRETCH_MISSED_RAYS={false}
+            USE_MRT
+            USE_NORMALMAP
+            USE_ROUGHNESSMAP
           />
         ) : null}
         {quality.enableBloom ? (

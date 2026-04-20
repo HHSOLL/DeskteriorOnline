@@ -1,5 +1,8 @@
 import { getShowcaseSnapshotProfile } from "../src/lib/api/showcase";
-import { buildPublishedSnapshotCardModel } from "../src/lib/showcase/published-snapshot-card";
+import {
+  buildPublishedSnapshotCardHref,
+  buildPublishedSnapshotCardModel
+} from "../src/lib/showcase/published-snapshot-card";
 import { buildSharePreviewMeta } from "../src/lib/share/preview";
 import { buildPublicScenePayload } from "../src/lib/server/public-scenes";
 import {
@@ -206,6 +209,7 @@ try {
     previewMeta: showcaseItem.previewMeta,
     publishedAt: showcaseItem.published_at
   });
+  const cardHref = buildPublishedSnapshotCardHref(showcaseItem.token);
   const profile = getShowcaseSnapshotProfile(showcaseItem);
   const thumbnailSource = resolveShowcaseThumbnailSource(
     {
@@ -239,6 +243,7 @@ try {
   assert(cardModel.secondaryLabel === "제품 2개", `card secondary label mismatch: ${cardModel.secondaryLabel}`);
   assert(cardModel.primaryCollection === "Worksurface", `card collection mismatch: ${cardModel.primaryCollection}`);
   assert(cardModel.versionBadgeLabel === "장면 v7", `card version badge mismatch: ${cardModel.versionBadgeLabel}`);
+  assert(cardHref === "/shared/sharetoken123?source=showcase", `card href mismatch: ${cardHref}`);
   assert(profile.room === "workspace", `showcase room profile mismatch: ${profile.room}`);
   assert(profile.tone === "sand", `showcase tone profile mismatch: ${profile.tone}`);
   assert(profile.density === "minimal", `showcase density profile mismatch: ${profile.density}`);
@@ -248,6 +253,7 @@ try {
     JSON.stringify(
       {
         token: showcaseItem.token,
+        href: cardHref,
         projectName: cardModel.projectName,
         versionBadgeLabel: cardModel.versionBadgeLabel,
         thumbnailSource,

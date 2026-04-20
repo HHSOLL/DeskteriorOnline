@@ -19,6 +19,10 @@ export type SceneRenderQuality = {
   vignetteDarkness: number;
   noiseOpacity: number;
   enableSsao: boolean;
+  enableSSR: boolean;
+  ssrIntensity: number;
+  ssrMaxRoughness: number;
+  ssrThickness: number;
   composerMultisampling: number;
   enableContactShadows: boolean;
   contactShadowResolution: number;
@@ -76,6 +80,10 @@ export function resolveSceneRenderQuality({
         vignetteDarkness: 0,
         noiseOpacity: 0,
         enableSsao: false,
+        enableSSR: false,
+        ssrIntensity: 0,
+        ssrMaxRoughness: 0,
+        ssrThickness: 0,
         composerMultisampling: 0,
         enableContactShadows: false,
         contactShadowResolution: 0,
@@ -100,6 +108,10 @@ export function resolveSceneRenderQuality({
         vignetteDarkness: constrainedDevice ? 0 : 0.18,
         noiseOpacity: constrainedDevice ? 0 : 0.0025,
         enableSsao: false,
+        enableSSR: !constrainedDevice,
+        ssrIntensity: constrainedDevice ? 0 : 0.24,
+        ssrMaxRoughness: constrainedDevice ? 0 : 0.62,
+        ssrThickness: constrainedDevice ? 0 : 6,
         composerMultisampling: 0,
         enableContactShadows: false,
         contactShadowResolution: 0,
@@ -124,6 +136,10 @@ export function resolveSceneRenderQuality({
         vignetteDarkness: constrainedDevice ? 0 : 0.2,
         noiseOpacity: constrainedDevice ? 0 : 0.003,
         enableSsao: false,
+        enableSSR: false,
+        ssrIntensity: 0,
+        ssrMaxRoughness: 0,
+        ssrThickness: 0,
         composerMultisampling: 0,
         enableContactShadows: false,
         contactShadowResolution: 0,
@@ -147,6 +163,10 @@ export function resolveSceneRenderQuality({
       vignetteDarkness: 0,
       noiseOpacity: 0,
       enableSsao: false,
+      enableSSR: false,
+      ssrIntensity: 0,
+      ssrMaxRoughness: 0,
+      ssrThickness: 0,
       composerMultisampling: 0,
       enableContactShadows: false,
       contactShadowResolution: 0,
@@ -171,6 +191,10 @@ export function resolveSceneRenderQuality({
       vignetteDarkness: constrainedDevice ? 0 : 0.18,
       noiseOpacity: constrainedDevice ? 0 : 0.003,
       enableSsao: false,
+      enableSSR: false,
+      ssrIntensity: 0,
+      ssrMaxRoughness: 0,
+      ssrThickness: 0,
       composerMultisampling: 0,
       enableContactShadows: true,
       contactShadowResolution: constrainedDevice ? 192 : 320,
@@ -195,6 +219,10 @@ export function resolveSceneRenderQuality({
       vignetteDarkness: constrainedDevice ? 0 : 0.18,
       noiseOpacity: constrainedDevice ? 0 : 0.0025,
       enableSsao: false,
+      enableSSR: false,
+      ssrIntensity: 0,
+      ssrMaxRoughness: 0,
+      ssrThickness: 0,
       composerMultisampling: 0,
       enableContactShadows: constrainedDevice ? false : true,
       contactShadowResolution: constrainedDevice ? 0 : 224,
@@ -219,6 +247,10 @@ export function resolveSceneRenderQuality({
       vignetteDarkness: constrainedDevice ? 0.16 : 0.22,
       noiseOpacity: constrainedDevice ? 0.003 : 0.0045,
       enableSsao: !constrainedDevice,
+      enableSSR: !constrainedDevice,
+      ssrIntensity: constrainedDevice ? 0 : 0.32,
+      ssrMaxRoughness: constrainedDevice ? 0 : 0.68,
+      ssrThickness: constrainedDevice ? 0 : 7.5,
       composerMultisampling: constrainedDevice ? 0 : 2,
       enableContactShadows: true,
       contactShadowResolution: constrainedDevice ? 256 : 416,
@@ -242,6 +274,10 @@ export function resolveSceneRenderQuality({
     vignetteDarkness: constrainedDevice ? 0.22 : 0.28,
     noiseOpacity: constrainedDevice ? 0.004 : 0.006,
     enableSsao: !constrainedDevice,
+    enableSSR: !constrainedDevice,
+    ssrIntensity: constrainedDevice ? 0 : 0.26,
+    ssrMaxRoughness: constrainedDevice ? 0 : 0.6,
+    ssrThickness: constrainedDevice ? 0 : 6.5,
     composerMultisampling: constrainedDevice ? 0 : 2,
     enableContactShadows: true,
     contactShadowResolution: constrainedDevice ? 256 : 448,

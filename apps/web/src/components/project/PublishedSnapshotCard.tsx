@@ -2,7 +2,10 @@ import Link from "next/link";
 import { Layers3 } from "lucide-react";
 import { getCatalogPreviewClasses } from "../../lib/builder/catalog";
 import type { SharePreviewMeta } from "../../lib/share/preview";
-import { buildPublishedSnapshotCardModel } from "../../lib/showcase/published-snapshot-card";
+import {
+  buildPublishedSnapshotCardHref,
+  buildPublishedSnapshotCardModel
+} from "../../lib/showcase/published-snapshot-card";
 
 type PublishedSnapshotCardProps = {
   token: string;
@@ -18,11 +21,12 @@ export function PublishedSnapshotCard({
   publishedAt
 }: PublishedSnapshotCardProps) {
   const cardModel = buildPublishedSnapshotCardModel({ previewMeta, publishedAt });
+  const href = buildPublishedSnapshotCardHref(token);
   const previewTheme = getCatalogPreviewClasses(cardModel.primaryTone);
 
   return (
     <Link
-      href={`/shared/${token}`}
+      href={href}
       className="group flex h-full flex-col overflow-hidden rounded-[16px] border border-black/10 bg-white shadow-[0_10px_26px_rgba(38,24,14,0.08)] transition hover:-translate-y-0.5 hover:border-black/20 hover:shadow-[0_18px_42px_rgba(38,24,14,0.12)]"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-[#ebe5db]">

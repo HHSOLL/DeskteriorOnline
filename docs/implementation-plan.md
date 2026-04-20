@@ -416,6 +416,17 @@ Updated:
 Removed/Deprecated:
 - mode-aware render ladder가 light/post FX만 나누고 tone mapping/exposure는 SceneViewport 고정값에 묶여 있던 상태.
 
+## 2026-04-20 변경 동기화 (SSR Feasibility Phase 1)
+Added:
+- `editor walk`와 `viewer-showcase` non-constrained profile에만 보수적 SSR을 연결하는 첫 운영 단계를 추가했다.
+
+Updated:
+- 원문 보고서 기준 남은 `실사 강화 2차`를 “PBR Neutral + selective SSR feasibility phase 1 완료, showcase polish만 남음” 상태로 갱신한다.
+- 다음 후보를 `room mode direct-drag와 공존하는 editor instancing feasibility`, `P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선`, `showcase polish` 순서로 재정렬한다.
+
+Removed/Deprecated:
+- SSR feasibility가 문서 계획만 있고 실제 품질 ladder에는 반영되지 않은 상태.
+
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:
 - desk precision mode에서 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector와 overlay에 추가했다.
@@ -742,3 +753,14 @@ Updated:
 
 Removed/Deprecated:
 - 톤 일관성 없이 scene별 초기 조명 체감이 달라지는 기존 기본값 전제.
+
+## 2026-04-20 변경 동기화 (Showcase Viewer Presentation Phase 1)
+Added:
+- gallery/community 카드가 shared viewer를 `showcase presentation`으로 열도록 URL 계약(`source=showcase`)을 추가했다.
+
+Updated:
+- `showcase polish` 범위를 “viewer-showcase 렌더 ladder 정의”에서 “gallery/community 진입 경로까지 실제 연결”로 확장하고 phase 1 완료 상태로 갱신한다.
+- 다음 후보를 `room mode direct-drag와 공존하는 editor instancing feasibility`, `P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선`, `showcase polish phase 2(카메라/lighting fine-tune)` 순서로 재정렬한다.
+
+Removed/Deprecated:
+- `viewer-showcase`가 아직 실제 제품 플로우에는 연결되지 않았다는 이전 상태 설명.
