@@ -321,7 +321,7 @@ Removed/Deprecated:
 
 현재 착수:
 - 완료: Phase 1 / Slice 1, Phase 1 / Slice 2, Phase 1 / Slice 3, Phase 2 / Slice 1, Phase 2 / Slice 2, Phase 2 / Slice 3, Phase 3 / Slice 1, Phase 3 / Slice 2, Phase 3 / Slice 3, Phase 3 / Slice 4, Phase 4 / Slice 1, Phase 4 / Slice 2, Phase 4 / Slice 3, Phase 5 / Slice 1, Phase 5 / Slice 2, Phase 5 / Slice 3
-- 다음 후보: P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선, 실사 강화 2차
+- 다음 후보: editor-side instancing 확대, 실사 강화 2차(SSR feasibility), P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
 
 ## 2026-04-20 변경 동기화 (BVH Worker Offload)
 Added:
@@ -391,6 +391,18 @@ Updated:
 
 Removed/Deprecated:
 - native gltfpack 환경 준비가 개발자별 전역 설치나 PATH 수동 설정에만 의존하던 상태.
+
+## 2026-04-20 변경 동기화 (PBR Neutral Tone Mapping Phase 1)
+Added:
+- `SceneViewport` renderer 설정이 mode-aware tone mapping / exposure 값을 반영하도록 정리했다.
+- `desk precision`, `builder preview`, `viewer-showcase`에 Neutral tone mapping을 연결하고, `room mode`, `viewer-shared`, 기본 walk-viewer는 ACES를 유지하는 품질 계단을 추가했다.
+
+Updated:
+- 원문 보고서 기준 남은 `실사 강화 2차`를 “PBR Neutral tone mapping phase 1 완료, SSR feasibility / showcase polish만 남음” 상태로 갱신한다.
+- 다음 후보를 `editor-side instancing 확대`, `실사 강화 2차(SSR feasibility)`, `P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선` 순서로 재정렬한다.
+
+Removed/Deprecated:
+- mode-aware render ladder가 light/post FX만 나누고 tone mapping/exposure는 SceneViewport 고정값에 묶여 있던 상태.
 
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:

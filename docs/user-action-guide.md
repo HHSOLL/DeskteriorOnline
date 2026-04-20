@@ -89,6 +89,7 @@
 41. `verify:scene-document`, `verify:public-scene` 실행 시 위 product contract metadata가 save/load/share roundtrip에서 유지되는지 확인하기
 42. `verify:asset-lod` 실행 시 complex asset은 room mode에서 더 빨리 proxy fallback 되고, simple asset은 desk precision에서 full detail을 유지하는지 확인하기
 43. `verify:asset-instancing` 실행 시 read-only top/walk와 builder preview에서만 repeated `single_mesh` 자산이 cluster로 묶이고, editable room top / selected / dynamic light / manual LOD 자산은 개별 경로로 남는지 확인하기
+44. desk precision / builder preview / richer showcase 경로는 Neutral tone mapping으로, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping으로 읽히며 하이라이트 clipping과 white balance가 mode 목적에 맞게 유지되는지 확인하기
 
 실행 명령:
 
@@ -118,6 +119,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - 상단뷰에서는 `목록/속성/항목뷰/이동/회전` 보조 UI가 사라지고 `추가/설정` drawer 패턴만 남는지 확인
 - 상단뷰 하단 pill toolbar에서 `룸 배치` / `데스크 정밀` 토글이 보이고, 워크뷰에서는 사라지는지 확인
 - room mode와 desk precision mode 전환 시 체감 화질과 idle 비용이 달라지고, 워크뷰 품질에는 영향을 주지 않는지 확인
+- desk precision / builder preview / showcase 계열은 Neutral tone mapping, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping을 사용해도 surface/material 읽기 흐름이 어색해지지 않는지 확인
 - room mode, desk precision mode, builder preview는 조작을 멈췄을 때 continuous redraw 없이 idle이 안정화되는지 확인
 - desk precision mode에서 선택 자산의 inspector와 measurement overlay가 동일한 X/Z/Y(mm), Yaw(deg), 실측 W/D/H(mm) 기준으로 동기화되는지 확인
 - desk precision mode에서 surface anchor 제품의 inspector와 overlay가 동일한 support asset / support surface / surface size / margin / top 높이 기준으로 동기화되는지 확인

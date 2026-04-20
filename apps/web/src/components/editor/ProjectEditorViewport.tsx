@@ -18,7 +18,6 @@ export function ProjectEditorViewport({
       className="rounded-none border-0 shadow-none"
       gl={gl}
       camera={{ fov: 40, position: [0, 10, 20] }}
-      toneMappingExposure={1.14}
       chromeTone="light"
       interactionMode="editor"
       modeBadge={modeBadge}

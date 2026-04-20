@@ -261,7 +261,6 @@ export function BuilderPreviewPane({
       <SceneViewport
         className="h-full min-h-[320px] !rounded-none !border-0 !shadow-none lg:h-full lg:min-h-0"
         camera={{ fov: 46, position: [8, 5, 8] }}
-        toneMappingExposure={1.02}
         chromeTone="light"
         showHud={false}
         interactionMode="preview"

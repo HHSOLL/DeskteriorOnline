@@ -4,7 +4,8 @@
 
 ## 렌더링 기본 설정
 `apps/web/src/components/editor/SceneViewport.tsx`
-- ToneMapping: `ACESFilmicToneMapping`
+- ToneMapping: `room mode` / `viewer-shared` / 기본 walk-viewer는 `ACESFilmicToneMapping`, `desk precision` / `builder-preview` / `viewer-showcase`는 `NeutralToneMapping`
+- `toneMappingExposure`는 `resolveSceneRenderQuality`가 모드/디바이스별로 관리하고, `SceneViewport` prop override는 예외적인 수동 보정에만 사용한다.
 - `physicallyCorrectLights = true`
 - `outputColorSpace = SRGB`
 - Shadow: `PCFSoftShadowMap`
@@ -403,6 +404,17 @@ Updated:
 
 Removed/Deprecated:
 - native gltfpack 적용 시 named node/material/extras 보존을 별도 기준 없이 운에 맡기던 상태.
+
+## 2026-04-20 변경 동기화 (PBR Neutral Tone Mapping Phase 1)
+Added:
+- `SceneViewport` renderer 설정이 mode-aware tone mapping / exposure 값을 반영하도록 갱신했다.
+- `desk precision`, `builder preview`, `viewer-showcase`는 Neutral tone mapping, `room mode`, `viewer-shared`, 기본 walk viewer는 ACES tone mapping을 사용하도록 기준을 추가했다.
+
+Updated:
+- 렌더링 기본 설정을 단일 ACES 고정 설명에서 `mode-aware ACES/Neutral split + exposure ladder` 기준으로 갱신한다.
+
+Removed/Deprecated:
+- `SceneViewport`의 고정 exposure 기본값이 모드별 tone mapping/exposure ladder를 덮어쓰던 상태.
 
 ## 2026-04-18 변경 동기화 (Opening Asset + Top-Entry Optimization)
 Added:

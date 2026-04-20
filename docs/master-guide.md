@@ -26,6 +26,7 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - curated deskterior 제품 메타데이터는 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 manifest와 sceneDocument roundtrip에서 같이 유지해야 한다.
 - `lodProfile`는 문서용 필드에만 머물지 않고 room mode / desk precision / walk / builder preview 런타임 LOD 전환 거리 정책으로 실제 소비되어야 한다.
 - 반복된 `single_mesh` deskterior 자산은 read-only top/walk와 builder preview에서 instanced cluster로 묶을 수 있어야 하며, 선택 중이거나 편집 가능한 자산은 개별 오브젝트 경로를 유지해야 한다.
+- 렌더 품질 사다리는 mode-aware tone mapping을 포함해야 하며, `room mode` / `viewer-shared` / 기본 walk-viewer는 ACES, `desk precision` / `builder preview` / `viewer-showcase`는 Neutral tone mapping을 사용한다.
 - `sceneDocument` 저장 계약은 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, meter float 좌표는 그 스냅샷에서 파생된 호환 필드로만 유지한다.
 - `desk precision mode`에서는 선택한 제품의 위치/회전을 `mm/deg` 기준 numeric inspector와 measurement overlay로 노출한다.
 - `desk precision mode`에서는 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 surface lock 상태 카드로 노출한다.
@@ -466,6 +467,16 @@ Updated:
 
 Removed/Deprecated:
 - native gltfpack 적용이 수동 일회성 로컬 명령에만 의존하고 저장소 스크립트/문서 기준이 없던 상태.
+
+## 2026-04-20 변경 동기화 (PBR Neutral Tone Mapping Phase 1)
+Added:
+- mode-aware render ladder에 tone mapping / exposure split을 추가해 `desk precision`, `builder preview`, `viewer-showcase`가 Neutral tone mapping을 사용하도록 기준을 고정한다.
+
+Updated:
+- shared viewer / room mode / 기본 walk viewer는 ACES를 유지하고, inspection/showcase 계열만 Neutral로 분리하는 방향으로 실사 강화 2차의 첫 단계를 반영한다.
+
+Removed/Deprecated:
+- renderer tone mapping이 SceneViewport 기본값 하나로만 고정되어 mode-aware 품질 ladder를 제대로 반영하지 못하던 상태.
 
 ## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement)
 Added:

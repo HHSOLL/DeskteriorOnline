@@ -9,6 +9,8 @@ export type SceneInteractionMode =
 export type SceneRenderQuality = {
   frameLoop: "always" | "demand";
   dpr: [number, number];
+  toneMapping: "aces" | "neutral";
+  toneMappingExposure: number;
   enableShadows: boolean;
   shadowMapSize: number;
   enablePostEffects: boolean;
@@ -64,6 +66,8 @@ export function resolveSceneRenderQuality({
       return {
         frameLoop: "always",
         dpr: constrainedDevice ? clampRange(0.66, 0.84) : clampRange(0.72, 0.92),
+        toneMapping: "aces",
+        toneMappingExposure: 1.08,
         enableShadows: false,
         shadowMapSize: 512,
         enablePostEffects: false,
@@ -86,6 +90,8 @@ export function resolveSceneRenderQuality({
       return {
         frameLoop: "always",
         dpr: constrainedDevice ? clampRange(0.8, 1) : clampRange(0.92, 1.14),
+        toneMapping: "neutral",
+        toneMappingExposure: constrainedDevice ? 1 : 1.04,
         enableShadows: false,
         shadowMapSize: 512,
         enablePostEffects: !constrainedDevice,
@@ -108,6 +114,8 @@ export function resolveSceneRenderQuality({
       return {
         frameLoop: "demand",
         dpr: constrainedDevice ? clampRange(0.78, 1) : clampRange(0.9, 1.12),
+        toneMapping: "neutral",
+        toneMappingExposure: constrainedDevice ? 1 : 1.03,
         enableShadows: false,
         shadowMapSize: 512,
         enablePostEffects: !constrainedDevice,
@@ -129,6 +137,8 @@ export function resolveSceneRenderQuality({
     return {
       frameLoop: "demand",
       dpr: constrainedDevice ? clampRange(0.68, 0.88) : clampRange(0.74, 0.96),
+      toneMapping: "aces",
+      toneMappingExposure: 1.08,
       enableShadows: false,
       shadowMapSize: 512,
       enablePostEffects: false,
@@ -151,6 +161,8 @@ export function resolveSceneRenderQuality({
     return {
       frameLoop: "demand",
       dpr: constrainedDevice ? clampRange(0.8, 1) : clampRange(0.9, 1.15),
+      toneMapping: "neutral",
+      toneMappingExposure: constrainedDevice ? 0.98 : 1.01,
       enableShadows: !constrainedDevice,
       shadowMapSize: constrainedDevice ? 512 : 768,
       enablePostEffects: !constrainedDevice,
@@ -173,6 +185,8 @@ export function resolveSceneRenderQuality({
     return {
       frameLoop: "always",
       dpr: constrainedDevice ? clampRange(0.82, 1) : clampRange(0.9, 1.08),
+      toneMapping: "aces",
+      toneMappingExposure: 1.1,
       enableShadows: !constrainedDevice,
       shadowMapSize: constrainedDevice ? 512 : 640,
       enablePostEffects: !constrainedDevice,
@@ -191,9 +205,35 @@ export function resolveSceneRenderQuality({
     };
   }
 
+  if (isViewerShowcase) {
+    return {
+      frameLoop: "always",
+      dpr: constrainedDevice ? clampRange(0.9, 1.08) : clampRange(1, 1.24),
+      toneMapping: "neutral",
+      toneMappingExposure: constrainedDevice ? 1.02 : 1.05,
+      enableShadows: true,
+      shadowMapSize: constrainedDevice ? 896 : 1280,
+      enablePostEffects: true,
+      enableBloom: true,
+      bloomIntensity: constrainedDevice ? 0.18 : 0.28,
+      vignetteDarkness: constrainedDevice ? 0.16 : 0.22,
+      noiseOpacity: constrainedDevice ? 0.003 : 0.0045,
+      enableSsao: !constrainedDevice,
+      composerMultisampling: constrainedDevice ? 0 : 2,
+      enableContactShadows: true,
+      contactShadowResolution: constrainedDevice ? 256 : 416,
+      contactShadowBlur: constrainedDevice ? 1.55 : 1.8,
+      contactShadowOpacity: constrainedDevice ? 0.24 : 0.32,
+      allowDynamicLights: true,
+      enableFillLight: true
+    };
+  }
+
   return {
     frameLoop: "always",
     dpr: constrainedDevice ? clampRange(0.88, 1.12) : clampRange(0.95, 1.3),
+    toneMapping: "aces",
+    toneMappingExposure: constrainedDevice ? 1.1 : 1.14,
     enableShadows: true,
     shadowMapSize: constrainedDevice ? 768 : 1280,
     enablePostEffects: true,

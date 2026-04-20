@@ -1,9 +1,9 @@
 "use client";
 
 import "../../lib/polyfills/progress-event";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useThree } from "@react-three/fiber";
 import type { ReactNode, ComponentProps } from "react";
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import CameraRig from "../canvas/core/CameraRig";
 import ScenePerformanceTelemetry from "../canvas/debug/ScenePerformanceTelemetry";
@@ -41,6 +41,42 @@ type SceneViewportProps = {
   hudProfile?: "full" | "shared-viewer" | "none";
 };
 
+function SceneRendererSettings({
+  quality,
+  toneMappingExposure
+}: {
+  quality: ReturnType<typeof resolveSceneRenderQuality>;
+  toneMappingExposure?: number;
+}) {
+  const renderer = useThree((state) => state.gl);
+
+  useEffect(() => {
+    renderer.shadowMap.enabled = quality.enableShadows;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping =
+      quality.toneMapping === "neutral"
+        ? THREE.NeutralToneMapping
+        : THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = toneMappingExposure ?? quality.toneMappingExposure;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    if ("physicallyCorrectLights" in renderer) {
+      (
+        renderer as THREE.WebGLRenderer & {
+          physicallyCorrectLights?: boolean;
+        }
+      ).physicallyCorrectLights = true;
+    }
+  }, [
+    quality.enableShadows,
+    quality.toneMapping,
+    quality.toneMappingExposure,
+    renderer,
+    toneMappingExposure
+  ]);
+
+  return null;
+}
+
 export function SceneViewport({
   className = "",
   gl = {
@@ -53,7 +89,7 @@ export function SceneViewport({
   },
   camera,
   interactionMode,
-  toneMappingExposure = 1.12,
+  toneMappingExposure,
   modeBadge,
   bottomNotice,
   chromeTone = "dark",
@@ -123,18 +159,11 @@ export function SceneViewport({
         onCreated={({ gl: rendererContext }) => {
           const renderer = rendererContext as THREE.WebGLRenderer & { physicallyCorrectLights?: boolean };
           configureRuntimeAssetLoaders(renderer);
-          renderer.shadowMap.enabled = quality.enableShadows;
-          renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-          renderer.toneMapping = THREE.ACESFilmicToneMapping;
-          renderer.toneMappingExposure = toneMappingExposure;
-          renderer.outputColorSpace = THREE.SRGBColorSpace;
-          if ("physicallyCorrectLights" in renderer) {
-            renderer.physicallyCorrectLights = true;
-          }
         }}
       >
         <color attach="background" args={[isLightTone ? "#d0d0ce" : "#0a0a0b"]} />
         <Suspense fallback={null}>
+          <SceneRendererSettings quality={quality} toneMappingExposure={toneMappingExposure} />
           <ScenePerformanceTelemetry interactionMode={resolvedInteractionMode} />
           {viewMode === "walk" ? <PhysicsWorld>{sceneContent}</PhysicsWorld> : sceneContent}
           <PostEffects quality={quality} />
