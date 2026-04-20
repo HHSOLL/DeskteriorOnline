@@ -8,6 +8,9 @@ export type PrecisionSurfaceLockInfo = {
   marginMm: [number, number];
   localOffsetMm: [number, number];
   topMm: number;
+  assetHeightMm: number;
+  bottomOffsetMm: number;
+  topOffsetMm: number;
   footprintMm: [number, number];
   projectedFootprintMm: [number, number];
   relativeYawDeg: number;

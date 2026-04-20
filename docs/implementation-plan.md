@@ -307,7 +307,19 @@ Removed/Deprecated:
 
 현재 착수:
 - 완료: Phase 1 / Slice 1, Phase 1 / Slice 2, Phase 1 / Slice 3, Phase 2 / Slice 1, Phase 2 / Slice 2, Phase 2 / Slice 3, Phase 3 / Slice 1, Phase 3 / Slice 2, Phase 3 / Slice 3, Phase 3 / Slice 4, Phase 4 / Slice 1, Phase 4 / Slice 2, Phase 4 / Slice 3, Phase 5 / Slice 1, Phase 5 / Slice 2, Phase 5 / Slice 3
-- 다음 후보: KTX2 실제 encoder(`toktx`) 연결, side/front helper view, worker offload, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
+- 다음 후보: KTX2 실제 encoder(`toktx`) 연결, worker offload, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
+
+## 2026-04-20 변경 동기화 (Desk Precision Helper View)
+Added:
+- desk precision mode에서 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector와 overlay에 추가했다.
+- surface lock 계산에 `asset height`, `bottom gap`, `top reach`를 포함해 단면 보조 시각화에 필요한 vertical metric을 추가했다.
+
+Updated:
+- 원문 보고서 기준 남은 항목에서 `side/front helper view`를 완료 상태로 갱신한다.
+- Phase 3의 정밀 측정 범위를 `numeric inspector + overlay + micro-view + helper view + verify chain`까지 포함한 확장 완료 상태로 정리한다.
+
+Removed/Deprecated:
+- side/front helper view를 아직 미구현인 다음 후보로 유지하던 서술.
 
 ## 2026-04-19 변경 동기화 (Phase 3 Slice 4 Sub-slice 1)
 Added:

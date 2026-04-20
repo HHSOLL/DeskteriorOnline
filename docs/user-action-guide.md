@@ -74,15 +74,16 @@
 27. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay에 같은 support asset / support surface / surface size / margin / top 높이가 표시되고, 비-surface anchor에서는 lock off로 보이는지 확인하기
 28. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay의 micro-view marker가 같은 support-local 위치를 가리키고, offset 수치와도 일치하는지 확인하기
 29. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay가 같은 footprint / projected footprint / edge clearance / relative yaw를 보여주고, usable area를 넘기면 overflow 상태로 바뀌는지 확인하기
-30. desk precision mode에서 small asset 다수 장면에서도 hover/select 시작 지연이 `plan2space:interaction-latency` 기준으로 급격히 튀지 않는지 확인하기
-31. builder lighting step에서 `직접등` 선택 시 beam glow가, `간접등` 선택 시 천장 확산광이 preview에 반영되는지 확인하기
-32. room mode에서는 후처리/동적 조명이 꺼지고, desk precision mode에서는 정밀 확인에 필요한 저비용 bloom/조명만 선택적으로 올라오는지 확인하기
-33. shared viewer는 editor보다 더 가벼운 read-only preset으로 열리고, hotspot drawer 동작에는 영향이 없는지 확인하기
-34. shared viewer 첫 진입 시 어떤 제품도 자동 선택되지 않고, hotspot 또는 목록 선택 이후에만 상세 카드가 열리는지 확인하기
-35. gallery/community에서 room/tone/density 필터를 건 뒤 header count와 다음 페이지 total이 현재 필터 결과 기준으로 유지되는지 확인하기
-36. community에서 최신 게시, featured 장면, 주요 컬렉션 summary가 현재 페이지 카드 조각이 아니라 active filter scope 전체 기준으로 유지되는지 확인하기
-37. shared viewer와 builder preview가 constrained 환경에서 fill light + bloom 없이도 읽기 흐름을 유지하고, walk/showcase에서만 richer shadow/bloom이 유지되는지 확인하기
-38. `NEXT_PUBLIC_ENABLE_REALTIME_LABS=1`로 로컬 실행 시 `/labs/realtime`만 열리고, primary navigation에는 realtime/presence 진입점이 생기지 않는지 확인하기
+30. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay의 `front(X/H)` / `side(Z/H)` helper view가 같은 projected span, gap, reach를 보여주는지 확인하기
+31. desk precision mode에서 small asset 다수 장면에서도 hover/select 시작 지연이 `plan2space:interaction-latency` 기준으로 급격히 튀지 않는지 확인하기
+32. builder lighting step에서 `직접등` 선택 시 beam glow가, `간접등` 선택 시 천장 확산광이 preview에 반영되는지 확인하기
+33. room mode에서는 후처리/동적 조명이 꺼지고, desk precision mode에서는 정밀 확인에 필요한 저비용 bloom/조명만 선택적으로 올라오는지 확인하기
+34. shared viewer는 editor보다 더 가벼운 read-only preset으로 열리고, hotspot drawer 동작에는 영향이 없는지 확인하기
+35. shared viewer 첫 진입 시 어떤 제품도 자동 선택되지 않고, hotspot 또는 목록 선택 이후에만 상세 카드가 열리는지 확인하기
+36. gallery/community에서 room/tone/density 필터를 건 뒤 header count와 다음 페이지 total이 현재 필터 결과 기준으로 유지되는지 확인하기
+37. community에서 최신 게시, featured 장면, 주요 컬렉션 summary가 현재 페이지 카드 조각이 아니라 active filter scope 전체 기준으로 유지되는지 확인하기
+38. shared viewer와 builder preview가 constrained 환경에서 fill light + bloom 없이도 읽기 흐름을 유지하고, walk/showcase에서만 richer shadow/bloom이 유지되는지 확인하기
+39. `NEXT_PUBLIC_ENABLE_REALTIME_LABS=1`로 로컬 실행 시 `/labs/realtime`만 열리고, primary navigation에는 realtime/presence 진입점이 생기지 않는지 확인하기
 
 실행 명령:
 
@@ -526,6 +527,16 @@ Updated:
 
 Removed/Deprecated:
 - support surface 배치 품질을 offset 숫자와 점 marker만으로 확인하던 QA 기준.
+
+## 2026-04-20 변경 동기화 (Desk Precision Helper View)
+Added:
+- desk precision mode에서 surface anchor 제품의 `front(X/H)` / `side(Z/H)` helper view가 inspector/overlay 양쪽에서 같은 projected span, gap, reach를 보여주는지 확인하는 QA 항목을 추가.
+
+Updated:
+- 정밀 배치 QA 기준을 `top-down micro-view + footprint 확인`에서 `side/front section helper view 확인`까지 확장했다.
+
+Removed/Deprecated:
+- support surface 위 수직 관계를 top height 숫자만 확인하면 충분하다는 QA 가정.
 
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop QA)
 Added:

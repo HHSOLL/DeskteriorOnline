@@ -6,6 +6,7 @@ import {
   PrecisionSurfaceMicroView,
   type PrecisionSurfaceLockInfo
 } from "./PrecisionSurfaceMicroView";
+import { PrecisionSurfaceProjectionView } from "./PrecisionSurfaceProjectionView";
 
 type PrecisionMeasurementOverlayProps = {
   selectedAsset: SceneAsset | null;
@@ -94,6 +95,9 @@ export function PrecisionMeasurementOverlay({
           <div className="mt-3">
             <PrecisionSurfaceMicroView surfaceLockInfo={surfaceLockInfo} variant="compact" />
           </div>
+          <div className="mt-2">
+            <PrecisionSurfaceProjectionView surfaceLockInfo={surfaceLockInfo} variant="compact" />
+          </div>
           <div className={`mt-1 text-[10px] ${surfaceLockTone?.detail ?? ""}`}>
             {surfaceLockInfo.sizeMm[0]} x {surfaceLockInfo.sizeMm[1]} mm · margin{" "}
             {surfaceLockInfo.marginMm[0]} / {surfaceLockInfo.marginMm[1]} mm
@@ -109,6 +113,10 @@ export function PrecisionMeasurementOverlay({
           <div className={`mt-1 text-[10px] ${surfaceLockTone?.detail ?? ""}`}>
             offset {surfaceLockInfo.localOffsetMm[0]} / {surfaceLockInfo.localOffsetMm[1]} mm · yaw Δ{" "}
             {surfaceLockInfo.relativeYawDeg} deg · top {surfaceLockInfo.topMm} mm
+          </div>
+          <div className={`mt-1 text-[10px] ${surfaceLockTone?.detail ?? ""}`}>
+            height {surfaceLockInfo.assetHeightMm} mm · gap {surfaceLockInfo.bottomOffsetMm} mm · reach{" "}
+            {surfaceLockInfo.topOffsetMm} mm
           </div>
         </div>
       ) : usesSurfaceLock ? (

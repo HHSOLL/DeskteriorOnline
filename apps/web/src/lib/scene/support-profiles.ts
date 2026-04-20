@@ -65,6 +65,9 @@ export type ResolvedSupportSurfaceLock = {
   marginMm: [number, number];
   localOffsetMm: [number, number];
   topMm: number;
+  assetHeightMm: number;
+  bottomOffsetMm: number;
+  topOffsetMm: number;
   footprintMm: [number, number];
   projectedFootprintMm: [number, number];
   relativeYawDeg: number;
@@ -178,19 +181,26 @@ function normalizeDegrees(value: number) {
   return Math.round(normalized * 10) / 10;
 }
 
-type MeasurementFootprintMeters = {
+type MeasurementBoundsMeters = {
   width: number;
   depth: number;
+  height: number;
   halfWidth: number;
   halfDepth: number;
 };
 
-function createMeasurementFootprint(width: number, depth: number): MeasurementFootprintMeters {
+function createMeasurementBounds(
+  width: number,
+  depth: number,
+  height: number
+): MeasurementBoundsMeters {
   const safeWidth = Math.max(width, 0.05);
   const safeDepth = Math.max(depth, 0.05);
+  const safeHeight = Math.max(height, 0.03);
   return {
     width: safeWidth,
     depth: safeDepth,
+    height: safeHeight,
     halfWidth: safeWidth / 2,
     halfDepth: safeDepth / 2
   };
@@ -199,57 +209,69 @@ function createMeasurementFootprint(width: number, depth: number): MeasurementFo
 function getScaleMagnitude(scale: [number, number, number]) {
   return {
     x: Math.max(Math.abs(scale[0] ?? 1), 0.1),
+    y: Math.max(Math.abs(scale[1] ?? 1), 0.1),
     z: Math.max(Math.abs(scale[2] ?? 1), 0.1)
   };
 }
 
-function inferMeasurementFootprintMeters(
+function inferMeasurementBoundsMeters(
   descriptor: ActiveSupportMeasurementAssetLike
-): MeasurementFootprintMeters {
+): MeasurementBoundsMeters {
   const dimensionsMm = normalizeDimensionsMm(descriptor.product?.dimensionsMm ?? null);
   const scale = getScaleMagnitude(descriptor.scale);
 
   if (dimensionsMm) {
-    return createMeasurementFootprint(
+    return createMeasurementBounds(
       toMeters(dimensionsMm.width) * scale.x,
-      toMeters(dimensionsMm.depth) * scale.z
+      toMeters(dimensionsMm.depth) * scale.z,
+      toMeters(dimensionsMm.height) * scale.y
     );
   }
 
   const haystack = descriptor.assetId.toLowerCase();
   let width = 0.28;
   let depth = 0.18;
+  let height = 0.16;
 
   if (haystack.includes("monitor")) {
     width = 0.58;
     depth = 0.18;
+    height = 0.34;
   } else if (haystack.includes("keyboard")) {
     width = 0.44;
     depth = 0.14;
+    height = 0.04;
   } else if (haystack.includes("mouse")) {
     width = 0.11;
     depth = 0.07;
+    height = 0.04;
   } else if (haystack.includes("speaker")) {
     width = 0.16;
     depth = 0.16;
+    height = 0.24;
   } else if (haystack.includes("lamp")) {
     width = 0.22;
     depth = 0.18;
+    height = 0.46;
   } else if (haystack.includes("mug")) {
     width = 0.1;
     depth = 0.1;
+    height = 0.1;
   } else if (haystack.includes("tray")) {
     width = 0.32;
     depth = 0.22;
+    height = 0.05;
   } else if (haystack.includes("book")) {
     width = 0.24;
     depth = 0.18;
+    height = 0.03;
   } else if (haystack.includes("planter")) {
     width = 0.18;
     depth = 0.18;
+    height = 0.22;
   }
 
-  return createMeasurementFootprint(width * scale.x, depth * scale.z);
+  return createMeasurementBounds(width * scale.x, depth * scale.z, height * scale.y);
 }
 
 function resolveDimensionBounds(descriptor: SupportProfileDescriptor) {
@@ -472,7 +494,7 @@ export function resolveSupportSurfaceLock(
   const scaleY = Math.max(Math.abs(supportAsset.scale[1] ?? 1), 0.0001);
   const scaleZ = Math.max(Math.abs(supportAsset.scale[2] ?? 1), 0.0001);
   const [x, , z] = activeAsset.position;
-  const activeFootprint = inferMeasurementFootprintMeters(activeAsset);
+  const activeBounds = inferMeasurementBoundsMeters(activeAsset);
   type SupportSurfaceCandidate = ResolvedSupportSurfaceLock & { distanceSq: number };
 
   return profile.surfaces
@@ -488,11 +510,11 @@ export function resolveSupportSurfaceLock(
       const marginZ = Math.min((surface.margin?.[1] ?? 0.06) * scaleZ, halfDepth);
       const relativeYaw = (activeAsset.rotation[1] ?? 0) - yaw;
       const projectedHalfWidth =
-        Math.abs(Math.cos(relativeYaw)) * activeFootprint.halfWidth +
-        Math.abs(Math.sin(relativeYaw)) * activeFootprint.halfDepth;
+        Math.abs(Math.cos(relativeYaw)) * activeBounds.halfWidth +
+        Math.abs(Math.sin(relativeYaw)) * activeBounds.halfDepth;
       const projectedHalfDepth =
-        Math.abs(Math.sin(relativeYaw)) * activeFootprint.halfWidth +
-        Math.abs(Math.cos(relativeYaw)) * activeFootprint.halfDepth;
+        Math.abs(Math.sin(relativeYaw)) * activeBounds.halfWidth +
+        Math.abs(Math.cos(relativeYaw)) * activeBounds.halfDepth;
       const usableHalfWidth = Math.max(halfWidth - marginX - projectedHalfWidth, 0);
       const usableHalfDepth = Math.max(halfDepth - marginZ - projectedHalfDepth, 0);
       const clampedLocalX = Math.min(usableHalfWidth, Math.max(-usableHalfWidth, localPoint.x));
@@ -512,6 +534,9 @@ export function resolveSupportSurfaceLock(
         clearanceBottom
       );
       const distanceSq = (clampedLocalX - localPoint.x) ** 2 + (clampedLocalZ - localPoint.z) ** 2;
+      const supportTopY = supportAsset.position[1] + surface.top * scaleY;
+      const bottomOffset = activeAsset.position[1] - supportTopY;
+      const topOffset = bottomOffset + activeBounds.height;
       const candidate: SupportSurfaceCandidate = {
         supportAssetId: supportAsset.id,
         surface,
@@ -522,8 +547,11 @@ export function resolveSupportSurfaceLock(
         ],
         marginMm: [toMillimeters(marginX), toMillimeters(marginZ)],
         localOffsetMm: [toMillimeters(localPoint.x), toMillimeters(localPoint.z)],
-        topMm: toMillimeters(supportAsset.position[1] + surface.top * scaleY),
-        footprintMm: [toMillimeters(activeFootprint.width), toMillimeters(activeFootprint.depth)],
+        topMm: toMillimeters(supportTopY),
+        assetHeightMm: toMillimeters(activeBounds.height),
+        bottomOffsetMm: toMillimeters(bottomOffset),
+        topOffsetMm: toMillimeters(topOffset),
+        footprintMm: [toMillimeters(activeBounds.width), toMillimeters(activeBounds.depth)],
         projectedFootprintMm: [
           toMillimeters(projectedHalfWidth * 2),
           toMillimeters(projectedHalfDepth * 2)

@@ -14,6 +14,7 @@ import {
   PrecisionSurfaceMicroView,
   type PrecisionSurfaceLockInfo
 } from "./PrecisionSurfaceMicroView";
+import { PrecisionSurfaceProjectionView } from "./PrecisionSurfaceProjectionView";
 import { builderFloorFinishes, builderWallFinishes } from "../../lib/builder/templates";
 import {
   LIGHTING_PRESETS,
@@ -594,6 +595,9 @@ export function BuilderInspectorPanel({
                       <div className="mt-3">
                         <PrecisionSurfaceMicroView surfaceLockInfo={surfaceLockInfo} />
                       </div>
+                      <div className="mt-3">
+                        <PrecisionSurfaceProjectionView surfaceLockInfo={surfaceLockInfo} />
+                      </div>
                       <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-[#5f574d]">
                         <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
                           <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
@@ -648,6 +652,22 @@ export function BuilderInspectorPanel({
                             Top
                           </div>
                           <div className="mt-1 font-semibold text-[#1f1b16]">{surfaceLockInfo.topMm} mm</div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Height
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.assetHeightMm} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Gap / Reach
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.bottomOffsetMm} / {surfaceLockInfo.topOffsetMm} mm
+                          </div>
                         </div>
                         <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
                           <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
