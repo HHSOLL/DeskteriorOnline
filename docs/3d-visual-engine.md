@@ -75,8 +75,19 @@
 - loaded GLB 자산의 hover/select raycast는 `three-mesh-bvh` bounds tree를 우선 사용해 작은 desk asset 다수 배치 시 raycast 비용을 낮춘다.
 - loaded GLB 자산의 large non-interleaved geometry는 BVH 생성 자체를 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync 경로를 유지한다.
 - KTX2 encoder(`toktx`)가 없는 환경에서도 runtime decode path와 public transcoder sync는 유지해야 한다.
-- `verify:asset-instancing`는 read-only top/walk + builder preview + editor `desk precision` instancing eligibility와 cluster grouping 정책을 회귀 검증해야 한다.
+- `verify:asset-instancing`는 read-only top/walk + builder preview + editor `desk precision` + editor `room mode` idle instancing eligibility와 cluster grouping 정책을 회귀 검증해야 한다.
 - native gltfpack output을 사용할 때는 `-kn -km -ke` 보존 플래그 기준을 유지해 slot-aware finish와 named node/material 기반 런타임 가정이 깨지지 않게 해야 한다.
+
+## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing Phase 1)
+Added:
+- editor `room mode` top-view에서도 반복된 `single_mesh` low/medium complexity 자산을 idle 상태에 한해 instanced cluster로 유지하는 기준을 추가했다.
+- instanced cluster 위를 직접 눌렀을 때 선택 자산만 live update로 움직이고, pointer-up 이후에만 개별 오브젝트 경로로 빠지는 direct-drag handoff 기준을 추가했다.
+
+Updated:
+- instancing 적용 범위를 `read-only top/walk + builder preview + editor desk precision`에서 `read-only top/walk + builder preview + editor desk precision + editor room mode idle`까지 확장한다.
+
+Removed/Deprecated:
+- room mode direct-drag 때문에 editor room top은 instancing을 전혀 사용할 수 없다는 가정.
 
 ## Scene 데이터 소비 규칙
 - `apps/web/src/lib/domain/scene-document.ts`를 scene 복원의 canonical 매핑 계층으로 사용

@@ -764,3 +764,15 @@ Updated:
 
 Removed/Deprecated:
 - `viewer-showcase`가 아직 실제 제품 플로우에는 연결되지 않았다는 이전 상태 설명.
+
+## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing Phase 1)
+Added:
+- editor `room mode` top-view repeated asset도 idle 상태에선 instanced cluster로 유지하고, pointer-down 이후 live drag로 handoff 하는 범위를 추가했다.
+- `verify:asset-instancing`가 room mode idle cluster와 dragging 중 selected asset 유지 정책까지 점검하도록 확장했다.
+
+Updated:
+- 원문 보고서 기준 남은 `instancing/LOD 운영화`를 “native pass 완료, editor desk precision + room mode idle instancing 완료, 후속은 polish/metrics뿐” 상태로 갱신한다.
+- 다음 후보를 `P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선`, `showcase polish phase 2(카메라/lighting fine-tune)`, `presence / broadcast` 순서로 재정렬한다.
+
+Removed/Deprecated:
+- `room mode direct-drag와 공존하는 editor instancing feasibility`가 아직 미해결이라는 이전 상태 설명.

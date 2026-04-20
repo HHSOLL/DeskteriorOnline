@@ -83,6 +83,17 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - `docs/user-action-guide.md`
 - `docs/deployment.md`
 
+## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing Phase 1)
+Added:
+- editor `room mode` top-view의 repeated `single_mesh` low/medium complexity 자산도 idle 상태에 한해 instancing 후보로 포함하는 제품 규칙을 추가했다.
+- room mode cluster 자산은 pointer-down 시 selected asset만 live drag 대상으로 유지하고, pointer-up 후 개별 경로로 전환하는 direct-drag handoff 규칙을 추가했다.
+
+Updated:
+- `instancing/LOD 운영화` 상태를 `editor desk precision instancing 포함`에서 `editor room mode idle instancing + direct-drag handoff 포함` 상태로 확장한다.
+
+Removed/Deprecated:
+- editor room top은 direct-drag 때문에 항상 per-instance만 사용해야 한다는 가정.
+
 ## 2026-04-14 변경 동기화 (IKEA Kreativ Pivot Hard Cleanup)
 Added:
 - IKEA Kreativ 스타일 room-first + deskterior + community 3D viewing을 canonical 제품 정의로 고정.

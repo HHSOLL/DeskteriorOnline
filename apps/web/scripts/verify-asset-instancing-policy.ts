@@ -162,6 +162,7 @@ try {
     viewMode: "builder-preview",
     topMode: "room",
     readOnly: false,
+    isTransforming: false,
     selectedAssetId: null,
     emitterAssetIds: new Set<string>()
   });
@@ -170,6 +171,25 @@ try {
     viewMode: "top",
     topMode: "desk-precision",
     readOnly: false,
+    isTransforming: false,
+    selectedAssetId: "mug-1",
+    emitterAssetIds: new Set<string>()
+  });
+  const roomModeClusters = groupAssetsForInstancing({
+    assets: repeatedAssets,
+    viewMode: "top",
+    topMode: "room",
+    readOnly: false,
+    isTransforming: false,
+    selectedAssetId: "mug-1",
+    emitterAssetIds: new Set<string>()
+  });
+  const roomModeDraggingClusters = groupAssetsForInstancing({
+    assets: repeatedAssets,
+    viewMode: "top",
+    topMode: "room",
+    readOnly: false,
+    isTransforming: true,
     selectedAssetId: "mug-1",
     emitterAssetIds: new Set<string>()
   });
@@ -181,7 +201,7 @@ try {
     editableDeskPrecisionPlan.eligible,
     "editable desk precision asset should be instancing-eligible"
   );
-  assert(!editableTopPlan.eligible, "editable top room asset should stay per-instance");
+  assert(editableTopPlan.eligible, "editable top room asset should be instancing-eligible while idle");
   assert(!selectedPlan.eligible, "selected asset should stay per-instance");
   assert(!dynamicLightPlan.eligible, "dynamic light asset should stay per-instance");
   assert(!manualLodPlan.eligible, "manual LOD asset should stay per-instance");
@@ -197,6 +217,26 @@ try {
   assert(
     deskPrecisionClusters[0]?.assets.map((asset) => asset.id).join(",") === "mug-2,mug-4",
     `unexpected desk precision cluster members: ${deskPrecisionClusters[0]?.assets
+      .map((asset) => asset.id)
+      .join(",")}`
+  );
+  assert(
+    roomModeClusters.length === 1,
+    `expected one room mode cluster, received ${roomModeClusters.length}`
+  );
+  assert(
+    roomModeClusters[0]?.assets.map((asset) => asset.id).join(",") === "mug-2,mug-4",
+    `unexpected room mode cluster members: ${roomModeClusters[0]?.assets
+      .map((asset) => asset.id)
+      .join(",")}`
+  );
+  assert(
+    roomModeDraggingClusters.length === 1,
+    `expected one room mode dragging cluster, received ${roomModeDraggingClusters.length}`
+  );
+  assert(
+    roomModeDraggingClusters[0]?.assets.map((asset) => asset.id).join(",") === "mug-1,mug-2,mug-4",
+    `unexpected room mode dragging cluster members: ${roomModeDraggingClusters[0]?.assets
       .map((asset) => asset.id)
       .join(",")}`
   );
@@ -218,6 +258,14 @@ try {
           assetIds: cluster.assets.map((asset) => asset.id)
         })),
         deskPrecisionClusters: deskPrecisionClusters.map((cluster) => ({
+          key: cluster.key,
+          assetIds: cluster.assets.map((asset) => asset.id)
+        })),
+        roomModeClusters: roomModeClusters.map((cluster) => ({
+          key: cluster.key,
+          assetIds: cluster.assets.map((asset) => asset.id)
+        })),
+        roomModeDraggingClusters: roomModeDraggingClusters.map((cluster) => ({
           key: cluster.key,
           assetIds: cluster.assets.map((asset) => asset.id)
         }))

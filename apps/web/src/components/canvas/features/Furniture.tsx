@@ -450,10 +450,20 @@ function InstancedFurnitureCluster({
   assets: SceneAsset[];
   readOnly: boolean;
 }) {
+  const camera = useThree((state) => state.camera);
+  const gl = useThree((state) => state.gl);
   const invalidate = useThree((state) => state.invalidate);
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
+  const setIsTransforming = useEditorStore((state) => state.setIsTransforming);
   const setSelectedAssetId = useSelectionSelector((slice) => slice.setSelectedAssetId);
+  const walls = useShellSelector((slice) => slice.walls);
+  const ceilings = useShellSelector((slice) => slice.ceilings);
+  const scale = useShellSelector((slice) => slice.scale);
+  const sceneAssets = useAssetSelector((slice) => slice.assets);
+  const updateFurniture = useAssetSelector((slice) => slice.updateFurniture);
+  const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
+  const dragCleanupRef = useRef<(() => void) | null>(null);
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
@@ -514,6 +524,8 @@ function InstancedFurnitureCluster({
 
   useEffect(() => {
     return () => {
+      dragCleanupRef.current?.();
+      dragCleanupRef.current = null;
       instancedMeshes.forEach(({ mesh }) => {
         const material = mesh.material;
         if (Array.isArray(material)) {
@@ -525,11 +537,51 @@ function InstancedFurnitureCluster({
     };
   }, [instancedMeshes]);
 
+  const allowRoomModeDirectDrag =
+    !readOnly && viewMode === "top" && topViewPolicy.allowDirectAssetDrag;
   const allowInteractiveSelection =
     readOnly || (viewMode === "top" && !topViewPolicy.allowDirectAssetDrag);
+  const allowPointerInteraction = allowRoomModeDirectDrag || allowInteractiveSelection;
+
+  const resolvePlacementFromPointer = (nativeEvent: PointerEvent, targetAsset: SceneAsset) => {
+    const rect = gl.domElement.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return null;
+    }
+
+    const pointer = new THREE.Vector2(
+      ((nativeEvent.clientX - rect.left) / rect.width) * 2 - 1,
+      -((nativeEvent.clientY - rect.top) / rect.height) * 2 + 1
+    );
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(pointer, camera);
+
+    const intersection = new THREE.Vector3();
+    if (!raycaster.ray.intersectPlane(groundPlane, intersection)) {
+      return null;
+    }
+
+    const snap = (value: number) =>
+      Math.round(value / topViewPolicy.translationSnap) * topViewPolicy.translationSnap;
+
+    return constrainPlacementToAnchor(
+      {
+        position: [snap(intersection.x), targetAsset.position[1], snap(intersection.z)],
+        rotation: targetAsset.rotation,
+        anchorType: targetAsset.anchorType,
+        supportAssetId: targetAsset.supportAssetId
+      },
+      {
+        walls,
+        ceilings,
+        scale,
+        sceneAssets,
+        activeAssetId: targetAsset.id
+      }
+    );
+  };
 
   const handlePointerDown = (event: ThreeEvent<PointerEvent>) => {
-    if (!allowInteractiveSelection) return;
     const instanceId = event.instanceId;
     if (instanceId === undefined || instanceId === null) return;
     const targetAsset = assets[instanceId];
@@ -537,6 +589,53 @@ function InstancedFurnitureCluster({
     event.stopPropagation();
     const startedAt = performance.now();
     setSelectedAssetId(targetAsset.id);
+
+    if (allowRoomModeDirectDrag) {
+      dragCleanupRef.current?.();
+      setIsTransforming(true);
+      scheduleInteractionLatency("drag-start", startedAt, {
+        viewMode,
+        topMode,
+        targetId: targetAsset.id
+      });
+
+      let moved = false;
+      const handleWindowPointerMove = (nativeEvent: PointerEvent) => {
+        const anchoredPlacement = resolvePlacementFromPointer(nativeEvent, targetAsset);
+        if (!anchoredPlacement) return;
+        moved = true;
+        updateFurniture(targetAsset.id, {
+          anchorType: anchoredPlacement.anchorType,
+          supportAssetId: anchoredPlacement.supportAssetId,
+          position: anchoredPlacement.position,
+          rotation: anchoredPlacement.rotation
+        });
+        invalidate();
+      };
+      const handleWindowPointerUp = () => {
+        dragCleanupRef.current?.();
+        dragCleanupRef.current = null;
+        setIsTransforming(false);
+        if (moved) {
+          recordSnapshot("Move asset");
+        }
+        invalidate();
+      };
+
+      dragCleanupRef.current = () => {
+        window.removeEventListener("pointermove", handleWindowPointerMove);
+        window.removeEventListener("pointerup", handleWindowPointerUp);
+        window.removeEventListener("pointercancel", handleWindowPointerUp);
+      };
+
+      window.addEventListener("pointermove", handleWindowPointerMove);
+      window.addEventListener("pointerup", handleWindowPointerUp, { once: true });
+      window.addEventListener("pointercancel", handleWindowPointerUp, { once: true });
+      invalidate();
+      return;
+    }
+
+    if (!allowInteractiveSelection) return;
     invalidate();
     scheduleInteractionLatency("select", startedAt, {
       viewMode,
@@ -546,12 +645,12 @@ function InstancedFurnitureCluster({
   };
 
   const handlePointerOver = () => {
-    if (!allowInteractiveSelection || typeof document === "undefined") return;
+    if (!allowPointerInteraction || typeof document === "undefined") return;
     document.body.style.cursor = "pointer";
   };
 
   const handlePointerOut = () => {
-    if (!allowInteractiveSelection || typeof document === "undefined") return;
+    if (!allowPointerInteraction || typeof document === "undefined") return;
     document.body.style.cursor = "default";
   };
 
@@ -880,6 +979,7 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
+  const isTransforming = useEditorStore((state) => state.isTransforming);
   const readOnly = useEditorStore((state) => state.readOnly);
   const emitterAssetIds = useMemo(() => {
     if (!allowDynamicLights) {
@@ -902,10 +1002,11 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
         viewMode,
         topMode,
         readOnly,
+        isTransforming,
         selectedAssetId,
         emitterAssetIds
       }),
-    [assets, emitterAssetIds, readOnly, selectedAssetId, topMode, viewMode]
+    [assets, emitterAssetIds, isTransforming, readOnly, selectedAssetId, topMode, viewMode]
   );
   const instancedAssetIds = useMemo(() => {
     const ids = new Set<string>();

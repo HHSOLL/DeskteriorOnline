@@ -14,6 +14,7 @@ type AssetInstancingInput = {
   readOnly: boolean;
   enableDynamicLight: boolean;
   isSelected: boolean;
+  allowSelectedInstancing?: boolean;
 };
 
 export type AssetInstancingCluster = {
@@ -35,16 +36,17 @@ export function resolveAssetInstancingPlan({
   topMode,
   readOnly,
   enableDynamicLight,
-  isSelected
+  isSelected,
+  allowSelectedInstancing = false
 }: AssetInstancingInput): AssetInstancingPlan {
-  if (isSelected || enableDynamicLight) {
+  if ((isSelected && !allowSelectedInstancing) || enableDynamicLight) {
     return { eligible: false, clusterKey: null };
   }
 
   const allowMode =
     viewMode === "builder-preview" ||
     (viewMode === "walk" && readOnly) ||
-    (viewMode === "top" && (readOnly || topMode === "desk-precision"));
+    (viewMode === "top" && (readOnly || topMode === "desk-precision" || topMode === "room"));
   if (!allowMode) {
     return { eligible: false, clusterKey: null };
   }
@@ -70,6 +72,7 @@ type GroupAssetsForInstancingInput = {
   viewMode: EditorViewMode;
   topMode: EditorTopMode;
   readOnly: boolean;
+  isTransforming: boolean;
   selectedAssetId: string | null;
   emitterAssetIds: Set<string>;
 };
@@ -79,6 +82,7 @@ export function groupAssetsForInstancing({
   viewMode,
   topMode,
   readOnly,
+  isTransforming,
   selectedAssetId,
   emitterAssetIds
 }: GroupAssetsForInstancingInput): AssetInstancingCluster[] {
@@ -95,7 +99,13 @@ export function groupAssetsForInstancing({
       topMode,
       readOnly,
       enableDynamicLight: emitterAssetIds.has(asset.id),
-      isSelected: asset.id === selectedAssetId
+      isSelected: asset.id === selectedAssetId,
+      allowSelectedInstancing:
+        isTransforming &&
+        !readOnly &&
+        viewMode === "top" &&
+        topMode === "room" &&
+        asset.id === selectedAssetId
     });
     if (!plan.eligible || !plan.clusterKey) {
       continue;
