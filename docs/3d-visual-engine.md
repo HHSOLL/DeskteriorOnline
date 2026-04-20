@@ -496,3 +496,13 @@ Updated:
 
 Removed/Deprecated:
 - gallery/community 카드와 일반 shared 링크가 항상 같은 lean viewer profile만 사용해야 한다는 가정.
+
+## 2026-04-20 변경 동기화 (Showcase Polish Phase 2)
+Added:
+- `viewer-showcase`는 `viewer-shared`보다 tighter walk FOV, 살짝 더 공격적인 top zoom, warm rim + stronger fill light polish를 사용하는 기준을 추가했다.
+
+Updated:
+- showcase presentation 정의를 “render-quality preset 분리”에서 “camera framing + light rig까지 포함한 curated viewer presentation”으로 확장한다.
+
+Removed/Deprecated:
+- showcase/shared viewer가 같은 camera preset과 같은 light rig를 공유해야 한다는 가정.

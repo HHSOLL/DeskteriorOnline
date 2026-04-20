@@ -9,9 +9,11 @@ import {
   resolvePreferredTopViewZoom,
   resolveTopViewInteractionPolicy
 } from "../../../lib/editor/top-view-policy";
+import type { SceneInteractionMode } from "../../../lib/scene/render-quality";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useCameraSelector, useShellSelector } from "../../../lib/stores/scene-slices";
 import { useMobileControlsStore } from "../../../lib/stores/useMobileControlsStore";
+import { resolveSharedViewerPresentationPolish } from "../../../lib/viewer/presentation";
 
 type MoveState = {
   forward: boolean;
@@ -58,12 +60,14 @@ function WalkRig({
   initialPosition,
   initialTarget,
   isTouch,
-  farClip
+  farClip,
+  fov
 }: {
   initialPosition: [number, number, number];
   initialTarget: [number, number, number];
   isTouch: boolean;
   farClip: number;
+  fov: number;
 }) {
   const bodyRef = useRef<RapierRigidBody | null>(null);
   const pointerLockRef = useRef<any>(null);
@@ -160,14 +164,14 @@ function WalkRig({
     >
       <CapsuleCollider args={[0.35, 0.6]} />
       <group position={[0, EYE_HEIGHT, 0]}>
-        <PerspectiveCamera makeDefault fov={60} near={0.08} far={farClip} />
+        <PerspectiveCamera makeDefault fov={fov} near={0.08} far={farClip} />
         {!isTouch ? <PointerLockControls ref={pointerLockRef} /> : null}
       </group>
     </RigidBody>
   );
 }
 
-export default function CameraRig() {
+export default function CameraRig({ interactionMode = "editor" }: { interactionMode?: SceneInteractionMode }) {
   const gl = useThree((state) => state.gl);
   const invalidate = useThree((state) => state.invalidate);
   const viewMode = useEditorStore((state) => state.viewMode);
@@ -187,16 +191,25 @@ export default function CameraRig() {
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
   );
+  const viewerPresentationPolish = useMemo(
+    () =>
+      resolveSharedViewerPresentationPolish(
+        interactionMode === "viewer-showcase" ? "showcase" : "shared"
+      ),
+    [interactionMode]
+  );
   const bounds = useMemo(() => computeBounds(walls, scale), [walls, scale]);
   const centerX = (bounds.minX + bounds.maxX) / 2;
   const centerZ = (bounds.minZ + bounds.maxZ) / 2;
   const radius = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ, 1);
   const topHeight = Math.max(6, radius);
   const zoom = Math.max(58, 210 / radius);
+  const presentationZoom = zoom * viewerPresentationPolish.topZoomMultiplier;
   const builderDistance = Math.max(4.8, radius * 1.45);
   const builderHeight = Math.max(3.1, radius * 0.92);
   const builderTargetY = Math.max(1.15, radius * 0.12);
   const walkFarClip = Math.max(42, radius * 10);
+  const walkFov = viewerPresentationPolish.walkFov;
 
   const initialPosition = useMemo((): [number, number, number] => {
     const preferredAnchor =
@@ -245,8 +258,23 @@ export default function CameraRig() {
         ];
       }
     }
-    return [centerX, BODY_Y, centerZ + radius * 0.4];
-  }, [cameraAnchors, entranceId, openings, walls, scale, centerX, centerZ, radius]);
+    return [
+      centerX + radius * viewerPresentationPolish.walkFallbackOffset.x,
+      BODY_Y,
+      centerZ + radius * viewerPresentationPolish.walkFallbackOffset.z
+    ];
+  }, [
+    cameraAnchors,
+    centerX,
+    centerZ,
+    entranceId,
+    openings,
+    radius,
+    scale,
+    viewerPresentationPolish.walkFallbackOffset.x,
+    viewerPresentationPolish.walkFallbackOffset.z,
+    walls
+  ]);
 
   const initialTarget = useMemo((): [number, number, number] => {
     const preferredAnchor =
@@ -262,8 +290,8 @@ export default function CameraRig() {
       ];
     }
 
-    return [centerX, Math.max(1.2, builderTargetY), centerZ];
-  }, [builderTargetY, cameraAnchors, centerX, centerZ, scale]);
+    return [centerX, Math.max(1.2, builderTargetY + viewerPresentationPolish.walkTargetLift), centerZ];
+  }, [builderTargetY, cameraAnchors, centerX, centerZ, scale, viewerPresentationPolish.walkTargetLift]);
 
   useEffect(() => {
     const supportsTouch = typeof window !== "undefined" &&
@@ -278,7 +306,7 @@ export default function CameraRig() {
       camera.position.set(centerX, topHeight, centerZ);
       camera.up.set(Math.sin(topRotationRef.current), 0, -Math.cos(topRotationRef.current));
       camera.zoom = clampValue(
-        nextZoom ?? resolvePreferredTopViewZoom(topMode, zoom, camera.zoom),
+        nextZoom ?? resolvePreferredTopViewZoom(topMode, presentationZoom, camera.zoom),
         topViewPolicy.zoomBounds.min,
         topViewPolicy.zoomBounds.max
       );
@@ -294,15 +322,15 @@ export default function CameraRig() {
       topMode,
       topViewPolicy.zoomBounds.max,
       topViewPolicy.zoomBounds.min,
-      zoom
+      presentationZoom
     ]
   );
 
   useEffect(() => {
     if (viewMode === "top") {
-      applyTopCamera(resolvePreferredTopViewZoom(topMode, zoom, orthoRef.current?.zoom));
+      applyTopCamera(resolvePreferredTopViewZoom(topMode, presentationZoom, orthoRef.current?.zoom));
     }
-  }, [applyTopCamera, topMode, viewMode, zoom]);
+  }, [applyTopCamera, presentationZoom, topMode, viewMode]);
 
   useEffect(() => {
     if (viewMode !== "top") return;
@@ -374,7 +402,15 @@ export default function CameraRig() {
   }, [applyTopCamera, topViewPolicy.rotateStep, viewMode]);
 
   if (viewMode === "walk") {
-    return <WalkRig initialPosition={initialPosition} initialTarget={initialTarget} isTouch={isTouch} farClip={walkFarClip} />;
+    return (
+      <WalkRig
+        initialPosition={initialPosition}
+        initialTarget={initialTarget}
+        isTouch={isTouch}
+        farClip={walkFarClip}
+        fov={walkFov}
+      />
+    );
   }
 
   if (viewMode === "builder-preview") {

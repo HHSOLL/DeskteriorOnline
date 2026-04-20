@@ -427,6 +427,18 @@ Updated:
 Removed/Deprecated:
 - SSR feasibility가 문서 계획만 있고 실제 품질 ladder에는 반영되지 않은 상태.
 
+## 2026-04-20 변경 동기화 (Showcase Polish Phase 2)
+Added:
+- `viewer-showcase` 전용 camera/light polish preset을 추가해 walk FOV, top framing, accent fill/rim lighting을 일반 shared viewer와 분리했다.
+- `verify:showcase-scene`가 showcase presentation preset의 tighter framing / richer lighting 계약까지 같이 점검하도록 확장했다.
+
+Updated:
+- 남은 `showcase polish` 상태를 “phase 2 camera/lighting fine-tune 완료”로 갱신한다.
+- 다음 후보를 `presence / broadcast` 순서로 단순화한다.
+
+Removed/Deprecated:
+- showcase polish가 아직 카메라/라이팅 미세 조정 없이 SSR/tone mapping 단계에서만 멈춰 있다는 이전 상태 설명.
+
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:
 - desk precision mode에서 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector와 overlay에 추가했다.

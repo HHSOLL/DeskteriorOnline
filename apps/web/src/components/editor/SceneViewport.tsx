@@ -126,9 +126,9 @@ export function SceneViewport({
 
   const sceneContent = (
     <>
-      <Lights quality={quality} />
+      <Lights quality={quality} interactionMode={resolvedInteractionMode} />
       <SceneEnvironment quality={quality} />
-      <CameraRig />
+      <CameraRig interactionMode={resolvedInteractionMode} />
       <InteractionManager>
         <ProceduralFloor />
         <ProceduralCeiling />

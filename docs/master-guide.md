@@ -534,6 +534,17 @@ Updated:
 Removed/Deprecated:
 - SSR이 향후 별도 branch에서만 검토되고 현재 render ladder에는 아무 연결이 없다는 가정.
 
+## 2026-04-20 변경 동기화 (Showcase Polish Phase 2)
+Added:
+- `viewer-showcase`는 일반 shared viewer보다 tighter walk FOV, 살짝 더 가까운 top framing, accent rim/fill light rig를 사용하는 presentation polish 규칙을 추가한다.
+
+Updated:
+- showcase viewer 품질 기준을 “SSR/Neutral/post FX가 켜지는 richer slot”에서 “카메라 프레이밍과 라이트 밸런스까지 분리된 curated presentation”으로 확장한다.
+- 남은 후속 항목을 `presence / broadcast` 중심 실험축만 남은 상태로 갱신한다.
+
+Removed/Deprecated:
+- `viewer-showcase`와 `viewer-shared`가 같은 카메라 framing/light rig를 공유해야 한다는 가정.
+
 ## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement)
 Added:
 - curated `p2s_*` 자산에 `source/license/pivot/collisionProxy/textureSet/lodProfile` 메타데이터 계약을 추가한다.

@@ -10,6 +10,7 @@ import {
   resolveShowcaseThumbnailSource
 } from "../src/lib/server/showcase";
 import { buildSceneDocumentBootstrapFromSavePayload } from "../src/lib/server/project-versions";
+import { resolveSharedViewerPresentationPolish } from "../src/lib/viewer/presentation";
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
@@ -210,6 +211,8 @@ try {
     publishedAt: showcaseItem.published_at
   });
   const cardHref = buildPublishedSnapshotCardHref(showcaseItem.token);
+  const sharedPolish = resolveSharedViewerPresentationPolish("shared");
+  const showcasePolish = resolveSharedViewerPresentationPolish("showcase");
   const profile = getShowcaseSnapshotProfile(showcaseItem);
   const thumbnailSource = resolveShowcaseThumbnailSource(
     {
@@ -244,6 +247,15 @@ try {
   assert(cardModel.primaryCollection === "Worksurface", `card collection mismatch: ${cardModel.primaryCollection}`);
   assert(cardModel.versionBadgeLabel === "장면 v7", `card version badge mismatch: ${cardModel.versionBadgeLabel}`);
   assert(cardHref === "/shared/sharetoken123?source=showcase", `card href mismatch: ${cardHref}`);
+  assert(showcasePolish.walkFov < sharedPolish.walkFov, "showcase walk camera should be tighter than shared");
+  assert(
+    showcasePolish.topZoomMultiplier > sharedPolish.topZoomMultiplier,
+    "showcase top camera should frame more tightly than shared"
+  );
+  assert(
+    showcasePolish.rimBoost > sharedPolish.rimBoost,
+    "showcase presentation should enable richer accent lighting"
+  );
   assert(profile.room === "workspace", `showcase room profile mismatch: ${profile.room}`);
   assert(profile.tone === "sand", `showcase tone profile mismatch: ${profile.tone}`);
   assert(profile.density === "minimal", `showcase density profile mismatch: ${profile.density}`);
@@ -256,6 +268,8 @@ try {
         href: cardHref,
         projectName: cardModel.projectName,
         versionBadgeLabel: cardModel.versionBadgeLabel,
+        walkFov: showcasePolish.walkFov,
+        topZoomMultiplier: showcasePolish.topZoomMultiplier,
         thumbnailSource,
         showcaseProfile: profile
       },
