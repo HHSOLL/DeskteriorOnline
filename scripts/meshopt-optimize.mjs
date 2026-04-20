@@ -2,6 +2,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { NodeIO } from "@gltf-transform/core";
+import { dedup, meshopt, prune } from "@gltf-transform/functions";
 import {
   EXTMeshGPUInstancing,
   EXTMeshoptCompression,
@@ -164,15 +165,17 @@ async function main() {
         continue;
       }
 
-      const meshoptExtension = document
-        .createExtension(EXTMeshoptCompression)
-        .setRequired(true)
-        .setEncoderOptions({
-          method:
-            level === "high"
-              ? EXTMeshoptCompression.EncoderMethod.FILTER
-              : EXTMeshoptCompression.EncoderMethod.QUANTIZE
-        });
+      await document.transform(
+        dedup({ keepUniqueNames: true }),
+        prune({ keepLeaves: true }),
+        meshopt({
+          encoder: MeshoptEncoder,
+          level: level === "high" ? "high" : "medium"
+        })
+      );
+
+      const meshoptExtension = document.createExtension(EXTMeshoptCompression);
+      meshoptExtension.setRequired(true);
 
       if (!skipTextures && hasNonWebpTextures) {
         console.warn(
@@ -180,13 +183,12 @@ async function main() {
         );
       }
 
-      void meshoptExtension;
       await io.write(filePath, document);
 
       const afterSize = await getFileSize(filePath);
       const delta = beforeSize - afterSize;
       console.log(
-        `Optimized: ${filePath} (${formatBytes(beforeSize)} -> ${formatBytes(afterSize)}, saved ${formatBytes(Math.max(delta, 0))})`
+        `Optimized: ${filePath} (${formatBytes(beforeSize)} -> ${formatBytes(afterSize)}, saved ${formatBytes(Math.max(delta, 0))}; dedup+prune+meshopt)`
       );
       processed += 1;
     } catch (error) {

@@ -255,10 +255,16 @@ PATH="/Users/sol/.nvm/versions/node/v20.11.1/bin:$PATH" npm --workspace apps/web
 PATH="/Users/sol/.nvm/versions/node/v20.11.1/bin:$PATH" npm --workspace apps/web run textures:encode:room-shell:ktx2
 ```
 
-7. Meshopt 최적화와 budget re-check를 수행한다.
+7. glTF Transform 기반 `dedup + prune + meshopt(내부 reorder/quantize 포함)` 최적화와 budget re-check를 수행한다.
 
 ```bash
 npm --workspace apps/web run assets:optimize:deskterior
+```
+
+강제 재적용이 필요하면:
+
+```bash
+npm --workspace apps/web run assets:optimize:deskterior -- --force --level high
 ```
 
 7. Khronos glTF Validator로 런타임 GLB를 검증한다.
@@ -591,3 +597,13 @@ Updated:
 
 Removed/Deprecated:
 - curated deskterior 자산 메타 검증이 물리 메타와 supportProfile까지만 확인하면 충분하다는 가정.
+
+## 2026-04-20 변경 동기화 (Deskterior Optimize Chain Phase 1 QA)
+Added:
+- `assets:optimize:deskterior`가 `glTF Transform dedup + prune + meshopt` 체인을 실행한 뒤 `assets:validate:deskterior`를 다시 통과하는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- deskterior optimize QA 기준을 “meshopt 재적용 후 budget 확인”에서 “dedup/prune + meshopt 재적용 후 validate/verify/build 확인”까지 확장했다.
+
+Removed/Deprecated:
+- optimize 패스가 meshopt extension write 한 단계뿐이라서 geometry 정리 회귀를 따로 볼 필요가 없다는 가정.

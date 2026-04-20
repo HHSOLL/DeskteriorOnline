@@ -24,7 +24,7 @@ npm --workspace apps/web run assets:verify:deskterior
 - Blender source(.blend) 존재/신선도 검사 + 런타임 GLB export
 - Plan2Space 제작 deskterior 자산(p2s_*) upsert
 - basis transcoder public sync(`apps/web/public/assets/transcoders/basis`)
-- Meshopt 최적화와 budget re-check
+- glTF Transform 기반 `dedup + prune + meshopt(내부 reorder/quantize 포함)` 최적화와 budget re-check
 - curated supportProfile surface/anchor metadata 검증
 - curated `p2s_*` source/license/pivot/collisionProxy/textureSet/lodProfile metadata 검증
 - Khronos glTF Validator 기반 구조/리소스 검증

@@ -279,6 +279,16 @@ Updated:
 Removed/Deprecated:
 - top-view와 builder preview가 입력이 없어도 항상 continuous frame loop를 유지한다는 가정.
 
+## 2026-04-20 변경 동기화 (Deskterior Optimize Chain Phase 1)
+Added:
+- deskterior 런타임 GLB 최적화 기준에 `glTF Transform dedup + prune + meshopt` 체인을 추가한다.
+
+Updated:
+- runtime asset delivery 기준을 `Draco + Meshopt + KTX2-ready decode path`에서 `glTF Transform dedup/prune + Meshopt compression + KTX2-ready decode path`까지 확장한다.
+
+Removed/Deprecated:
+- deskterior optimize가 `EXT_meshopt_compression` extension write 한 단계만으로 충분하다는 가정.
+
 ## 2026-04-19 변경 동기화 (Top Render Ladder Split)
 Added:
 - room mode는 top-entry lean preset, desk precision mode는 selective high-fidelity preset을 사용하도록 렌더 정책 계단을 추가한다.

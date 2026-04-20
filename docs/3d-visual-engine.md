@@ -401,6 +401,7 @@ Added:
 
 Updated:
 - 오픈소스 자산 활용 기준을 generic import에서 “CC0 provenance + category/brand/externalUrl 보강”까지 확장.
+- deskterior optimize 기준을 단순 meshopt extension write에서 `glTF Transform dedup + prune + meshopt(reorder/quantize 포함)` 체인으로 구체화했다.
 
 Removed/Deprecated:
 - Blender source만 추가하고 runtime/export/metadata/verify는 수동으로 맞춘다는 운영 가정.

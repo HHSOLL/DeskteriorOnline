@@ -253,10 +253,22 @@ Added:
 
 Updated:
 - P2 자산 파이프라인 범위를 `Meshopt optimize + validate`에서 `Meshopt optimize + KTX2 runtime-ready decode + validate/require-ktx2 gate`까지 확장했다.
+- `assets:optimize:deskterior` 기준을 단순 Meshopt extension write에서 `glTF Transform dedup + prune + meshopt` 체인으로 구체화했다.
 - Phase 4 idle profile 범위를 품질 ladder 설명에서 실제 frame loop 정책 적용까지 확장했다.
 
 Removed/Deprecated:
 - top-view와 builder preview가 idle 상태에서도 continuous frame loop를 유지한다는 서술.
+
+## 2026-04-20 변경 동기화 (Deskterior Optimize Chain Phase 1)
+Added:
+- `assets:optimize:deskterior -- --force --level high` 기준으로 curated `p2s_*` 런타임 GLB에 `glTF Transform dedup + prune + meshopt`를 재적용하는 안정화 단계를 추가했다.
+
+Updated:
+- 원문 보고서 기준 남은 `고급 자산 최적화 체인`을 “phase 1 완료, native gltfpack/instancing/LOD 운영화만 남음” 상태로 갱신한다.
+- P2 자산 최적화 루프의 정의를 `meshopt 압축`에서 `dedup/prune + meshopt + validate/verify`로 확장한다.
+
+Removed/Deprecated:
+- 고급 자산 최적화 체인이 아직 meshopt 단일 패스밖에 없는 상태라는 서술.
 
 ### Phase 5. 공유/커뮤니티 안정화
 목표:

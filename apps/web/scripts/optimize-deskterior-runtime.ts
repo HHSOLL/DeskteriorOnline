@@ -6,18 +6,41 @@ import { fileURLToPath } from "node:url";
 const execFileAsync = promisify(execFile);
 
 function parseArgs(argv: string[]) {
-  const passthrough = argv.filter((arg) =>
-    [
-      "--dry-run",
-      "--skip-textures",
-      "--force",
-      "--json",
-      "--strict-warnings",
-      "--require-ktx2",
-      "--help"
-    ].includes(arg)
-  );
-  const unknown = argv.filter((arg) => !passthrough.includes(arg));
+  const passthrough: string[] = [];
+  const unknown: string[] = [];
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (
+      [
+        "--dry-run",
+        "--skip-textures",
+        "--force",
+        "--json",
+        "--strict-warnings",
+        "--require-ktx2",
+        "--help"
+      ].includes(arg)
+    ) {
+      passthrough.push(arg);
+      continue;
+    }
+
+    if (arg === "--level") {
+      const value = argv[index + 1];
+      if (value === "medium" || value === "high") {
+        passthrough.push(arg, value);
+        index += 1;
+        continue;
+      }
+      unknown.push(arg, ...(value ? [value] : []));
+      index += value ? 1 : 0;
+      continue;
+    }
+
+    unknown.push(arg);
+  }
+
   return { passthrough, unknown, help: argv.includes("--help") };
 }
 
@@ -33,6 +56,7 @@ async function main() {
         "  --dry-run          Print the optimize targets without writing",
         "  --skip-textures    Skip the optional texture compression pass",
         "  --force            Re-optimize assets even if meshopt extension already exists",
+        "  --level <mode>     Meshopt compression level: medium | high",
         "  --strict-warnings  Pass through to post-optimize validation",
         "  --require-ktx2     Pass through to post-optimize validation",
         "  --help             Show help"
@@ -56,11 +80,11 @@ async function main() {
     optimizeScript,
     "--dest",
     "./apps/web/public/assets/models",
-    "--match",
-    "p2s_",
-    "--exclude",
-    "p2s_opening_",
-    ...passthrough.filter((arg) => arg !== "--json" && arg !== "--strict-warnings")
+      "--match",
+      "p2s_",
+      "--exclude",
+      "p2s_opening_",
+      ...passthrough.filter((arg) => arg !== "--json" && arg !== "--strict-warnings")
   ];
 
   const validateArgs = ["--import", "tsx", validateScript];
