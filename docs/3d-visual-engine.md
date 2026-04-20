@@ -69,6 +69,7 @@
 - `viewer-shared`는 subtle vignette/noise까지만 허용하고, bloom은 `desk precision` 또는 richer walk/showcase preset에서만 선택적으로 사용한다.
 - 가구 drag는 local preview 후 pointer-up 시점에 store commit을 우선 적용해 전역 scene 재직렬화를 매 pointer move마다 유발하지 않는다.
 - loaded GLB 자산의 hover/select raycast는 `three-mesh-bvh` bounds tree를 우선 사용해 작은 desk asset 다수 배치 시 raycast 비용을 낮춘다.
+- loaded GLB 자산의 large non-interleaved geometry는 BVH 생성 자체를 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync 경로를 유지한다.
 - KTX2 encoder(`toktx`)가 없는 환경에서도 runtime decode path와 public transcoder sync는 유지해야 한다.
 
 ## Scene 데이터 소비 규칙
@@ -283,6 +284,16 @@ Updated:
 
 Removed/Deprecated:
 - desk precision picking이 raw triangle raycast 위에서만 동작한다는 가정.
+
+## 2026-04-20 변경 동기화 (BVH Worker Offload)
+Added:
+- large non-interleaved GLB geometry에 대해 bounds tree 생성을 Web Worker queue로 오프로딩하는 렌더 상호작용 기준을 추가했다.
+
+Updated:
+- `useGLBAsset` 품질 기준을 `BVH raycast 사용`에서 `BVH raycast + BVH generation offload`까지 확장한다.
+
+Removed/Deprecated:
+- dense geometry BVH 생성이 항상 main thread sync compute에만 의존한다는 가정.
 
 ## 2026-04-19 변경 동기화 (SceneDocument Roundtrip Verify)
 Added:

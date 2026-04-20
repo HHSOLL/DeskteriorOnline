@@ -32,6 +32,7 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - `SceneViewport` 기반 경로는 성능 측정 시 `plan2space:renderer-stats`와 `plan2space:interaction-latency` 브라우저 이벤트를 공용 telemetry 계약으로 사용한다.
 - 성능 회귀 보고는 `window.__PLAN2SPACE_TELEMETRY_CAPTURE__`로 캡처한 JSON entry와 `perf:report:verify` CLI 검증을 기본 절차로 사용한다.
 - loaded GLB 자산의 picking은 `three-mesh-bvh` 기반 bounds tree raycast를 기본값으로 사용한다.
+- loaded GLB 자산의 bounds tree 생성은 large non-interleaved geometry에 한해 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync fallback을 사용한다.
 - loaded GLB runtime decode는 `KTX2Loader` + local basis transcoder(`apps/web/public/assets/transcoders/basis`)를 기본 경로로 준비하고, 경로 override는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`만 사용한다.
 - room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 산출물이 없거나 플래그가 꺼져 있으면 JPG/PNG 원본으로 fallback 한다.
 - editor top-view(room / desk precision)와 builder preview는 기본적으로 `frameloop="demand"`를 사용하고, 카메라/hover/drag/gizmo 변경에서만 explicit invalidation 한다.
@@ -254,6 +255,16 @@ Updated:
 
 Removed/Deprecated:
 - 모든 GLB 자산 선택/hover가 기본 three.js triangle raycast만 사용한다는 가정.
+
+## 2026-04-20 변경 동기화 (BVH Worker Offload)
+Added:
+- loaded GLB 자산의 large non-interleaved geometry는 bounds tree 생성을 Web Worker queue로 오프로딩하는 기준을 추가했다.
+
+Updated:
+- BVH 적용 범위를 `accelerated raycast 사용`에서 `accelerated raycast + generation offload`까지 확장한다.
+
+Removed/Deprecated:
+- loaded GLB bounds tree 생성이 항상 main thread sync compute에만 머문다는 가정.
 
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop)
 Added:

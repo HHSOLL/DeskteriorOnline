@@ -3,12 +3,14 @@
 export const PLAN2SPACE_RENDERER_STATS_EVENT = "plan2space:renderer-stats";
 export const PLAN2SPACE_INTERACTION_LATENCY_EVENT =
   "plan2space:interaction-latency";
+export const PLAN2SPACE_BVH_BUILD_EVENT = "plan2space:bvh-build";
 
 const TELEMETRY_QUERY_PARAM = "telemetry";
 const WINDOW_TELEMETRY_FLAG = "__PLAN2SPACE_TELEMETRY__";
 const WINDOW_RENDERER_SNAPSHOT_KEY = "__PLAN2SPACE_LAST_RENDERER_STATS__";
 const WINDOW_INTERACTION_SNAPSHOT_KEY =
   "__PLAN2SPACE_LAST_INTERACTION_LATENCY__";
+const WINDOW_BVH_BUILD_SNAPSHOT_KEY = "__PLAN2SPACE_LAST_BVH_BUILD__";
 const WINDOW_TELEMETRY_CAPTURE_KEY = "__PLAN2SPACE_TELEMETRY_CAPTURE__";
 const WINDOW_ACTIVE_CAPTURE_KEY = "__PLAN2SPACE_ACTIVE_TELEMETRY_CAPTURE__";
 const WINDOW_CAPTURE_HISTORY_KEY = "__PLAN2SPACE_TELEMETRY_CAPTURE_HISTORY__";
@@ -28,6 +30,17 @@ import {
   type TelemetryCaptureInput,
   type TelemetryCaptureSession
 } from "./performance-regression";
+
+export type BvhBuildDetail = {
+  timestamp: string;
+  path: string;
+  geometryUuid: string;
+  triangleCount: number;
+  durationMs: number;
+  mode: "sync" | "worker";
+  status: "success" | "error";
+  reason?: string;
+};
 
 type TelemetryCaptureApi = {
   start: (input: TelemetryCaptureInput) => TelemetryCaptureSession;
@@ -210,4 +223,12 @@ export function scheduleInteractionLatency(
   win.requestAnimationFrame(() => {
     win.requestAnimationFrame(finalize);
   });
+}
+
+export function emitBvhBuild(detail: BvhBuildDetail) {
+  emitTelemetryEvent(
+    PLAN2SPACE_BVH_BUILD_EVENT,
+    WINDOW_BVH_BUILD_SNAPSHOT_KEY,
+    detail
+  );
 }

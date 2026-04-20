@@ -53,6 +53,7 @@
 - Blender 알려진 슬롯 기준(`DeskWood`, `DeskMetal`, `StandWood`, `StandPad`, `LampBody`, `LampAccent`, `LampBulb`)의 slot-aware finish 매핑 적용
 - 오픈소스/공식문서/논문 기반 개선안은 `docs/research-roadmap.md`를 기준으로 추적
 - loaded GLB 자산에 `three-mesh-bvh` bounds tree를 생성해 hover/select raycast 비용을 완화
+- loaded GLB BVH 생성 자체를 large non-interleaved geometry 기준 Web Worker queue로 오프로딩
 - `KTX2Loader` + local basis transcoder sync 경로를 runtime decode 기본선으로 추가
 - room shell floor/wall texture set에 `KTX2 우선 + JPG/PNG fallback` 경로와 encode/check 스크립트를 추가
 - shared viewport에 mode-aware render quality ladder 적용(top/builder 경량화, walk/viewer 품질 유지)
@@ -308,7 +309,19 @@ Removed/Deprecated:
 
 현재 착수:
 - 완료: Phase 1 / Slice 1, Phase 1 / Slice 2, Phase 1 / Slice 3, Phase 2 / Slice 1, Phase 2 / Slice 2, Phase 2 / Slice 3, Phase 3 / Slice 1, Phase 3 / Slice 2, Phase 3 / Slice 3, Phase 3 / Slice 4, Phase 4 / Slice 1, Phase 4 / Slice 2, Phase 4 / Slice 3, Phase 5 / Slice 1, Phase 5 / Slice 2, Phase 5 / Slice 3
-- 다음 후보: worker offload, 자산 메타데이터 계약 보강, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
+- 다음 후보: 자산 메타데이터 계약 보강, P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선, 실사 강화 2차
+
+## 2026-04-20 변경 동기화 (BVH Worker Offload)
+Added:
+- loaded GLB 자산의 large non-interleaved geometry에 대해 `three-mesh-bvh` bounds tree 생성을 Web Worker queue로 오프로딩하는 경로를 추가했다.
+- `plan2space:bvh-build` 브라우저 이벤트와 `window.__PLAN2SPACE_LAST_BVH_BUILD__` 스냅샷으로 worker/sync BVH build mode, triangle count, duration을 확인하는 측정 지점을 추가했다.
+
+Updated:
+- 원문 보고서 기준 남은 작업에서 `worker offload`의 첫 안전한 범위를 `loaded GLB BVH generation offload` 완료 상태로 갱신한다.
+- P2 성능 개선 범위를 `BVH raycast baseline`에서 `BVH raycast + BVH generation worker offload`까지 확장한다.
+
+Removed/Deprecated:
+- loaded GLB bounds tree 생성이 항상 main thread sync compute에만 의존한다는 가정.
 
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:

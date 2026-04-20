@@ -122,6 +122,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - 필요 시 브라우저 콘솔에서 `plan2space:renderer-stats` / `plan2space:interaction-latency` 이벤트를 구독해 draw call, texture, hover/select/drag-start 지연을 같이 기록하는지 확인
 - 필요 시 `window.__PLAN2SPACE_TELEMETRY_CAPTURE__`로 builder/editor/shared viewer 측정 세션을 각각 묶고 `perf:report:verify`로 JSON report를 검증하는지 확인
 - loaded GLB 자산이 많은 장면에서 hover/select 시작 지연이 BVH 적용 후에도 50ms 예산 안에 들어오는지 확인
+- large geometry가 있는 장면에서 브라우저 콘솔의 `plan2space:bvh-build` 이벤트가 `mode: "worker"`로 기록되고, small/interleaved geometry는 필요 시 `mode: "sync"`로 fallback 되는지 확인
 - `npm --workspace apps/web run assets:sync:ktx2-transcoder -- --check`가 basis transcoder public 파일을 PASS로 검증하는지 확인
 - `npm --workspace apps/web run verify:scene-document`가 placement/support/product metadata roundtrip 검증을 통과하는지 확인
 - `npm --workspace apps/web run verify:public-scene`가 shared viewer payload에서 placement/support/product metadata roundtrip 검증을 통과하는지 확인
@@ -567,3 +568,13 @@ Updated:
 
 Removed/Deprecated:
 - room shell texture KTX2 준비 상태를 수동 파일 탐색만으로 판단하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (BVH Worker Offload QA)
+Added:
+- `plan2space:bvh-build` 이벤트로 large geometry가 worker offload 되는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- BVH QA 기준을 `hover/select latency` 확인에서 `hover/select latency + BVH build mode(worker/sync) 확인`까지 확장했다.
+
+Removed/Deprecated:
+- BVH generation path를 코드 추측만으로 판단하던 QA 방식.
