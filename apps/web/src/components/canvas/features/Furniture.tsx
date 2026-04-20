@@ -8,6 +8,7 @@ import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-po
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
 import { normalizeSceneAnchorType } from "../../../lib/scene/anchor-types";
+import { resolveAssetLodPlan, type AssetLodPlan } from "../../../lib/scene/asset-lod";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
@@ -405,7 +406,7 @@ function PlaceholderFurniture() {
   );
 }
 
-function ModelInstance({ asset }: { asset: SceneAsset }) {
+function ModelInstance({ asset, lodPlan }: { asset: SceneAsset; lodPlan: AssetLodPlan }) {
   const gltf = useGLBAsset(asset.assetId);
   const finishMetadata = useMemo<FinishMetadata>(
     () => ({
@@ -419,10 +420,15 @@ function ModelInstance({ asset }: { asset: SceneAsset }) {
     () => resolveFinishAppearance(finishMetadata),
     [finishMetadata]
   );
-  const lod = useMemo(() => {
-    const root = new THREE.LOD();
+  const model = useMemo(() => {
     const high = gltf.scene.clone(true);
     applyFinishAppearanceToObject(high, finishAppearance);
+
+    if (!lodPlan.useProxyBox || lodPlan.lowDetailDistance === null) {
+      return high;
+    }
+
+    const root = new THREE.LOD();
     const bbox = new THREE.Box3().setFromObject(high);
     const size = new THREE.Vector3();
     const center = new THREE.Vector3();
@@ -443,19 +449,19 @@ function ModelInstance({ asset }: { asset: SceneAsset }) {
     }
     const low = new THREE.Mesh(lowGeometry, lowMaterial);
     root.addLevel(high, 0);
-    root.addLevel(low, 8);
+    root.addLevel(low, lodPlan.lowDetailDistance);
     return root;
-  }, [finishAppearance, gltf.scene]);
+  }, [finishAppearance, gltf.scene, lodPlan.lowDetailDistance, lodPlan.useProxyBox]);
 
   useEffect(() => {
-    lod.traverse((child) => {
+    model.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.castShadow = true;
         child.receiveShadow = true;
       }
     });
     return () => {
-      lod.traverse((child) => {
+      model.traverse((child) => {
         if (child instanceof THREE.Mesh) {
           child.geometry?.dispose();
           const material = child.material;
@@ -467,9 +473,9 @@ function ModelInstance({ asset }: { asset: SceneAsset }) {
         }
       });
     };
-  }, [lod]);
+  }, [model]);
 
-  return <primitive object={lod} />;
+  return <primitive object={model} />;
 }
 
 function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enableDynamicLight: boolean }) {
@@ -499,6 +505,15 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
+  );
+  const lodPlan = useMemo(
+    () =>
+      resolveAssetLodPlan({
+        asset,
+        viewMode,
+        topMode
+      }),
+    [asset, topMode, viewMode]
   );
   const lightProfile = useMemo(
     () => (enableDynamicLight ? resolveAssetLightProfile(asset) : null),
@@ -623,7 +638,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     <PlaceholderFurniture />
   ) : (
     <Suspense fallback={<PlaceholderFurniture />}>
-      <ModelInstance asset={asset} />
+      <ModelInstance asset={asset} lodPlan={lodPlan} />
     </Suspense>
   );
 

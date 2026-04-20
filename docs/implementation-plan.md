@@ -347,6 +347,17 @@ Updated:
 Removed/Deprecated:
 - curated deskterior 자산 계약이 물리 메타데이터만 보장하면 충분하다는 가정.
 
+## 2026-04-20 변경 동기화 (LOD Policy Operationalization)
+Added:
+- `lodProfile`를 room mode / desk precision / walk / builder preview 런타임 fallback 거리 정책으로 실제 연결했다.
+- `verify:asset-lod` 스크립트를 추가해 complexity별 proxy fallback과 manual-lod bonus를 회귀 검증하도록 했다.
+
+Updated:
+- 원문 보고서 기준 남은 `instancing/LOD 운영화`를 “LOD policy phase 완료, native instancing만 남음” 상태로 갱신한다.
+
+Removed/Deprecated:
+- `lodProfile`가 문서/manifest에만 있고 런타임이 고정 거리 box proxy만 사용하는 상태라는 서술.
+
 ## 2026-04-20 변경 동기화 (Desk Precision Helper View)
 Added:
 - desk precision mode에서 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector와 overlay에 추가했다.

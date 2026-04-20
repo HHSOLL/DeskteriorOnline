@@ -49,6 +49,7 @@
 - desk precision mode는 support surface 위 제품 footprint, projected footprint, edge clearance, relative yaw를 함께 노출해 usable area 침범 여부를 즉시 판단할 수 있어야 한다.
 - walk view 진입 시 기본 시선은 room center/entrance target을 향해야 한다.
 - room mode, desk precision mode, builder preview는 idle 상태에서 `frameloop="demand"`를 기본으로 사용하고, camera zoom/rotate, hover highlight, direct drag, gizmo transform에서만 `invalidate()`를 호출한다.
+- deskterior 자산은 `lodProfile.maxDrawCalls/maxTriangleCount` 기준으로 complexity를 나누고, room mode는 더 이른 box proxy fallback, desk precision/walk는 더 늦은 fallback을 사용한다.
 
 ## 뷰어 규칙
 - `apps/web/src/components/viewer/ReadOnlySceneViewport.tsx`
@@ -367,6 +368,17 @@ Updated:
 
 Removed/Deprecated:
 - save/load/public payload에서 source/license/pivot/collision/texture/lod 메타가 누락돼도 무방하다는 가정.
+
+## 2026-04-20 변경 동기화 (LOD Policy Operationalization)
+Added:
+- `lodProfile`를 room mode / desk precision / walk / builder preview 런타임 LOD 거리 정책으로 실제 소비하는 기준을 추가했다.
+- `verify:asset-lod` 스크립트로 complexity별 proxy fallback 거리와 manual-lod bonus를 검증하는 품질 기준을 추가했다.
+
+Updated:
+- deskterior 런타임 LOD를 “모든 자산 공통 high + box proxy”에서 `lodProfile + 모드별 거리 정책` 기반으로 구체화했다.
+
+Removed/Deprecated:
+- `lodProfile`가 문서용 메타 필드에만 머물고 런타임은 고정 거리만 사용한다는 가정.
 
 ## 2026-04-18 변경 동기화 (Opening Asset + Top-Entry Optimization)
 Added:

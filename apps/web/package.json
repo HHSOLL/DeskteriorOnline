@@ -24,6 +24,7 @@
     "assets:verify:deskterior": "node --import tsx scripts/verify-deskterior-pipeline.ts",
     "assets:optimize:deskterior": "node --import tsx scripts/optimize-deskterior-runtime.ts",
     "verify:scene-document": "node --import tsx scripts/verify-scene-document-roundtrip.ts",
+    "verify:asset-lod": "node --import tsx scripts/verify-asset-lod-policy.ts",
     "verify:public-scene": "node --import tsx scripts/verify-public-scene-payload.ts",
     "verify:showcase-scene": "node --import tsx scripts/verify-showcase-scene-consistency.ts",
     "perf:report:verify": "node --import tsx scripts/verify-performance-regression-report.ts",
