@@ -370,6 +370,18 @@ Updated:
 Removed/Deprecated:
 - 반복 자산 instancing이 아직 전혀 런타임에 적용되지 않았다는 서술.
 
+## 2026-04-20 변경 동기화 (Editor Desk Precision Instancing)
+Added:
+- editor `desk precision` top-view에서 반복된 `single_mesh` low/medium complexity 자산을 instanced cluster로 유지하는 2차 운영 단계를 추가했다.
+- `verify:asset-instancing`가 editable `desk precision` eligibility와 selected asset 제외 후 cluster regrouping까지 점검하도록 확장했다.
+
+Updated:
+- 원문 보고서 기준 남은 `instancing/LOD 운영화`를 “LOD policy 완료, read-only/builder instancing + editor desk precision instancing 완료, room-mode direct drag 확대만 남음” 상태로 갱신한다.
+- 다음 후보를 `실사 강화 2차(SSR feasibility)`, `room mode direct-drag와 공존하는 editor instancing feasibility`, `P3 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선` 순서로 재정렬한다.
+
+Removed/Deprecated:
+- editor top-view 전체가 instancing에서 제외되어야 한다는 서술.
+
 ## 2026-04-20 변경 동기화 (Native gltfpack Optional Chain)
 Added:
 - `assets:probe:gltfpack`와 `assets:optimize:deskterior:native` 스크립트를 추가해 native gltfpack binary를 저장소 파이프라인에서 직접 probe/run할 수 있게 했다.

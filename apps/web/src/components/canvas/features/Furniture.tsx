@@ -454,6 +454,10 @@ function InstancedFurnitureCluster({
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const setSelectedAssetId = useSelectionSelector((slice) => slice.setSelectedAssetId);
+  const topViewPolicy = useMemo(
+    () => resolveTopViewInteractionPolicy(topMode),
+    [topMode]
+  );
   const gltf = useGLBAsset(assets[0]!.assetId);
   const finishMetadata = useMemo<FinishMetadata>(
     () => ({
@@ -521,8 +525,11 @@ function InstancedFurnitureCluster({
     };
   }, [instancedMeshes]);
 
+  const allowInteractiveSelection =
+    readOnly || (viewMode === "top" && !topViewPolicy.allowDirectAssetDrag);
+
   const handlePointerDown = (event: ThreeEvent<PointerEvent>) => {
-    if (!readOnly) return;
+    if (!allowInteractiveSelection) return;
     const instanceId = event.instanceId;
     if (instanceId === undefined || instanceId === null) return;
     const targetAsset = assets[instanceId];
@@ -539,12 +546,12 @@ function InstancedFurnitureCluster({
   };
 
   const handlePointerOver = () => {
-    if (!readOnly || typeof document === "undefined") return;
+    if (!allowInteractiveSelection || typeof document === "undefined") return;
     document.body.style.cursor = "pointer";
   };
 
   const handlePointerOut = () => {
-    if (!readOnly || typeof document === "undefined") return;
+    if (!allowInteractiveSelection || typeof document === "undefined") return;
     document.body.style.cursor = "default";
   };
 

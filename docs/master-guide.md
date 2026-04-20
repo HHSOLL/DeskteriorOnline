@@ -25,7 +25,7 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - 제품 메타데이터는 실측 규격(`dimensionsMm`)과 마감(`finishColor`, `finishMaterial`, `detailNotes`)을 유지해야 한다.
 - curated deskterior 제품 메타데이터는 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 manifest와 sceneDocument roundtrip에서 같이 유지해야 한다.
 - `lodProfile`는 문서용 필드에만 머물지 않고 room mode / desk precision / walk / builder preview 런타임 LOD 전환 거리 정책으로 실제 소비되어야 한다.
-- 반복된 `single_mesh` deskterior 자산은 read-only top/walk와 builder preview에서 instanced cluster로 묶을 수 있어야 하며, 선택 중이거나 편집 가능한 자산은 개별 오브젝트 경로를 유지해야 한다.
+- 반복된 `single_mesh` deskterior 자산은 read-only top/walk와 builder preview, editor `desk precision` top-view에서 instanced cluster로 묶을 수 있어야 하며, 선택 중이거나 `room mode` direct-drag 대상 자산은 개별 오브젝트 경로를 유지해야 한다.
 - 렌더 품질 사다리는 mode-aware tone mapping을 포함해야 하며, `room mode` / `viewer-shared` / 기본 walk-viewer는 ACES, `desk precision` / `builder preview` / `viewer-showcase`는 Neutral tone mapping을 사용한다.
 - `sceneDocument` 저장 계약은 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, meter float 좌표는 그 스냅샷에서 파생된 호환 필드로만 유지한다.
 - `desk precision mode`에서는 선택한 제품의 위치/회전을 `mm/deg` 기준 numeric inspector와 measurement overlay로 노출한다.
@@ -456,6 +456,16 @@ Updated:
 
 Removed/Deprecated:
 - 반복 자산이 있는 read-only/builder 장면도 항상 개별 mesh clone만 사용해야 한다는 가정.
+
+## 2026-04-20 변경 동기화 (Editor Desk Precision Instancing)
+Added:
+- editor `desk precision` top-view에서 반복된 `single_mesh` low/medium complexity 자산을 instanced cluster로 유지하는 운영 규칙을 추가한다.
+
+Updated:
+- `instancing/LOD 운영화` 상태를 `read-only/builder instancing 1차 완료`에서 `editor desk precision instancing 포함` 상태로 확장한다.
+
+Removed/Deprecated:
+- editor top-view 전체가 instancing eligibility에서 항상 제외되어야 한다는 가정.
 
 ## 2026-04-20 변경 동기화 (Native gltfpack Optional Chain)
 Added:

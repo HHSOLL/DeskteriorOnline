@@ -43,7 +43,8 @@ export function resolveAssetInstancingPlan({
 
   const allowMode =
     viewMode === "builder-preview" ||
-    (readOnly && (viewMode === "walk" || (viewMode === "top" && topMode === "room")));
+    (viewMode === "walk" && readOnly) ||
+    (viewMode === "top" && (readOnly || topMode === "desk-precision"));
   if (!allowMode) {
     return { eligible: false, clusterKey: null };
   }

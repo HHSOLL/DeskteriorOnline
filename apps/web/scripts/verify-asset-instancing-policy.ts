@@ -69,6 +69,7 @@ function createAsset(id: string, overrides?: {
 const repeatedAssets = [
   createAsset("mug-1"),
   createAsset("mug-2"),
+  createAsset("mug-4"),
   createAsset("mug-3", { finishColor: "black" }),
   createAsset("lamp-1", {
     assetId: "p2s_desk_lamp_glow",
@@ -123,6 +124,14 @@ try {
     enableDynamicLight: false,
     isSelected: false
   });
+  const editableDeskPrecisionPlan = resolveAssetInstancingPlan({
+    asset: repeatedAssets[0]!,
+    viewMode: "top",
+    topMode: "desk-precision",
+    readOnly: false,
+    enableDynamicLight: false,
+    isSelected: false
+  });
   const selectedPlan = resolveAssetInstancingPlan({
     asset: repeatedAssets[0]!,
     viewMode: "top",
@@ -156,18 +165,40 @@ try {
     selectedAssetId: null,
     emitterAssetIds: new Set<string>()
   });
+  const deskPrecisionClusters = groupAssetsForInstancing({
+    assets: repeatedAssets,
+    viewMode: "top",
+    topMode: "desk-precision",
+    readOnly: false,
+    selectedAssetId: "mug-1",
+    emitterAssetIds: new Set<string>()
+  });
 
   assert(readOnlyTopPlan.eligible, "read-only top room asset should be instancing-eligible");
   assert(walkReadOnlyPlan.eligible, "read-only walk asset should be instancing-eligible");
   assert(builderPreviewPlan.eligible, "builder preview asset should be instancing-eligible");
+  assert(
+    editableDeskPrecisionPlan.eligible,
+    "editable desk precision asset should be instancing-eligible"
+  );
   assert(!editableTopPlan.eligible, "editable top room asset should stay per-instance");
   assert(!selectedPlan.eligible, "selected asset should stay per-instance");
   assert(!dynamicLightPlan.eligible, "dynamic light asset should stay per-instance");
   assert(!manualLodPlan.eligible, "manual LOD asset should stay per-instance");
   assert(clusters.length === 1, `expected one repeated cluster, received ${clusters.length}`);
   assert(
-    clusters[0]?.assets.map((asset) => asset.id).join(",") === "mug-1,mug-2",
+    clusters[0]?.assets.map((asset) => asset.id).join(",") === "mug-1,mug-2,mug-4",
     `unexpected cluster members: ${clusters[0]?.assets.map((asset) => asset.id).join(",")}`
+  );
+  assert(
+    deskPrecisionClusters.length === 1,
+    `expected one desk precision cluster, received ${deskPrecisionClusters.length}`
+  );
+  assert(
+    deskPrecisionClusters[0]?.assets.map((asset) => asset.id).join(",") === "mug-2,mug-4",
+    `unexpected desk precision cluster members: ${deskPrecisionClusters[0]?.assets
+      .map((asset) => asset.id)
+      .join(",")}`
   );
 
   console.log("asset instancing policy ok");
@@ -178,10 +209,15 @@ try {
         editableTopPlan,
         walkReadOnlyPlan,
         builderPreviewPlan,
+        editableDeskPrecisionPlan,
         selectedPlan,
         dynamicLightPlan,
         manualLodPlan,
         clusters: clusters.map((cluster) => ({
+          key: cluster.key,
+          assetIds: cluster.assets.map((asset) => asset.id)
+        })),
+        deskPrecisionClusters: deskPrecisionClusters.map((cluster) => ({
           key: cluster.key,
           assetIds: cluster.assets.map((asset) => asset.id)
         }))

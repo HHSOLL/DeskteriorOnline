@@ -51,7 +51,7 @@
 - walk view 진입 시 기본 시선은 room center/entrance target을 향해야 한다.
 - room mode, desk precision mode, builder preview는 idle 상태에서 `frameloop="demand"`를 기본으로 사용하고, camera zoom/rotate, hover highlight, direct drag, gizmo transform에서만 `invalidate()`를 호출한다.
 - deskterior 자산은 `lodProfile.maxDrawCalls/maxTriangleCount` 기준으로 complexity를 나누고, room mode는 더 이른 box proxy fallback, desk precision/walk는 더 늦은 fallback을 사용한다.
-- read-only top/walk와 builder preview에서는 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶어 draw call을 줄이고, selected/editable 경로는 개별 오브젝트를 유지한다.
+- read-only top/walk와 builder preview, 그리고 editor `desk precision` top-view에서는 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶어 draw call을 줄이고, selected/direct-drag 경로는 개별 오브젝트를 유지한다.
 
 ## 뷰어 규칙
 - `apps/web/src/components/viewer/ReadOnlySceneViewport.tsx`
@@ -74,7 +74,7 @@
 - loaded GLB 자산의 hover/select raycast는 `three-mesh-bvh` bounds tree를 우선 사용해 작은 desk asset 다수 배치 시 raycast 비용을 낮춘다.
 - loaded GLB 자산의 large non-interleaved geometry는 BVH 생성 자체를 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync 경로를 유지한다.
 - KTX2 encoder(`toktx`)가 없는 환경에서도 runtime decode path와 public transcoder sync는 유지해야 한다.
-- `verify:asset-instancing`는 read-only top/walk + builder preview instancing eligibility와 cluster grouping 정책을 회귀 검증해야 한다.
+- `verify:asset-instancing`는 read-only top/walk + builder preview + editor `desk precision` instancing eligibility와 cluster grouping 정책을 회귀 검증해야 한다.
 - native gltfpack output을 사용할 때는 `-kn -km -ke` 보존 플래그 기준을 유지해 slot-aware finish와 named node/material 기반 런타임 가정이 깨지지 않게 해야 한다.
 
 ## Scene 데이터 소비 규칙
@@ -394,6 +394,17 @@ Updated:
 
 Removed/Deprecated:
 - read-only/builder 장면에서도 반복 자산을 항상 개별 mesh clone으로만 유지해야 한다는 가정.
+
+## 2026-04-20 변경 동기화 (Editor Desk Precision Instancing)
+Added:
+- editor `desk precision` top-view에서 반복된 `single_mesh` low/medium complexity 자산을 instanced cluster로 유지하는 기준을 추가했다.
+
+Updated:
+- instancing 적용 범위를 `read-only top/walk + builder preview`에서 `read-only top/walk + builder preview + editor desk precision`까지 확장한다.
+- selected 자산과 `room mode` direct-drag 경로는 계속 개별 오브젝트를 유지하도록 품질 기준을 구체화한다.
+
+Removed/Deprecated:
+- editor top-view 전체가 instancing에서 무조건 제외되어야 한다는 가정.
 
 ## 2026-04-20 변경 동기화 (Native gltfpack Optional Chain)
 Added:
