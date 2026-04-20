@@ -1,20 +1,25 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { getSupabaseClient } from "../lib/supabase/client";
 import {
   buildRealtimeLabChannelName,
   buildRealtimePresenceMeta,
+  createDefaultRealtimeLocalPresenceState,
   createRealtimeLabLabel,
   REALTIME_LAB_STALE_AFTER_MS,
   resolveRealtimeParticipantsFromPresenceState,
+  type LocalRealtimePresenceState,
   type RealtimeParticipant
 } from "../lib/experiments/realtime-presence";
+import type { RealtimeViewMode } from "../lib/experiments/realtime-presence";
 
 type RealtimeStatus = "idle" | "disabled" | "connecting" | "connected" | "error";
 
 const REALTIME_HEARTBEAT_INTERVAL_MS = 15_000;
+const REALTIME_PRESENCE_DEBOUNCE_MS = 120;
+const REALTIME_CURSOR_EPSILON = 0.01;
 
 function getRealtimeSessionKey() {
   if (typeof window === "undefined") {
@@ -43,14 +48,79 @@ export function useRealtime(input: {
   const [error, setError] = useState<string | null>(null);
   const [lastSyncAt, setLastSyncAt] = useState<string | null>(null);
   const [heartbeatAt, setHeartbeatAt] = useState<string | null>(null);
+  const [localPresence, setLocalPresence] = useState<LocalRealtimePresenceState>(() =>
+    createDefaultRealtimeLocalPresenceState()
+  );
   const selfJoinedAtRef = useRef<string | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
+  const localPresenceRef = useRef(localPresence);
+  const syncSnapshotRef = useRef<(() => void) | null>(null);
+  const sendPresenceUpdateRef = useRef<(() => Promise<void>) | null>(null);
   const selfSessionKey = useMemo(() => getRealtimeSessionKey(), []);
   const selfLabel = useMemo(
     () => (selfSessionKey ? createRealtimeLabLabel(selfSessionKey) : null),
     [selfSessionKey]
   );
   const channelName = roomId ? buildRealtimeLabChannelName(roomId) : null;
+
+  useEffect(() => {
+    localPresenceRef.current = localPresence;
+  }, [localPresence]);
+
+  const setViewMode = useCallback((viewMode: RealtimeViewMode) => {
+    setLocalPresence((previous) => {
+      if (previous.viewMode === viewMode) {
+        return previous;
+      }
+      return {
+        ...previous,
+        viewMode
+      };
+    });
+  }, []);
+
+  const setSelectedAssetId = useCallback((selectedAssetId: string | null) => {
+    setLocalPresence((previous) => {
+      if (previous.selectedAssetId === selectedAssetId) {
+        return previous;
+      }
+      return {
+        ...previous,
+        selectedAssetId
+      };
+    });
+  }, []);
+
+  const setCursor = useCallback((cursor: { x: number; y: number } | null) => {
+    setLocalPresence((previous) => {
+      if (!cursor) {
+        if (!previous.cursor) {
+          return previous;
+        }
+        return {
+          ...previous,
+          cursor: null
+        };
+      }
+
+      if (
+        previous.cursor &&
+        Math.abs(previous.cursor.x - cursor.x) < REALTIME_CURSOR_EPSILON &&
+        Math.abs(previous.cursor.y - cursor.y) < REALTIME_CURSOR_EPSILON
+      ) {
+        return previous;
+      }
+
+      return {
+        ...previous,
+        cursor
+      };
+    });
+  }, []);
+
+  const clearCursor = useCallback(() => {
+    setCursor(null);
+  }, [setCursor]);
 
   useEffect(() => {
     if (!enabled) {
@@ -99,15 +169,17 @@ export function useRealtime(input: {
         setLastSyncAt(new Date().toISOString());
       }
     };
+    syncSnapshotRef.current = syncSnapshot;
 
-    const sendHeartbeat = async () => {
+    const sendPresenceUpdate = async () => {
       const now = Date.now();
       const meta = buildRealtimePresenceMeta({
         roomId,
         sessionKey: selfSessionKey,
         label: selfLabel,
         now,
-        joinedAt: selfJoinedAtRef.current ?? undefined
+        joinedAt: selfJoinedAtRef.current ?? undefined,
+        localState: localPresenceRef.current
       });
       if (!selfJoinedAtRef.current) {
         selfJoinedAtRef.current = meta.joinedAt;
@@ -118,6 +190,7 @@ export function useRealtime(input: {
         throw new Error(`Realtime heartbeat failed: ${result}`);
       }
     };
+    sendPresenceUpdateRef.current = sendPresenceUpdate;
 
     channel
       .on("presence", { event: "sync" }, syncSnapshot)
@@ -130,7 +203,7 @@ export function useRealtime(input: {
 
         if (nextStatus === "SUBSCRIBED") {
           try {
-            await sendHeartbeat();
+            await sendPresenceUpdate();
             syncSnapshot();
             setStatus("connected");
           } catch (subscribeError) {
@@ -147,7 +220,7 @@ export function useRealtime(input: {
       });
 
     const heartbeatTimer = window.setInterval(() => {
-      void sendHeartbeat().then(syncSnapshot).catch((heartbeatError) => {
+      void sendPresenceUpdate().then(syncSnapshot).catch((heartbeatError) => {
         if (!cancelled) {
           setStatus("error");
           setError(heartbeatError instanceof Error ? heartbeatError.message : "Realtime heartbeat failed.");
@@ -160,6 +233,8 @@ export function useRealtime(input: {
       window.clearInterval(heartbeatTimer);
       selfJoinedAtRef.current = null;
       setParticipants([]);
+      syncSnapshotRef.current = null;
+      sendPresenceUpdateRef.current = null;
       void channel.untrack().catch(() => undefined);
       void supabase.removeChannel(channel);
       if (channelRef.current === channel) {
@@ -167,6 +242,29 @@ export function useRealtime(input: {
       }
     };
   }, [channelName, enabled, roomId, selfLabel, selfSessionKey]);
+
+  useEffect(() => {
+    if (status !== "connected") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      const sendPresenceUpdate = sendPresenceUpdateRef.current;
+      if (!sendPresenceUpdate) {
+        return;
+      }
+      void sendPresenceUpdate()
+        .then(() => syncSnapshotRef.current?.())
+        .catch((presenceError) => {
+          setStatus("error");
+          setError(presenceError instanceof Error ? presenceError.message : "Realtime presence update failed.");
+        });
+    }, REALTIME_PRESENCE_DEBOUNCE_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [localPresence, status]);
 
   const activeParticipants = useMemo(
     () => participants.filter((participant) => !participant.stale),
@@ -183,6 +281,11 @@ export function useRealtime(input: {
     sessionKey: selfSessionKey,
     selfLabel,
     heartbeatAt,
-    lastSyncAt
+    lastSyncAt,
+    localPresence,
+    setViewMode,
+    setSelectedAssetId,
+    setCursor,
+    clearCursor
   };
 }

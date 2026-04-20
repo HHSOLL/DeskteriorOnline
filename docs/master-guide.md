@@ -403,6 +403,19 @@ Updated:
 Removed/Deprecated:
 - `/labs/realtime`가 정적 설명 화면만 제공하고 실제 room/session foundation은 없는 상태.
 
+## 2026-04-20 변경 동기화 (Presence Lab Phase 2 Basics)
+Added:
+- `/labs/realtime` 안에서 cursor presence surface, view mode presence, selected asset presence를 같은 realtime channel meta로 노출하는 Phase 2 basics를 추가한다.
+- occupancy snapshot card와 active participant badge가 label/session뿐 아니라 accent color, view mode, selected asset, cursor 좌표를 함께 보여주도록 확장한다.
+- `verify:realtime-lab` 검증 범위를 room/session foundation에서 cursor/view/selection presence roundtrip까지 확장한다.
+
+Updated:
+- presence/realtime 상태를 `lab isolation + phase 1 foundation complete`에서 `phase 2 presence basics complete`로 갱신한다.
+- 남은 실험 범위를 `Phase 3 broadcast state -> Phase 4 lab-only collaborative draft -> Phase 5 hardening` 순으로 축소한다.
+
+Removed/Deprecated:
+- `/labs/realtime`가 occupancy snapshot만 보여주고 실제 ephemeral participant state(cursor/view/selection)는 전혀 노출하지 않는 상태.
+
 ## 2026-04-19 변경 동기화 (Desk Precision Measurements)
 Added:
 - desk precision mode에서 선택 자산의 X/Y/Z 위치와 Yaw 회전을 `mm/deg` 기준으로 보여주는 numeric inspector + measurement overlay 규칙을 추가한다.

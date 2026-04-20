@@ -1,6 +1,7 @@
 import {
   buildRealtimeLabChannelName,
   buildRealtimePresenceMeta,
+  createDefaultRealtimeLocalPresenceState,
   normalizeRealtimeLabRoomId,
   resolveRealtimeParticipantsFromPresenceState
 } from "../src/lib/experiments/realtime-presence";
@@ -25,13 +26,26 @@ try {
     roomId: roomId ?? "demo-room-01",
     sessionKey: "session-self",
     label: "guest-self",
-    now
+    now,
+    localState: {
+      viewMode: "desk",
+      selectedAssetId: "p2s_desk_oak",
+      cursor: {
+        x: 0.24,
+        y: 0.61
+      }
+    }
   });
   const staleMeta = buildRealtimePresenceMeta({
     roomId: roomId ?? "demo-room-01",
     sessionKey: "session-stale",
     label: "guest-stale",
-    now: now - 70_000
+    now: now - 70_000,
+    localState: {
+      ...createDefaultRealtimeLocalPresenceState(),
+      viewMode: "walk",
+      selectedAssetId: "p2s_ceramic_mug"
+    }
   });
 
   const participants = resolveRealtimeParticipantsFromPresenceState({
@@ -46,9 +60,15 @@ try {
   assert(participants.length === 2, `expected 2 participants, received ${participants.length}`);
   assert(participants[0]?.isSelf === true, "self participant should be ranked first");
   assert(participants[0]?.stale === false, "self participant should be active");
+  assert(participants[0]?.viewMode === "desk", "self participant view mode should roundtrip");
+  assert(participants[0]?.selectedAssetId === "p2s_desk_oak", "self selection should roundtrip");
+  assert(participants[0]?.cursor?.x === 0.24, "self cursor x should roundtrip");
+  assert(participants[0]?.cursor?.y === 0.61, "self cursor y should roundtrip");
   assert(participants[1]?.stale === true, "stale participant should be marked stale");
+  assert(participants[1]?.viewMode === "walk", "stale participant view mode should roundtrip");
+  assert(participants[1]?.selectedAssetId === "p2s_ceramic_mug", "stale selection should roundtrip");
 
-  console.log("realtime lab foundation ok");
+  console.log("realtime lab phase 2 ok");
   console.log(
     JSON.stringify(
       {

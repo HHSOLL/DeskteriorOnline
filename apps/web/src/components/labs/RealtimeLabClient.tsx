@@ -1,10 +1,24 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Activity, Copy, RadioTower, RefreshCcw, Users } from "lucide-react";
+import { useMemo, useState, type PointerEvent } from "react";
+import { Activity, Copy, Crosshair, Monitor, Package, RadioTower, RefreshCcw, Users } from "lucide-react";
 import type { RealtimeLabsConfig } from "../../lib/experiments/realtime-labs";
+import type { RealtimeViewMode } from "../../lib/experiments/realtime-presence";
 import { useRealtime } from "../../hooks/useRealtime";
 import { useRealtimeSync } from "../../hooks/useRealtimeSync";
+
+const VIEW_MODE_OPTIONS: Array<{ id: RealtimeViewMode; label: string }> = [
+  { id: "room", label: "Room" },
+  { id: "desk", label: "Desk" },
+  { id: "walk", label: "Walk" }
+];
+
+const SAMPLE_ASSETS = [
+  { id: "p2s_desk_oak", label: "Desk Oak" },
+  { id: "p2s_desk_lamp_glow", label: "Desk Lamp Glow" },
+  { id: "p2s_ceramic_mug", label: "Ceramic Mug" },
+  { id: "p2s_desk_planter_pilea", label: "Planter Pilea" }
+] as const;
 
 function formatTimestamp(value: string | null) {
   if (!value) return "없음";
@@ -24,6 +38,14 @@ function buildAbsoluteShareUrl(path: string | null) {
   return new URL(path, window.location.origin).toString();
 }
 
+function formatAssetLabel(assetId: string | null) {
+  if (!assetId) {
+    return "선택 없음";
+  }
+
+  return SAMPLE_ASSETS.find((asset) => asset.id === assetId)?.label ?? assetId;
+}
+
 export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
   const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [roomError, setRoomError] = useState<string | null>(null);
@@ -35,6 +57,10 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
   const absoluteShareUrl = useMemo(
     () => buildAbsoluteShareUrl(realtimeSync.shareUrl),
     [realtimeSync.shareUrl]
+  );
+  const activeCursors = useMemo(
+    () => realtime.activeParticipants.filter((participant) => participant.cursor),
+    [realtime.activeParticipants]
   );
 
   const handleJoinRoom = () => {
@@ -61,20 +87,32 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
     }
   };
 
+  const handlePresenceSurfacePointer = (event: PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return;
+    }
+
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    realtime.setCursor({ x, y });
+  };
+
   return (
     <section className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_360px]">
       <div className="space-y-5">
         <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
           <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
             <RadioTower className="h-4 w-4" />
-            <span>Phase 1 Foundation</span>
+            <span>Phase 2 Presence Basics</span>
           </div>
           <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[#171411]">
-            room bootstrap / heartbeat / occupancy snapshot
+            cursor / camera-view / selection presence
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-[#625a51]">
-            이 단계는 local-only lab room에 참가자를 묶고, heartbeat와 occupancy snapshot을 안정적으로 보여주는
-            기반만 다룬다. scene write, presenter broadcast, 공동 편집은 아직 포함하지 않는다.
+            Phase 1의 room/session foundation 위에 ephemeral presence만 얹었다. 같은 room 안에서 커서 위치,
+            현재 view mode, 선택 자산을 서로 볼 수 있지만 scene write, presenter broadcast, 협업 편집은 아직
+            다루지 않는다.
           </p>
 
           <div className="mt-6 grid gap-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
@@ -116,7 +154,7 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
           <div className="mt-4 flex flex-wrap items-center gap-3 text-[11px] text-[#625a51]">
             <span>상태 {realtime.status}</span>
             <span>활성 참가자 {realtime.activeParticipants.length}</span>
-            <span>전체 스냅샷 {realtime.participants.length}</span>
+            <span>활성 커서 {activeCursors.length}</span>
             <span>마지막 sync {formatTimestamp(realtime.lastSyncAt)}</span>
             <span>최근 heartbeat {formatTimestamp(realtime.heartbeatAt)}</span>
           </div>
@@ -127,6 +165,12 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
             </div>
             <div className="rounded-full border border-black/10 bg-[#f4f4f1] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#625a51]">
               self {realtime.selfLabel ?? "없음"}
+            </div>
+            <div className="rounded-full border border-black/10 bg-[#f4f4f1] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#625a51]">
+              mode {realtime.localPresence.viewMode}
+            </div>
+            <div className="rounded-full border border-black/10 bg-[#f4f4f1] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#625a51]">
+              selected {formatAssetLabel(realtime.localPresence.selectedAssetId)}
             </div>
             {absoluteShareUrl ? (
               <button
@@ -140,6 +184,71 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
             ) : null}
           </div>
 
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-[20px] border border-black/10 bg-[#faf7f1] p-4">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7e7367]">
+                <Monitor className="h-4 w-4" />
+                <span>View Mode Presence</span>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {VIEW_MODE_OPTIONS.map((option) => {
+                  const active = realtime.localPresence.viewMode === option.id;
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => realtime.setViewMode(option.id)}
+                      className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition ${
+                        active
+                          ? "bg-[#171411] text-white"
+                          : "border border-black/10 bg-white text-[#171411] hover:bg-[#f4f4f1]"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-[20px] border border-black/10 bg-[#faf7f1] p-4">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7e7367]">
+                <Package className="h-4 w-4" />
+                <span>Selection Presence</span>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => realtime.setSelectedAssetId(null)}
+                  className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition ${
+                    realtime.localPresence.selectedAssetId === null
+                      ? "bg-[#171411] text-white"
+                      : "border border-black/10 bg-white text-[#171411] hover:bg-[#f4f4f1]"
+                  }`}
+                >
+                  Clear
+                </button>
+                {SAMPLE_ASSETS.map((asset) => {
+                  const active = realtime.localPresence.selectedAssetId === asset.id;
+                  return (
+                    <button
+                      key={asset.id}
+                      type="button"
+                      onClick={() => realtime.setSelectedAssetId(asset.id)}
+                      className={`rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition ${
+                        active
+                          ? "bg-[#171411] text-white"
+                          : "border border-black/10 bg-white text-[#171411] hover:bg-[#f4f4f1]"
+                      }`}
+                    >
+                      {asset.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
           {roomError ? (
             <div className="mt-4 rounded-[18px] border border-amber-500/25 bg-amber-50 p-4 text-sm leading-6 text-[#7a4d17]">
               {roomError}
@@ -151,6 +260,79 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
               {realtime.error}
             </div>
           ) : null}
+        </div>
+
+        <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
+          <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
+            <Crosshair className="h-4 w-4" />
+            <span>Presence Surface</span>
+          </div>
+          <p className="mt-3 text-sm leading-6 text-[#625a51]">
+            이 보드 안에서 포인터를 움직이면 같은 room 참가자에게 cursor presence가 전달된다. 아래 badge는 각
+            참가자의 view mode와 selected asset 상태를 같이 보여준다.
+          </p>
+          <div
+            onPointerMove={handlePresenceSurfacePointer}
+            onPointerEnter={handlePresenceSurfacePointer}
+            onPointerLeave={realtime.clearCursor}
+            className="relative mt-5 h-[340px] overflow-hidden rounded-[24px] border border-black/10 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.95),_rgba(242,236,228,0.92)_35%,_rgba(224,214,201,0.86)_100%)]"
+          >
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(23,20,17,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(23,20,17,0.06)_1px,transparent_1px)] bg-[size:44px_44px]" />
+            <div className="absolute inset-x-0 top-0 flex items-center justify-between px-5 py-4 text-[10px] font-bold uppercase tracking-[0.16em] text-[#6b6157]">
+              <span>Cursor Presence</span>
+              <span>{activeCursors.length} active markers</span>
+            </div>
+            <div className="absolute inset-x-0 bottom-0 flex flex-wrap gap-2 px-5 py-4">
+              {realtime.activeParticipants.map((participant) => (
+                <div
+                  key={participant.sessionKey}
+                  className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/82 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-[#171411]"
+                >
+                  <span
+                    className="h-2.5 w-2.5 rounded-full"
+                    style={{ backgroundColor: participant.accentColor }}
+                  />
+                  <span>{participant.label}</span>
+                  <span className="text-[#71675d]">{participant.viewMode}</span>
+                  <span className="text-[#71675d]">{formatAssetLabel(participant.selectedAssetId)}</span>
+                </div>
+              ))}
+            </div>
+
+            {activeCursors.length > 0 ? (
+              activeCursors.map((participant) => {
+                if (!participant.cursor) {
+                  return null;
+                }
+
+                return (
+                  <div
+                    key={`${participant.sessionKey}-${participant.cursor.updatedAt}`}
+                    className="absolute"
+                    style={{
+                      left: `${participant.cursor.x * 100}%`,
+                      top: `${participant.cursor.y * 100}%`,
+                      transform: "translate(-50%, -50%)"
+                    }}
+                  >
+                    <div className="relative">
+                      <div
+                        className="h-4 w-4 rounded-full border-2 border-white shadow-[0_10px_20px_rgba(0,0,0,0.18)]"
+                        style={{ backgroundColor: participant.accentColor }}
+                      />
+                      <div className="mt-2 rounded-full bg-[#171411] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_10px_20px_rgba(0,0,0,0.18)]">
+                        {participant.label}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center px-8 text-center text-sm leading-6 text-[#625a51]">
+                아직 active cursor가 없다. 같은 room을 두 창에서 열고 이 보드 위로 포인터를 움직여 보세요.
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
@@ -173,7 +355,13 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <div className="text-sm font-semibold text-[#171411]">{participant.label}</div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-[#171411]">
+                        <span
+                          className="h-2.5 w-2.5 rounded-full"
+                          style={{ backgroundColor: participant.accentColor }}
+                        />
+                        <span>{participant.label}</span>
+                      </div>
                       <div className="mt-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#7e7367]">
                         {participant.sessionKey.slice(-8)}
                       </div>
@@ -197,6 +385,9 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
                   </div>
                   <div className="mt-3 space-y-1 text-[11px] leading-5 text-[#625a51]">
                     <div>room {participant.roomId}</div>
+                    <div>mode {participant.viewMode}</div>
+                    <div>selected {formatAssetLabel(participant.selectedAssetId)}</div>
+                    <div>cursor {participant.cursor ? `${Math.round(participant.cursor.x * 100)} / ${Math.round(participant.cursor.y * 100)}` : "없음"}</div>
                     <div>joined {formatTimestamp(participant.joinedAt)}</div>
                     <div>heartbeat {formatTimestamp(participant.heartbeatAt)}</div>
                   </div>
@@ -215,25 +406,25 @@ export function RealtimeLabClient({ config }: { config: RealtimeLabsConfig }) {
         <div className="rounded-[24px] border border-black/10 bg-[#191512] p-5 text-[#f9f4ec] shadow-[0_18px_46px_rgba(0,0,0,0.18)]">
           <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] text-[#ccb59b]">
             <Activity className="h-4 w-4" />
-            <span>Phase 1 Scope</span>
+            <span>Phase 2 Scope</span>
           </div>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-[#e1d7cd]">
-            <li>room id bootstrap와 shareable query 유지</li>
-            <li>session key 기반 presence join/leave</li>
-            <li>15초 heartbeat 갱신</li>
-            <li>45초 stale participant 표시</li>
-            <li>occupancy snapshot panel</li>
+            <li>cursor presence on lab surface</li>
+            <li>view mode presence badge</li>
+            <li>selected asset presence badge</li>
+            <li>active/stale participant snapshot 유지</li>
+            <li>still no scene write or presenter sync</li>
           </ul>
         </div>
 
         <div className="rounded-[24px] border border-black/10 bg-white/82 p-5 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
-          <div className="text-[10px] font-semibold tracking-[0.2em] text-[#8a8177]">Phase 2 이후 범위</div>
+          <div className="text-[10px] font-semibold tracking-[0.2em] text-[#8a8177]">Phase 3 이후 범위</div>
           <ul className="mt-4 space-y-2 text-sm leading-6 text-[#52483f]">
-            <li>cursor presence</li>
-            <li>camera/view mode presence</li>
             <li>presenter broadcast</li>
             <li>follow presenter</li>
+            <li>spotlight asset</li>
             <li>lab-only collaborative edit draft</li>
+            <li>reconnect / hardening / kill switch</li>
           </ul>
         </div>
       </div>

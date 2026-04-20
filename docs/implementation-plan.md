@@ -328,6 +328,19 @@ Updated:
 Removed/Deprecated:
 - presence 실험이 hidden route 분리까지만 되어 있고 실제 room/session foundation은 전혀 없는 상태.
 
+## 2026-04-20 변경 동기화 (Presence/Broadcast Phase 2 Complete)
+Added:
+- `/labs/realtime`에 cursor presence surface, view mode toggle, selected asset toggle을 추가해 lab 참가자끼리 ephemeral participant state를 공유하도록 확장했다.
+- realtime presence contract를 `accentColor`, `viewMode`, `selectedAssetId`, `cursor(x/y)`까지 포함하도록 넓혔다.
+- `verify:realtime-lab`를 Phase 2 기준으로 확장해 cursor/view/selection presence roundtrip을 검증한다.
+
+Updated:
+- `presence / broadcast` 남은 작업을 `Phase 2 basics 완료` 상태로 갱신한다.
+- 다음 후보를 `Phase 3 broadcast state`, `Phase 4 lab-only collaborative edit draft`, `Phase 5 hardening` 순으로 재정렬한다.
+
+Removed/Deprecated:
+- lab이 active/stale occupancy만 보여주고 participant ephemeral state는 표현하지 않는 상태.
+
 완료 기준:
 - publish 후 shared viewer와 community 카드가 같은 장면 상태를 재현한다.
 - viewer에는 editor 전용 affordance가 남지 않는다.

@@ -1,9 +1,30 @@
+export type RealtimeViewMode = "room" | "desk" | "walk";
+
+export type RealtimeCursor = {
+  x: number;
+  y: number;
+  updatedAt: string;
+};
+
+export type LocalRealtimePresenceState = {
+  viewMode: RealtimeViewMode;
+  selectedAssetId: string | null;
+  cursor: {
+    x: number;
+    y: number;
+  } | null;
+};
+
 export type RealtimePresenceMeta = {
   sessionKey: string;
   label: string;
   roomId: string;
   joinedAt: string;
   heartbeatAt: string;
+  accentColor: string;
+  viewMode: RealtimeViewMode;
+  selectedAssetId: string | null;
+  cursor: RealtimeCursor | null;
 };
 
 export type RealtimeParticipant = {
@@ -14,13 +35,26 @@ export type RealtimeParticipant = {
   heartbeatAt: string;
   isSelf: boolean;
   stale: boolean;
+  accentColor: string;
+  viewMode: RealtimeViewMode;
+  selectedAssetId: string | null;
+  cursor: RealtimeCursor | null;
 };
 
 export const REALTIME_LAB_STALE_AFTER_MS = 45_000;
 const REALTIME_ROOM_ID_PATTERN = /^[a-z0-9-]{4,32}$/;
+const REALTIME_VIEW_MODES = new Set<RealtimeViewMode>(["room", "desk", "walk"]);
 
 function toIsoString(value: number) {
   return new Date(value).toISOString();
+}
+
+function clampNormalizedCoordinate(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function isRealtimeViewMode(value: unknown): value is RealtimeViewMode {
+  return typeof value === "string" && REALTIME_VIEW_MODES.has(value as RealtimeViewMode);
 }
 
 export function normalizeRealtimeLabRoomId(value: string | null | undefined) {
@@ -42,8 +76,25 @@ export function createRealtimeLabRoomId(now = Date.now()) {
   return normalizeRealtimeLabRoomId(`lab-${timeSeed}-${randomSeed}`) ?? `lab-${timeSeed}`;
 }
 
+export function createDefaultRealtimeLocalPresenceState(): LocalRealtimePresenceState {
+  return {
+    viewMode: "room",
+    selectedAssetId: null,
+    cursor: null
+  };
+}
+
 export function buildRealtimeLabChannelName(roomId: string) {
   return `plan2space:labs:presence:${roomId}`;
+}
+
+export function createRealtimeLabAccentColor(sessionKey: string) {
+  let hash = 0;
+  for (const character of sessionKey) {
+    hash = (hash * 31 + character.charCodeAt(0)) >>> 0;
+  }
+  const hue = hash % 360;
+  return `hsl(${hue} 76% 54%)`;
 }
 
 export function buildRealtimePresenceMeta(input: {
@@ -52,14 +103,29 @@ export function buildRealtimePresenceMeta(input: {
   label: string;
   now?: number;
   joinedAt?: string;
+  localState?: LocalRealtimePresenceState;
 }): RealtimePresenceMeta {
   const now = input.now ?? Date.now();
+  const localState = input.localState ?? createDefaultRealtimeLocalPresenceState();
   return {
     sessionKey: input.sessionKey,
     label: input.label,
     roomId: input.roomId,
     joinedAt: input.joinedAt ?? toIsoString(now),
-    heartbeatAt: toIsoString(now)
+    heartbeatAt: toIsoString(now),
+    accentColor: createRealtimeLabAccentColor(input.sessionKey),
+    viewMode: isRealtimeViewMode(localState.viewMode) ? localState.viewMode : "room",
+    selectedAssetId:
+      typeof localState.selectedAssetId === "string" && localState.selectedAssetId.length > 0
+        ? localState.selectedAssetId
+        : null,
+    cursor: localState.cursor
+      ? {
+          x: clampNormalizedCoordinate(localState.cursor.x),
+          y: clampNormalizedCoordinate(localState.cursor.y),
+          updatedAt: toIsoString(now)
+        }
+      : null
   };
 }
 
@@ -73,6 +139,33 @@ type PresenceStateLike = Record<
     metas?: Array<Partial<RealtimePresenceMeta> & Record<string, unknown>>;
   }
 >;
+
+function normalizeRealtimeCursor(value: unknown) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const candidate = value as Partial<RealtimeCursor> & Record<string, unknown>;
+  if (
+    typeof candidate.x !== "number" ||
+    typeof candidate.y !== "number" ||
+    !Number.isFinite(candidate.x) ||
+    !Number.isFinite(candidate.y)
+  ) {
+    return null;
+  }
+
+  const updatedAt =
+    typeof candidate.updatedAt === "string" && !Number.isNaN(new Date(candidate.updatedAt).getTime())
+      ? candidate.updatedAt
+      : new Date(0).toISOString();
+
+  return {
+    x: clampNormalizedCoordinate(candidate.x),
+    y: clampNormalizedCoordinate(candidate.y),
+    updatedAt
+  };
+}
 
 function normalizeParticipantMeta(
   entry: Partial<RealtimePresenceMeta> & Record<string, unknown>,
@@ -97,13 +190,25 @@ function normalizeParticipantMeta(
     typeof entry.heartbeatAt === "string" && !Number.isNaN(new Date(entry.heartbeatAt).getTime())
       ? entry.heartbeatAt
       : joinedAt;
+  const accentColor =
+    typeof entry.accentColor === "string" && entry.accentColor.length > 0
+      ? entry.accentColor
+      : createRealtimeLabAccentColor(sessionKey);
+  const viewMode = isRealtimeViewMode(entry.viewMode) ? entry.viewMode : "room";
+  const selectedAssetId =
+    typeof entry.selectedAssetId === "string" && entry.selectedAssetId.length > 0 ? entry.selectedAssetId : null;
+  const cursor = normalizeRealtimeCursor(entry.cursor);
 
   return {
     sessionKey,
     roomId,
     label,
     joinedAt,
-    heartbeatAt
+    heartbeatAt,
+    accentColor,
+    viewMode,
+    selectedAssetId,
+    cursor
   };
 }
 
@@ -115,7 +220,7 @@ export function resolveRealtimeParticipantsFromPresenceState(input: {
 }) {
   const now = input.now ?? Date.now();
   const staleAfterMs = input.staleAfterMs ?? REALTIME_LAB_STALE_AFTER_MS;
-  const participants: RealtimeParticipant[] = [];
+  const participants = new Map<string, RealtimeParticipant>();
   const presenceState = input.presenceState ?? {};
 
   for (const [presenceKey, value] of Object.entries(presenceState)) {
@@ -123,15 +228,25 @@ export function resolveRealtimeParticipantsFromPresenceState(input: {
       const normalized = normalizeParticipantMeta(meta, presenceKey);
       const heartbeatMs = new Date(normalized.heartbeatAt).getTime();
       const stale = !Number.isFinite(heartbeatMs) || now - heartbeatMs > staleAfterMs;
-      participants.push({
+      const nextParticipant: RealtimeParticipant = {
         ...normalized,
         stale,
         isSelf: normalized.sessionKey === input.selfSessionKey
-      });
+      };
+      const existing = participants.get(nextParticipant.sessionKey);
+      if (!existing) {
+        participants.set(nextParticipant.sessionKey, nextParticipant);
+        continue;
+      }
+
+      const existingHeartbeatMs = new Date(existing.heartbeatAt).getTime();
+      if (!Number.isFinite(existingHeartbeatMs) || heartbeatMs >= existingHeartbeatMs) {
+        participants.set(nextParticipant.sessionKey, nextParticipant);
+      }
     }
   }
 
-  return participants.sort((left, right) => {
+  return [...participants.values()].sort((left, right) => {
     if (left.isSelf !== right.isSelf) {
       return left.isSelf ? -1 : 1;
     }
