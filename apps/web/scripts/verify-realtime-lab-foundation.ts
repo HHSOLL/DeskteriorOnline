@@ -7,6 +7,11 @@ import {
   transitionRealtimeDraftState
 } from "../src/lib/experiments/realtime-draft";
 import {
+  REALTIME_LAB_ARCHIVE_AFTER_MS,
+  resolveRealtimeLabExitGate,
+  resolveRealtimeLabHealth
+} from "../src/lib/experiments/realtime-health";
+import {
   buildRealtimeAttentionPing,
   buildRealtimeLabChannelName,
   buildRealtimePresenceMeta,
@@ -105,6 +110,32 @@ try {
     staleParticipant?.followingPresenterSessionKey === "session-self",
     "following presenter session key should roundtrip"
   );
+
+  const health = resolveRealtimeLabHealth({
+    participants,
+    reconnectCount: 2,
+    lastConnectedAt: new Date(now - 5_000).toISOString(),
+    lastDisconnectedAt: new Date(now - 2_000).toISOString(),
+    lastSyncAt: new Date(now).toISOString(),
+    canRetry: true,
+    needsAttention: false,
+    now: now + REALTIME_LAB_ARCHIVE_AFTER_MS + 1_000
+  });
+  assert(health.activeCount === 2, `expected 2 active participants, received ${health.activeCount}`);
+  assert(health.staleVisibleCount === 0, `expected 0 stale-visible participants, received ${health.staleVisibleCount}`);
+  assert(health.archivedCount === 1, `expected 1 archived participant, received ${health.archivedCount}`);
+  assert(health.reconnectCount === 2, "reconnect count should roundtrip");
+  assert(health.canRetry === true, "retry availability should roundtrip");
+
+  const exitGate = resolveRealtimeLabExitGate({
+    localOnly: true,
+    killSwitchReady: true,
+    reconnectReady: true,
+    staleCleanupReady: true,
+    presenterReady: true,
+    collaborativeDraftReady: true
+  });
+  assert(exitGate.every((item) => item.ok), "exit gate should be fully ready");
 
   const broadcastState = resolveRealtimeBroadcastState({
     participants: participants.filter((participant) => !participant.stale)
@@ -205,12 +236,14 @@ try {
   draftState = releaseTransition.state;
   assert(!draftState.locks["p2s_ceramic_mug"], "draft lock should be cleared after release");
 
-  console.log("realtime lab phase 4 ok");
+  console.log("realtime lab phase 5 ok");
   console.log(
     JSON.stringify(
       {
         roomId,
         participants,
+        health,
+        exitGate,
         broadcastState,
         ping,
         draftState

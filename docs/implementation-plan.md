@@ -367,6 +367,19 @@ Updated:
 Removed/Deprecated:
 - lab이 presenter/follow/ping까지만 다루고 실제 collaborative draft 편집 보드는 없는 상태.
 
+## 2026-04-20 변경 동기화 (Presence/Broadcast Phase 5 Complete)
+Added:
+- `/labs/realtime`에 runtime pause/resume, reconnect retry, reconnect count, stale participant archive 상태를 추가해 local-only lab hardening을 마감했다.
+- `verify:realtime-lab`에서 stale archive health와 exit gate checklist까지 검증하도록 범위를 확장했다.
+- exit gate checklist를 도입해 `local-only isolation`, `kill switch`, `reconnect control`, `stale cleanup`, `broadcast + draft coverage`를 한 화면에서 확인할 수 있게 했다.
+
+Updated:
+- `presence / broadcast` 남은 작업을 `Phase 5 hardening 완료` 상태로 갱신한다.
+- 다음 후보를 `presence / broadcast lab 범위 완료`로 정리하고, 추가 협업 제품화는 별도 범위 재정의 후 착수하도록 갱신한다.
+
+Removed/Deprecated:
+- realtime lab에 reconnect hardening, stale archive, exit gate가 아직 없고 다음 단계로만 남아 있는 상태.
+
 완료 기준:
 - publish 후 shared viewer와 community 카드가 같은 장면 상태를 재현한다.
 - viewer에는 editor 전용 affordance가 남지 않는다.

@@ -442,6 +442,19 @@ Updated:
 Removed/Deprecated:
 - lab 안에서 공동 편집 draft는 아직 없고 presenter/follow까지만 실험하는 상태.
 
+## 2026-04-20 변경 동기화 (Presence Lab Phase 5 Hardening)
+Added:
+- `/labs/realtime` 안에서 runtime pause/resume kill switch, manual reconnect retry, reconnect count, stale participant archive window를 제공하는 hardening 계층을 추가한다.
+- realtime health helper를 도입해 `active / stale-visible / archived participant` bucket, reconnect 상태, exit gate checklist를 순수 함수로 계산한다.
+- `verify:realtime-lab` 검증 범위를 stale archive health와 exit gate ready 상태까지 확장한다.
+
+Updated:
+- presence/realtime 상태를 `phase 4 collaborative draft complete`에서 `phase 5 hardening complete`로 갱신한다.
+- 남은 실험 범위를 `Phase 5 hardening`에서 `presence/broadcast lab 범위 완료`로 갱신한다.
+
+Removed/Deprecated:
+- reconnect / stale cleanup / kill switch / exit gate가 다음 단계로 남아 있고 현재 lab에는 아직 없다는 상태.
+
 ## 2026-04-19 변경 동기화 (Desk Precision Measurements)
 Added:
 - desk precision mode에서 선택 자산의 X/Y/Z 위치와 Yaw 회전을 `mm/deg` 기준으로 보여주는 numeric inspector + measurement overlay 규칙을 추가한다.

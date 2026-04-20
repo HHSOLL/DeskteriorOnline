@@ -173,9 +173,10 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - shared viewer가 상단 light bar, 우측 zoom rail, 하단 readonly status pill 기준으로 노출되는지 확인
 - shared viewer와 builder preview는 lean light rig(no fill light)를 유지하고, constrained 환경에서는 directional shadow + bloom이 제거되는지 확인
 - realtime/presence 평가는 `/labs/realtime` hidden route에서만 노출되고, 홈/에디터/뷰어/갤러리/커뮤니티에는 진입 링크가 생기지 않는지 확인
-- `verify:realtime-lab` 실행 시 room id 정규화, channel name, stale participant snapshot, cursor/view/selection presence, presenter/spotlight/ping roundtrip 규칙이 통과하는지 확인
+- `verify:realtime-lab` 실행 시 room id 정규화, channel name, stale participant snapshot, cursor/view/selection presence, presenter/spotlight/ping, stale archive health, exit gate 규칙이 통과하는지 확인
 - `/labs/realtime?room=...`에서 같은 room id를 두 창으로 열면 occupancy snapshot이 증가하고, heartbeat가 15초 간격으로 갱신되는지 확인
 - 한 창을 닫거나 heartbeat가 45초 이상 끊긴 참가자는 stale로 표시되는지 확인
+- stale 참가자가 archive 임계치를 넘기면 occupancy visible count에서 빠지고 archived count가 증가하는지 확인
 - 같은 room에서 presence surface 위로 포인터를 움직이면 다른 창에서 cursor marker가 보이는지 확인
 - 한 창에서 room/desk/walk와 sample asset selection을 바꾸면 다른 창 badge와 occupancy snapshot에 같은 값이 반영되는지 확인
 - 한 창에서 presenter를 claim하면 다른 창에서 presenter label과 spotlight 상태가 갱신되는지 확인
@@ -184,6 +185,9 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - sample draft board에서 자산을 잡고 드래그하면 다른 창 보드의 자산 위치가 같이 이동하는지 확인
 - 이미 다른 창이 잡고 있는 자산을 다시 잡으려 하면 conflict banner가 노출되는지 확인
 - 드래그를 놓으면 lock이 해제되고, occupancy/draft board에서 owner 표시가 사라지는지 확인
+- runtime pause를 누르면 presence/broadcast가 멈추고, resume 후 같은 room에 다시 reconnect되는지 확인
+- retry connection을 누르면 reconnect count가 증가하고 room channel이 다시 subscribe되는지 확인
+- exit gate 카드가 모두 `ready` 상태로 보이고, hidden local-only lab이라는 전제가 유지되는지 확인
 - 뷰어에 편집 affordance가 노출되지 않는지 확인
 - 갤러리/커뮤니티 카드가 `/shared/[token]` 읽기 전용 뷰어로 이동하는지 확인
 - 갤러리/커뮤니티 피드가 레퍼런스 8번 기준의 4열 카드 밀도와 상단 filter rail을 유지하는지 확인

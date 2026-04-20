@@ -15,6 +15,7 @@ import {
   type RealtimeDraftEvent,
   type RealtimeDraftState
 } from "../lib/experiments/realtime-draft";
+import { resolveRealtimeLabHealth } from "../lib/experiments/realtime-health";
 import {
   buildRealtimeAttentionPing,
   buildRealtimeLabChannelName,
@@ -63,11 +64,15 @@ export function useRealtime(input: {
   const [error, setError] = useState<string | null>(null);
   const [lastSyncAt, setLastSyncAt] = useState<string | null>(null);
   const [heartbeatAt, setHeartbeatAt] = useState<string | null>(null);
+  const [reconnectCount, setReconnectCount] = useState(0);
+  const [lastConnectedAt, setLastConnectedAt] = useState<string | null>(null);
+  const [lastDisconnectedAt, setLastDisconnectedAt] = useState<string | null>(null);
   const [lastAttentionPing, setLastAttentionPing] = useState<RealtimeAttentionPing | null>(null);
   const [draftState, setDraftState] = useState<RealtimeDraftState>(() => createRealtimeDraftState());
   const [localPresence, setLocalPresence] = useState<LocalRealtimePresenceState>(() =>
     createDefaultRealtimeLocalPresenceState()
   );
+  const [retryToken, setRetryToken] = useState(0);
   const selfJoinedAtRef = useRef<string | null>(null);
   const channelRef = useRef<RealtimeChannel | null>(null);
   const draftStateRef = useRef(draftState);
@@ -94,9 +99,15 @@ export function useRealtime(input: {
     draftStateRef.current = nextDraftState;
     setDraftState(nextDraftState);
     setLastAttentionPing(null);
+    setReconnectCount(0);
+    setLastConnectedAt(null);
+    setLastDisconnectedAt(null);
   }, [roomId]);
 
   const setViewMode = useCallback((viewMode: RealtimeViewMode) => {
+    if (!enabled) {
+      return;
+    }
     setLocalPresence((previous) => {
       if (previous.viewMode === viewMode) {
         return previous;
@@ -106,9 +117,12 @@ export function useRealtime(input: {
         viewMode
       };
     });
-  }, []);
+  }, [enabled]);
 
   const setSelectedAssetId = useCallback((selectedAssetId: string | null) => {
+    if (!enabled) {
+      return;
+    }
     setLocalPresence((previous) => {
       if (previous.selectedAssetId === selectedAssetId) {
         return previous;
@@ -118,9 +132,12 @@ export function useRealtime(input: {
         selectedAssetId
       };
     });
-  }, []);
+  }, [enabled]);
 
   const setCursor = useCallback((cursor: { x: number; y: number } | null) => {
+    if (!enabled && cursor) {
+      return;
+    }
     setLocalPresence((previous) => {
       if (!cursor) {
         if (!previous.cursor) {
@@ -145,13 +162,16 @@ export function useRealtime(input: {
         cursor
       };
     });
-  }, []);
+  }, [enabled]);
 
   const clearCursor = useCallback(() => {
     setCursor(null);
   }, [setCursor]);
 
   const setPresenterRole = useCallback((role: RealtimePresenterRole) => {
+    if (!enabled) {
+      return;
+    }
     setLocalPresence((previous) => {
       if (previous.role === role) {
         return previous;
@@ -164,9 +184,12 @@ export function useRealtime(input: {
         spotlightAssetId: role === "presenter" ? previous.spotlightAssetId : null
       };
     });
-  }, []);
+  }, [enabled]);
 
   const setFollowingPresenterSessionKey = useCallback((followingPresenterSessionKey: string | null) => {
+    if (!enabled) {
+      return;
+    }
     setLocalPresence((previous) => {
       if (previous.followingPresenterSessionKey === followingPresenterSessionKey) {
         return previous;
@@ -176,9 +199,12 @@ export function useRealtime(input: {
         followingPresenterSessionKey
       };
     });
-  }, []);
+  }, [enabled]);
 
   const setSpotlightAssetId = useCallback((spotlightAssetId: string | null) => {
+    if (!enabled) {
+      return;
+    }
     setLocalPresence((previous) => {
       if (previous.spotlightAssetId === spotlightAssetId) {
         return previous;
@@ -188,7 +214,7 @@ export function useRealtime(input: {
         spotlightAssetId
       };
     });
-  }, []);
+  }, [enabled]);
 
   const applyDraftEvent = useCallback((event: RealtimeDraftEvent) => {
     const transition = transitionRealtimeDraftState(draftStateRef.current, event);
@@ -216,14 +242,13 @@ export function useRealtime(input: {
         }
       })
       .catch((draftError) => {
-        setStatus("error");
         setError(draftError instanceof Error ? draftError.message : "Realtime draft broadcast failed.");
       });
   }, []);
 
   const claimDraftAsset = useCallback(
     (input: { assetId: string; assetLabel: string }) => {
-      if (!roomId || !selfSessionKey || !selfLabel) {
+      if (!enabled || !roomId || !selfSessionKey || !selfLabel) {
         return false;
       }
 
@@ -260,12 +285,12 @@ export function useRealtime(input: {
       }
       return transition.accepted;
     },
-    [applyDraftEvent, roomId, selfLabel, selfSessionKey, sendDraftEvent, setSelectedAssetId]
+    [applyDraftEvent, enabled, roomId, selfLabel, selfSessionKey, sendDraftEvent, setSelectedAssetId]
   );
 
   const moveDraftAsset = useCallback(
     (input: { assetId: string; assetLabel: string; x: number; y: number }) => {
-      if (!roomId || !selfSessionKey || !selfLabel) {
+      if (!enabled || !roomId || !selfSessionKey || !selfLabel) {
         return false;
       }
 
@@ -290,12 +315,12 @@ export function useRealtime(input: {
       }
       return transition.accepted;
     },
-    [applyDraftEvent, roomId, selfLabel, selfSessionKey, sendDraftEvent]
+    [applyDraftEvent, enabled, roomId, selfLabel, selfSessionKey, sendDraftEvent]
   );
 
   const releaseDraftAsset = useCallback(
     (input: { assetId: string; assetLabel: string }) => {
-      if (!roomId || !selfSessionKey || !selfLabel) {
+      if (!enabled || !roomId || !selfSessionKey || !selfLabel) {
         return false;
       }
 
@@ -318,7 +343,7 @@ export function useRealtime(input: {
       }
       return transition.accepted;
     },
-    [applyDraftEvent, roomId, selfLabel, selfSessionKey, sendDraftEvent]
+    [applyDraftEvent, enabled, roomId, selfLabel, selfSessionKey, sendDraftEvent]
   );
 
   const dismissDraftConflictBanner = useCallback(() => {
@@ -328,6 +353,18 @@ export function useRealtime(input: {
       return nextState;
     });
   }, []);
+
+  const retryConnection = useCallback(() => {
+    if (!enabled || !roomId || !selfSessionKey || !selfLabel) {
+      return false;
+    }
+
+    setReconnectCount((previous) => previous + 1);
+    setError(null);
+    setStatus("connecting");
+    setRetryToken((previous) => previous + 1);
+    return true;
+  }, [enabled, roomId, selfLabel, selfSessionKey]);
 
   useEffect(() => {
     if (!enabled) {
@@ -463,15 +500,18 @@ export function useRealtime(input: {
             await sendPresenceUpdate();
             syncSnapshot();
             setStatus("connected");
+            setLastConnectedAt(new Date().toISOString());
           } catch (subscribeError) {
             setStatus("error");
+            setLastDisconnectedAt(new Date().toISOString());
             setError(subscribeError instanceof Error ? subscribeError.message : "Realtime track failed.");
           }
           return;
         }
 
-        if (nextStatus === "CHANNEL_ERROR" || nextStatus === "TIMED_OUT") {
+        if (nextStatus === "CHANNEL_ERROR" || nextStatus === "TIMED_OUT" || nextStatus === "CLOSED") {
           setStatus("error");
+          setLastDisconnectedAt(new Date().toISOString());
           setError(`Realtime channel status: ${nextStatus}`);
         }
       });
@@ -480,6 +520,7 @@ export function useRealtime(input: {
       void sendPresenceUpdate().then(syncSnapshot).catch((heartbeatError) => {
         if (!cancelled) {
           setStatus("error");
+          setLastDisconnectedAt(new Date().toISOString());
           setError(heartbeatError instanceof Error ? heartbeatError.message : "Realtime heartbeat failed.");
         }
       });
@@ -499,7 +540,7 @@ export function useRealtime(input: {
         channelRef.current = null;
       }
     };
-  }, [applyDraftEvent, channelName, enabled, roomId, selfLabel, selfSessionKey]);
+  }, [applyDraftEvent, channelName, enabled, retryToken, roomId, selfLabel, selfSessionKey]);
 
   useEffect(() => {
     if (status !== "connected") {
@@ -515,6 +556,7 @@ export function useRealtime(input: {
         .then(() => syncSnapshotRef.current?.())
         .catch((presenceError) => {
           setStatus("error");
+          setLastDisconnectedAt(new Date().toISOString());
           setError(presenceError instanceof Error ? presenceError.message : "Realtime presence update failed.");
         });
     }, REALTIME_PRESENCE_DEBOUNCE_MS);
@@ -524,10 +566,20 @@ export function useRealtime(input: {
     };
   }, [localPresence, status]);
 
-  const activeParticipants = useMemo(
-    () => participants.filter((participant) => !participant.stale),
-    [participants]
+  const health = useMemo(
+    () =>
+      resolveRealtimeLabHealth({
+        participants,
+        reconnectCount,
+        lastConnectedAt,
+        lastDisconnectedAt,
+        lastSyncAt,
+        canRetry: enabled && Boolean(roomId),
+        needsAttention: status === "error" || Boolean(error)
+      }),
+    [enabled, error, lastConnectedAt, lastDisconnectedAt, lastSyncAt, participants, reconnectCount, roomId, status]
   );
+  const activeParticipants = health.activeParticipants;
 
   useEffect(() => {
     const activeSessionKeys = new Set(activeParticipants.map((participant) => participant.sessionKey));
@@ -587,7 +639,7 @@ export function useRealtime(input: {
 
   const sendAttentionPing = useCallback(
     async (input: { message: string; targetSessionKey?: string | null; targetLabel?: string | null }) => {
-      if (!roomId || !selfSessionKey || !selfLabel || !channelRef.current) {
+      if (!enabled || !roomId || !selfSessionKey || !selfLabel || !channelRef.current) {
         return false;
       }
 
@@ -613,7 +665,7 @@ export function useRealtime(input: {
       setLastAttentionPing(ping);
       return true;
     },
-    [roomId, selfLabel, selfSessionKey]
+    [enabled, roomId, selfLabel, selfSessionKey]
   );
 
   return {
@@ -621,12 +673,17 @@ export function useRealtime(input: {
     error,
     roomId,
     channelName,
-    participants,
+    participants: health.visibleParticipants,
     activeParticipants,
+    archivedParticipants: health.archivedParticipants,
     sessionKey: selfSessionKey,
     selfLabel,
     heartbeatAt,
     lastSyncAt,
+    lastConnectedAt,
+    lastDisconnectedAt,
+    reconnectCount,
+    health,
     localPresence,
     broadcastState,
     currentPresenter,
@@ -641,6 +698,7 @@ export function useRealtime(input: {
     setFollowingPresenterSessionKey,
     setSpotlightAssetId,
     sendAttentionPing,
+    retryConnection,
     claimDraftAsset,
     moveDraftAsset,
     releaseDraftAsset,
