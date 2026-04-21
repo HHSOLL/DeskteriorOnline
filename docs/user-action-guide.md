@@ -158,9 +158,11 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - builder opening preview에서 문/창문이 실제 opening asset처럼 서 있고, style 선택 전에는 white wall/white floor shell이 유지되는지 확인
 - builder opening preview에서 문/창문이 floor에 눕지 않고 wall plane에 수직으로 붙는지 확인
 - builder style 선택지에 room shape 8종, wall finish 7종, floor finish 9종 이상이 노출되는지 확인
+- builder style 선택 버튼이 단색 swatch가 아니라 실제 wall/floor texture thumbnail로 보이는지 확인
 - room mode와 desk precision mode 전환 시 체감 화질과 idle 비용이 달라지고, 워크뷰 품질에는 영향을 주지 않는지 확인
 - editor 상단뷰가 orthographic footprint처럼만 보이지 않고, builder와 비슷한 perspective orbit 품질로 열리는지 확인
 - walk view에서 카메라를 돌렸을 때 벽 backface/near clip 때문에 검정 화면이 나오지 않는지 확인
+- editor 상단뷰에서 orbit 회전 중 전체 viewport가 검게 깜빡이지 않는지 확인
 - 상단뷰와 워크뷰 모두 room shell texture decode가 실패해도 black plane 대신 fallback shell color로 계속 보이는지 확인
 - desk precision / builder preview / showcase 계열은 Neutral tone mapping, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping을 사용해도 surface/material 읽기 흐름이 어색해지지 않는지 확인
 - editor walk와 richer showcase 경로에서만 selective SSR이 반사 하이라이트를 보강하고, shared viewer / top-view / builder preview에는 비용이 전파되지 않는지 확인

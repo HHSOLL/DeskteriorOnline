@@ -27,6 +27,7 @@
 - `MeshStandardMaterial` 기반 PBR
 - 색상 텍스처는 SRGB, roughness/normal은 Linear
 - top-view는 texture decode가 실패해도 preset color 기반 fallback material로 shell을 유지해야 하며, builder-preview와 비슷한 수준의 full shell legibility를 유지한다.
+- builder style step의 wall/floor 선택 버튼은 단색 swatch가 아니라 active preset의 실제 texture thumbnail을 우선 보여줘야 한다.
 - builder-preview/walk만 active finish texture set을 1종씩 로드한다. 선택되지 않은 texture set preload를 기본값으로 두지 않는다.
 - GLB runtime loader는 `KTX2Loader`를 기본 연결하고, basis transcoder는 `/assets/transcoders/basis/` 또는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`에서 읽는다.
 - room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 없으면 JPG/PNG 원본으로 fallback 한다.
@@ -52,6 +53,7 @@
 - walk view 진입 시 entrance spawn은 room interior bounds 안쪽으로 clamp 하고, near clip과 wall backface 문제 때문에 검은 화면이 발생하지 않아야 한다.
 - editor walk-view는 entrance보다 room center anchor를 우선 사용해 첫 진입 black frame 가능성을 낮춘다.
 - room mode, desk precision mode, builder preview는 idle 상태에서 `frameloop="demand"`를 기본으로 사용하고, camera zoom/rotate, hover highlight, direct drag, gizmo transform에서만 `invalidate()`를 호출한다.
+- editor top-view와 editor walk-view는 회전/진입 시 black-frame flicker가 발생하면 안 되므로, 안정성 우선 프로필에서는 post FX/SSR보다 shell legibility를 우선한다.
 - deskterior 자산은 `lodProfile.maxDrawCalls/maxTriangleCount` 기준으로 complexity를 나누고, room mode는 더 이른 box proxy fallback, desk precision/walk는 더 늦은 fallback을 사용한다.
 - read-only top/walk와 builder preview, 그리고 editor `desk precision` top-view에서는 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶어 draw call을 줄이고, selected/direct-drag 경로는 개별 오브젝트를 유지한다.
 
@@ -194,6 +196,18 @@ Removed/Deprecated:
 - opening asset이 floor plane에 눕는 source transform을 runtime에서 그대로 통과시키는 가정.
 - top-view가 flat shell 표현만 사용하고 실제 opening asset을 숨기는 기준.
 - 포스트FX 기준(SSAO + 보수적 bloom + 완화된 vignette + 저강도 noise) 추가.
+
+## 2026-04-21 변경 동기화 (Builder Texture Thumbnails + Stable Editor Orbit)
+Added:
+- builder style step은 실제 wall/floor texture thumbnail을 선택 버튼 미리보기로 사용한다.
+- walk view 기본 시선은 room center anchor가 target과 겹칠 때 전방 오프셋 target을 사용해 첫 프레임 black view 가능성을 낮춘다.
+
+Updated:
+- editor top-view와 editor walk-view는 black flicker를 막기 위해 안정성 우선 프로필에서 post FX/SSR을 비활성화하고 `frameloop="always"`를 사용한다.
+- editor top orbit과 builder preview orbit은 벽 내부로 파고드는 저각도 회전을 막기 위해 polar angle 범위를 더 보수적으로 제한한다.
+
+Removed/Deprecated:
+- editor top/walk에서 post FX를 유지한 채 흑화 회귀를 허용하는 가정.
 
 Updated:
 - 에디터/뷰어 기본 노출 값을 상향해 홈 레퍼런스의 밝기/재질 가독성에 맞춤.

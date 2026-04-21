@@ -1,4 +1,8 @@
 import type { BuilderFinishOption } from "../../../lib/api/room-templates";
+import {
+  FLOOR_TEXTURE_PRESETS,
+  WALL_TEXTURE_PRESETS
+} from "../../../lib/textures/room-shell-textures";
 
 type BuilderStyleStepProps = {
   wallMaterialIndex: number;
@@ -18,7 +22,9 @@ function buildWallPalette(
   return options.map((finish) => ({
     id: finish.id,
     name: finish.name,
-    background: swatches[finish.id] ?? "#efe9df"
+    background: swatches[finish.id] ?? "#efe9df",
+    previewImage:
+      WALL_TEXTURE_PRESETS[finish.id % WALL_TEXTURE_PRESETS.length]?.map ?? null
   }));
 }
 
@@ -29,7 +35,9 @@ function buildFloorPalette(
   return options.map((finish) => ({
     id: finish.id,
     name: finish.name,
-    background: swatches[finish.id] ?? "#b58f67"
+    background: swatches[finish.id] ?? "#b58f67",
+    previewImage:
+      FLOOR_TEXTURE_PRESETS[finish.id % FLOOR_TEXTURE_PRESETS.length]?.map ?? null
   }));
 }
 
@@ -60,7 +68,12 @@ export function BuilderStyleStep({
               className={`aspect-square rounded-[12px] border-2 transition ${
                 wallMaterialIndex === finish.id ? "border-[#171411]" : "border-transparent"
               }`}
-              style={{ background: finish.background }}
+              style={{
+                backgroundColor: finish.background,
+                backgroundImage: finish.previewImage ? `url(${finish.previewImage})` : undefined,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }}
               aria-label={finish.name}
             />
           ))}
@@ -84,7 +97,12 @@ export function BuilderStyleStep({
               className={`aspect-square rounded-[12px] border-2 bg-cover bg-center transition ${
                 floorMaterialIndex === finish.id ? "border-[#171411]" : "border-transparent"
               }`}
-              style={{ background: finish.background }}
+              style={{
+                backgroundColor: finish.background,
+                backgroundImage: finish.previewImage ? `url(${finish.previewImage})` : undefined,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }}
               aria-label={finish.name}
             />
           ))}
