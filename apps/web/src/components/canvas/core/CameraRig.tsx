@@ -75,6 +75,14 @@ function measureAssetPlanExtent(asset: {
   return Math.max(width, depth, fallback);
 }
 
+function hasDistinctPlanTarget(
+  origin: [number, number] | undefined,
+  target: [number, number] | undefined
+) {
+  if (!origin || !target) return false;
+  return Math.hypot(target[0] - origin[0], target[1] - origin[1]) > 0.12;
+}
+
 function clampWalkCoordinate(value: number, min: number, max: number, margin: number) {
   const lower = min + margin;
   const upper = max - margin;
@@ -361,7 +369,10 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
           cameraAnchors.find((anchor) => anchor.kind === "overview") ??
           cameraAnchors.find((anchor) => anchor.kind === "room_center");
 
-    if (preferredAnchor?.targetPlanPosition) {
+    if (
+      preferredAnchor?.targetPlanPosition &&
+      hasDistinctPlanTarget(preferredAnchor.planPosition, preferredAnchor.targetPlanPosition)
+    ) {
       return [
         preferredAnchor.targetPlanPosition[0] * scale,
         Math.max(1.2, preferredAnchor.height * 0.72),
@@ -369,8 +380,26 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
       ];
     }
 
-    return [centerX, Math.max(1.2, builderTargetY + viewerPresentationPolish.walkTargetLift), centerZ];
-  }, [builderTargetY, cameraAnchors, centerX, centerZ, interactionMode, scale, viewerPresentationPolish.walkTargetLift]);
+    return [
+      clampWalkCoordinate(centerX, bounds.minX, bounds.maxX, walkMargin),
+      Math.max(1.2, builderTargetY + viewerPresentationPolish.walkTargetLift),
+      clampWalkCoordinate(centerZ - Math.max(0.8, radius * 0.28), bounds.minZ, bounds.maxZ, walkMargin)
+    ];
+  }, [
+    bounds.maxX,
+    bounds.maxZ,
+    bounds.minX,
+    bounds.minZ,
+    builderTargetY,
+    cameraAnchors,
+    centerX,
+    centerZ,
+    interactionMode,
+    radius,
+    scale,
+    viewerPresentationPolish.walkTargetLift,
+    walkMargin
+  ]);
 
   useEffect(() => {
     const supportsTouch = typeof window !== "undefined" &&
@@ -447,8 +476,8 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
           dampingFactor={0.09}
           rotateSpeed={0.8}
           zoomSpeed={0.95}
-          minPolarAngle={Math.PI * 0.2}
-          maxPolarAngle={Math.PI * 0.54}
+          minPolarAngle={Math.PI * 0.22}
+          maxPolarAngle={Math.PI * 0.44}
           minDistance={Math.max(3.2, radius * 0.85)}
           maxDistance={Math.max(16, radius * 3.2)}
         />
@@ -477,8 +506,8 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
           dampingFactor={0.08}
           rotateSpeed={0.74}
           zoomSpeed={0.92}
-          minPolarAngle={topMode === "desk-precision" ? Math.PI * 0.14 : Math.PI * 0.18}
-          maxPolarAngle={topMode === "desk-precision" ? Math.PI * 0.46 : Math.PI * 0.5}
+          minPolarAngle={topMode === "desk-precision" ? Math.PI * 0.16 : Math.PI * 0.2}
+          maxPolarAngle={topMode === "desk-precision" ? Math.PI * 0.34 : Math.PI * 0.4}
           minDistance={topMode === "desk-precision" ? Math.max(1.4, precisionExtent * 1.3) : Math.max(3.8, radius * 0.78)}
           maxDistance={topMode === "desk-precision" ? Math.max(9, precisionExtent * 6.2) : Math.max(18, radius * 3.2)}
         />

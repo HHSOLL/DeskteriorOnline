@@ -114,7 +114,7 @@ export function Providers({ children }: { children: ReactNode }) {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.98 }}
                         transition={{ duration: 0.28, ease: "easeOut" }}
-                        className="pointer-events-none fixed inset-0 z-[10000] flex items-start justify-center px-4 pt-24 sm:pt-28"
+                        className="pointer-events-none fixed inset-x-0 top-0 z-[10000] flex justify-center px-4 pt-6 sm:pt-8"
                     >
                         <div className="rounded-[28px] border border-stone-200/90 bg-white/92 px-7 py-5 text-center shadow-[0_35px_90px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl">
                             <div className="text-[11px] font-semibold uppercase tracking-[0.34em] text-stone-500">

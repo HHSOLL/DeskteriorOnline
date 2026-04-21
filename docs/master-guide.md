@@ -45,7 +45,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 산출물이 없거나 플래그가 꺼져 있으면 JPG/PNG 원본으로 fallback 한다.
 - curated deskterior optimize chain은 기본 `glTF Transform dedup + prune + meshopt`를 사용하고, native `gltfpack`은 `GLTFPACK_BIN` 또는 `--gltfpack-bin`이 있을 때만 optional pass로 추가한다.
 - repo-local native `gltfpack` 설치 경로는 `.tools/gltfpack/current/gltfpack`를 우선 사용한다.
-- editor top-view(room / desk precision)와 builder preview는 기본적으로 `frameloop="demand"`를 사용하고, 카메라/hover/drag/gizmo 변경에서만 explicit invalidation 한다.
+- builder preview는 `frameloop="demand"`를 유지하지만, editor top-view(room / desk precision)와 editor walk-view는 black flicker 회귀를 막기 위해 안정성 우선 프로필에서 `frameloop="always"`를 사용한다.
 - 실측 고정 제품(`scaleLocked=true`)은 에디터에서 임의 스케일 변경을 허용하지 않는다.
 - 데스크/선반 표면 배치는 실측 규격이 있으면 해당 값 기반으로 support surface를 계산한다.
 - floor/surface 배치는 active asset footprint 기반 wall clearance + 자산 간 분리(relaxation)를 적용한다.
@@ -126,12 +126,14 @@ Added:
 - editor 상단 bar에서 프로젝트 이름을 직접 수정하고 저장 payload의 `projectName`으로 같이 보낼 수 있는 규칙을 추가했다.
 - read-only shared/showcase top-view는 고정 orthographic이 아니라 orbit 기반 360도 감상 카메라를 허용하는 규칙을 추가했다.
 - desk precision에서 선택 자산과 해당 support asset은 instancing/LOD proxy보다 full-detail 표시를 우선하는 규칙을 추가했다.
+- builder style step의 wall/floor 선택 버튼은 실제 texture thumbnail을 노출하는 규칙을 추가했다.
 
 Updated:
 - top-view 품질 기준을 `flat floor footprint 우선`에서 `textured floor + 상향된 DPR + fill light 허용` 기준으로 갱신한다.
 - room shell texture decode는 `.ktx2` 실패 시 원본 JPG/PNG로 즉시 fallback 되는 경로를 기본 계약으로 강화한다.
 - editor top-view room shell은 footprint strip만이 아니라 full-height wall mesh도 함께 렌더해 builder preview와 유사한 shell legibility를 유지하도록 갱신한다.
 - editor walk-view 기본 진입 anchor는 entrance 우선이 아니라 room center 우선으로 두어 첫 진입 시 wall clip으로 검정 화면이 발생하지 않도록 갱신한다.
+- editor top-view / walk-view는 안정성 우선으로 post FX를 비활성화하고, top orbit polar range를 더 보수적으로 제한해 회전 중 black flicker를 줄인다.
 
 Removed/Deprecated:
 - editor header가 프로젝트 이름을 hardcoded subtitle로만 보여주고 직접 수정은 불가능하다는 가정.
