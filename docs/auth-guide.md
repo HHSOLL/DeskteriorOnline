@@ -19,6 +19,9 @@ NEXT_PUBLIC_APP_URL=
 - Vercel Preview는 보통 **비워둡니다.**
   - 이유: preview마다 URL이 달라지므로 production canonical host로 강제하면 OAuth 시작/콜백 host가 어긋날 수 있습니다.
   - production build를 deployment-specific `*.vercel.app` URL로 열어도 앱은 `NEXT_PUBLIC_APP_URL` alias로 먼저 정규화한 뒤 OAuth를 시작합니다.
+  - 단, Preview에서 Google/Kakao OAuth를 실제로 테스트하려면 **Vercel Deployment Protection의 Vercel Authentication을 Preview/Deployment URL에 걸지 않아야 합니다.**
+    - Vercel Authentication은 Routing Middleware 이전의 모든 요청을 가로채므로, preview host의 `/auth/signin` / `/auth/callback`도 예외가 아닙니다.
+    - preview host가 보호되면 Supabase PKCE verifier cookie가 callback host까지 안정적으로 전달되지 않아 `PKCE code verifier not found in storage`가 발생할 수 있습니다.
 
 ## Supabase 설정 순서
 
@@ -56,6 +59,18 @@ NEXT_PUBLIC_APP_URL=
   3) Supabase `Redirect URLs`에 `https://plan2space.vercel.app/auth/callback` 추가
   4) 실제 로그인도 반드시 `https://plan2space.vercel.app` alias에서 시작
   5) 예전 `sb-*` 쿠키가 남아 있으면 삭제 후 재시도
+
+### "PKCE code verifier not found in storage"가 Preview에서 반복될 때
+
+- 가장 흔한 원인: **Vercel Preview Deployment Protection(Vercel Authentication)이 preview URL 앞단에서 OAuth callback을 가로챔**
+- 확인 항목:
+  1) Vercel Project Settings → Deployment Protection에서 `Vercel Authentication`이 preview/deployment URL에 걸려 있지 않은지 확인
+  2) preview host에서 `/auth/signin`이 `401`이 아니라 `307`으로 Supabase authorize URL로 이동하는지 확인
+  3) preview host에서 `/auth/callback?...`가 `401`이 아니라 앱 redirect(`307`)를 반환하는지 확인
+  4) Supabase Redirect URLs에 해당 preview callback 또는 허용 가능한 preview 패턴이 포함되어 있는지 확인
+- 현재 운영 기준:
+  - 이 프로젝트는 preview OAuth를 허용하기 위해 **Vercel `ssoProtection=null`** 상태를 유지합니다.
+  - preview login 장애 원인이 Railway 서비스에 있는 경우는 아니며, OAuth 경로는 Vercel + Supabase 설정이 일치해야 해결됩니다.
 
 ## Google OAuth 설정
 

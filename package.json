@@ -12,6 +12,7 @@
     "type-check": "npm --workspace apps/web run type-check",
     "type-check:all": "npm --workspace apps/web run type-check && npm --workspace apps/api run typecheck && npm --workspace apps/worker run typecheck",
     "check:web-boundary": "node scripts/check-web-boundary.mjs",
+    "ops:verify:preview-oauth": "node scripts/verify-vercel-preview-oauth.mjs",
     "qa:visual:capture": "node scripts/capture-visual-qa.mjs",
     "assets:download": "node scripts/assets-download.mjs",
     "assets:download:deskterior-textures": "node scripts/assets-download.mjs --skip-hdri --skip-models --textures-list wood_floor,weathered_brown_planks,concrete_floor_worn_001,concrete_layers_02,concrete_wall_007,painted_plaster_wall,white_plaster_02,marble_01,laminate_floor_02,linoleum_brown,oak_veneer_01,kitchen_wood,wood_table_worn,fabric_pattern_07,fabric_leather_01,terrazzo_tiles,dirty_carpet,grey_plaster_02,anti_skid_tiles",
