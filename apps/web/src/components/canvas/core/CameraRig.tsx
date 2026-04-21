@@ -266,9 +266,13 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
 
   const initialPosition = useMemo((): [number, number, number] => {
     const preferredAnchor =
-      cameraAnchors.find((anchor) => anchor.kind === "entrance") ??
-      cameraAnchors.find((anchor) => anchor.kind === "overview") ??
-      cameraAnchors.find((anchor) => anchor.kind === "room_center");
+      interactionMode === "editor"
+        ? cameraAnchors.find((anchor) => anchor.kind === "room_center") ??
+          cameraAnchors.find((anchor) => anchor.kind === "overview") ??
+          cameraAnchors.find((anchor) => anchor.kind === "entrance")
+        : cameraAnchors.find((anchor) => anchor.kind === "entrance") ??
+          cameraAnchors.find((anchor) => anchor.kind === "overview") ??
+          cameraAnchors.find((anchor) => anchor.kind === "room_center");
     if (preferredAnchor) {
       const baseX = preferredAnchor.planPosition[0] * scale;
       const baseZ = preferredAnchor.planPosition[1] * scale;
@@ -295,8 +299,10 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     }
 
     const entrance =
-      (entranceId ? openings.find((o) => o.id === entranceId) : null) ??
-      openings.find((o) => o.type === "door");
+      interactionMode === "editor"
+        ? null
+        : (entranceId ? openings.find((o) => o.id === entranceId) : null) ??
+          openings.find((o) => o.type === "door");
     if (entrance) {
       const wall = walls.find((w) => w.id === entrance.wallId);
       if (wall) {
@@ -335,6 +341,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     centerX,
     centerZ,
     entranceId,
+    interactionMode,
     openings,
     radius,
     scale,
@@ -346,9 +353,13 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
 
   const initialTarget = useMemo((): [number, number, number] => {
     const preferredAnchor =
-      cameraAnchors.find((anchor) => anchor.kind === "entrance") ??
-      cameraAnchors.find((anchor) => anchor.kind === "overview") ??
-      cameraAnchors.find((anchor) => anchor.kind === "room_center");
+      interactionMode === "editor"
+        ? cameraAnchors.find((anchor) => anchor.kind === "room_center") ??
+          cameraAnchors.find((anchor) => anchor.kind === "overview") ??
+          cameraAnchors.find((anchor) => anchor.kind === "entrance")
+        : cameraAnchors.find((anchor) => anchor.kind === "entrance") ??
+          cameraAnchors.find((anchor) => anchor.kind === "overview") ??
+          cameraAnchors.find((anchor) => anchor.kind === "room_center");
 
     if (preferredAnchor?.targetPlanPosition) {
       return [
@@ -359,7 +370,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     }
 
     return [centerX, Math.max(1.2, builderTargetY + viewerPresentationPolish.walkTargetLift), centerZ];
-  }, [builderTargetY, cameraAnchors, centerX, centerZ, scale, viewerPresentationPolish.walkTargetLift]);
+  }, [builderTargetY, cameraAnchors, centerX, centerZ, interactionMode, scale, viewerPresentationPolish.walkTargetLift]);
 
   useEffect(() => {
     const supportsTouch = typeof window !== "undefined" &&

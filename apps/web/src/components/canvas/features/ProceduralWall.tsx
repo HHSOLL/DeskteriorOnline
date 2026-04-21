@@ -15,6 +15,12 @@ import {
   resolveRuntimeTextureSet
 } from "../../../lib/textures/room-shell-textures";
 
+function hasRenderableTexture(texture: THREE.Texture | undefined) {
+  if (!texture) return false;
+  const sourceData = (texture.source as { data?: unknown } | undefined)?.data;
+  return Boolean((texture as { image?: unknown }).image ?? sourceData);
+}
+
 function WallMesh({
   wallId,
   materialTemplate
@@ -183,9 +189,20 @@ function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
         : null,
     [loadedTextures, textureUrls]
   );
+  const hasRenderableTextureSet = useMemo(
+    () =>
+      Boolean(
+        textures &&
+          hasRenderableTexture(textures.map) &&
+          hasRenderableTexture(textures.roughnessMap) &&
+          hasRenderableTexture(textures.normalMap) &&
+          hasRenderableTexture(textures.bumpMap)
+      ),
+    [textures]
+  );
 
   useEffect(() => {
-    if (!textures) return;
+    if (!textures || !hasRenderableTextureSet) return;
     Object.values(textures).forEach((texture) => {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
@@ -197,13 +214,13 @@ function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
     textures.roughnessMap.colorSpace = THREE.NoColorSpace;
     textures.normalMap.colorSpace = THREE.NoColorSpace;
     textures.bumpMap.colorSpace = THREE.NoColorSpace;
-  }, [textures]);
+  }, [hasRenderableTextureSet, textures]);
 
   const material = useMemo(() => {
-    if (isWhitePreview || !textures) {
+    if (isWhitePreview || !textures || !hasRenderableTextureSet) {
       return new THREE.MeshStandardMaterial({
-        color: "#f5f3ef",
-        roughness: 0.92,
+        color: textureConfig.color ?? textureConfig.topColor,
+        roughness: 0.86,
         metalness: 0.02,
         envMapIntensity: 0.36,
         side: THREE.DoubleSide
@@ -222,7 +239,7 @@ function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
       envMapIntensity: textureConfig.envMapIntensity,
       side: THREE.DoubleSide
     });
-  }, [isWhitePreview, textureConfig, textures]);
+  }, [hasRenderableTextureSet, isWhitePreview, textureConfig, textures]);
 
   useEffect(() => {
     return () => {
@@ -251,6 +268,7 @@ export default function ProceduralWall() {
   if (viewMode === "top") {
     return (
       <group>
+        <DetailedWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
         {walls.map((wall) => (
           <TopWallFootprint key={wall.id} wallId={wall.id} color={topWallColor} />
         ))}

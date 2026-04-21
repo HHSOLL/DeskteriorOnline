@@ -26,7 +26,7 @@
 기준:
 - `MeshStandardMaterial` 기반 PBR
 - 색상 텍스처는 SRGB, roughness/normal은 Linear
-- top-view는 floor/wall full PBR texture load를 지연하고, flat material/footprint strip으로 먼저 렌더한다.
+- top-view는 texture decode가 실패해도 preset color 기반 fallback material로 shell을 유지해야 하며, builder-preview와 비슷한 수준의 full shell legibility를 유지한다.
 - builder-preview/walk만 active finish texture set을 1종씩 로드한다. 선택되지 않은 texture set preload를 기본값으로 두지 않는다.
 - GLB runtime loader는 `KTX2Loader`를 기본 연결하고, basis transcoder는 `/assets/transcoders/basis/` 또는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`에서 읽는다.
 - room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 없으면 JPG/PNG 원본으로 fallback 한다.
@@ -42,7 +42,7 @@
 - builder opening/style preview는 room center를 target으로 하는 orbit camera를 사용한다.
 - preview orbit은 wheel zoom과 drag rotation을 기본 제스처로 제공하고 pan은 보조 동작으로 제한하거나 비활성화한다.
 - editor top-view는 builder와 같은 perspective orbit camera를 사용하고, room mode는 room shell 전체를, desk precision mode는 선택한 desk/support asset을 우선 framing 한다.
-- editor top-view의 room shell은 floor 위 footprint strip으로 읽혀야 하고, walk/builder-preview에서만 full-height wall mesh를 사용한다.
+- editor top-view의 room shell은 floor 위 footprint strip과 full-height wall mesh를 함께 사용해 shell 형태가 즉시 읽혀야 한다.
 - desk precision mode는 선택 제품의 위치/회전 값을 `mm/deg` measurement overlay로 함께 노출해 미세 배치 확인을 보조한다.
 - desk precision mode는 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 surface lock 상태로 함께 노출한다.
 - desk precision mode는 support surface 내부 상대 위치를 보여주는 surface-local micro-view를 inspector/overlay에 함께 노출한다.
@@ -50,6 +50,7 @@
 - desk precision mode는 support surface 위 제품 footprint, projected footprint, edge clearance, relative yaw를 함께 노출해 usable area 침범 여부를 즉시 판단할 수 있어야 한다.
 - walk view 진입 시 기본 시선은 room center/entrance target을 향해야 한다.
 - walk view 진입 시 entrance spawn은 room interior bounds 안쪽으로 clamp 하고, near clip과 wall backface 문제 때문에 검은 화면이 발생하지 않아야 한다.
+- editor walk-view는 entrance보다 room center anchor를 우선 사용해 첫 진입 black frame 가능성을 낮춘다.
 - room mode, desk precision mode, builder preview는 idle 상태에서 `frameloop="demand"`를 기본으로 사용하고, camera zoom/rotate, hover highlight, direct drag, gizmo transform에서만 `invalidate()`를 호출한다.
 - deskterior 자산은 `lodProfile.maxDrawCalls/maxTriangleCount` 기준으로 complexity를 나누고, room mode는 더 이른 box proxy fallback, desk precision/walk는 더 늦은 fallback을 사용한다.
 - read-only top/walk와 builder preview, 그리고 editor `desk precision` top-view에서는 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶어 draw call을 줄이고, selected/direct-drag 경로는 개별 오브젝트를 유지한다.
