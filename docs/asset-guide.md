@@ -1,6 +1,6 @@
 # Asset Guide
 
-Plan2Space의 메인 자산 경로는 **deskterior 카탈로그 + Blender/오픈소스 GLB**입니다.
+DeskteriorOnline의 메인 자산 경로는 **deskterior 카탈로그 + Blender/오픈소스 GLB**입니다.
 
 ## 1) 메인 경로: Blender + 오픈소스 카탈로그
 
@@ -25,7 +25,7 @@ npm --workspace apps/web run assets:verify:deskterior
 위 스크립트는 아래를 수행합니다.
 
 - Blender source(.blend) 존재/신선도 검사 + 런타임 GLB export
-- Plan2Space 제작 deskterior 자산(p2s_*) upsert
+- DeskteriorOnline 제작 deskterior 자산(p2s_*) upsert
 - basis transcoder public sync(`apps/web/public/assets/transcoders/basis`)
 - glTF Transform 기반 `dedup + prune + meshopt(내부 reorder/quantize 포함)` 최적화와 budget re-check
 - optional native `gltfpack -cc -mi -kn -km -ke` 패스와 probe/wrapper 체인

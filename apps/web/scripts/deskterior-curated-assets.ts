@@ -77,14 +77,14 @@ function createCuratedContractMetadata(
 ): CuratedDeskteriorAsset["contractMetadata"] {
   return {
     source: {
-      kind: "plan2space_blender",
-      name: "Plan2Space Blender Deskterior",
+      kind: "deskterioronline_blender",
+      name: "DeskteriorOnline Blender Deskterior",
       path: sourceBlendRepoPath(assetKey),
       url: null
     },
     license: {
-      spdx: "LicenseRef-Plan2Space-Internal",
-      label: "Plan2Space Internal Catalog",
+      spdx: "LicenseRef-DeskteriorOnline-Internal",
+      label: "DeskteriorOnline Internal Catalog",
       requiresAttribution: false
     },
     pivot: {

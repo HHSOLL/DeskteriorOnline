@@ -41,7 +41,7 @@
 추가 기준:
 - builder opening/style preview는 room center를 target으로 하는 orbit camera를 사용한다.
 - preview orbit은 wheel zoom과 drag rotation을 기본 제스처로 제공하고 pan은 보조 동작으로 제한하거나 비활성화한다.
-- editor top-view는 orthographic top camera를 방 중심에 고정하고 좌/우 회전 버튼 + zoom만 허용하며 pan은 금지한다.
+- editor top-view는 builder와 같은 perspective orbit camera를 사용하고, room mode는 room shell 전체를, desk precision mode는 선택한 desk/support asset을 우선 framing 한다.
 - editor top-view의 room shell은 floor 위 footprint strip으로 읽혀야 하고, walk/builder-preview에서만 full-height wall mesh를 사용한다.
 - desk precision mode는 선택 제품의 위치/회전 값을 `mm/deg` measurement overlay로 함께 노출해 미세 배치 확인을 보조한다.
 - desk precision mode는 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 surface lock 상태로 함께 노출한다.
@@ -49,6 +49,7 @@
 - desk precision mode는 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector/overlay에 함께 노출해 projected span과 vertical reach를 동시에 확인할 수 있어야 한다.
 - desk precision mode는 support surface 위 제품 footprint, projected footprint, edge clearance, relative yaw를 함께 노출해 usable area 침범 여부를 즉시 판단할 수 있어야 한다.
 - walk view 진입 시 기본 시선은 room center/entrance target을 향해야 한다.
+- walk view 진입 시 entrance spawn은 room interior bounds 안쪽으로 clamp 하고, near clip과 wall backface 문제 때문에 검은 화면이 발생하지 않아야 한다.
 - room mode, desk precision mode, builder preview는 idle 상태에서 `frameloop="demand"`를 기본으로 사용하고, camera zoom/rotate, hover highlight, direct drag, gizmo transform에서만 `invalidate()`를 호출한다.
 - deskterior 자산은 `lodProfile.maxDrawCalls/maxTriangleCount` 기준으로 complexity를 나누고, room mode는 더 이른 box proxy fallback, desk precision/walk는 더 늦은 fallback을 사용한다.
 - read-only top/walk와 builder preview, 그리고 editor `desk precision` top-view에서는 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶어 draw call을 줄이고, selected/direct-drag 경로는 개별 오브젝트를 유지한다.
@@ -177,6 +178,20 @@ Updated:
 
 Removed/Deprecated:
 - top-view에서 full-height wall mesh만으로 shell legibility를 확보한다는 가정.
+
+## 2026-04-21 변경 동기화 (Opening Orientation + Orbit Editor Top)
+Added:
+- builder/editor/shared scene는 opening GLB를 local Z-up source에서 runtime Y-up wall-plane 기준으로 정규화해 door/window가 실제 opening asset처럼 서 보이게 한다.
+- style 선택 전 builder opening preview는 white wall / white floor neutral shell을 사용한다.
+
+Updated:
+- editor top-view 탐색 규칙을 `orthographic + rotate button`에서 `perspective orbit + wheel zoom`으로 갱신한다.
+- top-view에서도 opening asset을 숨기지 않고 shell의 일부로 렌더한다.
+- procedural wall material은 walk interior readability를 위해 double-sided 렌더를 기본으로 사용한다.
+
+Removed/Deprecated:
+- opening asset이 floor plane에 눕는 source transform을 runtime에서 그대로 통과시키는 가정.
+- top-view가 flat shell 표현만 사용하고 실제 opening asset을 숨기는 기준.
 - 포스트FX 기준(SSAO + 보수적 bloom + 완화된 vignette + 저강도 noise) 추가.
 
 Updated:

@@ -1,6 +1,6 @@
 # Deskterior Blender Sources
 
-이 디렉토리는 Plan2Space의 데스크테리어 기본 자산 원본 `.blend` 파일을 보관합니다.
+이 디렉토리는 DeskteriorOnline의 데스크테리어 기본 자산 원본 `.blend` 파일을 보관합니다.
 
 ## 포함 자산
 

@@ -43,5 +43,5 @@
 
 - 캡처 세트가 없으면 축 2 완료를 “코드 완료, 런타임 증적 대기”로 분류한다.
 - 배포 검증 시에는 동일 체크리스트를 preview URL 기준으로 재실행한다.
-- 자동 캡처 스크립트(`scripts/visual-qa.capture.spec.ts`)는 headless 안정성을 위해 `window.__PLAN2SPACE_DISABLE_LOADING_OVERLAY__ = true`를 주입한다.
+- 자동 캡처 스크립트(`scripts/visual-qa.capture.spec.ts`)는 headless 안정성을 위해 `window.__DESKTERIORONLINE_DISABLE_LOADING_OVERLAY__ = true`를 주입한다.
 - 로딩 오버레이 우회는 QA 캡처 전용이며, 제품 기본 동작(로딩 연출)은 변경하지 않는다.

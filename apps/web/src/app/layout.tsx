@@ -8,7 +8,7 @@ import { LoadingOverlay } from "../components/overlay/LoadingOverlay";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata = {
-  title: "Plan2Space | 룸 빌더 · 3D 뷰어",
+  title: "DeskteriorOnline | 룸 빌더 · 3D 뷰어",
   description: "빈 방을 만들고 편집한 뒤 공유 가능한 읽기 전용 3D 뷰어로 발행하는 공간 우선 인테리어 스튜디오.",
   icons: {
     icon: "/favicon.png",

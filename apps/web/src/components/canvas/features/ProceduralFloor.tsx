@@ -53,28 +53,36 @@ function DetailedFloorMeshes({
   depth: number;
   floorMaterialIndex: number;
 }) {
+  const isWhitePreview = floorMaterialIndex < 0;
   const gl = useThree((state) => state.gl);
   const textureConfig =
     FLOOR_TEXTURE_PRESETS[floorMaterialIndex % FLOOR_TEXTURE_PRESETS.length] ?? FLOOR_TEXTURE_PRESETS[0];
   configureRuntimeAssetLoaders(gl);
-  const textureUrls = useMemo(() => resolveRuntimeTextureSet(textureConfig), [textureConfig]);
-  const [map, roughnessMap, normalMap, bumpMap] = useLoader(RuntimeTextureLoader, [
-    textureUrls.map,
-    textureUrls.roughnessMap,
-    textureUrls.normalMap,
-    textureUrls.bumpMap
-  ]) as THREE.Texture[];
+  const textureUrls = useMemo(
+    () => (isWhitePreview ? null : resolveRuntimeTextureSet(textureConfig)),
+    [isWhitePreview, textureConfig]
+  );
+  const loadedTextures = useLoader(
+    RuntimeTextureLoader,
+    textureUrls
+      ? [textureUrls.map, textureUrls.roughnessMap, textureUrls.normalMap, textureUrls.bumpMap]
+      : []
+  ) as THREE.Texture[];
   const textures = useMemo(
-    () => ({
-      map,
-      roughnessMap,
-      normalMap,
-      bumpMap
-    }),
-    [bumpMap, map, normalMap, roughnessMap]
+    () =>
+      textureUrls
+        ? {
+            map: loadedTextures[0]!,
+            roughnessMap: loadedTextures[1]!,
+            normalMap: loadedTextures[2]!,
+            bumpMap: loadedTextures[3]!
+          }
+        : null,
+    [loadedTextures, textureUrls]
   );
 
   useEffect(() => {
+    if (!textures) return;
     Object.values(textures).forEach((texture) => {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
@@ -90,23 +98,33 @@ function DetailedFloorMeshes({
     textures.bumpMap.colorSpace = THREE.NoColorSpace;
   }, [depth, textures, width]);
 
-  const material = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        map: textures.map,
-        roughnessMap: textures.roughnessMap,
-        normalMap: textures.normalMap,
-        bumpMap: textures.bumpMap,
-        bumpScale: textureConfig.bumpScale,
-        roughness: textureConfig.roughness,
-        normalScale: new THREE.Vector2(textureConfig.normalScale, textureConfig.normalScale),
+  const material = useMemo(() => {
+    if (isWhitePreview || !textures) {
+      return new THREE.MeshStandardMaterial({
+        color: "#f7f4ef",
+        roughness: 0.96,
+        metalness: 0.01,
         side: THREE.DoubleSide,
         polygonOffset: true,
         polygonOffsetFactor: 1,
         polygonOffsetUnits: 1
-      }),
-    [textureConfig.bumpScale, textureConfig.normalScale, textureConfig.roughness, textures]
-  );
+      });
+    }
+
+    return new THREE.MeshStandardMaterial({
+      map: textures.map,
+      roughnessMap: textures.roughnessMap,
+      normalMap: textures.normalMap,
+      bumpMap: textures.bumpMap,
+      bumpScale: textureConfig.bumpScale,
+      roughness: textureConfig.roughness,
+      normalScale: new THREE.Vector2(textureConfig.normalScale, textureConfig.normalScale),
+      side: THREE.DoubleSide,
+      polygonOffset: true,
+      polygonOffsetFactor: 1,
+      polygonOffsetUnits: 1
+    });
+  }, [isWhitePreview, textureConfig.bumpScale, textureConfig.normalScale, textureConfig.roughness, textures]);
 
   useEffect(() => {
     return () => {

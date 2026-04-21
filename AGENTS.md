@@ -1,6 +1,6 @@
 # AGENTS
 
-Plan2Space 저장소의 모든 작업은 이 문서를 기본 운영 규약으로 따릅니다.
+DeskteriorOnline 저장소의 모든 작업은 이 문서를 기본 운영 규약으로 따릅니다.
 
 ## 1) Start Protocol (작업 시작 전 필수)
 1. 아래 문서를 **반드시 순서대로** 읽고 현재 기준을 확인한다.
@@ -24,9 +24,9 @@ Must Read (in order):
 - PBR + HDR + Post FX 품질 기준을 유지한다.
 
 ## 3) Skill Routing Matrix
-- 아키텍처/범위/품질 게이트: `plan2space-project-core`
-- 랜딩/UX/상호작용/비주얼 폴리시: `plan2space-studio-ux`
-- 자산 생성/추천형 AI 경계: `plan2space-blueprint-ai` (필요 시 제한적으로 사용)
+- 아키텍처/범위/품질 게이트: `deskterioronline-project-core`
+- 랜딩/UX/상호작용/비주얼 폴리시: `deskterioronline-studio-ux`
+- 자산 생성/추천형 AI 경계: `deskterioronline-blueprint-ai` (필요 시 제한적으로 사용)
 - 브라우저 E2E/시나리오 검증: `playwright`
 - UI 가이드라인 점검: `web-design-guidelines`
 

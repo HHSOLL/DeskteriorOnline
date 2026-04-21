@@ -87,8 +87,11 @@ test("capture full visual QA pack", async ({ page, baseURL }) => {
 
   await page.setViewportSize({ width: 1440, height: 960 });
   await page.addInitScript(() => {
-    (window as Window & { __PLAN2SPACE_DISABLE_LOADING_OVERLAY__?: boolean }).__PLAN2SPACE_DISABLE_LOADING_OVERLAY__ =
-      true;
+    (
+      window as Window & {
+        __DESKTERIORONLINE_DISABLE_LOADING_OVERLAY__?: boolean;
+      }
+    ).__DESKTERIORONLINE_DISABLE_LOADING_OVERLAY__ = true;
   });
 
   await gotoAndHydrate(

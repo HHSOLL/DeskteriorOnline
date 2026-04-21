@@ -1,17 +1,18 @@
 "use client";
 
-import { OrbitControls, OrthographicCamera, PerspectiveCamera, PointerLockControls } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera, PointerLockControls } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, type RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import {
-  resolvePreferredTopViewZoom,
-  resolveTopViewInteractionPolicy
-} from "../../../lib/editor/top-view-policy";
 import type { SceneInteractionMode } from "../../../lib/scene/render-quality";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
-import { useCameraSelector, useShellSelector } from "../../../lib/stores/scene-slices";
+import {
+  useAssetSelector,
+  useCameraSelector,
+  useSelectionSelector,
+  useShellSelector
+} from "../../../lib/stores/scene-slices";
 import { useMobileControlsStore } from "../../../lib/stores/useMobileControlsStore";
 import { resolveSharedViewerPresentationPolish } from "../../../lib/viewer/presentation";
 
@@ -25,8 +26,7 @@ type MoveState = {
 const WALK_SPEED = 3.5;
 const BODY_Y = 1;
 const EYE_HEIGHT = 0.6;
-const ZOOM_EVENT_NAME = "plan2space:zoom";
-const TOP_ROTATE_EVENT_NAME = "plan2space:top-rotate";
+const ZOOM_EVENT_NAME = "deskterioronline:zoom";
 
 function clampValue(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -54,6 +54,34 @@ function computeBounds(walls: { start: [number, number]; end: [number, number] }
   });
 
   return { minX, maxX, minZ, maxZ };
+}
+
+function measureAssetPlanExtent(asset: {
+  product?: {
+    dimensionsMm?: {
+      width?: number;
+      depth?: number;
+      height?: number;
+    };
+  } | null;
+  scale: [number, number, number];
+} | null) {
+  if (!asset) return 0;
+  const width =
+    ((asset.product?.dimensionsMm?.width ?? 0) / 1000) * Math.max(asset.scale[0], 0.001);
+  const depth =
+    ((asset.product?.dimensionsMm?.depth ?? 0) / 1000) * Math.max(asset.scale[2], 0.001);
+  const fallback = Math.max(Math.abs(asset.scale[0]), Math.abs(asset.scale[2]), 0.9);
+  return Math.max(width, depth, fallback);
+}
+
+function clampWalkCoordinate(value: number, min: number, max: number, margin: number) {
+  const lower = min + margin;
+  const upper = max - margin;
+  if (lower <= upper) {
+    return clampValue(value, lower, upper);
+  }
+  return (min + max) / 2;
 }
 
 function WalkRig({
@@ -164,7 +192,7 @@ function WalkRig({
     >
       <CapsuleCollider args={[0.35, 0.6]} />
       <group position={[0, EYE_HEIGHT, 0]}>
-        <PerspectiveCamera makeDefault fov={fov} near={0.08} far={farClip} />
+        <PerspectiveCamera makeDefault fov={fov} near={0.03} far={farClip} />
         {!isTouch ? <PointerLockControls ref={pointerLockRef} /> : null}
       </group>
     </RigidBody>
@@ -177,6 +205,8 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const isTransforming = useEditorStore((state) => state.isTransforming);
+  const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
+  const assets = useAssetSelector((slice) => slice.assets);
   const walls = useShellSelector((slice) => slice.walls);
   const openings = useShellSelector((slice) => slice.openings);
   const scale = useShellSelector((slice) => slice.scale);
@@ -184,13 +214,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
   const entranceId = useCameraSelector((slice) => slice.entranceId);
   const [isTouch, setIsTouch] = useState(false);
 
-  const orthoRef = useRef<THREE.OrthographicCamera | null>(null);
   const controlsRef = useRef<any>(null);
-  const topRotationRef = useRef(0);
-  const topViewPolicy = useMemo(
-    () => resolveTopViewInteractionPolicy(topMode),
-    [topMode]
-  );
   const viewerPresentationPolish = useMemo(
     () =>
       resolveSharedViewerPresentationPolish(
@@ -198,24 +222,47 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
       ),
     [interactionMode]
   );
-  const enableReadOnlyTopOrbit =
-    viewMode === "top" &&
-    (interactionMode === "viewer-shared" || interactionMode === "viewer-showcase");
+  const enableTopOrbit = viewMode === "top";
   const bounds = useMemo(() => computeBounds(walls, scale), [walls, scale]);
   const centerX = (bounds.minX + bounds.maxX) / 2;
   const centerZ = (bounds.minZ + bounds.maxZ) / 2;
   const radius = Math.max(bounds.maxX - bounds.minX, bounds.maxZ - bounds.minZ, 1);
-  const topHeight = Math.max(6, radius);
-  const zoom = Math.max(58, 210 / radius);
-  const presentationZoom = zoom * viewerPresentationPolish.topZoomMultiplier;
+  const selectedAsset = useMemo(
+    () => assets.find((asset) => asset.id === selectedAssetId) ?? null,
+    [assets, selectedAssetId]
+  );
+  const precisionFocusAsset = useMemo(() => {
+    if (topMode !== "desk-precision") return null;
+    if (!selectedAsset) return null;
+    if (selectedAsset.supportAssetId) {
+      return assets.find((asset) => asset.id === selectedAsset.supportAssetId) ?? selectedAsset;
+    }
+    return selectedAsset;
+  }, [assets, selectedAsset, topMode]);
+  const precisionExtent = measureAssetPlanExtent(precisionFocusAsset);
+  const topTargetX = precisionFocusAsset?.position[0] ?? centerX;
+  const topTargetZ = precisionFocusAsset?.position[2] ?? centerZ;
+  const topTargetY =
+    topMode === "desk-precision" && precisionFocusAsset
+      ? Math.max(0.42, precisionFocusAsset.position[1] + precisionExtent * 0.18)
+      : Math.max(1.15, radius * 0.12);
   const builderDistance = Math.max(4.8, radius * 1.45);
   const builderHeight = Math.max(3.1, radius * 0.92);
   const builderTargetY = Math.max(1.15, radius * 0.12);
-  const viewerTopDistance = Math.max(5.4, radius * (interactionMode === "viewer-showcase" ? 1.38 : 1.52));
-  const viewerTopHeight = Math.max(4.2, radius * (interactionMode === "viewer-showcase" ? 1.02 : 1.14));
-  const viewerTopFov = interactionMode === "viewer-showcase" ? 36 : 40;
+  const roomTopDistance = Math.max(5.6, radius * (interactionMode === "viewer-showcase" ? 1.34 : 1.42));
+  const roomTopHeight = Math.max(4.1, radius * (interactionMode === "viewer-showcase" ? 0.94 : 1.02));
+  const precisionTopDistance = precisionFocusAsset
+    ? Math.max(2.1, precisionExtent * 2.6)
+    : Math.max(4.2, radius * 1.08);
+  const precisionTopHeight = precisionFocusAsset
+    ? Math.max(1.6, precisionExtent * 1.25)
+    : Math.max(3, radius * 0.72);
+  const topOrbitDistance = topMode === "desk-precision" ? precisionTopDistance : roomTopDistance;
+  const topOrbitHeight = topMode === "desk-precision" ? precisionTopHeight : roomTopHeight;
+  const topOrbitFov = topMode === "desk-precision" ? 34 : interactionMode === "viewer-showcase" ? 34 : 38;
   const walkFarClip = Math.max(42, radius * 10);
   const walkFov = viewerPresentationPolish.walkFov;
+  const walkMargin = Math.min(Math.max(0.6, radius * 0.14), Math.max(radius / 2 - 0.18, 0.6));
 
   const initialPosition = useMemo((): [number, number, number] => {
     const preferredAnchor =
@@ -232,18 +279,18 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
         const dz = targetZ - baseZ;
         const length = Math.hypot(dx, dz);
         if (length > 0.001) {
-          const inwardOffset = Math.min(Math.max(0.8, radius * 0.16), Math.max(0.8, length * 0.6));
+          const inwardOffset = Math.min(Math.max(1.18, radius * 0.24), Math.max(1.18, length * 0.82));
           return [
-            baseX + (dx / length) * inwardOffset,
+            clampWalkCoordinate(baseX + (dx / length) * inwardOffset, bounds.minX, bounds.maxX, walkMargin),
             Math.max(BODY_Y, preferredAnchor.height),
-            baseZ + (dz / length) * inwardOffset
+            clampWalkCoordinate(baseZ + (dz / length) * inwardOffset, bounds.minZ, bounds.maxZ, walkMargin)
           ];
         }
       }
       return [
-        baseX,
+        clampWalkCoordinate(baseX, bounds.minX, bounds.maxX, walkMargin),
         Math.max(BODY_Y, preferredAnchor.height),
-        baseZ
+        clampWalkCoordinate(baseZ, bounds.minZ, bounds.maxZ, walkMargin)
       ];
     }
 
@@ -258,18 +305,32 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
         const length = Math.sqrt(dx * dx + dz * dz);
         const ratio = length > 0 ? entrance.offset / length : 0;
         return [
-          (wall.start[0] + dx * ratio) * scale,
+          clampWalkCoordinate((wall.start[0] + dx * ratio) * scale, bounds.minX, bounds.maxX, walkMargin),
           BODY_Y,
-          (wall.start[1] + dz * ratio) * scale
+          clampWalkCoordinate((wall.start[1] + dz * ratio) * scale, bounds.minZ, bounds.maxZ, walkMargin)
         ];
       }
     }
     return [
-      centerX + radius * viewerPresentationPolish.walkFallbackOffset.x,
+      clampWalkCoordinate(
+        centerX + radius * viewerPresentationPolish.walkFallbackOffset.x,
+        bounds.minX,
+        bounds.maxX,
+        walkMargin
+      ),
       BODY_Y,
-      centerZ + radius * viewerPresentationPolish.walkFallbackOffset.z
+      clampWalkCoordinate(
+        centerZ + radius * viewerPresentationPolish.walkFallbackOffset.z,
+        bounds.minZ,
+        bounds.maxZ,
+        walkMargin
+      )
     ];
   }, [
+    bounds.maxX,
+    bounds.maxZ,
+    bounds.minX,
+    bounds.minZ,
     cameraAnchors,
     centerX,
     centerZ,
@@ -279,6 +340,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     scale,
     viewerPresentationPolish.walkFallbackOffset.x,
     viewerPresentationPolish.walkFallbackOffset.z,
+    walkMargin,
     walls
   ]);
 
@@ -305,57 +367,6 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     setIsTouch(Boolean(supportsTouch));
   }, []);
 
-  const applyTopCamera = useMemo(
-    () => (nextZoom?: number) => {
-      if (!orthoRef.current) return;
-      const camera = orthoRef.current;
-      camera.position.set(centerX, topHeight, centerZ);
-      camera.up.set(Math.sin(topRotationRef.current), 0, -Math.cos(topRotationRef.current));
-      camera.zoom = clampValue(
-        nextZoom ?? resolvePreferredTopViewZoom(topMode, presentationZoom, camera.zoom),
-        topViewPolicy.zoomBounds.min,
-        topViewPolicy.zoomBounds.max
-      );
-      camera.lookAt(centerX, 0, centerZ);
-      camera.updateProjectionMatrix();
-      invalidate();
-    },
-    [
-      centerX,
-      centerZ,
-      invalidate,
-      topHeight,
-      topMode,
-      topViewPolicy.zoomBounds.max,
-      topViewPolicy.zoomBounds.min,
-      presentationZoom
-    ]
-  );
-
-  useEffect(() => {
-    if (viewMode === "top") {
-      applyTopCamera(resolvePreferredTopViewZoom(topMode, presentationZoom, orthoRef.current?.zoom));
-    }
-  }, [applyTopCamera, presentationZoom, topMode, viewMode]);
-
-  useEffect(() => {
-    if (viewMode !== "top") return;
-
-    const element = gl.domElement;
-    const handleWheel = (event: WheelEvent) => {
-      event.preventDefault();
-      if (!orthoRef.current) return;
-      const factor = event.deltaY < 0 ? 1.1 : 1 / 1.1;
-      applyTopCamera(orthoRef.current.zoom * factor);
-    };
-
-    element.addEventListener("wheel", handleWheel, { passive: false });
-
-    return () => {
-      element.removeEventListener("wheel", handleWheel);
-    };
-  }, [applyTopCamera, gl.domElement, viewMode]);
-
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -364,7 +375,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
       const direction = customEvent.detail?.direction;
       if (direction !== "in" && direction !== "out") return;
 
-      if (viewMode === "top" && enableReadOnlyTopOrbit && controlsRef.current) {
+      if (viewMode === "top" && controlsRef.current) {
         if (direction === "in") {
           controlsRef.current.dollyIn?.(1.15);
         } else {
@@ -372,12 +383,6 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
         }
         controlsRef.current.update?.();
         invalidate();
-        return;
-      }
-
-      if (viewMode === "top" && orthoRef.current) {
-        const factor = direction === "in" ? 1.15 : 1 / 1.15;
-        applyTopCamera(orthoRef.current.zoom * factor);
         return;
       }
 
@@ -396,27 +401,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     return () => {
       window.removeEventListener(ZOOM_EVENT_NAME, handleZoomEvent as EventListener);
     };
-  }, [applyTopCamera, enableReadOnlyTopOrbit, invalidate, viewMode]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const handleTopRotateEvent = (event: Event) => {
-      if (viewMode !== "top") return;
-      const customEvent = event as CustomEvent<{ direction?: "left" | "right" }>;
-      const direction = customEvent.detail?.direction;
-      if (direction !== "left" && direction !== "right") return;
-
-      topRotationRef.current +=
-        direction === "left" ? topViewPolicy.rotateStep : -topViewPolicy.rotateStep;
-      applyTopCamera();
-    };
-
-    window.addEventListener(TOP_ROTATE_EVENT_NAME, handleTopRotateEvent as EventListener);
-    return () => {
-      window.removeEventListener(TOP_ROTATE_EVENT_NAME, handleTopRotateEvent as EventListener);
-    };
-  }, [applyTopCamera, topViewPolicy.rotateStep, viewMode]);
+  }, [invalidate, viewMode]);
 
   if (viewMode === "walk") {
     return (
@@ -460,38 +445,35 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     );
   }
 
-  if (enableReadOnlyTopOrbit) {
+  if (enableTopOrbit) {
     return (
       <>
         <PerspectiveCamera
           makeDefault
-          fov={viewerTopFov}
+          fov={topOrbitFov}
           near={0.1}
           far={2000}
-          position={[centerX + viewerTopDistance, viewerTopHeight, centerZ + viewerTopDistance]}
+          position={[topTargetX + topOrbitDistance, topOrbitHeight, topTargetZ + topOrbitDistance]}
         />
         <OrbitControls
           ref={controlsRef}
-          target={[centerX, builderTargetY, centerZ]}
+          target={[topTargetX, topTargetY, topTargetZ]}
+          enabled={!isTransforming}
           enableRotate
           enablePan={false}
           enableZoom
           enableDamping
           dampingFactor={0.08}
-          rotateSpeed={0.68}
+          rotateSpeed={0.74}
           zoomSpeed={0.92}
-          minPolarAngle={Math.PI * 0.18}
-          maxPolarAngle={Math.PI * 0.48}
-          minDistance={Math.max(3.8, radius * 0.82)}
-          maxDistance={Math.max(18, radius * 3.6)}
+          minPolarAngle={topMode === "desk-precision" ? Math.PI * 0.14 : Math.PI * 0.18}
+          maxPolarAngle={topMode === "desk-precision" ? Math.PI * 0.46 : Math.PI * 0.5}
+          minDistance={topMode === "desk-precision" ? Math.max(1.4, precisionExtent * 1.3) : Math.max(3.8, radius * 0.78)}
+          maxDistance={topMode === "desk-precision" ? Math.max(9, precisionExtent * 6.2) : Math.max(18, radius * 3.2)}
         />
       </>
     );
   }
 
-  return (
-    <>
-      <OrthographicCamera ref={orthoRef} makeDefault zoom={zoom} near={0.1} far={2000} />
-    </>
-  );
+  return null;
 }

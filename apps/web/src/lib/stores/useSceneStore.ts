@@ -397,7 +397,7 @@ function normalizeProductSource(value: unknown): ProductSourceMetadata | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const record = value as Record<string, unknown>;
   const kind =
-    record.kind === "plan2space_blender" || record.kind === "open_source" ? record.kind : null;
+    record.kind === "deskterioronline_blender" || record.kind === "open_source" ? record.kind : null;
   const name = normalizeProductText(record.name);
   const metadataPath = normalizeProductText(record.path);
   const url = normalizeProductUrl(record.url);

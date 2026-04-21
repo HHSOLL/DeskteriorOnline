@@ -42,7 +42,7 @@ function getRealtimeSessionKey() {
     return null;
   }
 
-  const storageKey = "plan2space:realtime-lab-session";
+  const storageKey = "deskterioronline:realtime-lab-session";
   const existing = window.sessionStorage.getItem(storageKey);
   if (existing) {
     return existing;

@@ -225,7 +225,7 @@ function toMetadataSource(value: unknown): ProductSourceMetadata | null {
     return null;
   }
 
-  const kind = value.kind === "plan2space_blender" || value.kind === "open_source" ? value.kind : null;
+  const kind = value.kind === "deskterioronline_blender" || value.kind === "open_source" ? value.kind : null;
   const name = toMetadataText(value.name);
   const metadataPath = toMetadataText(value.path);
   const url = toMetadataUrl(value.url);

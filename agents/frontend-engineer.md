@@ -4,8 +4,8 @@
 랜딩부터 에디터까지 UI/상호작용을 일관된 품질 기준으로 구현한다.
 
 ## Preferred Skills
-- `plan2space-studio-ux` (필수)
-- `plan2space-project-core`
+- `deskterioronline-studio-ux` (필수)
+- `deskterioronline-project-core`
 
 ## Core Responsibilities
 - 로딩/랜딩/인증/대시보드 UX 구현

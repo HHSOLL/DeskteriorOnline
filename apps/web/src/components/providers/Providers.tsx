@@ -73,7 +73,7 @@ export function Providers({ children }: { children: ReactNode }) {
         }
         if (lastAuthToastRef.current !== status) {
             if (status === "success") {
-                toast.success("Welcome to Plan2Space Studio");
+                toast.success("Welcome to DeskteriorOnline Studio");
             } else if (status === "error") {
                 toast.error(authMessage ?? "로그인에 실패했습니다.");
             }
