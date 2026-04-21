@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "../../types/database";
 
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname === "/auth/callback") {
+  if (request.nextUrl.pathname === "/auth/callback" || request.nextUrl.pathname === "/auth/signin") {
     return NextResponse.next();
   }
 

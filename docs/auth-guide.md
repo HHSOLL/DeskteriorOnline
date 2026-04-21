@@ -1,7 +1,7 @@
 # Auth Guide (Supabase OAuth)
 
 DeskteriorOnline는 **@supabase/ssr** 기반으로 쿠키 세션을 동기화합니다.
-Google/Kakao OAuth는 `/auth/callback` 서버 라우트에서 세션을 교환합니다.
+Google/Kakao OAuth는 `/auth/signin` 서버 라우트에서 시작하고 `/auth/callback` 서버 라우트에서 세션을 교환합니다.
 
 ## 필수 환경 변수
 
@@ -88,15 +88,18 @@ NEXT_PUBLIC_APP_URL=
 - Kakao에서 받은 Client ID/Secret을 Supabase Provider 설정에 입력
 - Kakao Redirect URI에는 `localhost`가 아니라 **Supabase 콜백 URL**을 사용합니다.
 
-## 콜백 라우트
+## OAuth 서버 라우트
 
-- 서버 라우트: `apps/web/src/app/auth/callback/route.ts`
+- 로그인 시작 라우트: `apps/web/src/app/auth/signin/route.ts`
+- 콜백 라우트: `apps/web/src/app/auth/callback/route.ts`
 - 처리 흐름:
-  1) `code` 수신
-  2) `exchangeCodeForSession` 실행
-  3) 쿠키 동기화 후 `?auth=success` 리다이렉트
-  4) `Providers`에서 토스트 표시
-  5) 콜백 실패 시 기존 `sb-*` 인증 쿠키를 정리하고 `?auth=error`로 복귀
+  1) 브라우저는 `/auth/signin?provider=...&next=...`로 이동
+  2) 서버가 `signInWithOAuth`를 실행하고 PKCE verifier를 쿠키에 기록
+  3) provider가 `/auth/callback`으로 복귀
+  4) `exchangeCodeForSession` 실행
+  5) 쿠키 동기화 후 `?auth=success` 리다이렉트
+  6) `Providers`에서 중앙 welcome overlay 또는 error toast 표시
+  7) 실패 시 기존 `sb-*` 인증 쿠키와 PKCE verifier 쿠키를 정리하고 `?auth=error`로 복귀
 
 ## 흔한 오류 & 해결
 
@@ -104,6 +107,7 @@ NEXT_PUBLIC_APP_URL=
 
 - `@supabase/ssr` 사용 여부 확인
 - OAuth 시작/콜백 모두 동일 도메인인지 확인
+- OAuth 시작이 브라우저 직접 호출이 아니라 `/auth/signin` 서버 라우트를 타는지 확인
 - `/auth/callback` 라우트 존재 확인
 - 브라우저 쿠키 차단 여부 확인
 - 캐시 정리 후 재시작:
@@ -123,6 +127,7 @@ npm run dev:web
 - 현재 동작:
   - 클라이언트 초기화 시 recoverable refresh-token 오류를 감지하면 로컬 세션을 자동 정리
   - `/auth/callback`에서 세션 교환 실패 시 기존 `sb-*` 쿠키를 즉시 삭제
+  - `/auth/signin`에서 새 로그인 시작 전 기존 PKCE verifier 쿠키를 먼저 제거
 - 수동 확인 방법:
   1) 시크릿 창에서 재로그인
   2) 일반 창이라면 `Application/Storage`의 Supabase 관련 쿠키와 스토리지를 삭제 후 재시도
