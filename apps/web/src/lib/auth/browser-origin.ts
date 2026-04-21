@@ -1,6 +1,7 @@
 "use client";
 
 const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1"]);
+const VERCEL_HOST_SUFFIX = ".vercel.app";
 const AUTH_QUERY_KEYS = ["code", "error", "error_description", "state", "auth", "auth_message"];
 
 function toUrl(value: string | undefined | null): URL | null {
@@ -15,6 +16,10 @@ function toUrl(value: string | undefined | null): URL | null {
 
 function isLoopback(url: URL) {
   return LOOPBACK_HOSTS.has(url.hostname);
+}
+
+function isVercelHostname(url: URL) {
+  return url.hostname.endsWith(VERCEL_HOST_SUFFIX);
 }
 
 export function resolveBrowserAppOrigin() {
@@ -32,10 +37,22 @@ export function resolveCanonicalBrowserHref(href: string) {
 
   if (!current || !configured) return null;
   if (current.pathname === "/auth/callback" || hasAuthFlowParams(current)) return null;
-  if (!isLoopback(current) || !isLoopback(configured) || current.origin === configured.origin) return null;
+  if (current.origin === configured.origin) return null;
 
-  const canonical = new URL(`${current.pathname}${current.search}${current.hash}`, configured.origin);
-  return canonical.toString();
+  if (isLoopback(current) && isLoopback(configured)) {
+    const canonical = new URL(`${current.pathname}${current.search}${current.hash}`, configured.origin);
+    return canonical.toString();
+  }
+
+  // Production builds may still be opened on a deployment-specific Vercel URL.
+  // Force those requests onto the configured alias before OAuth starts so PKCE
+  // cookies and callback host stay aligned with Supabase allow lists.
+  if (isVercelHostname(current) && isVercelHostname(configured)) {
+    const canonical = new URL(`${current.pathname}${current.search}${current.hash}`, configured.origin);
+    return canonical.toString();
+  }
+
+  return null;
 }
 
 export function buildBrowserAuthRedirectUrl(nextPath?: string) {
