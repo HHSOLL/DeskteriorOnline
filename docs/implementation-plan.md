@@ -29,6 +29,7 @@
 - opening/style step preview에 orbit/zoom 카메라 UX 적용
 - opening step preview에서 style 선택 전 기본 흰 벽/바닥 shell 유지
 - opening GLB를 wall-plane 기준 실제 door/window orientation으로 정규화
+- builder room shape를 8종으로 확장하고 wall/floor finish 선택 폭을 7종/9종으로 확대
 - lighting step에 direct/indirect mood 선택 및 scene lighting payload 연결
 - 템플릿 기반 방 생성 속도 개선
 - 저장 직후 에디터/뷰어 일관성 확인 자동화
@@ -63,6 +64,7 @@
 - top-view 자산 drag를 local preview 후 commit 방식으로 전환해 pointer-move store churn 완화
 - physics/runtime shadow/contact shadow/post FX를 walk/viewer 중심으로 재배치해 furnished scene headroom 확보
 - editor top-view를 builder와 같은 perspective orbit + wheel zoom 기준으로 재조정
+- editor room shell material fallback을 강화해 top/walk에서 texture decode 실패 시 black shell이 나오지 않도록 수정
 - direct lighting beam shader / indirect ceiling glow shader를 scene shell 렌더에 연결
 - room/desk top-view와 builder preview에 demand frame loop + explicit invalidate 경로를 적용
 

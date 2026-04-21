@@ -64,6 +64,24 @@ function ShapePreview({
         strokeLinejoin="round"
         strokeWidth={strokeWidth}
       />
+    ),
+    "offset-studio": (
+      <path
+        d="M18 18H82V50H58V82H18Z"
+        fill={fill}
+        stroke={stroke}
+        strokeLinejoin="round"
+        strokeWidth={strokeWidth}
+      />
+    ),
+    "gallery-bay": (
+      <path
+        d="M18 82V18H36V8H64V18H82V82Z"
+        fill={fill}
+        stroke={stroke}
+        strokeLinejoin="round"
+        strokeWidth={strokeWidth}
+      />
     )
   };
 

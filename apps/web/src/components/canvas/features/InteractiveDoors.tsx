@@ -101,7 +101,7 @@ function prepareRuntimeAsset(root: THREE.Object3D) {
 }
 
 function normalizeOpeningAsset(root: THREE.Object3D) {
-  root.rotation.x = -Math.PI / 2;
+  root.rotation.set(0, 0, 0);
   root.updateWorldMatrix(true, true);
 
   const bounds = new THREE.Box3().setFromObject(root);

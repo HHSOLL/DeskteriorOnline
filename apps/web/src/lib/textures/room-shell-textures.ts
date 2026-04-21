@@ -78,6 +78,54 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     bumpScale: 0.015,
     normalScale: 0.35,
     envMapIntensity: 0.25
+  },
+  {
+    topColor: "#c8c7c2",
+    map: "/assets/textures/grey_plaster_02/grey_plaster_02_diff_2k.jpg",
+    roughnessMap: "/assets/textures/grey_plaster_02/grey_plaster_02_rough_2k.jpg",
+    normalMap: "/assets/textures/grey_plaster_02/grey_plaster_02_disp_2k.jpg",
+    bumpMap: "/assets/textures/grey_plaster_02/grey_plaster_02_disp_2k.jpg",
+    color: "#dad7d1",
+    roughness: 0.82,
+    bumpScale: 0.012,
+    normalScale: 0.26,
+    envMapIntensity: 0.42
+  },
+  {
+    topColor: "#9d9892",
+    map: "/assets/textures/concrete_layers_02/concrete_layers_02_diff_2k.jpg",
+    roughnessMap: "/assets/textures/concrete_layers_02/concrete_layers_02_rough_2k.jpg",
+    normalMap: "/assets/textures/concrete_layers_02/concrete_layers_02_disp_2k.jpg",
+    bumpMap: "/assets/textures/concrete_layers_02/concrete_layers_02_disp_2k.jpg",
+    color: "#cbc6be",
+    roughness: 0.88,
+    bumpScale: 0.013,
+    normalScale: 0.3,
+    envMapIntensity: 0.34
+  },
+  {
+    topColor: "#b08a62",
+    map: "/assets/textures/oak_veneer_01/oak_veneer_01_diff_2k.jpg",
+    roughnessMap: "/assets/textures/oak_veneer_01/oak_veneer_01_rough_2k.jpg",
+    normalMap: "/assets/textures/oak_veneer_01/oak_veneer_01_disp_2k.jpg",
+    bumpMap: "/assets/textures/oak_veneer_01/oak_veneer_01_disp_2k.jpg",
+    color: "#c89c72",
+    roughness: 0.66,
+    bumpScale: 0.01,
+    normalScale: 0.24,
+    envMapIntensity: 0.5
+  },
+  {
+    topColor: "#8f6c52",
+    map: "/assets/textures/kitchen_wood/kitchen_wood_diff_2k.jpg",
+    roughnessMap: "/assets/textures/kitchen_wood/kitchen_wood_rough_2k.jpg",
+    normalMap: "/assets/textures/kitchen_wood/kitchen_wood_disp_2k.jpg",
+    bumpMap: "/assets/textures/kitchen_wood/kitchen_wood_disp_2k.jpg",
+    color: "#9f7755",
+    roughness: 0.62,
+    bumpScale: 0.01,
+    normalScale: 0.22,
+    envMapIntensity: 0.46
   }
 ];
 
@@ -111,6 +159,66 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     roughness: 0.5,
     bumpScale: 0.01,
     normalScale: 0.3
+  },
+  {
+    topColor: "#b89e7e",
+    map: "/assets/textures/laminate_floor_02/laminate_floor_02_diff_2k.jpg",
+    roughnessMap: "/assets/textures/laminate_floor_02/laminate_floor_02_rough_2k.jpg",
+    normalMap: "/assets/textures/laminate_floor_02/laminate_floor_02_disp_2k.jpg",
+    bumpMap: "/assets/textures/laminate_floor_02/laminate_floor_02_disp_2k.jpg",
+    roughness: 0.62,
+    bumpScale: 0.011,
+    normalScale: 0.28
+  },
+  {
+    topColor: "#9f7b58",
+    map: "/assets/textures/wood_floor/wood_floor_diff_2k.jpg",
+    roughnessMap: "/assets/textures/wood_floor/wood_floor_rough_2k.jpg",
+    normalMap: "/assets/textures/wood_floor/wood_floor_disp_2k.jpg",
+    bumpMap: "/assets/textures/wood_floor/wood_floor_disp_2k.jpg",
+    roughness: 0.64,
+    bumpScale: 0.012,
+    normalScale: 0.3
+  },
+  {
+    topColor: "#8b6543",
+    map: "/assets/textures/linoleum_brown/linoleum_brown_diff_2k.jpg",
+    roughnessMap: "/assets/textures/linoleum_brown/linoleum_brown_rough_2k.jpg",
+    normalMap: "/assets/textures/linoleum_brown/linoleum_brown_disp_2k.jpg",
+    bumpMap: "/assets/textures/linoleum_brown/linoleum_brown_disp_2k.jpg",
+    roughness: 0.76,
+    bumpScale: 0.008,
+    normalScale: 0.2
+  },
+  {
+    topColor: "#d7d0c5",
+    map: "/assets/textures/terrazzo_tiles/terrazzo_tiles_diff_2k.jpg",
+    roughnessMap: "/assets/textures/terrazzo_tiles/terrazzo_tiles_rough_2k.jpg",
+    normalMap: "/assets/textures/terrazzo_tiles/terrazzo_tiles_disp_2k.jpg",
+    bumpMap: "/assets/textures/terrazzo_tiles/terrazzo_tiles_disp_2k.jpg",
+    roughness: 0.56,
+    bumpScale: 0.006,
+    normalScale: 0.16
+  },
+  {
+    topColor: "#adb0b2",
+    map: "/assets/textures/anti_skid_tiles/anti_skid_tiles_diff_2k.jpg",
+    roughnessMap: "/assets/textures/anti_skid_tiles/anti_skid_tiles_rough_2k.jpg",
+    normalMap: "/assets/textures/anti_skid_tiles/anti_skid_tiles_disp_2k.jpg",
+    bumpMap: "/assets/textures/anti_skid_tiles/anti_skid_tiles_disp_2k.jpg",
+    roughness: 0.78,
+    bumpScale: 0.008,
+    normalScale: 0.2
+  },
+  {
+    topColor: "#6f6258",
+    map: "/assets/textures/dirty_carpet/dirty_carpet_diff_2k.jpg",
+    roughnessMap: "/assets/textures/dirty_carpet/dirty_carpet_rough_2k.jpg",
+    normalMap: "/assets/textures/dirty_carpet/dirty_carpet_disp_2k.jpg",
+    bumpMap: "/assets/textures/dirty_carpet/dirty_carpet_disp_2k.jpg",
+    roughness: 0.9,
+    bumpScale: 0.012,
+    normalScale: 0.24
   }
 ];
 

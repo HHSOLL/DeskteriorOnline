@@ -17,6 +17,12 @@ type FloorGeometryEntry = {
   geometry: THREE.ShapeGeometry;
 };
 
+function hasRenderableTexture(texture: THREE.Texture | undefined) {
+  if (!texture) return false;
+  const sourceData = (texture.source as { data?: unknown } | undefined)?.data;
+  return Boolean((texture as { image?: unknown }).image ?? sourceData);
+}
+
 function computeBounds(walls: { start: [number, number]; end: [number, number] }[], scale: number) {
   if (walls.length === 0) {
     return { minX: -2.5, maxX: 2.5, minZ: -2.5, maxZ: 2.5 };
@@ -80,9 +86,20 @@ function DetailedFloorMeshes({
         : null,
     [loadedTextures, textureUrls]
   );
+  const hasRenderableTextureSet = useMemo(
+    () =>
+      Boolean(
+        textures &&
+          hasRenderableTexture(textures.map) &&
+          hasRenderableTexture(textures.roughnessMap) &&
+          hasRenderableTexture(textures.normalMap) &&
+          hasRenderableTexture(textures.bumpMap)
+      ),
+    [textures]
+  );
 
   useEffect(() => {
-    if (!textures) return;
+    if (!textures || !hasRenderableTextureSet) return;
     Object.values(textures).forEach((texture) => {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
@@ -96,13 +113,13 @@ function DetailedFloorMeshes({
     textures.roughnessMap.colorSpace = THREE.NoColorSpace;
     textures.normalMap.colorSpace = THREE.NoColorSpace;
     textures.bumpMap.colorSpace = THREE.NoColorSpace;
-  }, [depth, textures, width]);
+  }, [depth, hasRenderableTextureSet, textures, width]);
 
   const material = useMemo(() => {
-    if (isWhitePreview || !textures) {
+    if (isWhitePreview || !textures || !hasRenderableTextureSet) {
       return new THREE.MeshStandardMaterial({
-        color: "#f7f4ef",
-        roughness: 0.96,
+        color: textureConfig.topColor,
+        roughness: 0.88,
         metalness: 0.01,
         side: THREE.DoubleSide,
         polygonOffset: true,
@@ -124,7 +141,15 @@ function DetailedFloorMeshes({
       polygonOffsetFactor: 1,
       polygonOffsetUnits: 1
     });
-  }, [isWhitePreview, textureConfig.bumpScale, textureConfig.normalScale, textureConfig.roughness, textures]);
+  }, [
+    hasRenderableTextureSet,
+    isWhitePreview,
+    textureConfig.bumpScale,
+    textureConfig.normalScale,
+    textureConfig.roughness,
+    textureConfig.topColor,
+    textures
+  ]);
 
   useEffect(() => {
     return () => {

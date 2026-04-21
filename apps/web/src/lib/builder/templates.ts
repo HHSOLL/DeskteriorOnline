@@ -6,7 +6,9 @@ export type BuilderTemplateId =
   | "cut-shape"
   | "t-shape"
   | "u-shape"
-  | "slanted-shape";
+  | "slanted-shape"
+  | "offset-studio"
+  | "gallery-bay";
 
 export type BuilderTemplate = {
   id: BuilderTemplateId;
@@ -84,19 +86,51 @@ export const builderTemplates: BuilderTemplate[] = [
     defaultDepth: 5.4,
     defaultNookWidth: 1.4,
     defaultNookDepth: 1.4
+  },
+  {
+    id: "offset-studio",
+    name: "오프셋 스튜디오",
+    eyebrow: "비대칭 레이아웃",
+    description: "한쪽 벽이 안으로 들어간 비대칭 구조로 작업/촬영 구역을 나누기 좋습니다.",
+    accent: "#896257",
+    defaultWidth: 7.4,
+    defaultDepth: 5.8,
+    defaultNookWidth: 2.2,
+    defaultNookDepth: 1.8
+  },
+  {
+    id: "gallery-bay",
+    name: "갤러리 베이",
+    eyebrow: "전면 확장",
+    description: "전면이 살짝 돌출된 형태로 전시형 벽면과 포컬존을 만들기 좋습니다.",
+    accent: "#4e6a87",
+    defaultWidth: 8.2,
+    defaultDepth: 5.6,
+    defaultNookWidth: 2.6,
+    defaultNookDepth: 1.6
   }
 ];
 
 export const builderWallFinishes = [
   { id: 0, name: "Soft Plaster" },
   { id: 1, name: "Gallery White" },
-  { id: 2, name: "Dark Concrete" }
+  { id: 2, name: "Dark Concrete" },
+  { id: 3, name: "Grey Plaster" },
+  { id: 4, name: "Layered Concrete" },
+  { id: 5, name: "Oak Panel" },
+  { id: 6, name: "Walnut Panel" }
 ] as const;
 
 export const builderFloorFinishes = [
   { id: 0, name: "Oak Boards" },
   { id: 1, name: "Worn Concrete" },
-  { id: 2, name: "Stone Marble" }
+  { id: 2, name: "Stone Marble" },
+  { id: 3, name: "Warm Laminate" },
+  { id: 4, name: "Classic Wood" },
+  { id: 5, name: "Brown Linoleum" },
+  { id: 6, name: "Terrazzo Tile" },
+  { id: 7, name: "Anti-Skid Tile" },
+  { id: 8, name: "Soft Carpet" }
 ] as const;
 
 export type BuilderSceneInput = {
@@ -186,6 +220,22 @@ export function normalizeBuilderSceneInput(input: BuilderSceneInput): BuilderSce
         width,
         depth,
         nookDepth: clamp(defaultNookDepth, 0.6, Math.min(2.4, Math.min(width, depth) * 0.35))
+      };
+    case "offset-studio":
+      return {
+        templateId: input.templateId,
+        width,
+        depth,
+        nookWidth: clamp(defaultNookWidth, 1.4, Math.min(4, Math.max(1.4, width - 2))),
+        nookDepth: clamp(defaultNookDepth, 1.2, Math.min(3, Math.max(1.2, depth - 1.4)))
+      };
+    case "gallery-bay":
+      return {
+        templateId: input.templateId,
+        width,
+        depth,
+        nookWidth: clamp(defaultNookWidth, 1.8, Math.min(4.4, Math.max(1.8, width - 2))),
+        nookDepth: clamp(defaultNookDepth, 1, Math.min(2.2, Math.max(1, depth - 1.8)))
       };
     case "rect-studio":
     default:
@@ -292,6 +342,34 @@ function buildSegments(input: BuilderSceneInput): BuilderWallSegment[] {
         { key: "west", start: [0, depth - bevel], end: [0, 0] }
       ];
     }
+    case "offset-studio": {
+      const insetWidth = normalizedInput.nookWidth ?? clamp(width * 0.32, 1.4, Math.max(1.4, width - 2));
+      const insetDepth = normalizedInput.nookDepth ?? clamp(depth * 0.3, 1.2, Math.max(1.2, depth - 1.4));
+      return [
+        { key: "south", start: [0, 0], end: [width, 0] },
+        { key: "east-lower", start: [width, 0], end: [width, depth - insetDepth] },
+        { key: "inset-bottom", start: [width, depth - insetDepth], end: [width - insetWidth, depth - insetDepth] },
+        { key: "inset-vertical", start: [width - insetWidth, depth - insetDepth], end: [width - insetWidth, depth] },
+        { key: "north", start: [width - insetWidth, depth], end: [0, depth] },
+        { key: "west", start: [0, depth], end: [0, 0] }
+      ];
+    }
+    case "gallery-bay": {
+      const bayWidth = normalizedInput.nookWidth ?? clamp(width * 0.34, 1.8, Math.max(1.8, width - 2));
+      const bayDepth = normalizedInput.nookDepth ?? clamp(depth * 0.2, 1, Math.max(1, depth - 1.8));
+      const bayStart = (width - bayWidth) / 2;
+      const bayEnd = bayStart + bayWidth;
+      return [
+        { key: "south-west", start: [0, 0], end: [bayStart, 0] },
+        { key: "bay-left", start: [bayStart, 0], end: [bayStart, -bayDepth] },
+        { key: "bay-front", start: [bayStart, -bayDepth], end: [bayEnd, -bayDepth] },
+        { key: "bay-right", start: [bayEnd, -bayDepth], end: [bayEnd, 0] },
+        { key: "south-east", start: [bayEnd, 0], end: [width, 0] },
+        { key: "east", start: [width, 0], end: [width, depth] },
+        { key: "north", start: [width, depth], end: [0, depth] },
+        { key: "west", start: [0, depth], end: [0, 0] }
+      ];
+    }
     case "rect-studio":
     default:
       return [
@@ -353,6 +431,18 @@ export function getBuilderDimensionControls(input: BuilderSceneInput): BuilderDi
       return [
         ...base,
         { id: "nookDepth", label: "사선 깊이", min: 0.6, max: 2.4, step: 0.1, value: normalizedInput.nookDepth ?? 1.4 }
+      ];
+    case "offset-studio":
+      return [
+        ...base,
+        { id: "nookWidth", label: "인셋 가로", min: 1.4, max: 4, step: 0.1, value: normalizedInput.nookWidth ?? 2.2 },
+        { id: "nookDepth", label: "인셋 깊이", min: 1.2, max: 3, step: 0.1, value: normalizedInput.nookDepth ?? 1.8 }
+      ];
+    case "gallery-bay":
+      return [
+        ...base,
+        { id: "nookWidth", label: "베이 가로", min: 1.8, max: 4.4, step: 0.1, value: normalizedInput.nookWidth ?? 2.6 },
+        { id: "nookDepth", label: "베이 돌출", min: 1, max: 2.2, step: 0.1, value: normalizedInput.nookDepth ?? 1.6 }
       ];
     case "rect-studio":
     default:
