@@ -83,7 +83,7 @@ export function PremiumNavbar() {
               onClick={() => router.push("/")}
               className="text-left text-[14px] font-semibold tracking-[-0.04em] text-[#181818] sm:text-[15px]"
             >
-              Plan2Space
+              DeskteriorOnline
             </motion.button>
           </div>
 

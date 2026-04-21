@@ -1,9 +1,9 @@
 # 마스터 가이드 (엔지니어링 단일 기준)
 
-이 문서는 Plan2Space의 현재 제품 기준을 정의합니다.
+이 문서는 DeskteriorOnline의 현재 제품 기준을 정의합니다.
 
 ## 핵심 제품 정의
-Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테리어 빌더/에디터/뷰어/커뮤니티**입니다.
+DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테리어 빌더/에디터/뷰어/커뮤니티**입니다.
 
 핵심 경로:
 1. `/` 시작하기 화면에서 `공간 선택` 또는 `공간 만들기` 진입점을 선택
@@ -34,8 +34,8 @@ Plan2Space의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스크테�
 - `desk precision mode`에서는 surface-local 상대 위치를 확인할 수 있는 micro-view를 inspector와 overlay 양쪽에서 제공한다.
 - `desk precision mode`에서는 support surface 기준 `front(X/H)` / `side(Z/H)` orthographic helper view를 inspector와 overlay 양쪽에서 제공한다.
 - `desk precision mode`에서는 surface anchor 제품의 footprint, projected footprint, edge clearance를 inspector와 overlay 양쪽에서 같은 값으로 제공한다.
-- `SceneViewport` 기반 경로는 성능 측정 시 `plan2space:renderer-stats`와 `plan2space:interaction-latency` 브라우저 이벤트를 공용 telemetry 계약으로 사용한다.
-- 성능 회귀 보고는 `window.__PLAN2SPACE_TELEMETRY_CAPTURE__`로 캡처한 JSON entry와 `perf:report:verify` CLI 검증을 기본 절차로 사용한다.
+- `SceneViewport` 기반 경로는 성능 측정 시 `deskterioronline:renderer-stats`와 `deskterioronline:interaction-latency` 브라우저 이벤트를 공용 telemetry 계약으로 사용한다.
+- 성능 회귀 보고는 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__`로 캡처한 JSON entry와 `perf:report:verify` CLI 검증을 기본 절차로 사용한다.
 - loaded GLB 자산의 picking은 `three-mesh-bvh` 기반 bounds tree raycast를 기본값으로 사용한다.
 - loaded GLB 자산의 bounds tree 생성은 large non-interleaved geometry에 한해 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync fallback을 사용한다.
 - loaded GLB runtime decode는 `KTX2Loader` + local basis transcoder(`apps/web/public/assets/transcoders/basis`)를 기본 경로로 준비하고, 경로 override는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`만 사용한다.
@@ -259,17 +259,17 @@ Removed/Deprecated:
 
 ## 2026-04-17 변경 동기화 (Editor Top-View Shell + Drawer Controls)
 Added:
-- editor 상단뷰는 방 중심 기준의 rotate-only orthographic camera와 zoom 동작을 기본으로 사용한다.
+- editor 상단뷰는 builder와 같은 perspective orbit camera를 기본으로 사용하고, 마우스 drag 회전 + wheel zoom을 허용한다.
 - editor 상단뷰의 벽 표시는 full-height wall mesh가 아니라 floor-level wall footprint strip으로 우선 표현한다.
 - editor 상단 bar의 `추가`/`설정`은 좌측 slide-in drawer를 공유하고, 동시에 둘 이상 열 수 없도록 규칙을 추가.
 
 Updated:
 - 상단뷰는 ceiling을 숨기고, 워크뷰만 ceiling을 노출하는 몰입감 기준을 제품 기본값으로 고정.
 - share modal은 작은 viewport에서도 카드 전체가 보이고 내부만 스크롤되도록 반응형 규칙을 강화.
-- 상단뷰 카메라 회전은 빈 공간 drag에서만 시작하고, 자산 선택/드래그/transform gizmo 조작과 충돌하지 않도록 분리한다.
+- 상단뷰 카메라 회전은 orbit 기반으로 허용하되, 자산 선택/드래그/transform gizmo 조작과 충돌하지 않도록 분리한다.
 
 Removed/Deprecated:
-- 상단뷰 pan 중심 탐색과 `목록/속성/항목뷰/이동/회전` 보조 affordance 의존.
+- 상단뷰의 explicit 좌/우 회전 버튼에만 의존하는 조작 가정.
 
 ## 2026-04-19 변경 동기화 (Room Mode + Desk Precision Mode Split)
 Added:
@@ -277,15 +277,29 @@ Added:
 - room mode는 직접 드래그 기반 coarse layout, desk precision mode는 gizmo 기반 fine placement를 기본 조작으로 고정한다.
 
 Updated:
-- 상단뷰 카메라 정책을 단일 규칙에서 `room mode(넓은 framing + 90도 회전 단계)`와 `desk precision mode(더 높은 기본 zoom + 15도 회전 단계)`로 분리한다.
+- 상단뷰 카메라 정책을 단일 규칙에서 `room mode(넓은 framing orbit)`와 `desk precision mode(선택한 desk/support focus orbit)`로 분리한다.
 - 상단뷰 편집 affordance를 `가구 직접 drag + transform gizmo 혼합`에서 `room mode=drag`, `desk precision mode=gizmo`로 명확히 나눈다.
 
 Removed/Deprecated:
 - 상단뷰 하나가 room layout과 desk surface 정밀 배치를 같은 snap/picking 정책으로 동시에 처리한다는 가정.
 
+## 2026-04-21 변경 동기화 (Builder Openings + Editor Orbit + Brand Rename)
+Added:
+- builder step 3 opening preview는 style 선택 전 단계에서 기본 흰 벽/바닥을 사용하고, door/window GLB는 wall plane에 수직인 실제 opening asset으로 렌더한다.
+- editor 상단뷰는 room mode와 desk precision 모두 perspective orbit + wheel zoom을 허용하고, desk precision은 선택한 desk/support asset을 우선 framing 한다.
+- walk view는 entrance spawn을 room interior 쪽으로 더 깊게 clamp 하고, wall material은 실내 시점에서도 읽히도록 double-sided 렌더를 기본으로 사용한다.
+- 서비스 표기와 내부 계약 문자열은 `DeskteriorOnline` / `deskterioronline`으로 통일한다.
+
+Updated:
+- top-view 품질 기준을 footprint legibility 우선에서 `실제 wall/opening asset + 더 높은 DPR/shadow/post FX` 기준으로 상향한다.
+- builder opening step의 목표를 `개구부 배치 가능`에서 `개구부가 실제 door/window처럼 서 있고, style 선택 전에는 neutral white shell이 유지됨`으로 강화한다.
+
+Removed/Deprecated:
+- builder opening preview에서 문/창문이 바닥에 눕거나, style 선택 전 floor/wall finish가 미리 노출되는 상태.
+
 ## 2026-04-19 변경 동기화 (Scene Telemetry Contract)
 Added:
-- `SceneViewport` 공용 경로의 성능 계측 이벤트 계약(`plan2space:renderer-stats`, `plan2space:interaction-latency`)을 마스터 가이드에 추가했다.
+- `SceneViewport` 공용 경로의 성능 계측 이벤트 계약(`deskterioronline:renderer-stats`, `deskterioronline:interaction-latency`)을 마스터 가이드에 추가했다.
 
 Updated:
 - 성능 측정 기준을 route shell 수치 문서뿐 아니라 브라우저 이벤트 훅까지 포함하는 형태로 명시한다.
@@ -295,7 +309,7 @@ Removed/Deprecated:
 
 ## 2026-04-19 변경 동기화 (Perf Regression Contract)
 Added:
-- 성능 regression capture/verify 경로(`window.__PLAN2SPACE_TELEMETRY_CAPTURE__`, `perf:report:verify`)를 마스터 가이드의 운영 계약에 추가했다.
+- 성능 regression capture/verify 경로(`window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__`, `perf:report:verify`)를 마스터 가이드의 운영 계약에 추가했다.
 
 Updated:
 - 공용 telemetry 계약 범위를 이벤트 발행만이 아니라 report JSON 검증까지 포함하도록 확장했다.

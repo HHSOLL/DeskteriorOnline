@@ -21,7 +21,7 @@ jobs:
           RAILWAY_API_URL: http://localhost:4000
       - name: Primary room-flow contract gate (builder->editor->publish/share surface)
         run: |
-          npm --workspace apps/web run start -- --hostname 127.0.0.1 --port 3100 >/tmp/plan2space-web.log 2>&1 &
+          npm --workspace apps/web run start -- --hostname 127.0.0.1 --port 3100 >/tmp/deskterioronline-web.log 2>&1 &
           WEB_PID=$!
           cleanup() {
             kill "${WEB_PID}" >/dev/null 2>&1 || true
@@ -44,7 +44,7 @@ jobs:
             echo "Primary full-flow gate skipped (missing E2E Supabase secrets)."
             exit 0
           fi
-          npm --workspace apps/web run start -- --hostname 127.0.0.1 --port 3100 >/tmp/plan2space-web-full.log 2>&1 &
+          npm --workspace apps/web run start -- --hostname 127.0.0.1 --port 3100 >/tmp/deskterioronline-web-full.log 2>&1 &
           WEB_PID=$!
           cleanup() {
             kill "${WEB_PID}" >/dev/null 2>&1 || true

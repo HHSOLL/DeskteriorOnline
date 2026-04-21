@@ -2521,8 +2521,8 @@
       1,
       1
     ],
-    "description": "Plan2Space에서 Blender로 직접 제작한 기본 데스크 자산입니다.",
-    "brand": "Plan2Space Studio",
+    "description": "DeskteriorOnline에서 Blender로 직접 제작한 기본 데스크 자산입니다.",
+    "brand": "DeskteriorOnline Studio",
     "price": "₩189,000",
     "options": "1330x581x575 mm (Blender measured envelope)",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%EC%B1%85%EC%83%81",
@@ -2560,14 +2560,14 @@
     "detailNotes": "Rectangular desk with a straight apron and slab top. Dimensions reflect Blender-measured envelope for runtime fidelity.",
     "scaleLocked": true,
     "source": {
-      "kind": "plan2space_blender",
-      "name": "Plan2Space Blender Deskterior",
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
       "path": "assets/blender/deskterior/p2s_desk_oak.blend",
       "url": null
     },
     "license": {
-      "spdx": "LicenseRef-Plan2Space-Internal",
-      "label": "Plan2Space Internal Catalog",
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
       "requiresAttribution": false
     },
     "pivot": {
@@ -2602,7 +2602,7 @@
       1
     ],
     "description": "키보드 수납 공간이 있는 데스크 전용 모니터 스탠드입니다.",
-    "brand": "Plan2Space Studio",
+    "brand": "DeskteriorOnline Studio",
     "price": "₩39,000",
     "options": "560x130x71 mm (Blender measured envelope)",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%EB%AA%A8%EB%8B%88%ED%84%B0%20%EC%8A%A4%ED%83%A0%EB%93%9C",
@@ -2640,14 +2640,14 @@
     "detailNotes": "Low-profile riser for one ultrawide or dual compact monitors. Dimensions reflect Blender-measured envelope.",
     "scaleLocked": true,
     "source": {
-      "kind": "plan2space_blender",
-      "name": "Plan2Space Blender Deskterior",
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
       "path": "assets/blender/deskterior/p2s_monitor_stand.blend",
       "url": null
     },
     "license": {
-      "spdx": "LicenseRef-Plan2Space-Internal",
-      "label": "Plan2Space Internal Catalog",
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
       "requiresAttribution": false
     },
     "pivot": {
@@ -2682,7 +2682,7 @@
       1
     ],
     "description": "발광 벌브가 포함된 데스크 램프입니다. 뷰어/에디터에서 조명 효과가 적용됩니다.",
-    "brand": "Plan2Space Studio",
+    "brand": "DeskteriorOnline Studio",
     "price": "₩59,000",
     "options": "3000K 웜 라이트 · light-emitter",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%EB%8D%B0%EC%8A%A4%ED%81%AC%20%EB%9E%A8%ED%94%84",
@@ -2696,14 +2696,14 @@
     "detailNotes": "Adjustable desk lamp with integrated warm emitter. Dimensions reflect Blender-measured envelope for accurate placement.",
     "scaleLocked": true,
     "source": {
-      "kind": "plan2space_blender",
-      "name": "Plan2Space Blender Deskterior",
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
       "path": "assets/blender/deskterior/p2s_desk_lamp_glow.blend",
       "url": null
     },
     "license": {
-      "spdx": "LicenseRef-Plan2Space-Internal",
-      "label": "Plan2Space Internal Catalog",
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
       "requiresAttribution": false
     },
     "pivot": {
@@ -2738,7 +2738,7 @@
       1
     ],
     "description": "따뜻한 샌드 톤의 손잡이 머그입니다. 데스크와 선반 위 소품으로 바로 사용할 수 있습니다.",
-    "brand": "Plan2Space Studio",
+    "brand": "DeskteriorOnline Studio",
     "price": "₩14,000",
     "options": "120x84x92 mm (Blender measured envelope)",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%EB%A8%B8%EA%B7%B8",
@@ -2752,14 +2752,14 @@
     "detailNotes": "Single handled mug with thick ceramic wall and soft satin glaze. Dimensions reflect Blender-measured envelope for shelf and desk placement.",
     "scaleLocked": true,
     "source": {
-      "kind": "plan2space_blender",
-      "name": "Plan2Space Blender Deskterior",
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
       "path": "assets/blender/deskterior/p2s_ceramic_mug.blend",
       "url": null
     },
     "license": {
-      "spdx": "LicenseRef-Plan2Space-Internal",
-      "label": "Plan2Space Internal Catalog",
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
       "requiresAttribution": false
     },
     "pivot": {
@@ -2794,7 +2794,7 @@
       1
     ],
     "description": "따뜻한 컬러 커버로 구성한 책 3권 스택입니다. 데스크와 선반 스타일링용 기본 소품입니다.",
-    "brand": "Plan2Space Studio",
+    "brand": "DeskteriorOnline Studio",
     "price": "₩28,000",
     "options": "186x245x79 mm (Blender measured envelope)",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%EC%B1%85",
@@ -2808,14 +2808,14 @@
     "detailNotes": "Three-book horizontal stack with a warm editorial palette for desk, shelf, and side table styling.",
     "scaleLocked": true,
     "source": {
-      "kind": "plan2space_blender",
-      "name": "Plan2Space Blender Deskterior",
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
       "path": "assets/blender/deskterior/p2s_book_stack_warm.blend",
       "url": null
     },
     "license": {
-      "spdx": "LicenseRef-Plan2Space-Internal",
-      "label": "Plan2Space Internal Catalog",
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
       "requiresAttribution": false
     },
     "pivot": {
@@ -2850,7 +2850,7 @@
       1
     ],
     "description": "소품과 문구류를 정리하는 얕은 오크 트레이입니다.",
-    "brand": "Plan2Space Studio",
+    "brand": "DeskteriorOnline Studio",
     "price": "₩19,000",
     "options": "240x160x36 mm (Blender measured envelope)",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%ED%8A%B8%EB%A0%88%EC%9D%B4",
@@ -2889,14 +2889,14 @@
       ]
     },
     "source": {
-      "kind": "plan2space_blender",
-      "name": "Plan2Space Blender Deskterior",
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
       "path": "assets/blender/deskterior/p2s_desk_tray_oak.blend",
       "url": null
     },
     "license": {
-      "spdx": "LicenseRef-Plan2Space-Internal",
-      "label": "Plan2Space Internal Catalog",
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
       "requiresAttribution": false
     },
     "pivot": {
@@ -2931,7 +2931,7 @@
       1
     ],
     "description": "책상 위 북쉘프 구성을 위한 컴팩트 스피커입니다.",
-    "brand": "Plan2Space Studio",
+    "brand": "DeskteriorOnline Studio",
     "price": "₩79,000",
     "options": "90x141x220 mm (Blender measured envelope)",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%EC%8A%A4%ED%94%BC%EC%BB%A4",
@@ -2945,14 +2945,14 @@
     "detailNotes": "Single compact desktop speaker with two front drivers and rounded cabinet edges for modern desk setups.",
     "scaleLocked": true,
     "source": {
-      "kind": "plan2space_blender",
-      "name": "Plan2Space Blender Deskterior",
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
       "path": "assets/blender/deskterior/p2s_compact_speaker.blend",
       "url": null
     },
     "license": {
-      "spdx": "LicenseRef-Plan2Space-Internal",
-      "label": "Plan2Space Internal Catalog",
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
       "requiresAttribution": false
     },
     "pivot": {
@@ -2987,7 +2987,7 @@
       1
     ],
     "description": "작은 라운드 잎을 가진 필레아 화분입니다. 홈오피스와 선반 코너에 맞는 소형 식물 소품입니다.",
-    "brand": "Plan2Space Studio",
+    "brand": "DeskteriorOnline Studio",
     "price": "₩24,000",
     "options": "100x100x125 mm (Blender measured envelope)",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%ED%99%94%EB%B6%84",
@@ -3001,14 +3001,14 @@
     "detailNotes": "Compact pilea planter with terracotta pot, soil insert, and layered leaves sized for desk corners and shelf styling.",
     "scaleLocked": true,
     "source": {
-      "kind": "plan2space_blender",
-      "name": "Plan2Space Blender Deskterior",
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
       "path": "assets/blender/deskterior/p2s_desk_planter_pilea.blend",
       "url": null
     },
     "license": {
-      "spdx": "LicenseRef-Plan2Space-Internal",
-      "label": "Plan2Space Internal Catalog",
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
       "requiresAttribution": false
     },
     "pivot": {

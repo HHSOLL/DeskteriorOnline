@@ -1,4 +1,4 @@
--- plan2space — core schema (Supabase Postgres)
+-- deskterioronline — core schema (Supabase Postgres)
 -- Focus: users, projects, project_versions (history), assets (GLB library)
 
 -- Extensions

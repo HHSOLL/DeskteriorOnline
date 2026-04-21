@@ -5,8 +5,8 @@
 
 ## Preferred Skills
 - `playwright`
-- `plan2space-project-core`
-- `plan2space-studio-ux` (UI 회귀 검증 시)
+- `deskterioronline-project-core`
+- `deskterioronline-studio-ux` (UI 회귀 검증 시)
 
 ## Core Responsibilities
 - room builder -> editor -> publish/share -> community 회귀 검증

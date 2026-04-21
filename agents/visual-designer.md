@@ -4,8 +4,8 @@
 브랜드 톤과 몰입감을 유지하면서 고급 시각 품질을 설계한다.
 
 ## Preferred Skills
-- `plan2space-studio-ux` (필수)
-- `plan2space-project-core`
+- `deskterioronline-studio-ux` (필수)
+- `deskterioronline-project-core`
 
 ## Core Responsibilities
 - 로딩/랜딩/오버레이 비주얼 품질 가이드 유지

@@ -15,7 +15,7 @@ async function fetchText(url) {
   try {
     response = await fetch(url, {
       headers: {
-        "user-agent": "plan2space-preview-smoke/1.0"
+        "user-agent": "deskterioronline-preview-smoke/1.0"
       }
     });
   } catch (error) {

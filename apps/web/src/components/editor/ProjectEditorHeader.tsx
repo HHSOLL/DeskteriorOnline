@@ -68,7 +68,7 @@ export function ProjectEditorHeader({
               onClick={() => router.push("/")}
               className="text-left text-[14px] font-semibold tracking-[-0.04em] text-[#171411]"
             >
-              Plan2Space
+              DeskteriorOnline
             </button>
             <button
               type="button"

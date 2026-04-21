@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   AssetGenerationEnqueueResponseSchema,
   AssetGenerationRequestSchema
-} from "@plan2space/contracts/assets";
+} from "@deskterioronline/contracts/assets";
 import { ApiError } from "../services/errors";
 import { createAssetGenerationJobForOwner } from "../services/asset-service";
 

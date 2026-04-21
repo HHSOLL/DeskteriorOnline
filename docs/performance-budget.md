@@ -97,37 +97,37 @@ E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 
 ## Telemetry Hooks
 
-- 개발 모드에서는 `/project/[id]`, `/shared/[token]` 등 `SceneViewport`를 쓰는 경로가 기본으로 `plan2space:renderer-stats`, `plan2space:interaction-latency` 브라우저 이벤트를 발행한다.
-- production build에서는 URL에 `?telemetry=1`을 붙이거나 `window.__PLAN2SPACE_TELEMETRY__ = true`를 먼저 설정한 뒤 같은 이벤트를 켠다.
-- 최신 샘플은 `window.__PLAN2SPACE_LAST_RENDERER_STATS__`, `window.__PLAN2SPACE_LAST_INTERACTION_LATENCY__`, `window.__PLAN2SPACE_LAST_BVH_BUILD__`에 남는다.
-- 캡처 세션은 `window.__PLAN2SPACE_TELEMETRY_CAPTURE__`로 시작/종료하며, 종료 시 예산 검증용 regression entry JSON을 반환한다.
+- 개발 모드에서는 `/project/[id]`, `/shared/[token]` 등 `SceneViewport`를 쓰는 경로가 기본으로 `deskterioronline:renderer-stats`, `deskterioronline:interaction-latency` 브라우저 이벤트를 발행한다.
+- production build에서는 URL에 `?telemetry=1`을 붙이거나 `window.__DESKTERIORONLINE_TELEMETRY__ = true`를 먼저 설정한 뒤 같은 이벤트를 켠다.
+- 최신 샘플은 `window.__DESKTERIORONLINE_LAST_RENDERER_STATS__`, `window.__DESKTERIORONLINE_LAST_INTERACTION_LATENCY__`, `window.__DESKTERIORONLINE_LAST_BVH_BUILD__`에 남는다.
+- 캡처 세션은 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__`로 시작/종료하며, 종료 시 예산 검증용 regression entry JSON을 반환한다.
 - `renderer-stats`는 약 1초 간격으로 FPS / draw calls / triangles / textures / geometries를 보낸다.
 - `interaction-latency`는 hover / select / drag-start / gizmo-drag-start의 next-paint 기준 지연을 보낸다.
 - `bvh-build`는 geometry UUID / triangle count / duration / worker|sync mode를 기록해 large geometry BVH offload 동작 여부를 확인한다.
 
 ```js
-window.addEventListener("plan2space:renderer-stats", (event) => {
+window.addEventListener("deskterioronline:renderer-stats", (event) => {
   console.table(event.detail);
 });
 
-window.addEventListener("plan2space:interaction-latency", (event) => {
+window.addEventListener("deskterioronline:interaction-latency", (event) => {
   console.log(event.detail);
 });
 
-window.addEventListener("plan2space:bvh-build", (event) => {
+window.addEventListener("deskterioronline:bvh-build", (event) => {
   console.log(event.detail);
 });
 ```
 
 ```js
-window.__PLAN2SPACE_TELEMETRY_CAPTURE__.start({
+window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__.start({
   scenario: "dense-desk",
   build: "production",
   interactionProfile: "desk-precision"
 });
 
 // 20초 정도 상호작용 후
-window.__PLAN2SPACE_TELEMETRY_CAPTURE__.stop({
+window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__.stop({
   fcpP95Ms: 2890,
   heapGrowthPercentPoints: 0.4,
   placementToleranceMm: 3,
@@ -217,7 +217,7 @@ Removed/Deprecated:
 
 ## 2026-04-19 변경 동기화 (Telemetry Hooks)
 Added:
-- `SceneViewport` 공용 경로에 `plan2space:renderer-stats` / `plan2space:interaction-latency` 브라우저 이벤트 기반 계측 훅을 추가했다.
+- `SceneViewport` 공용 경로에 `deskterioronline:renderer-stats` / `deskterioronline:interaction-latency` 브라우저 이벤트 기반 계측 훅을 추가했다.
 
 Updated:
 - `renderer.info` 측정 절차를 "수동 콘솔 조회"에서 "1초 샘플링 이벤트 + 최신 스냅샷 window slot" 기준으로 구체화했다.
@@ -227,7 +227,7 @@ Removed/Deprecated:
 
 ## 2026-04-20 변경 동기화 (BVH Build Telemetry)
 Added:
-- `plan2space:bvh-build` 브라우저 이벤트와 `window.__PLAN2SPACE_LAST_BVH_BUILD__` 스냅샷을 추가했다.
+- `deskterioronline:bvh-build` 브라우저 이벤트와 `window.__DESKTERIORONLINE_LAST_BVH_BUILD__` 스냅샷을 추가했다.
 
 Updated:
 - Telemetry Hooks 범위를 `renderer-stats + interaction-latency`에서 `renderer-stats + interaction-latency + bvh-build`까지 확장한다.
@@ -237,7 +237,7 @@ Removed/Deprecated:
 
 ## 2026-04-19 변경 동기화 (Regression Report Workflow)
 Added:
-- `window.__PLAN2SPACE_TELEMETRY_CAPTURE__` 기반 capture session과 `perf:report:verify` CLI를 regression report 표준 경로로 추가했다.
+- `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__` 기반 capture session과 `perf:report:verify` CLI를 regression report 표준 경로로 추가했다.
 
 Updated:
 - Phase 1 측정 절차를 `이벤트 구독`에서 `capture -> JSON report -> budget/baseline verify` 루프로 확장했다.

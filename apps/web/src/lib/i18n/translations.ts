@@ -34,7 +34,7 @@ export const translations = {
       platform: "Platform",
       social: "Social",
       legal: "Legal",
-      copyright: "Plan2Space"
+      copyright: "DeskteriorOnline"
     }
   },
   ko: {
@@ -72,7 +72,7 @@ export const translations = {
       platform: "플랫폼",
       social: "소셜",
       legal: "법적 고지",
-      copyright: "Plan2Space"
+      copyright: "DeskteriorOnline"
     }
   }
 };

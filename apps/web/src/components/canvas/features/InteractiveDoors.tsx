@@ -31,32 +31,27 @@ type WindowVariant = "single" | "wide";
 
 type DoorAssetConfig = {
   path: string;
-  baseSize: [number, number, number];
   pivotNames: string[];
   openRotations: number[];
 };
 
 type WindowAssetConfig = {
   path: string;
-  baseSize: [number, number, number];
 };
 
 const DOOR_ASSETS: Record<DoorVariant, DoorAssetConfig> = {
   single: {
     path: "/assets/models/p2s_opening_door_single/p2s_opening_door_single.glb",
-    baseSize: [0.92, 2.1, 0.09],
     pivotNames: ["DoorLeafPivot"],
     openRotations: [-Math.PI / 2.35]
   },
   double: {
     path: "/assets/models/p2s_opening_door_double/p2s_opening_door_double.glb",
-    baseSize: [1.4, 2.1, 0.09],
     pivotNames: ["DoorLeafLeftPivot", "DoorLeafRightPivot"],
     openRotations: [-Math.PI / 2.5, Math.PI / 2.5]
   },
   french: {
     path: "/assets/models/p2s_opening_door_french/p2s_opening_door_french.glb",
-    baseSize: [1.6, 2.1, 0.09],
     pivotNames: ["DoorLeafLeftPivot", "DoorLeafRightPivot"],
     openRotations: [-Math.PI / 2.7, Math.PI / 2.7]
   }
@@ -64,12 +59,10 @@ const DOOR_ASSETS: Record<DoorVariant, DoorAssetConfig> = {
 
 const WINDOW_ASSETS: Record<WindowVariant, WindowAssetConfig> = {
   single: {
-    path: "/assets/models/p2s_opening_window_single/p2s_opening_window_single.glb",
-    baseSize: [1.8, 1.3, 0.12]
+    path: "/assets/models/p2s_opening_window_single/p2s_opening_window_single.glb"
   },
   wide: {
-    path: "/assets/models/p2s_opening_window_wide/p2s_opening_window_wide.glb",
-    baseSize: [2.4, 1.3, 0.12]
+    path: "/assets/models/p2s_opening_window_wide/p2s_opening_window_wide.glb"
   }
 };
 
@@ -107,6 +100,26 @@ function prepareRuntimeAsset(root: THREE.Object3D) {
   return highlightMesh;
 }
 
+function normalizeOpeningAsset(root: THREE.Object3D) {
+  root.rotation.x = -Math.PI / 2;
+  root.updateWorldMatrix(true, true);
+
+  const bounds = new THREE.Box3().setFromObject(root);
+  const center = bounds.getCenter(new THREE.Vector3());
+  const size = bounds.getSize(new THREE.Vector3());
+
+  root.position.x -= bounds.min.x;
+  root.position.y -= bounds.min.y;
+  root.position.z -= center.z;
+  root.updateWorldMatrix(true, true);
+
+  return {
+    width: Math.max(size.x, 0.001),
+    height: Math.max(size.y, 0.001),
+    thickness: Math.max(size.z, 0.001)
+  } as const;
+}
+
 function DoorAssetModel({ door }: { door: DoorSpec }) {
   const registry = useInteractionRegistry();
   const rootRef = useRef<THREE.Group | null>(null);
@@ -118,9 +131,11 @@ function DoorAssetModel({ door }: { door: DoorSpec }) {
   const runtimeAsset = useMemo(() => {
     const clone = gltf.scene.clone(true);
     const highlightMesh = prepareRuntimeAsset(clone);
+    const baseSize = normalizeOpeningAsset(clone);
     return {
       root: clone,
-      highlightMesh
+      highlightMesh,
+      baseSize
     };
   }, [gltf.scene]);
 
@@ -164,9 +179,9 @@ function DoorAssetModel({ door }: { door: DoorSpec }) {
       position={door.position}
       rotation={[0, door.angle, 0]}
       scale={[
-        door.width / config.baseSize[0],
-        door.height / config.baseSize[1],
-        door.thickness / config.baseSize[2]
+        door.width / runtimeAsset.baseSize.width,
+        door.height / runtimeAsset.baseSize.height,
+        door.thickness / runtimeAsset.baseSize.thickness
       ]}
     >
       <primitive object={runtimeAsset.root} />
@@ -182,7 +197,11 @@ function WindowAssetModel({ window }: { window: WindowSpec }) {
   const runtimeAsset = useMemo(() => {
     const clone = gltf.scene.clone(true);
     prepareRuntimeAsset(clone);
-    return clone;
+    const baseSize = normalizeOpeningAsset(clone);
+    return {
+      root: clone,
+      baseSize
+    };
   }, [gltf.scene]);
 
   return (
@@ -191,12 +210,12 @@ function WindowAssetModel({ window }: { window: WindowSpec }) {
       position={window.position}
       rotation={[0, window.angle, 0]}
       scale={[
-        window.width / config.baseSize[0],
-        window.height / config.baseSize[1],
-        window.thickness / config.baseSize[2]
+        window.width / runtimeAsset.baseSize.width,
+        window.height / runtimeAsset.baseSize.height,
+        window.thickness / runtimeAsset.baseSize.thickness
       ]}
     >
-      <primitive object={runtimeAsset} />
+      <primitive object={runtimeAsset.root} />
     </group>
   );
 }

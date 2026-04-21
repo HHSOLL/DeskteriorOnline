@@ -131,7 +131,7 @@ function SceneContent({ onAction }: { onAction: (id: string) => void }) {
           anchorY="middle"
           letterSpacing={0.06}
         >
-          PLAN2SPACE STUDIO
+          DESKTERIORONLINE STUDIO
         </Text>
         <Text
           position={[0, 1.2, 0.12]}

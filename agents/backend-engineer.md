@@ -4,8 +4,8 @@
 API/DB/스토리지를 안정적으로 운영하고 데이터 계약을 보장한다.
 
 ## Preferred Skills
-- `plan2space-project-core`
-- `plan2space-blueprint-ai` (asset-generation 계약 변경 시)
+- `deskterioronline-project-core`
+- `deskterioronline-blueprint-ai` (asset-generation 계약 변경 시)
 
 ## Core Responsibilities
 - Supabase Auth/RLS/Storage 정책 유지

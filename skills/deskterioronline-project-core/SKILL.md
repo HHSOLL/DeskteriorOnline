@@ -1,6 +1,6 @@
 ---
-name: plan2space-project-core
-description: Project-wide guidance for plan2space covering scope, docs, architecture, milestones, and quality bar. Use when tasks involve PRD/roadmap updates, system architecture decisions, cross-cutting constraints, or aligning implementation with the new_guideline brief.
+name: deskterioronline-project-core
+description: Project-wide guidance for deskterioronline covering scope, docs, architecture, milestones, and quality bar. Use when tasks involve PRD/roadmap updates, system architecture decisions, cross-cutting constraints, or aligning implementation with the new_guideline brief.
 ---
 
 # Plan2space Project Core

@@ -56,7 +56,7 @@ import { useAuthStore } from "../../../lib/stores/useAuthStore";
 import type { EditorViewMode } from "../../../lib/stores/useEditorStore";
 
 type BuilderPreviewMode = Extract<EditorViewMode, "top" | "builder-preview">;
-const BUILDER_AUTH_DRAFT_KEY = "plan2space:builder-auth-draft";
+const BUILDER_AUTH_DRAFT_KEY = "deskterioronline:builder-auth-draft";
 
 type RouteOverrides = {
   templateId: BuilderTemplateId | null;
@@ -496,12 +496,14 @@ function StudioBuilderPageContent() {
     [scene.floors, scene.openings]
   );
   const builderLighting = useMemo(() => BUILDER_LIGHTING_SCENE[lightingMode], [lightingMode]);
+  const previewWallMaterialIndex = activeStep.id === "style" || activeStep.id === "lighting" ? wallMaterialIndex : -1;
+  const previewFloorMaterialIndex = activeStep.id === "style" || activeStep.id === "lighting" ? floorMaterialIndex : -1;
 
   useBuilderSceneSync({
     previewMode,
     derivedRoomShell,
-    wallMaterialIndex,
-    floorMaterialIndex,
+    wallMaterialIndex: previewWallMaterialIndex,
+    floorMaterialIndex: previewFloorMaterialIndex,
     lighting: builderLighting
   });
 

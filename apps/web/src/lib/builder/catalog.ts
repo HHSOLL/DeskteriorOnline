@@ -30,7 +30,7 @@ export type ProductPhysicalMetadata = {
 };
 
 export type ProductSourceMetadata = {
-  kind: "plan2space_blender" | "open_source";
+  kind: "deskterioronline_blender" | "open_source";
   name: string;
   path: string | null;
   url: string | null;
@@ -397,7 +397,7 @@ function normalizeCatalogSource(value: unknown): ProductSourceMetadata | null {
 
   const record = value as Record<string, unknown>;
   const kind =
-    record.kind === "plan2space_blender" || record.kind === "open_source" ? record.kind : null;
+    record.kind === "deskterioronline_blender" || record.kind === "open_source" ? record.kind : null;
   const name = normalizeCatalogText(record.name);
   const metadataPath = normalizeCatalogText(record.path);
   const url = normalizeCatalogUrl(record.url);

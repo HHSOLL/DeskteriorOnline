@@ -4,7 +4,7 @@
 실시간 협업/동기화 기능의 정확성과 복원력을 보장한다.
 
 ## Preferred Skills
-- `plan2space-project-core`
+- `deskterioronline-project-core`
 - `playwright` (동시 편집 시나리오 검증 시)
 
 ## Core Responsibilities

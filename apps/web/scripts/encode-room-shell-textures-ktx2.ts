@@ -207,7 +207,7 @@ async function encodeTarget(
 
   await mkdir(path.dirname(outputAbsolutePath), { recursive: true });
 
-  const tempDir = await mkdtemp(path.join(os.tmpdir(), "plan2space-ktx2-"));
+  const tempDir = await mkdtemp(path.join(os.tmpdir(), "deskterioronline-ktx2-"));
   const tmpInputPath = path.join(tempDir, `${path.basename(target.inputPath, path.extname(target.inputPath))}.png`);
 
   try {
