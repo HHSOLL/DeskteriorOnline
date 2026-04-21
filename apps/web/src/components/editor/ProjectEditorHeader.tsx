@@ -11,6 +11,8 @@ import { AuthPopup } from "../overlay/AuthPopup";
 
 type ProjectEditorHeaderProps = {
   title: string;
+  onTitleChange: (value: string) => void;
+  onTitleCommit?: () => void;
   viewMode: EditorViewMode;
   canShowPanels: boolean;
   activePanel: "assets" | "properties" | null;
@@ -27,6 +29,8 @@ type ProjectEditorHeaderProps = {
 
 export function ProjectEditorHeader({
   title,
+  onTitleChange,
+  onTitleCommit,
   viewMode,
   canShowPanels,
   activePanel,
@@ -83,9 +87,22 @@ export function ProjectEditorHeader({
           >
             <div className="min-w-0">
               <div className="truncate text-[9px] font-semibold tracking-[0.08em] text-[#8a8177]">
-                제목 없는 디자인
+                프로젝트 이름
               </div>
-              <h1 className="truncate text-[12px] font-semibold leading-none text-[#171411]">{title}</h1>
+              <input
+                type="text"
+                value={title}
+                onChange={(event) => onTitleChange(event.target.value)}
+                onBlur={() => onTitleCommit?.()}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.currentTarget.blur();
+                  }
+                }}
+                placeholder="디자인 이름 입력"
+                aria-label="디자인 이름"
+                className="w-full min-w-[180px] max-w-[320px] truncate bg-transparent text-[12px] font-semibold leading-none text-[#171411] outline-none placeholder:text-[#a39a8d]"
+              />
             </div>
             <span className="hidden h-3.5 w-px bg-black/10 lg:block" />
             <span className="hidden rounded-full border border-black/10 bg-[#f7f7f4] px-2.5 py-1 text-[9px] font-semibold text-[#625a51] lg:inline-flex">

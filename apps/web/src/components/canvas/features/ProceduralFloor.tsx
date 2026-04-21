@@ -5,7 +5,6 @@ import * as THREE from "three";
 import { useLoader, useThree } from "@react-three/fiber";
 import { RuntimeTextureLoader } from "../../../lib/loaders/RuntimeTextureLoader";
 import { configureRuntimeAssetLoaders } from "../../../lib/loaders/AssetLoader";
-import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useShellSelector } from "../../../lib/stores/scene-slices";
 import { buildExteriorPolygon, buildFallbackShape } from "../../../lib/geometry/floor-shape";
 import {
@@ -123,7 +122,6 @@ function DetailedFloorMeshes({
 }
 
 export default function ProceduralFloor() {
-  const viewMode = useEditorStore((state) => state.viewMode);
   const walls = useShellSelector((slice) => slice.walls);
   const floors = useShellSelector((slice) => slice.floors);
   const scale = useShellSelector((slice) => slice.scale);
@@ -180,25 +178,6 @@ export default function ProceduralFloor() {
       geometries.forEach((entry) => entry.geometry.dispose());
     };
   }, [geometries]);
-
-  if (viewMode === "top") {
-    const topMaterial =
-      FLOOR_TEXTURE_PRESETS[floorMaterialIndex % FLOOR_TEXTURE_PRESETS.length] ?? FLOOR_TEXTURE_PRESETS[0];
-
-    return geometries.map((entry) => (
-      <mesh key={entry.id} name={`floor:${entry.id}`} geometry={entry.geometry} receiveShadow={false}>
-        <meshStandardMaterial
-          color={topMaterial.topColor}
-          roughness={0.92}
-          metalness={0.02}
-          side={THREE.DoubleSide}
-          polygonOffset
-          polygonOffsetFactor={1}
-          polygonOffsetUnits={1}
-        />
-      </mesh>
-    ));
-  }
 
   return (
     <DetailedFloorMeshes

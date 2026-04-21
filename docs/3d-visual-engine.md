@@ -506,3 +506,16 @@ Updated:
 
 Removed/Deprecated:
 - showcase/shared viewer가 같은 camera preset과 같은 light rig를 공유해야 한다는 가정.
+
+## 2026-04-21 변경 동기화 (Editor Walk/Top QA Fixes)
+Added:
+- read-only shared/showcase top-view는 orbit camera로 360도 회전과 zoom을 허용하고 pan은 계속 금지한다.
+- desk precision top-view에서는 선택 자산과 support asset이 full-detail 경로를 유지하도록 LOD/instancing 예외를 추가한다.
+
+Updated:
+- top-view floor 렌더 기준을 flat color footprint 우선에서 `runtime floor texture 허용 + 상향된 DPR` 기준으로 갱신한다.
+- room shell texture load는 `.ktx2` decode 실패 시 원본 JPG/PNG fallback을 시도해 walk-view가 검정 background만 남지 않도록 강화한다.
+
+Removed/Deprecated:
+- shared/read-only top-view가 고정 orthographic + 회전 버튼만 제공한다는 가정.
+- top-view에서 textured floor를 기본적으로 금지하던 이전 최적화 가정.

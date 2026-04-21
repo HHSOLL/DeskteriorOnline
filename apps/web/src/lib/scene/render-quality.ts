@@ -69,9 +69,9 @@ export function resolveSceneRenderQuality({
     if (isSharedViewer) {
       return {
         frameLoop: "always",
-        dpr: constrainedDevice ? clampRange(0.66, 0.84) : clampRange(0.72, 0.92),
+        dpr: constrainedDevice ? clampRange(0.88, 1.04) : clampRange(0.98, 1.16),
         toneMapping: "aces",
-        toneMappingExposure: 1.08,
+        toneMappingExposure: 1.1,
         enableShadows: false,
         shadowMapSize: 512,
         enablePostEffects: false,
@@ -97,9 +97,9 @@ export function resolveSceneRenderQuality({
     if (isViewerShowcase) {
       return {
         frameLoop: "always",
-        dpr: constrainedDevice ? clampRange(0.8, 1) : clampRange(0.92, 1.14),
+        dpr: constrainedDevice ? clampRange(0.96, 1.12) : clampRange(1.04, 1.22),
         toneMapping: "neutral",
-        toneMappingExposure: constrainedDevice ? 1 : 1.04,
+        toneMappingExposure: constrainedDevice ? 1.02 : 1.06,
         enableShadows: false,
         shadowMapSize: 512,
         enablePostEffects: !constrainedDevice,
@@ -125,9 +125,9 @@ export function resolveSceneRenderQuality({
     if (topMode === "desk-precision") {
       return {
         frameLoop: "demand",
-        dpr: constrainedDevice ? clampRange(0.78, 1) : clampRange(0.9, 1.12),
+        dpr: constrainedDevice ? clampRange(0.98, 1.12) : clampRange(1.06, 1.24),
         toneMapping: "neutral",
-        toneMappingExposure: constrainedDevice ? 1 : 1.03,
+        toneMappingExposure: constrainedDevice ? 1.02 : 1.06,
         enableShadows: false,
         shadowMapSize: 512,
         enablePostEffects: !constrainedDevice,
@@ -146,15 +146,15 @@ export function resolveSceneRenderQuality({
         contactShadowBlur: 0,
         contactShadowOpacity: 0,
         allowDynamicLights: true,
-        enableFillLight: false
+        enableFillLight: true
       };
     }
 
     return {
       frameLoop: "demand",
-      dpr: constrainedDevice ? clampRange(0.68, 0.88) : clampRange(0.74, 0.96),
+      dpr: constrainedDevice ? clampRange(0.9, 1.05) : clampRange(0.98, 1.14),
       toneMapping: "aces",
-      toneMappingExposure: 1.08,
+      toneMappingExposure: 1.12,
       enableShadows: false,
       shadowMapSize: 512,
       enablePostEffects: false,
@@ -173,7 +173,7 @@ export function resolveSceneRenderQuality({
       contactShadowBlur: 0,
       contactShadowOpacity: 0,
       allowDynamicLights: false,
-      enableFillLight: false
+      enableFillLight: true
     };
   }
 

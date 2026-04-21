@@ -129,6 +129,7 @@ export default function ProjectEditorPage() {
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isWebGPUReady, setIsWebGPUReady] = useState(false);
+  const [projectNameDraft, setProjectNameDraft] = useState("");
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
@@ -164,6 +165,10 @@ export default function ProjectEditorPage() {
       resetShellState();
     };
   }, [applyShellPreset, resetShellState]);
+
+  useEffect(() => {
+    setProjectNameDraft(currentProject?.name ?? "");
+  }, [currentProject?.id, currentProject?.name]);
 
   const preferWebGPU = searchParams.get("renderer") === "webgpu" && isWebGPUReady;
   const createRenderer = useMemo(() => {
@@ -572,7 +577,7 @@ export default function ProjectEditorPage() {
     { label: "마감 프리셋", value: `${builderWallFinishes.length + builderFloorFinishes.length}개` }
   ];
   const launchPreviewItems = featuredLibraryCatalog.slice(0, 3);
-  const headerTitle = currentProject?.name || (isSceneVisible ? "공간 편집 중" : hasSceneGeometry ? "상단뷰 준비 완료" : "공간 껍데기 필요");
+  const normalizedProjectName = projectNameDraft.trim();
   const activePanel = panels.assets ? "assets" : panels.properties ? "properties" : null;
   const topModeNotice =
     topMode === "room"
@@ -599,18 +604,21 @@ export default function ProjectEditorPage() {
         floorIndex: floorMaterialIndex
       },
       lighting,
-      assetSummary: buildProjectAssetSummary(libraryCatalog, assets)
+      assetSummary: buildProjectAssetSummary(libraryCatalog, assets),
+      projectName: normalizedProjectName || currentProject?.name || "새 공간 디자인"
     }),
     [
       assets,
       cameraAnchors,
       ceilings,
+      currentProject?.name,
       entranceId,
       floorMaterialIndex,
       floors,
       libraryCatalog,
       lighting,
       navGraph,
+      normalizedProjectName,
       openings,
       rooms,
       scale,
@@ -734,7 +742,9 @@ export default function ProjectEditorPage() {
   return (
     <div className="relative min-h-screen bg-[#efefec] text-[#1f1b16]">
       <ProjectEditorHeader
-        title={headerTitle}
+        title={projectNameDraft}
+        onTitleChange={setProjectNameDraft}
+        onTitleCommit={() => setProjectNameDraft((current) => current.trim())}
         viewMode={viewMode}
         canShowPanels={isTopEditorVisible}
         activePanel={activePanel}

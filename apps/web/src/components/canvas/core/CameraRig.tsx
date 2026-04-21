@@ -198,6 +198,9 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
       ),
     [interactionMode]
   );
+  const enableReadOnlyTopOrbit =
+    viewMode === "top" &&
+    (interactionMode === "viewer-shared" || interactionMode === "viewer-showcase");
   const bounds = useMemo(() => computeBounds(walls, scale), [walls, scale]);
   const centerX = (bounds.minX + bounds.maxX) / 2;
   const centerZ = (bounds.minZ + bounds.maxZ) / 2;
@@ -208,6 +211,9 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
   const builderDistance = Math.max(4.8, radius * 1.45);
   const builderHeight = Math.max(3.1, radius * 0.92);
   const builderTargetY = Math.max(1.15, radius * 0.12);
+  const viewerTopDistance = Math.max(5.4, radius * (interactionMode === "viewer-showcase" ? 1.38 : 1.52));
+  const viewerTopHeight = Math.max(4.2, radius * (interactionMode === "viewer-showcase" ? 1.02 : 1.14));
+  const viewerTopFov = interactionMode === "viewer-showcase" ? 36 : 40;
   const walkFarClip = Math.max(42, radius * 10);
   const walkFov = viewerPresentationPolish.walkFov;
 
@@ -358,6 +364,17 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
       const direction = customEvent.detail?.direction;
       if (direction !== "in" && direction !== "out") return;
 
+      if (viewMode === "top" && enableReadOnlyTopOrbit && controlsRef.current) {
+        if (direction === "in") {
+          controlsRef.current.dollyIn?.(1.15);
+        } else {
+          controlsRef.current.dollyOut?.(1.15);
+        }
+        controlsRef.current.update?.();
+        invalidate();
+        return;
+      }
+
       if (viewMode === "top" && orthoRef.current) {
         const factor = direction === "in" ? 1.15 : 1 / 1.15;
         applyTopCamera(orthoRef.current.zoom * factor);
@@ -379,7 +396,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     return () => {
       window.removeEventListener(ZOOM_EVENT_NAME, handleZoomEvent as EventListener);
     };
-  }, [applyTopCamera, invalidate, viewMode]);
+  }, [applyTopCamera, enableReadOnlyTopOrbit, invalidate, viewMode]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -438,6 +455,35 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
           maxPolarAngle={Math.PI * 0.54}
           minDistance={Math.max(3.2, radius * 0.85)}
           maxDistance={Math.max(16, radius * 3.2)}
+        />
+      </>
+    );
+  }
+
+  if (enableReadOnlyTopOrbit) {
+    return (
+      <>
+        <PerspectiveCamera
+          makeDefault
+          fov={viewerTopFov}
+          near={0.1}
+          far={2000}
+          position={[centerX + viewerTopDistance, viewerTopHeight, centerZ + viewerTopDistance]}
+        />
+        <OrbitControls
+          ref={controlsRef}
+          target={[centerX, builderTargetY, centerZ]}
+          enableRotate
+          enablePan={false}
+          enableZoom
+          enableDamping
+          dampingFactor={0.08}
+          rotateSpeed={0.68}
+          zoomSpeed={0.92}
+          minPolarAngle={Math.PI * 0.18}
+          maxPolarAngle={Math.PI * 0.48}
+          minDistance={Math.max(3.8, radius * 0.82)}
+          maxDistance={Math.max(18, radius * 3.6)}
         />
       </>
     );
