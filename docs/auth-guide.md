@@ -13,6 +13,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 NEXT_PUBLIC_APP_URL=
 ```
 
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`에는 legacy JWT `anon` 대신 Supabase publishable key(`sb_publishable_...`)를 넣습니다.
 - 로컬 개발 기본값: `NEXT_PUBLIC_APP_URL=http://127.0.0.1:3100`
 - Vercel Production: `NEXT_PUBLIC_APP_URL=https://plan2space.vercel.app`
 - Vercel Preview는 보통 **비워둡니다.**

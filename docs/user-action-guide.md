@@ -7,13 +7,16 @@
 ### Web (`apps/web/.env.local`)
 필수:
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (`sb_publishable_...`)
+- `SUPABASE_SERVICE_ROLE_KEY` (`sb_secret_...`, server-only)
 - `RAILWAY_API_URL`
 - `NEXT_PUBLIC_APP_URL` (`http://127.0.0.1:3100` 또는 배포 도메인)
 
 배포 규칙:
 - Vercel Preview에도 `SUPABASE_SERVICE_ROLE_KEY`, `RAILWAY_API_URL`를 넣어 preview server route가 production과 같은 계약으로 동작하도록 유지한다.
+- Vercel Preview/Production의 `SUPABASE_SERVICE_ROLE_KEY`, `RAILWAY_API_URL`는 `Sensitive`로 저장한다.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`는 legacy JWT `anon` 대신 `sb_publishable_...`를 사용한다.
+- 변수 이름 `SUPABASE_SERVICE_ROLE_KEY`는 유지하지만 실제 값은 legacy JWT `service_role`가 아니라 `sb_secret_...`여야 한다.
 
 권장:
 - `PROJECT_MEDIA_BUCKET`
@@ -28,14 +31,14 @@
 ### API (`apps/api/.env`)
 필수:
 - `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_ANON_KEY` (`sb_publishable_...`)
+- `SUPABASE_SERVICE_ROLE_KEY` (`sb_secret_...`)
 - `CORS_ORIGINS`
 
 ### Worker (`apps/worker/.env`)
 메인 제품 기준 필수 항목:
 - `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (`sb_secret_...`)
 - `ASSET_STORAGE_BUCKET`
 - `WORKER_CONCURRENCY`
 - `WORKER_POLL_INTERVAL_MS`

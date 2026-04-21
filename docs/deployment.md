@@ -27,24 +27,29 @@
 
 ### Vercel (`apps/web`)
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` (`sb_publishable_...`)
+- `SUPABASE_SERVICE_ROLE_KEY` (`sb_secret_...`, server-only)
 - `RAILWAY_API_URL`
 - `NEXT_PUBLIC_APP_URL`
 - `PROJECT_MEDIA_BUCKET` (선택)
 
 운영 규칙:
 - `SUPABASE_SERVICE_ROLE_KEY`, `RAILWAY_API_URL`는 Production뿐 아니라 Preview에도 넣어 server route parity를 유지한다.
+- Vercel Preview/Production의 `SUPABASE_SERVICE_ROLE_KEY`, `RAILWAY_API_URL`는 반드시 `Sensitive` 환경 변수로 저장한다.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`는 더 이상 legacy JWT `anon` 키를 쓰지 않고 `sb_publishable_...`를 사용한다.
+- 호환성을 위해 변수 이름 `SUPABASE_SERVICE_ROLE_KEY`는 유지하지만, 실제 값은 legacy JWT `service_role`가 아니라 `sb_secret_...`를 넣는다.
+- `autoExposeSystemEnvs`는 기본값을 `false`로 유지한다. Skew Protection이 꼭 필요한 경우에만 예외적으로 다시 켠다.
+- Deployment Protection bypass secret은 최대 1개만 유지하고, 회전 시 즉시 redeploy해서 이전 배포의 bypass 값을 무효화한다.
 
 ### Railway API (`apps/api`)
 - `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_ANON_KEY` (`sb_publishable_...`)
+- `SUPABASE_SERVICE_ROLE_KEY` (`sb_secret_...`)
 - `CORS_ORIGINS`
 
 ### Railway Worker (`apps/worker`)
 - `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (`sb_secret_...`)
 - `ASSET_STORAGE_BUCKET`
 - `WORKER_CONCURRENCY`
 - `WORKER_POLL_INTERVAL_MS`
