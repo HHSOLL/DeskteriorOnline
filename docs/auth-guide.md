@@ -15,9 +15,10 @@ NEXT_PUBLIC_APP_URL=
 
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`에는 legacy JWT `anon` 대신 Supabase publishable key(`sb_publishable_...`)를 넣습니다.
 - 로컬 개발 기본값: `NEXT_PUBLIC_APP_URL=http://127.0.0.1:3100`
-- Vercel Production: `NEXT_PUBLIC_APP_URL=https://deskterioronline.vercel.app`
+- Vercel Production: `NEXT_PUBLIC_APP_URL=https://plan2space.vercel.app`
 - Vercel Preview는 보통 **비워둡니다.**
   - 이유: preview마다 URL이 달라지므로 production canonical host로 강제하면 OAuth 시작/콜백 host가 어긋날 수 있습니다.
+  - production build를 deployment-specific `*.vercel.app` URL로 열어도 앱은 `NEXT_PUBLIC_APP_URL` alias로 먼저 정규화한 뒤 OAuth를 시작합니다.
 
 ## Supabase 설정 순서
 
@@ -25,7 +26,7 @@ NEXT_PUBLIC_APP_URL=
 2) Authentication → URL Configuration
    - Site URL: **현재 실제 로그인 시작 도메인**으로 설정
      - 로컬 개발 기본값: `http://127.0.0.1:3100`
-     - Vercel 운영 예시: `https://deskterioronline.vercel.app`
+     - Vercel 운영 예시: `https://plan2space.vercel.app`
    - Redirect URLs:
      - `http://127.0.0.1:3100/auth/callback`
      - `https://<your-domain>/auth/callback`
@@ -39,21 +40,21 @@ NEXT_PUBLIC_APP_URL=
 - 증상: Vercel 도메인에서 로그인했는데 `localhost:3000` 또는 로컬로 리다이렉트됨
 - 원인: Supabase `Site URL` / `Redirect URLs`가 로컬 값으로 남아 fallback 발생
 - 조치:
-  1) `Site URL`을 운영 도메인으로 변경 (예: `https://deskterioronline.vercel.app`)
+  1) `Site URL`을 운영 도메인으로 변경 (예: `https://plan2space.vercel.app`)
   2) `Redirect URLs`에 운영 콜백 추가
-     - `https://deskterioronline.vercel.app/auth/callback`
+     - `https://plan2space.vercel.app/auth/callback`
   3) 저장 후 브라우저 쿠키 삭제 또는 시크릿 창에서 재로그인
   4) 로그인 시작한 도메인과 콜백 도메인이 일치하는지 확인
 
 ### "PKCE code verifier not found in storage"가 Production에서 반복될 때
 
 - 가장 흔한 원인: **OAuth 시작 host와 callback host가 서로 다름**
-  - 예: `deskterioronline.vercel.app`에서 로그인 시작 -> Supabase fallback/site URL 또는 다른 Vercel alias로 callback 복귀
+  - 예: deployment-specific `plan2-space-xxxx.vercel.app`에서 로그인 시작 -> Supabase `site_url`인 `plan2space.vercel.app`로 callback 복귀
 - 확인 항목:
-  1) Vercel Production 환경 변수 `NEXT_PUBLIC_APP_URL=https://deskterioronline.vercel.app`
-  2) Supabase `Site URL=https://deskterioronline.vercel.app`
-  3) Supabase `Redirect URLs`에 `https://deskterioronline.vercel.app/auth/callback` 추가
-  4) 실제 로그인도 반드시 `https://deskterioronline.vercel.app`에서 시작
+  1) Vercel Production 환경 변수 `NEXT_PUBLIC_APP_URL=https://plan2space.vercel.app`
+  2) Supabase `Site URL=https://plan2space.vercel.app`
+  3) Supabase `Redirect URLs`에 `https://plan2space.vercel.app/auth/callback` 추가
+  4) 실제 로그인도 반드시 `https://plan2space.vercel.app` alias에서 시작
   5) 예전 `sb-*` 쿠키가 남아 있으면 삭제 후 재시도
 
 ## Google OAuth 설정
@@ -78,6 +79,7 @@ NEXT_PUBLIC_APP_URL=
 
 - 현재 앱 동작:
   - 로컬에서 `localhost`로 진입해도 `NEXT_PUBLIC_APP_URL`이 loopback canonical origin(`127.0.0.1`)으로 설정돼 있으면 그 주소로 정규화한 뒤 OAuth를 시작합니다.
+  - production build가 Vercel deployment-specific URL에서 열리면 `NEXT_PUBLIC_APP_URL` alias(`plan2space.vercel.app`)로 정규화한 뒤 OAuth를 시작합니다.
   - 콜백 실패 시 provider 에러 설명을 `auth_message`로 전달해 토스트에 노출합니다.
 
 ## Kakao OAuth 설정
