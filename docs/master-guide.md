@@ -16,6 +16,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 ## 제품 규칙
 - 홈/선택/빌더/에디터/뷰어/갤러리/커뮤니티는 같은 디자인 시스템을 사용한다.
 - 홈/선택/빌더는 공통 상단 bar에서 좌측 브랜드와 우측 로그인/로그아웃 affordance를 유지한다.
+- Google/Kakao OAuth는 브라우저 직접 `signInWithOAuth`가 아니라 `/auth/signin` 서버 시작 라우트와 `/auth/callback` 서버 교환 라우트의 2단계 흐름을 사용한다.
 - 레이아웃 기본은 `상단 app bar + 좌측 rail + 중앙 grey viewport + 하단 pill toolbar`다.
 - 좌측 rail 폭은 360~380px(기본 368px)로 고정한다.
 - 뷰어는 읽기 전용이며 편집 affordance를 노출하지 않는다.

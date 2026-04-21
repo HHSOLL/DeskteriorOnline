@@ -59,3 +59,28 @@ export function buildBrowserAuthRedirectUrl(nextPath?: string) {
   callbackUrl.searchParams.set("next", resolvedNextPath);
   return callbackUrl.toString();
 }
+
+export function buildBrowserAuthStartUrl(provider: "google" | "kakao", nextPath?: string) {
+  const origin = resolveBrowserAppOrigin();
+  if (!origin) return undefined;
+
+  const signinUrl = new URL("/auth/signin", origin);
+  signinUrl.searchParams.set("provider", provider);
+
+  const resolvedNextPath = (() => {
+    if (nextPath && nextPath.startsWith("/")) {
+      return nextPath;
+    }
+    if (typeof window === "undefined") {
+      return "/";
+    }
+
+    const current = new URL(window.location.href);
+    AUTH_QUERY_KEYS.forEach((key) => current.searchParams.delete(key));
+    const derivedPath = `${current.pathname}${current.search}${current.hash}`;
+    return derivedPath.startsWith("/") ? derivedPath : "/";
+  })();
+
+  signinUrl.searchParams.set("next", resolvedNextPath);
+  return signinUrl.toString();
+}

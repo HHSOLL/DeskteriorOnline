@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import type { Session, User } from "@supabase/supabase-js";
 import type { AuthUser } from "../../types";
+import { buildBrowserAuthStartUrl } from "../auth/browser-origin";
 import { clearInvalidBrowserSession, isRecoverableSessionError } from "../auth/session-recovery";
 import { getSupabaseClient } from "../supabase/client";
 
@@ -140,22 +141,28 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
   loginWithProvider: async (provider, redirectTo) => {
     set({ isLoading: true, error: null, notice: null });
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      set({ isLoading: false, error: "Supabase 환경 변수가 설정되지 않았습니다." });
+    if (typeof window === "undefined") {
+      set({ isLoading: false, error: "브라우저 환경에서만 로그인할 수 있습니다." });
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: redirectTo ? { redirectTo } : undefined
-    });
+    const nextPath = (() => {
+      if (!redirectTo) return undefined;
+      try {
+        const url = new URL(redirectTo);
+        return url.searchParams.get("next") ?? undefined;
+      } catch {
+        return undefined;
+      }
+    })();
 
-    if (error) {
-      set({ isLoading: false, error: error.message });
-    } else {
-      set({ isLoading: false });
+    const signInUrl = buildBrowserAuthStartUrl(provider, nextPath);
+    if (!signInUrl) {
+      set({ isLoading: false, error: "로그인 시작 URL을 만들 수 없습니다." });
+      return;
     }
+
+    window.location.assign(signInUrl);
   },
   logout: async () => {
     set({ isLoading: true, error: null, notice: null });
