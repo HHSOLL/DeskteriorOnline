@@ -878,3 +878,13 @@ Updated:
 
 Removed/Deprecated:
 - persisted activity 없이 `preview_meta + published_at` 추정치만으로 P3 활동성 지표를 마감할 수 있다는 이전 상태 설명.
+
+## 2026-04-21 변경 동기화 (Vercel Incident Hardening)
+Added:
+- Vercel/Supabase 운영 hardening 완료 항목에 `sb_publishable`/`sb_secret` 전환, Preview/Production `Sensitive` env 정리, automation bypass 단일화, `autoExposeSystemEnvs=false`를 추가한다.
+
+Updated:
+- 원격 환경 변수 운영 기준을 `preview parity`에서 `preview parity + credential rotation + control-plane hardening`까지 확장한다.
+
+Removed/Deprecated:
+- legacy JWT `anon`/`service_role` 키와 다중 automation bypass secret을 운영 env에 계속 남겨두는 가정.

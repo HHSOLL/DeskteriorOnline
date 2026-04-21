@@ -642,6 +642,19 @@ Updated:
 Removed/Deprecated:
 - `jobs.floorplan_id`, `project_versions.floor_plan`, revision provenance 테이블이 운영 DB에 남아 있어도 무방하다는 가정.
 
+## 2026-04-21 변경 동기화 (Vercel Incident Hardening)
+Added:
+- Supabase runtime key 기준을 `NEXT_PUBLIC_SUPABASE_ANON_KEY`/`SUPABASE_ANON_KEY`=`sb_publishable_...`, `SUPABASE_SERVICE_ROLE_KEY`=`sb_secret_...`로 고정한다.
+- Vercel Preview/Production의 server-side env(`SUPABASE_SERVICE_ROLE_KEY`, `RAILWAY_API_URL`)는 `Sensitive`로 저장하고, Deployment Protection bypass secret은 env-backed 1개만 유지한다.
+
+Updated:
+- 플랫폼 보안 baseline을 `preview env parity` 중심에서 `publishable/secret key migration + sensitive env + single bypass + autoExposeSystemEnvs=false`까지 확장한다.
+
+Removed/Deprecated:
+- legacy JWT `anon`/`service_role`를 운영 런타임 env에 계속 두는 가정.
+- Vercel에 여러 개의 automation bypass secret을 장기간 유지하는 운영 방식.
+- `autoExposeSystemEnvs=true`를 기본 운영값으로 보는 가정.
+
 ## 2026-04-18 변경 동기화 (Opening Asset Fidelity + Entry Performance)
 Added:
 - builder/editor opening render는 Blender source(`assets/blender/openings`)와 runtime GLB(`apps/web/public/assets/models/p2s_opening_*`)를 같이 관리하는 기준을 추가.
