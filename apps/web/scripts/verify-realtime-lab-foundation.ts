@@ -33,7 +33,7 @@ try {
   const roomId = normalizeRealtimeLabRoomId("  Demo Room 01 ");
   assert(roomId === "demo-room-01", `unexpected normalized room id: ${roomId}`);
   assert(
-    buildRealtimeLabChannelName(roomId ?? "missing") === "plan2space:labs:presence:demo-room-01",
+    buildRealtimeLabChannelName(roomId ?? "missing") === "deskterioronline:labs:presence:demo-room-01",
     "unexpected realtime channel name"
   );
 

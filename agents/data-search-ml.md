@@ -4,8 +4,8 @@
 자산 생성/추천 AI 품질과 데이터 계약을 상용 수준으로 유지한다.
 
 ## Preferred Skills
-- `plan2space-blueprint-ai` (필수)
-- `plan2space-project-core`
+- `deskterioronline-blueprint-ai` (필수)
+- `deskterioronline-project-core`
 
 ## Core Responsibilities
 - 자산 생성 provider 응답 정규화/검증 로직 유지

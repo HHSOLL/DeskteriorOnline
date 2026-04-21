@@ -4,9 +4,9 @@
 아키텍처 일관성, 렌더링 성능, 품질 게이트를 최종 책임진다.
 
 ## Preferred Skills
-- `plan2space-project-core` (필수)
-- `plan2space-studio-ux` (UI/시각 품질 변경 시)
-- `plan2space-blueprint-ai` (AI 파이프라인 변경 시)
+- `deskterioronline-project-core` (필수)
+- `deskterioronline-studio-ux` (UI/시각 품질 변경 시)
+- `deskterioronline-blueprint-ai` (AI 파이프라인 변경 시)
 
 ## Runbook
 1) 문서 사전 확인: `AGENTS.md` Must Read 순서 준수  

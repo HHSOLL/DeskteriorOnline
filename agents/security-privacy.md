@@ -4,7 +4,7 @@
 인증/권한/데이터 노출 리스크를 최소화하고 보안 기본값을 강제한다.
 
 ## Preferred Skills
-- `plan2space-project-core`
+- `deskterioronline-project-core`
 - `security-best-practices` (보안 리뷰가 명시적으로 요구될 때)
 
 ## Core Responsibilities

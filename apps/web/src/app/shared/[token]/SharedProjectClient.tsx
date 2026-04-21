@@ -118,7 +118,7 @@ function getSharedViewerSessionKey() {
     return null;
   }
 
-  const storageKey = "plan2space:shared-viewer-session";
+  const storageKey = "deskterioronline:shared-viewer-session";
   const existing = window.sessionStorage.getItem(storageKey);
   if (existing) {
     return existing;
@@ -377,7 +377,7 @@ export function SharedProjectClient({
                   onClick={() => router.push("/")}
                   className="inline-flex rounded-full border border-black/10 bg-white px-3 py-2 text-[11px] font-semibold tracking-[-0.03em] text-[#171411] transition hover:border-black/20 hover:bg-[#f4f4f1]"
                 >
-                  Plan2Space
+                  DeskteriorOnline
                 </button>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#8a8177]">
@@ -462,7 +462,7 @@ export function SharedProjectClient({
                 onClick={() => router.push("/")}
                 className="inline-flex rounded-full border border-black/10 bg-white px-3 py-2 text-[11px] font-semibold tracking-[-0.03em] text-[#171411] transition hover:border-black/20 hover:bg-[#f4f4f1]"
               >
-                Plan2Space
+                DeskteriorOnline
               </button>
 
               <div className="min-w-0 flex-1">

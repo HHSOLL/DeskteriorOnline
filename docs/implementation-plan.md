@@ -27,10 +27,13 @@
 - builder desktop shell 무스크롤 fit 및 실 floor outline 기반 dimension overlay 적용
 - builder exterior polygon/snap 안정화 및 shape-specific geometry 정합성 보강
 - opening/style step preview에 orbit/zoom 카메라 UX 적용
+- opening step preview에서 style 선택 전 기본 흰 벽/바닥 shell 유지
+- opening GLB를 wall-plane 기준 실제 door/window orientation으로 정규화
 - lighting step에 direct/indirect mood 선택 및 scene lighting payload 연결
 - 템플릿 기반 방 생성 속도 개선
 - 저장 직후 에디터/뷰어 일관성 확인 자동화
 - project-media bucket 미구성 시 thumbnail upload 복구/재시도로 저장 실패를 완화
+- 서비스 브랜드/코드 문자열을 `DeskteriorOnline` 기준으로 정리
 
 ## P2
 목표: 데스크테리어 편집 경험 고도화
@@ -59,7 +62,7 @@
 - shared viewport에 mode-aware render quality ladder 적용(top/builder 경량화, walk/viewer 품질 유지)
 - top-view 자산 drag를 local preview 후 commit 방식으로 전환해 pointer-move store churn 완화
 - physics/runtime shadow/contact shadow/post FX를 walk/viewer 중심으로 재배치해 furnished scene headroom 확보
-- editor top-view 회전을 drag에서 버튼형 90도 회전 rail로 단순화
+- editor top-view를 builder와 같은 perspective orbit + wheel zoom 기준으로 재조정
 - direct lighting beam shader / indirect ceiling glow shader를 scene shell 렌더에 연결
 - room/desk top-view와 builder preview에 demand frame loop + explicit invalidate 경로를 적용
 
@@ -74,7 +77,7 @@
 - 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
 
 ## 2026-04-19 심층 분석 기반 실행 순서
-이 순서는 `/Users/sol/Downloads/Plan2Space 정밀 공간 편집 시스템 심층 분석 보고서.docx`의 제안을 현재 room-first 제품 흐름에 맞게 재배열한 것이다. P0~P3의 큰 축은 유지하되, 실제 실행은 아래 Phase와 Slice 단위로 끊어서 진행한다.
+이 순서는 `/Users/sol/Downloads/DeskteriorOnline 정밀 공간 편집 시스템 심층 분석 보고서.docx`의 제안을 현재 room-first 제품 흐름에 맞게 재배열한 것이다. P0~P3의 큰 축은 유지하되, 실제 실행은 아래 Phase와 Slice 단위로 끊어서 진행한다.
 
 ### Phase 1. 측정 기반 고정
 목표:
@@ -96,8 +99,8 @@
 
 ## 2026-04-19 변경 동기화 (Phase 1 Slice 2 Complete)
 Added:
-- `SceneViewport`에 `plan2space:renderer-stats` 1초 샘플러를 붙여 FPS / draw calls / triangles / textures / geometries를 공통 이벤트 계약으로 노출했다.
-- hover / select / drag-start / gizmo-drag-start의 next-paint 지연을 `plan2space:interaction-latency` 이벤트로 기록하는 계측 훅을 추가했다.
+- `SceneViewport`에 `deskterioronline:renderer-stats` 1초 샘플러를 붙여 FPS / draw calls / triangles / textures / geometries를 공통 이벤트 계약으로 노출했다.
+- hover / select / drag-start / gizmo-drag-start의 next-paint 지연을 `deskterioronline:interaction-latency` 이벤트로 기록하는 계측 훅을 추가했다.
 
 Updated:
 - Phase 1 Slice 2를 `계측 훅/로그 포인트 배치` 완료 상태로 갱신한다.
@@ -108,7 +111,7 @@ Removed/Deprecated:
 
 ## 2026-04-19 변경 동기화 (Phase 1 Slice 3 Complete)
 Added:
-- `window.__PLAN2SPACE_TELEMETRY_CAPTURE__` capture helper로 telemetry 이벤트를 regression entry JSON으로 묶는 경로를 추가했다.
+- `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__` capture helper로 telemetry 이벤트를 regression entry JSON으로 묶는 경로를 추가했다.
 - `perf:report:verify` / `qa:primary:perf` 스크립트로 예산 검증과 baseline delta 비교 루틴을 추가했다.
 
 Updated:
@@ -391,7 +394,7 @@ Removed/Deprecated:
 ## 2026-04-20 변경 동기화 (BVH Worker Offload)
 Added:
 - loaded GLB 자산의 large non-interleaved geometry에 대해 `three-mesh-bvh` bounds tree 생성을 Web Worker queue로 오프로딩하는 경로를 추가했다.
-- `plan2space:bvh-build` 브라우저 이벤트와 `window.__PLAN2SPACE_LAST_BVH_BUILD__` 스냅샷으로 worker/sync BVH build mode, triangle count, duration을 확인하는 측정 지점을 추가했다.
+- `deskterioronline:bvh-build` 브라우저 이벤트와 `window.__DESKTERIORONLINE_LAST_BVH_BUILD__` 스냅샷으로 worker/sync BVH build mode, triangle count, duration을 확인하는 측정 지점을 추가했다.
 
 Updated:
 - 원문 보고서 기준 남은 작업에서 `worker offload`의 첫 안전한 범위를 `loaded GLB BVH generation offload` 완료 상태로 갱신한다.
@@ -879,12 +882,13 @@ Updated:
 Removed/Deprecated:
 - persisted activity 없이 `preview_meta + published_at` 추정치만으로 P3 활동성 지표를 마감할 수 있다는 이전 상태 설명.
 
-## 2026-04-21 변경 동기화 (Vercel Incident Hardening)
+## 2026-04-21 변경 동기화 (Editor Walk/Top QA Fixes)
 Added:
-- Vercel/Supabase 운영 hardening 완료 항목에 `sb_publishable`/`sb_secret` 전환, Preview/Production `Sensitive` env 정리, automation bypass 단일화, `autoExposeSystemEnvs=false`를 추가한다.
+- 배포 QA 이슈 대응 범위로 `project name inline edit/save`, `shared top 360 orbit`, `room shell texture fallback`, `desk precision detail pin` 작업을 추가했다.
 
 Updated:
-- 원격 환경 변수 운영 기준을 `preview parity`에서 `preview parity + credential rotation + control-plane hardening`까지 확장한다.
+- P2 편집 품질 범위를 “mode split + precision overlay”에서 “mode split + precision overlay + top/walk presentation regression fixes”까지 확장한다.
+- P3 shared viewer 범위를 “walk/shared/showcase shell”에서 “read-only top orbit + clearer walkthrough fallback”까지 확장한다.
 
 Removed/Deprecated:
-- legacy JWT `anon`/`service_role` 키와 다중 automation bypass secret을 운영 env에 계속 남겨두는 가정.
+- 배포 환경에서 top-view flat shell과 walk-view texture failure를 별도 후속으로 미룬다는 가정.

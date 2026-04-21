@@ -72,13 +72,12 @@ export function AuthPanel({ className }: { className?: string }) {
   };
 
   return (
-    <div className={`rounded-[28px] border border-stone-200/80 bg-white/70 p-7 shadow-[0_22px_70px_-55px_rgba(0,0,0,0.45)] backdrop-blur ${className ?? ""}`}>
+    <div
+      className={`overflow-hidden rounded-[32px] border border-stone-200/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.97),rgba(252,249,244,0.94))] p-7 shadow-[0_40px_120px_-50px_rgba(15,23,42,0.4)] ${className ?? ""}`}
+    >
       <div>
-        <div className="text-[11px] font-semibold uppercase tracking-[0.34em] text-stone-500">Account</div>
-        <h2 className="mt-3 font-sans text-2xl font-semibold text-stone-900">Plan2Space 로그인</h2>
-        <p className="mt-2 text-sm leading-relaxed text-stone-600">
-          프로젝트 저장 및 개인 폴더(Storage) 접근을 위해 로그인이 필요합니다.
-        </p>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.34em] text-stone-500">DeskteriorOnline</div>
+        <p className="mt-3 text-sm leading-relaxed text-stone-600">소셜 계정으로 바로 시작하세요.</p>
       </div>
 
       {isLoading ? (
@@ -110,7 +109,7 @@ export function AuthPanel({ className }: { className?: string }) {
             type="button"
             onClick={() => handleSocialLogin("google")}
             disabled={isLoading}
-            className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-stone-300 bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-stone-800 transition-all duration-300 hover:bg-stone-100 disabled:opacity-40"
+            className="inline-flex w-full items-center justify-center gap-3 rounded-[22px] border border-stone-300/90 bg-white px-5 py-4 text-sm font-semibold text-stone-900 transition-all duration-300 hover:border-stone-900 hover:bg-stone-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             <GoogleIcon />
             Google로 계속하기
@@ -119,14 +118,14 @@ export function AuthPanel({ className }: { className?: string }) {
             type="button"
             onClick={() => handleSocialLogin("kakao")}
             disabled={isLoading}
-            className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#FEE500] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-[#191919] transition-all duration-300 hover:bg-[#F7D200] disabled:opacity-40"
+            className="inline-flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#FEE500] px-5 py-4 text-sm font-semibold text-[#191919] transition-all duration-300 hover:bg-[#f6d900] disabled:cursor-not-allowed disabled:opacity-40"
           >
             <KakaoIcon />
             카카오로 계속하기
           </button>
-          <p className="text-xs leading-relaxed text-stone-500">
-            Google/Kakao 소셜 로그인만 지원합니다.
-          </p>
+          <div className="rounded-[24px] border border-stone-200/70 bg-white/55 px-4 py-3 text-center text-[11px] leading-relaxed text-stone-500">
+            Google · Kakao 소셜 로그인만 지원합니다.
+          </div>
         </div>
       ) : null}
     </div>

@@ -109,9 +109,11 @@ function WallMesh({
 }
 
 function TopWallFootprint({
-  wallId
+  wallId,
+  color
 }: {
   wallId: string;
+  color: string;
 }) {
   const walls = useShellSelector((slice) => slice.walls);
   const floors = useShellSelector((slice) => slice.floors);
@@ -148,34 +150,42 @@ function TopWallFootprint({
       castShadow={false}
     >
       <boxGeometry args={[strip.length, 0.036, strip.thickness]} />
-      <meshStandardMaterial color="#cfc9c1" roughness={0.97} metalness={0.02} />
+      <meshStandardMaterial color={color} roughness={0.94} metalness={0.02} />
     </mesh>
   );
 }
 
 function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number; walls: Wall[] }) {
+  const isWhitePreview = wallMaterialIndex < 0;
   const gl = useThree((state) => state.gl);
   const textureConfig =
     WALL_TEXTURE_PRESETS[wallMaterialIndex % WALL_TEXTURE_PRESETS.length] ?? WALL_TEXTURE_PRESETS[0];
   configureRuntimeAssetLoaders(gl);
-  const textureUrls = useMemo(() => resolveRuntimeTextureSet(textureConfig), [textureConfig]);
-  const [map, roughnessMap, normalMap, bumpMap] = useLoader(RuntimeTextureLoader, [
-    textureUrls.map,
-    textureUrls.roughnessMap,
-    textureUrls.normalMap,
-    textureUrls.bumpMap
-  ]) as THREE.Texture[];
+  const textureUrls = useMemo(
+    () => (isWhitePreview ? null : resolveRuntimeTextureSet(textureConfig)),
+    [isWhitePreview, textureConfig]
+  );
+  const loadedTextures = useLoader(
+    RuntimeTextureLoader,
+    textureUrls
+      ? [textureUrls.map, textureUrls.roughnessMap, textureUrls.normalMap, textureUrls.bumpMap]
+      : []
+  ) as THREE.Texture[];
   const textures = useMemo(
-    () => ({
-      map,
-      roughnessMap,
-      normalMap,
-      bumpMap
-    }),
-    [bumpMap, map, normalMap, roughnessMap]
+    () =>
+      textureUrls
+        ? {
+            map: loadedTextures[0]!,
+            roughnessMap: loadedTextures[1]!,
+            normalMap: loadedTextures[2]!,
+            bumpMap: loadedTextures[3]!
+          }
+        : null,
+    [loadedTextures, textureUrls]
   );
 
   useEffect(() => {
+    if (!textures) return;
     Object.values(textures).forEach((texture) => {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
@@ -189,21 +199,30 @@ function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
     textures.bumpMap.colorSpace = THREE.NoColorSpace;
   }, [textures]);
 
-  const material = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: textureConfig.color,
-        map: textures.map,
-        roughnessMap: textures.roughnessMap,
-        normalMap: textures.normalMap,
-        bumpMap: textures.bumpMap,
-        bumpScale: textureConfig.bumpScale,
-        roughness: textureConfig.roughness,
-        normalScale: new THREE.Vector2(textureConfig.normalScale, textureConfig.normalScale),
-        envMapIntensity: textureConfig.envMapIntensity
-      }),
-    [textureConfig, textures]
-  );
+  const material = useMemo(() => {
+    if (isWhitePreview || !textures) {
+      return new THREE.MeshStandardMaterial({
+        color: "#f5f3ef",
+        roughness: 0.92,
+        metalness: 0.02,
+        envMapIntensity: 0.36,
+        side: THREE.DoubleSide
+      });
+    }
+
+    return new THREE.MeshStandardMaterial({
+      color: textureConfig.color,
+      map: textures.map,
+      roughnessMap: textures.roughnessMap,
+      normalMap: textures.normalMap,
+      bumpMap: textures.bumpMap,
+      bumpScale: textureConfig.bumpScale,
+      roughness: textureConfig.roughness,
+      normalScale: new THREE.Vector2(textureConfig.normalScale, textureConfig.normalScale),
+      envMapIntensity: textureConfig.envMapIntensity,
+      side: THREE.DoubleSide
+    });
+  }, [isWhitePreview, textureConfig, textures]);
 
   useEffect(() => {
     return () => {
@@ -224,12 +243,16 @@ export default function ProceduralWall() {
   const viewMode = useEditorStore((state) => state.viewMode);
   const wallMaterialIndex = useShellSelector((slice) => slice.wallMaterialIndex);
   const walls = useShellSelector((slice) => slice.walls);
+  const topWallColor =
+    wallMaterialIndex < 0
+      ? "#f2efea"
+      : WALL_TEXTURE_PRESETS[wallMaterialIndex % WALL_TEXTURE_PRESETS.length]?.topColor ?? "#cfc9c1";
 
   if (viewMode === "top") {
     return (
       <group>
         {walls.map((wall) => (
-          <TopWallFootprint key={wall.id} wallId={wall.id} />
+          <TopWallFootprint key={wall.id} wallId={wall.id} color={topWallColor} />
         ))}
       </group>
     );

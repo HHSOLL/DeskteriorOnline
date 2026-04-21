@@ -29,7 +29,7 @@ function createAsset(id: string, overrides?: {
       id: "ceramic-mug",
       name: "Ceramic Mug",
       category: "Decor",
-      brand: "Plan2Space",
+      brand: "DeskteriorOnline",
       price: null,
       options: null,
       externalUrl: null,

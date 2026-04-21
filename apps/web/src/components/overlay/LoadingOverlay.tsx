@@ -11,8 +11,8 @@ export function LoadingOverlay() {
   useEffect(() => {
     const qaBypassEnabled =
       typeof window !== "undefined" &&
-      ((window as Window & { __PLAN2SPACE_DISABLE_LOADING_OVERLAY__?: boolean })
-        .__PLAN2SPACE_DISABLE_LOADING_OVERLAY__ === true ||
+      ((window as Window & { __DESKTERIORONLINE_DISABLE_LOADING_OVERLAY__?: boolean })
+        .__DESKTERIORONLINE_DISABLE_LOADING_OVERLAY__ === true ||
         new URLSearchParams(window.location.search).get("qaNoLoader") === "1");
     if (qaBypassEnabled) {
       setProgress(100);
@@ -56,7 +56,7 @@ export function LoadingOverlay() {
           aria-busy="true"
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#fdfdfc] text-[#1a1a1a]"
         >
-          <span className="sr-only">Loading Plan2Space</span>
+          <span className="sr-only">Loading DeskteriorOnline</span>
           <div className="relative w-48 h-[1px] overflow-hidden bg-black/5">
             <motion.div
               className="absolute inset-y-0 left-0 bg-black"
@@ -71,7 +71,7 @@ export function LoadingOverlay() {
             transition={{ duration: reduceMotion ? 0 : 0.6, ease: "easeOut" }}
             className="mt-12 text-4xl tracking-[0.1em] uppercase"
           >
-            Plan2Space
+            DeskteriorOnline
           </motion.div>
           <motion.div
             className="mt-4 text-[9px] tracking-[0.4em] text-black/20 uppercase font-bold"

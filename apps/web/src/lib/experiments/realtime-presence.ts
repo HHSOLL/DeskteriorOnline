@@ -119,7 +119,7 @@ export function createDefaultRealtimeLocalPresenceState(): LocalRealtimePresence
 }
 
 export function buildRealtimeLabChannelName(roomId: string) {
-  return `plan2space:labs:presence:${roomId}`;
+  return `deskterioronline:labs:presence:${roomId}`;
 }
 
 export function createRealtimeLabAccentColor(sessionKey: string) {

@@ -4,8 +4,8 @@
 절차적 3D 생성 품질과 런타임 성능을 상용 수준으로 고정한다.
 
 ## Preferred Skills
-- `plan2space-project-core`
-- `plan2space-studio-ux`
+- `deskterioronline-project-core`
+- `deskterioronline-studio-ux`
 
 ## Core Responsibilities
 - wall/floor/ceiling 절차적 생성

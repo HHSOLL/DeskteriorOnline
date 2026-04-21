@@ -4,8 +4,8 @@
 `new_guideline` 기반으로 범위/우선순위/완료조건을 명확히 유지한다.
 
 ## Preferred Skills
-- `plan2space-project-core` (필수)
-- `plan2space-studio-ux` (사용자 경험 범위 조정 시)
+- `deskterioronline-project-core` (필수)
+- `deskterioronline-studio-ux` (사용자 경험 범위 조정 시)
 
 ## Core Responsibilities
 - 단계별 목표와 정의역(scope) 확정

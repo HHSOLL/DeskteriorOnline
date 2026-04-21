@@ -255,7 +255,7 @@ function normalizeAssetMetadataSource(value: unknown): ProductSourceMetadata | n
     return null;
   }
 
-  const kind = value.kind === "plan2space_blender" || value.kind === "open_source" ? value.kind : null;
+  const kind = value.kind === "deskterioronline_blender" || value.kind === "open_source" ? value.kind : null;
   const name = normalizeAssetMetadataText(value.name);
   const metadataPath = normalizeAssetMetadataText(value.path);
   const url = normalizeAssetMetadataUrl(value.url);

@@ -9,9 +9,9 @@
 - 작업 시작 전 문서 확인 -> 스킬 선택 -> 구현 -> 품질 게이트 -> 문서 갱신 순서를 유지.
 
 ## Skill Mapping
-- Product/Architecture/Scope: `plan2space-project-core`
-- UI/UX/Interaction: `plan2space-studio-ux`
-- Deskterior AI (asset generation/recommendation): `plan2space-blueprint-ai`
+- Product/Architecture/Scope: `deskterioronline-project-core`
+- UI/UX/Interaction: `deskterioronline-studio-ux`
+- Deskterior AI (asset generation/recommendation): `deskterioronline-blueprint-ai`
 - Browser QA: `playwright`
 
 ## Agent Catalog

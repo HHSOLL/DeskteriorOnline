@@ -102,7 +102,7 @@ export function SceneViewport({
   const renderViewerHotspots = resolvedInteractionMode === "viewer-shared";
   const renderInteractiveShellControls =
     resolvedInteractionMode === "editor" || resolvedInteractionMode === "preview";
-  const renderOpeningDecor = renderInteractiveShellControls && viewMode !== "top";
+  const renderOpeningDecor = true;
   const renderLightingDecor = renderInteractiveShellControls && viewMode !== "top";
   const isLightTone = chromeTone === "light";
   const quality = useMemo(() => {

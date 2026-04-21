@@ -4,7 +4,7 @@
 배포/CI/운영 안정성을 보장하고 품질 게이트 자동화를 관리한다.
 
 ## Preferred Skills
-- `plan2space-project-core`
+- `deskterioronline-project-core`
 - `playwright` (브라우저 기반 회귀 점검 필요 시)
 
 ## Core Responsibilities

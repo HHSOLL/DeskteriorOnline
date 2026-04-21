@@ -60,7 +60,7 @@
 9. 치수 조정 시 overlay와 실제 room shape가 같이 바뀌는지 확인하기
 10. step 2 좌측 guide와 우측 preview가 같은 실제 outline을 보여주는지 확인하기
 11. step 3/4/5 preview에서 휠 줌 + 드래그 orbit이 방 중심 기준으로 동작하는지 확인하기
-12. 문/창문 추가하기
+12. 문/창문 추가 시 asset이 바닥에 눕지 않고 wall plane에 수직으로 서 보이며, style 선택 전에는 기본 흰 벽/흰 바닥 shell이 유지되는지 확인하기
 13. 스타일과 조명 모드(직접등/간접등)를 선택한 뒤 에디터로 진입하기
 14. 에디터에서 데스크테리어 가구 추가하기
 15. 상단뷰에서 `룸 배치`와 `데스크 정밀`을 각각 열어 가구 이동/회전 정책이 달라지는지 확인하기
@@ -68,7 +68,7 @@
 17. 공유 토큰 열기
 18. 읽기 전용 뷰어에서 제품 클릭하기
 19. 갤러리/커뮤니티에서 동일 장면 열기
-20. 에디터 상단뷰에서 우측 rail의 좌/우 회전 버튼과 wheel zoom만 동작하고 pan은 되지 않는지 확인하기
+20. 에디터 상단뷰에서 builder처럼 마우스 드래그 orbit + wheel zoom이 동작하고, 좌/우 회전 버튼에 의존하지 않는지 확인하기
 21. `추가`/`설정` 버튼이 각각 좌측 drawer를 열고, 재클릭/바깥 클릭 시 닫히며 동시에 둘 다 열리지 않는지 확인하기
 22. 워크뷰에서는 ceiling이 보이고 상단뷰에서는 ceiling이 숨겨지는지 확인하기
 23. 모바일 viewport에서 share modal이 화면 안에 들어오고 내부만 스크롤되는지 확인하기
@@ -79,7 +79,7 @@
 28. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay의 micro-view marker가 같은 support-local 위치를 가리키고, offset 수치와도 일치하는지 확인하기
 29. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay가 같은 footprint / projected footprint / edge clearance / relative yaw를 보여주고, usable area를 넘기면 overflow 상태로 바뀌는지 확인하기
 30. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay의 `front(X/H)` / `side(Z/H)` helper view가 같은 projected span, gap, reach를 보여주는지 확인하기
-31. desk precision mode에서 small asset 다수 장면에서도 hover/select 시작 지연이 `plan2space:interaction-latency` 기준으로 급격히 튀지 않는지 확인하기
+31. desk precision mode에서 small asset 다수 장면에서도 hover/select 시작 지연이 `deskterioronline:interaction-latency` 기준으로 급격히 튀지 않는지 확인하기
 32. builder lighting step에서 `직접등` 선택 시 beam glow가, `간접등` 선택 시 천장 확산광이 preview에 반영되는지 확인하기
 33. room mode에서는 후처리/동적 조명이 꺼지고, desk precision mode에서는 정밀 확인에 필요한 저비용 bloom/조명만 선택적으로 올라오는지 확인하기
 34. shared viewer는 editor보다 더 가벼운 read-only preset으로 열리고, hotspot drawer 동작에는 영향이 없는지 확인하기
@@ -141,10 +141,10 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 `primary:e2e:room-flow:full`은 Supabase 환경 변수가 없는 환경에서는 실행되지 않습니다.
 
 성능 계측 팁:
-- dev에서는 브라우저 콘솔에서 바로 `plan2space:renderer-stats`, `plan2space:interaction-latency` 이벤트를 구독하면 된다.
-- production build 측정 시에는 URL에 `?telemetry=1`을 붙이거나 콘솔에서 `window.__PLAN2SPACE_TELEMETRY__ = true`를 설정한 뒤 새로고침한다.
-- 최신 샘플은 `window.__PLAN2SPACE_LAST_RENDERER_STATS__`, `window.__PLAN2SPACE_LAST_INTERACTION_LATENCY__`에서도 확인할 수 있다.
-- regression report는 `window.__PLAN2SPACE_TELEMETRY_CAPTURE__.start(...)`로 측정을 시작하고 `stop(...)`으로 JSON entry를 얻는다.
+- dev에서는 브라우저 콘솔에서 바로 `deskterioronline:renderer-stats`, `deskterioronline:interaction-latency` 이벤트를 구독하면 된다.
+- production build 측정 시에는 URL에 `?telemetry=1`을 붙이거나 콘솔에서 `window.__DESKTERIORONLINE_TELEMETRY__ = true`를 설정한 뒤 새로고침한다.
+- 최신 샘플은 `window.__DESKTERIORONLINE_LAST_RENDERER_STATS__`, `window.__DESKTERIORONLINE_LAST_INTERACTION_LATENCY__`에서도 확인할 수 있다.
+- regression report는 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__.start(...)`로 측정을 시작하고 `stop(...)`으로 JSON entry를 얻는다.
 - 측정이 끝나면 `npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json`으로 예산과 coverage를 검증한다.
 - baseline 비교가 필요하면 `--baseline=/absolute/path/to/previous-report.json`을 같이 준다.
 
@@ -154,7 +154,10 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - 에디터 상단 bar, 좌측 rail, 우측 zoom rail, 하단 pill toolbar가 레퍼런스 7번 shell로 노출되는지 확인
 - 상단뷰에서는 `목록/속성/항목뷰/이동/회전` 보조 UI가 사라지고 `추가/설정` drawer 패턴만 남는지 확인
 - 상단뷰 하단 pill toolbar에서 `룸 배치` / `데스크 정밀` 토글이 보이고, 워크뷰에서는 사라지는지 확인
+- builder opening preview에서 문/창문이 실제 opening asset처럼 서 있고, style 선택 전에는 white wall/white floor shell이 유지되는지 확인
 - room mode와 desk precision mode 전환 시 체감 화질과 idle 비용이 달라지고, 워크뷰 품질에는 영향을 주지 않는지 확인
+- editor 상단뷰가 orthographic footprint처럼만 보이지 않고, builder와 비슷한 perspective orbit 품질로 열리는지 확인
+- walk view에서 카메라를 돌렸을 때 벽 backface/near clip 때문에 검정 화면이 나오지 않는지 확인
 - desk precision / builder preview / showcase 계열은 Neutral tone mapping, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping을 사용해도 surface/material 읽기 흐름이 어색해지지 않는지 확인
 - editor walk와 richer showcase 경로에서만 selective SSR이 반사 하이라이트를 보강하고, shared viewer / top-view / builder preview에는 비용이 전파되지 않는지 확인
 - room mode, desk precision mode, builder preview는 조작을 멈췄을 때 continuous redraw 없이 idle이 안정화되는지 확인
@@ -163,10 +166,10 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - desk precision mode에서 surface anchor 제품의 inspector와 overlay가 동일한 support asset / support surface / surface size / margin / top 높이 기준으로 동기화되는지 확인
 - desk precision mode에서 surface anchor 제품의 inspector와 overlay micro-view가 동일한 support-local marker / offset 위치를 가리키는지 확인
 - desk precision mode에서 surface anchor 제품의 inspector와 overlay가 footprint / projected footprint / edge clearance / relative yaw 기준까지 동기화되는지 확인
-- 필요 시 브라우저 콘솔에서 `plan2space:renderer-stats` / `plan2space:interaction-latency` 이벤트를 구독해 draw call, texture, hover/select/drag-start 지연을 같이 기록하는지 확인
-- 필요 시 `window.__PLAN2SPACE_TELEMETRY_CAPTURE__`로 builder/editor/shared viewer 측정 세션을 각각 묶고 `perf:report:verify`로 JSON report를 검증하는지 확인
+- 필요 시 브라우저 콘솔에서 `deskterioronline:renderer-stats` / `deskterioronline:interaction-latency` 이벤트를 구독해 draw call, texture, hover/select/drag-start 지연을 같이 기록하는지 확인
+- 필요 시 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__`로 builder/editor/shared viewer 측정 세션을 각각 묶고 `perf:report:verify`로 JSON report를 검증하는지 확인
 - loaded GLB 자산이 많은 장면에서 hover/select 시작 지연이 BVH 적용 후에도 50ms 예산 안에 들어오는지 확인
-- large geometry가 있는 장면에서 브라우저 콘솔의 `plan2space:bvh-build` 이벤트가 `mode: "worker"`로 기록되고, small/interleaved geometry는 필요 시 `mode: "sync"`로 fallback 되는지 확인
+- large geometry가 있는 장면에서 브라우저 콘솔의 `deskterioronline:bvh-build` 이벤트가 `mode: "worker"`로 기록되고, small/interleaved geometry는 필요 시 `mode: "sync"`로 fallback 되는지 확인
 - `npm --workspace apps/web run assets:sync:ktx2-transcoder -- --check`가 basis transcoder public 파일을 PASS로 검증하는지 확인
 - `npm --workspace apps/web run verify:scene-document`가 placement/support/product metadata roundtrip 검증을 통과하는지 확인
 - `npm --workspace apps/web run verify:public-scene`가 shared viewer payload에서 placement/support/product metadata roundtrip 검증을 통과하는지 확인
@@ -648,7 +651,7 @@ Removed/Deprecated:
 
 ## 2026-04-20 변경 동기화 (BVH Worker Offload QA)
 Added:
-- `plan2space:bvh-build` 이벤트로 large geometry가 worker offload 되는지 확인하는 QA 항목을 추가했다.
+- `deskterioronline:bvh-build` 이벤트로 large geometry가 worker offload 되는지 확인하는 QA 항목을 추가했다.
 
 Updated:
 - BVH QA 기준을 `hover/select latency` 확인에서 `hover/select latency + BVH build mode(worker/sync) 확인`까지 확장했다.
@@ -726,3 +729,16 @@ Updated:
 
 Removed/Deprecated:
 - gallery/community 유입과 일반 shared 링크를 같은 viewer profile로만 확인하던 QA 방식.
+
+## 2026-04-21 변경 동기화 (Editor Walk/Top QA Fixes)
+Added:
+- editor header에서 프로젝트 이름을 직접 입력한 뒤 저장/새로고침/재진입 후에도 같은 이름이 유지되는지 확인하는 QA 항목을 추가했다.
+- shared viewer top-view에서 drag orbit으로 360도 회전과 zoom이 되는지, walk-view 전환도 계속 가능한지 확인하는 QA 항목을 추가했다.
+- desk precision에서 선택 자산과 desk support asset이 proxy/cluster로 뭉개지지 않고 full-detail로 보이는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- walk-view QA 기준을 “진입 가능한지”에서 “room shell texture failure가 있어도 fallback으로 floor/wall이 보여 검정 화면이 남지 않는지”까지 확장한다.
+- top-view QA 기준을 “flat shell이 보이는지”에서 “textured floor와 상향된 가독성으로 회전 변화가 식별되는지”까지 확장한다.
+
+Removed/Deprecated:
+- 프로젝트 이름은 builder에서만 정하고 editor에서는 바꿀 수 없다는 QA 가정.

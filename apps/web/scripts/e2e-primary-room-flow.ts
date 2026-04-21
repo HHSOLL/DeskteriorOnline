@@ -132,7 +132,7 @@ async function checkRoute(baseUrl: URL, route: string): Promise<RouteResult> {
   try {
     const response = await fetch(target.toString(), {
       headers: {
-        "user-agent": "plan2space-room-first-e2e/1.0"
+        "user-agent": "deskterioronline-room-first-e2e/1.0"
       },
       redirect: "manual"
     });
@@ -156,7 +156,7 @@ async function checkRoute(baseUrl: URL, route: string): Promise<RouteResult> {
 async function pageContains(baseUrl: URL, route: string, pattern: string, attempts = 10) {
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     const response = await fetch(new URL(route, baseUrl), {
-      headers: { "user-agent": "plan2space-room-first-e2e/1.0" }
+      headers: { "user-agent": "deskterioronline-room-first-e2e/1.0" }
     });
 
     const text = await response.text();

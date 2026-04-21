@@ -1,6 +1,6 @@
 ---
-name: plan2space-studio-ux
-description: Studio UX and visual design guidance for plan2space, including loading/landing sequences, 3D popups, top-view layout, walk mode controls, and rendering polish. Use for UI/UX tasks, R3F interaction design, or visual styling changes.
+name: deskterioronline-studio-ux
+description: Studio UX and visual design guidance for deskterioronline, including loading/landing sequences, 3D popups, top-view layout, walk mode controls, and rendering polish. Use for UI/UX tasks, R3F interaction design, or visual styling changes.
 ---
 
 # Plan2space Studio UX

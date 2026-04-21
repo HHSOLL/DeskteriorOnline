@@ -64,7 +64,7 @@ const payload = {
         id: "desk-oak",
         name: "Oak Desk",
         category: "Tables",
-        brand: "Plan2Space",
+        brand: "DeskteriorOnline",
         price: "₩420,000",
         options: "1400 x 700",
         externalUrl: "https://example.com/desk",
@@ -79,14 +79,14 @@ const payload = {
         detailNotes: "Rounded front edge",
         scaleLocked: true,
         source: {
-          kind: "plan2space_blender",
-          name: "Plan2Space Blender Deskterior",
+          kind: "deskterioronline_blender",
+          name: "DeskteriorOnline Blender Deskterior",
           path: "assets/blender/deskterior/p2s_desk_oak.blend",
           url: null
         },
         license: {
-          spdx: "LicenseRef-Plan2Space-Internal",
-          label: "Plan2Space Internal Catalog",
+          spdx: "LicenseRef-DeskteriorOnline-Internal",
+          label: "DeskteriorOnline Internal Catalog",
           requiresAttribution: false
         },
         pivot: {
@@ -125,7 +125,7 @@ const payload = {
         id: "desk-lamp-glow",
         name: "Desk Lamp Glow",
         category: "Lighting",
-        brand: "Plan2Space",
+        brand: "DeskteriorOnline",
         price: "₩98,000",
         options: "Warm light",
         externalUrl: "https://example.com/lamp",
@@ -140,14 +140,14 @@ const payload = {
         detailNotes: "Emitter head with soft glow",
         scaleLocked: true,
         source: {
-          kind: "plan2space_blender",
-          name: "Plan2Space Blender Deskterior",
+          kind: "deskterioronline_blender",
+          name: "DeskteriorOnline Blender Deskterior",
           path: "assets/blender/deskterior/p2s_desk_lamp_glow.blend",
           url: null
         },
         license: {
-          spdx: "LicenseRef-Plan2Space-Internal",
-          label: "Plan2Space Internal Catalog",
+          spdx: "LicenseRef-DeskteriorOnline-Internal",
+          label: "DeskteriorOnline Internal Catalog",
           requiresAttribution: false
         },
         pivot: {
@@ -219,8 +219,8 @@ try {
     `lamp dimensions mismatch: ${JSON.stringify(lampAsset.product?.dimensionsMm)}`
   );
   assert(lampAsset.product?.scaleLocked === true, "lamp scaleLocked flag missing");
-  assert(lampAsset.product?.source?.kind === "plan2space_blender", "lamp source metadata missing");
-  assert(lampAsset.product?.license?.spdx === "LicenseRef-Plan2Space-Internal", "lamp license metadata missing");
+  assert(lampAsset.product?.source?.kind === "deskterioronline_blender", "lamp source metadata missing");
+  assert(lampAsset.product?.license?.spdx === "LicenseRef-DeskteriorOnline-Internal", "lamp license metadata missing");
   assert(lampAsset.product?.pivot?.y === "floor", "lamp pivot metadata missing");
   assert(lampAsset.product?.collisionProxy?.kind === "box", "lamp collision proxy metadata missing");
   assert(lampAsset.product?.textureSet?.workflow === "pbr_metallic_roughness", "lamp textureSet metadata missing");

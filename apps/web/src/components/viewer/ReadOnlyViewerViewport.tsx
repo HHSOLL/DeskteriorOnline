@@ -25,7 +25,7 @@ export function ReadOnlyViewerViewport({
 
   const triggerZoomControl = (direction: "in" | "out") => {
     if (typeof window === "undefined") return;
-    window.dispatchEvent(new CustomEvent("plan2space:zoom", { detail: { direction } }));
+    window.dispatchEvent(new CustomEvent("deskterioronline:zoom", { detail: { direction } }));
   };
 
   return (

@@ -1,4 +1,4 @@
--- Plan2Space v4 foundation: intake sessions, unified revisions, provenance links
+-- DeskteriorOnline v4 foundation: intake sessions, unified revisions, provenance links
 
 create table if not exists public.intake_sessions (
   id uuid primary key default gen_random_uuid(),
