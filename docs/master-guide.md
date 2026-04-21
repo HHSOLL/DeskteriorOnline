@@ -18,6 +18,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - 홈/선택/빌더는 공통 상단 bar에서 좌측 브랜드와 우측 로그인/로그아웃 affordance를 유지한다.
 - Google/Kakao OAuth는 브라우저 직접 `signInWithOAuth`가 아니라 `/auth/signin` 서버 시작 라우트와 `/auth/callback` 서버 교환 라우트의 2단계 흐름을 사용한다.
 - production build가 deployment-specific Vercel URL에서 열리면 OAuth 전에 canonical alias(`plan2space.vercel.app`)로 정규화해 PKCE cookie host와 Supabase callback host를 일치시킨다.
+- preview에서 Google/Kakao OAuth를 테스트해야 하는 경우 Vercel Deployment Protection의 Vercel Authentication을 preview/deployment URL에 적용하지 않는다. 이 보호 계층은 앱 라우트보다 먼저 요청을 가로채므로 preview `/auth/signin`·`/auth/callback`의 PKCE 쿠키 연속성을 깨뜨릴 수 있다.
 - 레이아웃 기본은 `상단 app bar + 좌측 rail + 중앙 grey viewport + 하단 pill toolbar`다.
 - 좌측 rail 폭은 360~380px(기본 368px)로 고정한다.
 - 뷰어는 읽기 전용이며 편집 affordance를 노출하지 않는다.

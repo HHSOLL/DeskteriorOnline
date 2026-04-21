@@ -17,6 +17,7 @@
 - Vercel Preview/Production의 `SUPABASE_SERVICE_ROLE_KEY`, `RAILWAY_API_URL`는 `Sensitive`로 저장한다.
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`는 legacy JWT `anon` 대신 `sb_publishable_...`를 사용한다.
 - 변수 이름 `SUPABASE_SERVICE_ROLE_KEY`는 유지하지만 실제 값은 legacy JWT `service_role`가 아니라 `sb_secret_...`여야 한다.
+- Preview에서 OAuth를 직접 검증하려면 Vercel Project Settings → Deployment Protection의 `Vercel Authentication`을 preview/deployment URL에 걸지 않는다. 보호가 켜져 있으면 preview `/auth/signin`과 `/auth/callback`이 Vercel 앞단에서 먼저 차단돼 PKCE 오류가 재발할 수 있다.
 
 권장:
 - `PROJECT_MEDIA_BUCKET`
