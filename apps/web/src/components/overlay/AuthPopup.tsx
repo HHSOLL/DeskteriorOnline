@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import { useEffect, useId } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "../../lib/stores/useAuthStore";
 import { buildBrowserAuthRedirectUrl } from "../../lib/auth/browser-origin";
 import { toast } from "sonner";
@@ -16,8 +16,6 @@ interface AuthPopupProps {
 export function AuthPopup({ isOpen, onClose, nextPath }: AuthPopupProps) {
     const { loginWithProvider, isLoading, error, notice, session } = useAuthStore();
     const isAuthenticated = Boolean(session?.user);
-    const titleId = useId();
-    const descriptionId = useId();
 
     useEffect(() => {
         if (!isOpen || !isAuthenticated) return;
@@ -84,61 +82,65 @@ export function AuthPopup({ isOpen, onClose, nextPath }: AuthPopupProps) {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-white/40 backdrop-blur-md">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(247,243,236,0.52)] p-6 backdrop-blur-xl">
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
+                        initial={{ opacity: 0, y: 18, scale: 0.985 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 12, scale: 0.985 }}
                         role="dialog"
                         aria-modal="true"
-                        aria-labelledby={titleId}
-                        aria-describedby={descriptionId}
-                        className="relative w-full max-w-md bg-white p-12 rounded-sm border border-[#e5e5e0] shadow-2xl"
+                        aria-label="로그인"
+                        className="relative w-full max-w-[420px] overflow-hidden rounded-[32px] border border-stone-200/85 bg-[linear-gradient(180deg,rgba(255,255,255,0.97),rgba(252,249,244,0.94))] p-6 shadow-[0_40px_120px_-50px_rgba(15,23,42,0.4)]"
                     >
-                        {/* Close Button */}
                         <button
                             onClick={onClose}
                             type="button"
                             aria-label="Close authentication dialog"
-                            className="absolute top-10 right-10 p-3 rounded-full hover:bg-black/5 transition-colors z-10"
+                            className="absolute right-5 top-5 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-stone-200/80 bg-white/80 text-stone-500 transition-all duration-300 hover:border-stone-300 hover:text-stone-900"
                         >
-                            <X className="w-5 h-5 text-[#999999]" />
+                            <X className="h-5 w-5" />
                         </button>
 
-                        {/* Content */}
-                        <div className="space-y-10">
-                            <div className="space-y-4">
-                                <h2 id={titleId} className="text-4xl font-light text-black">Access Studio</h2>
-                                <p id={descriptionId} className="text-[10px] text-[#999999] font-bold uppercase tracking-widest leading-relaxed">
-                                    Continue with Google or Kakao to enter the studio.
-                                </p>
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between gap-4 pr-12">
+                                <div className="space-y-2">
+                                    <div className="text-[11px] font-semibold uppercase tracking-[0.34em] text-stone-500">
+                                        DeskteriorOnline
+                                    </div>
+                                    <p className="text-sm leading-relaxed text-stone-600">
+                                        소셜 계정으로 바로 시작하세요.
+                                    </p>
+                                </div>
+                                {isLoading ? (
+                                    <span className="inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-stone-200/80 bg-white/80 px-3 text-[11px] font-semibold uppercase tracking-[0.24em] text-stone-500">
+                                        ...
+                                    </span>
+                                ) : null}
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-3">
                                 <button
                                     type="button"
                                     disabled={isLoading}
                                     onClick={() => handleSocialLogin("google")}
-                                    className="w-full flex items-center justify-center gap-3 py-5 border border-[#1a1a1a] text-[#1a1a1a] font-bold text-[10px] uppercase tracking-[0.4em] hover:bg-[#1a1a1a] hover:text-white transition-all disabled:opacity-50"
+                                    className="flex w-full items-center justify-center gap-3 rounded-[22px] border border-stone-300/90 bg-white px-5 py-4 text-sm font-semibold text-stone-900 transition-all duration-300 hover:border-stone-900 hover:bg-stone-950 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <GoogleIcon />
-                                    Continue with Google
+                                    구글로 계속하기
                                 </button>
                                 <button
                                     type="button"
                                     disabled={isLoading}
                                     onClick={() => handleSocialLogin("kakao")}
-                                    className="w-full flex items-center justify-center gap-3 py-5 bg-[#FEE500] text-[#191919] font-bold text-[10px] uppercase tracking-[0.4em] hover:bg-[#F7D200] transition-all disabled:opacity-50"
+                                    className="flex w-full items-center justify-center gap-3 rounded-[22px] bg-[#FEE500] px-5 py-4 text-sm font-semibold text-[#191919] transition-all duration-300 hover:bg-[#f6d900] disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <KakaoIcon />
                                     카카오로 계속하기
                                 </button>
                             </div>
 
-                            <div className="pt-4 text-center">
-                                <button type="button" className="text-[9px] uppercase tracking-[0.3em] text-[#999999] hover:text-black transition-colors font-bold">
-                                    Social login only (Google / Kakao)
-                                </button>
+                            <div className="rounded-[24px] border border-stone-200/70 bg-white/55 px-4 py-3 text-center text-[11px] leading-relaxed text-stone-500">
+                                Google · Kakao 소셜 로그인만 지원합니다.
                             </div>
                         </div>
                     </motion.div>
