@@ -9,7 +9,11 @@ import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
 import { normalizeSceneAnchorType } from "../../../lib/scene/anchor-types";
 import { groupAssetsForInstancing } from "../../../lib/scene/asset-instancing";
-import { resolveAssetLodPlan, type AssetLodPlan } from "../../../lib/scene/asset-lod";
+import {
+  resolveAssetLodComplexity,
+  resolveAssetLodPlan,
+  type AssetLodPlan
+} from "../../../lib/scene/asset-lod";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
@@ -768,18 +772,36 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     rotation: [number, number, number];
   } | null>(null);
   const isSelected = selectedAssetId === asset.id;
+  const selectedSupportAssetId = useMemo(
+    () => sceneAssets.find((candidate) => candidate.id === selectedAssetId)?.supportAssetId ?? null,
+    [sceneAssets, selectedAssetId]
+  );
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
   );
   const lodPlan = useMemo(
-    () =>
-      resolveAssetLodPlan({
+    () => {
+      const preserveFullDetail =
+        viewMode === "top" &&
+        topMode === "desk-precision" &&
+        (selectedAssetId === asset.id || selectedSupportAssetId === asset.id);
+
+      if (preserveFullDetail) {
+        return {
+          complexity: resolveAssetLodComplexity(asset.product?.lodProfile ?? null),
+          useProxyBox: false,
+          lowDetailDistance: null
+        } satisfies AssetLodPlan;
+      }
+
+      return resolveAssetLodPlan({
         asset,
         viewMode,
         topMode
-      }),
-    [asset, topMode, viewMode]
+      });
+    },
+    [asset, selectedAssetId, selectedSupportAssetId, topMode, viewMode]
   );
   const lightProfile = useMemo(
     () => (enableDynamicLight ? resolveAssetLightProfile(asset) : null),
@@ -995,6 +1017,17 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
     }
     return ids;
   }, [allowDynamicLights, assets]);
+  const pinnedAssetIds = useMemo(() => {
+    const ids = new Set<string>();
+    if (selectedAssetId) {
+      ids.add(selectedAssetId);
+      const selectedAsset = assets.find((asset) => asset.id === selectedAssetId);
+      if (viewMode === "top" && topMode === "desk-precision" && selectedAsset?.supportAssetId) {
+        ids.add(selectedAsset.supportAssetId);
+      }
+    }
+    return ids;
+  }, [assets, selectedAssetId, topMode, viewMode]);
   const instancingClusters = useMemo(
     () =>
       groupAssetsForInstancing({
@@ -1004,9 +1037,10 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
         readOnly,
         isTransforming,
         selectedAssetId,
+        pinnedAssetIds,
         emitterAssetIds
       }),
-    [assets, emitterAssetIds, isTransforming, readOnly, selectedAssetId, topMode, viewMode]
+    [assets, emitterAssetIds, isTransforming, pinnedAssetIds, readOnly, selectedAssetId, topMode, viewMode]
   );
   const instancedAssetIds = useMemo(() => {
     const ids = new Set<string>();

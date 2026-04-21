@@ -109,9 +109,11 @@ function WallMesh({
 }
 
 function TopWallFootprint({
-  wallId
+  wallId,
+  color
 }: {
   wallId: string;
+  color: string;
 }) {
   const walls = useShellSelector((slice) => slice.walls);
   const floors = useShellSelector((slice) => slice.floors);
@@ -148,7 +150,7 @@ function TopWallFootprint({
       castShadow={false}
     >
       <boxGeometry args={[strip.length, 0.036, strip.thickness]} />
-      <meshStandardMaterial color="#cfc9c1" roughness={0.97} metalness={0.02} />
+      <meshStandardMaterial color={color} roughness={0.94} metalness={0.02} />
     </mesh>
   );
 }
@@ -224,12 +226,14 @@ export default function ProceduralWall() {
   const viewMode = useEditorStore((state) => state.viewMode);
   const wallMaterialIndex = useShellSelector((slice) => slice.wallMaterialIndex);
   const walls = useShellSelector((slice) => slice.walls);
+  const topWallColor =
+    WALL_TEXTURE_PRESETS[wallMaterialIndex % WALL_TEXTURE_PRESETS.length]?.topColor ?? "#cfc9c1";
 
   if (viewMode === "top") {
     return (
       <group>
         {walls.map((wall) => (
-          <TopWallFootprint key={wall.id} wallId={wall.id} />
+          <TopWallFootprint key={wall.id} wallId={wall.id} color={topWallColor} />
         ))}
       </group>
     );

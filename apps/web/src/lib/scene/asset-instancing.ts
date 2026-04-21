@@ -74,6 +74,7 @@ type GroupAssetsForInstancingInput = {
   readOnly: boolean;
   isTransforming: boolean;
   selectedAssetId: string | null;
+  pinnedAssetIds?: Set<string>;
   emitterAssetIds: Set<string>;
 };
 
@@ -84,12 +85,17 @@ export function groupAssetsForInstancing({
   readOnly,
   isTransforming,
   selectedAssetId,
+  pinnedAssetIds,
   emitterAssetIds
 }: GroupAssetsForInstancingInput): AssetInstancingCluster[] {
   const byKey = new Map<string, SceneAsset[]>();
 
   for (const asset of assets) {
     if (asset.assetId.startsWith("placeholder:")) {
+      continue;
+    }
+
+    if (pinnedAssetIds?.has(asset.id)) {
       continue;
     }
 
