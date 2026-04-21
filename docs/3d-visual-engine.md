@@ -4,7 +4,8 @@
 
 ## 렌더링 기본 설정
 `apps/web/src/components/editor/SceneViewport.tsx`
-- ToneMapping: `ACESFilmicToneMapping`
+- ToneMapping: `room mode` / `viewer-shared` / 기본 walk-viewer는 `ACESFilmicToneMapping`, `desk precision` / `builder-preview` / `viewer-showcase`는 `NeutralToneMapping`
+- `toneMappingExposure`는 `resolveSceneRenderQuality`가 모드/디바이스별로 관리하고, `SceneViewport` prop override는 예외적인 수동 보정에만 사용한다.
 - `physicallyCorrectLights = true`
 - `outputColorSpace = SRGB`
 - Shadow: `PCFSoftShadowMap`
@@ -27,6 +28,8 @@
 - 색상 텍스처는 SRGB, roughness/normal은 Linear
 - top-view는 floor/wall full PBR texture load를 지연하고, flat material/footprint strip으로 먼저 렌더한다.
 - builder-preview/walk만 active finish texture set을 1종씩 로드한다. 선택되지 않은 texture set preload를 기본값으로 두지 않는다.
+- GLB runtime loader는 `KTX2Loader`를 기본 연결하고, basis transcoder는 `/assets/transcoders/basis/` 또는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`에서 읽는다.
+- room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 없으면 JPG/PNG 원본으로 fallback 한다.
 - 알려진 Blender 슬롯(`DeskWood`, `DeskMetal`, `StandWood`, `StandPad`, `LampBody`, `LampAccent`, `LampBulb`)은 slot-aware finish를 우선 적용한다.
 
 ## 카메라/모드
@@ -40,7 +43,15 @@
 - preview orbit은 wheel zoom과 drag rotation을 기본 제스처로 제공하고 pan은 보조 동작으로 제한하거나 비활성화한다.
 - editor top-view는 orthographic top camera를 방 중심에 고정하고 좌/우 회전 버튼 + zoom만 허용하며 pan은 금지한다.
 - editor top-view의 room shell은 floor 위 footprint strip으로 읽혀야 하고, walk/builder-preview에서만 full-height wall mesh를 사용한다.
+- desk precision mode는 선택 제품의 위치/회전 값을 `mm/deg` measurement overlay로 함께 노출해 미세 배치 확인을 보조한다.
+- desk precision mode는 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 surface lock 상태로 함께 노출한다.
+- desk precision mode는 support surface 내부 상대 위치를 보여주는 surface-local micro-view를 inspector/overlay에 함께 노출한다.
+- desk precision mode는 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector/overlay에 함께 노출해 projected span과 vertical reach를 동시에 확인할 수 있어야 한다.
+- desk precision mode는 support surface 위 제품 footprint, projected footprint, edge clearance, relative yaw를 함께 노출해 usable area 침범 여부를 즉시 판단할 수 있어야 한다.
 - walk view 진입 시 기본 시선은 room center/entrance target을 향해야 한다.
+- room mode, desk precision mode, builder preview는 idle 상태에서 `frameloop="demand"`를 기본으로 사용하고, camera zoom/rotate, hover highlight, direct drag, gizmo transform에서만 `invalidate()`를 호출한다.
+- deskterior 자산은 `lodProfile.maxDrawCalls/maxTriangleCount` 기준으로 complexity를 나누고, room mode는 더 이른 box proxy fallback, desk precision/walk는 더 늦은 fallback을 사용한다.
+- read-only top/walk와 builder preview, 그리고 editor `desk precision` top-view에서는 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶어 draw call을 줄이고, selected/direct-drag 경로는 개별 오브젝트를 유지한다.
 
 ## 뷰어 규칙
 - `apps/web/src/components/viewer/ReadOnlySceneViewport.tsx`
@@ -57,12 +68,36 @@
 - 에디터 대비 뷰어 interaction tree 경량화 유지
 - top-view/editor precision 모드는 physics simulation, SSAO, contact shadow를 기본 비활성으로 두고 낮은 DPR/그림자 예산을 사용한다.
 - builder preview는 walk/viewer보다 가벼운 품질 프로필을 사용하고, walk/viewer만 shadow + post FX를 보수적으로 유지한다.
+- builder preview와 `viewer-shared`는 fill directional light를 기본으로 올리지 않고, constrained profile에서는 directional shadow와 bloom을 먼저 제거한다.
+- `viewer-shared`는 subtle vignette/noise까지만 허용하고, bloom은 `desk precision` 또는 richer walk/showcase preset에서만 선택적으로 사용한다.
+- `editor walk`와 `viewer-showcase`는 non-constrained profile에서만 보수적 SSR을 사용할 수 있고, `viewer-shared`, top-view, builder preview는 SSR을 올리지 않는다.
 - 가구 drag는 local preview 후 pointer-up 시점에 store commit을 우선 적용해 전역 scene 재직렬화를 매 pointer move마다 유발하지 않는다.
+- loaded GLB 자산의 hover/select raycast는 `three-mesh-bvh` bounds tree를 우선 사용해 작은 desk asset 다수 배치 시 raycast 비용을 낮춘다.
+- loaded GLB 자산의 large non-interleaved geometry는 BVH 생성 자체를 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync 경로를 유지한다.
+- KTX2 encoder(`toktx`)가 없는 환경에서도 runtime decode path와 public transcoder sync는 유지해야 한다.
+- `verify:asset-instancing`는 read-only top/walk + builder preview + editor `desk precision` + editor `room mode` idle instancing eligibility와 cluster grouping 정책을 회귀 검증해야 한다.
+- native gltfpack output을 사용할 때는 `-kn -km -ke` 보존 플래그 기준을 유지해 slot-aware finish와 named node/material 기반 런타임 가정이 깨지지 않게 해야 한다.
+
+## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing Phase 1)
+Added:
+- editor `room mode` top-view에서도 반복된 `single_mesh` low/medium complexity 자산을 idle 상태에 한해 instanced cluster로 유지하는 기준을 추가했다.
+- instanced cluster 위를 직접 눌렀을 때 선택 자산만 live update로 움직이고, pointer-up 이후에만 개별 오브젝트 경로로 빠지는 direct-drag handoff 기준을 추가했다.
+
+Updated:
+- instancing 적용 범위를 `read-only top/walk + builder preview + editor desk precision`에서 `read-only top/walk + builder preview + editor desk precision + editor room mode idle`까지 확장한다.
+
+Removed/Deprecated:
+- room mode direct-drag 때문에 editor room top은 instancing을 전혀 사용할 수 없다는 가정.
 
 ## Scene 데이터 소비 규칙
 - `apps/web/src/lib/domain/scene-document.ts`를 scene 복원의 canonical 매핑 계층으로 사용
 - scene 저장/복원은 `project_versions.customization.sceneDocument`를 우선 source로 사용
+- 저장 경계에서는 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, renderer/store는 meter float 파생값만 소비한다.
 - 제품 물리 메타데이터(`dimensionsMm`, `finishColor`, `finishMaterial`, `detailNotes`, `scaleLocked`)를 누락 없이 전달한다.
+- curated deskterior 자산은 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 product metadata와 함께 save/load/public payload roundtrip에서 유지한다.
+- `verify:scene-document`는 save payload -> sceneDocument -> parse/load roundtrip에서 placement/support metadata/product metadata가 유지되는지 점검한다.
+- `verify:public-scene`는 shared_projects + pinned version + preview meta에서 shared viewer payload가 같은 placement/support/product metadata를 재현하는지 점검한다.
+- `verify:showcase-scene`는 gallery/community 카드 projection이 shared viewer public payload와 같은 version/preview asset summary를 유지하는지 점검한다.
 
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.
@@ -163,6 +198,257 @@ Updated:
 Removed/Deprecated:
 - editor/viewer/builder가 동일한 post FX, shadow, physics 비용을 항상 부담해야 한다는 가정.
 
+## 2026-04-19 변경 동기화 (Top-View Interaction Policy Split)
+Added:
+- room mode는 제품 본체 direct drag + 250mm snap을, desk precision mode는 transform gizmo + 25mm / 15도 snap을 기본 편집 규칙으로 추가한다.
+- desk precision mode는 local transform space를 기본값으로 사용하고, room mode는 world space coarse layout을 기본값으로 사용한다.
+
+Updated:
+- 상단뷰 카메라 회전 버튼은 단일 90도 고정에서 모드별 회전 단계(room 90도, desk precision 15도)로 갱신한다.
+- 상단뷰 zoom 기본값은 room shell framing 우선에서 `room layout`과 `desk surface inspection` 목적에 맞게 모드별로 재설정한다.
+
+Removed/Deprecated:
+- 상단뷰 편집에서 direct drag와 transform gizmo를 같은 picking 정책으로 항상 동시에 활성화하는 가정.
+
+## 2026-04-19 변경 동기화 (Mode-Aware Top Render Ladder)
+Added:
+- desk precision mode에서만 capped dynamic light와 저비용 post FX(bloom/vignette/noise) 사용 기준을 추가한다.
+
+Updated:
+- top-view 품질 기준을 단일 경량 preset에서 `room mode=lean top entry`, `desk precision mode=inspection-oriented top entry`로 분리한다.
+- room mode DPR 상한은 더 보수적으로 유지하고, desk precision mode는 근접 배치 확인을 위해 더 높은 DPR 상한을 허용하도록 갱신한다.
+
+Removed/Deprecated:
+- room mode와 desk precision mode가 같은 DPR/post FX/light budget을 공유한다는 가정.
+
+## 2026-04-19 변경 동기화 (Viewer Preset Split)
+Added:
+- read-only shared viewer 전용 `viewer-shared` 품질 슬롯과, 추후 desk showcase용 `viewer-showcase` 품질 슬롯을 구분하는 기준을 추가한다.
+
+Updated:
+- shared viewer는 hotspot drawer 중심 읽기 전용 경험에 맞춰 더 낮은 DPR/보수적 shadow-contact shadow/post FX 예산을 사용하도록 갱신한다.
+- generic showcase viewer는 shared viewer보다 풍부한 조명/후처리 여지를 갖는 preset으로 정의한다.
+
+Removed/Deprecated:
+- 모든 viewer 경로가 동일한 walk/top 품질 preset을 공유한다는 가정.
+
+## 2026-04-19 변경 동기화 (Shared Viewer Runtime Lightweight Pass)
+Added:
+- shared viewer는 기본 선택 상태 없이 시작하고, hotspot/list 선택 시에만 상세 패널이 활성화되는 기준을 추가한다.
+
+Updated:
+- shared viewer HUD를 crosshair 제거 + walk touch HUD 유지 구조로 단순화한다.
+
+Removed/Deprecated:
+- shared viewer가 editor와 같은 crosshair 시각 피드백을 기본으로 유지한다는 가정.
+
+## 2026-04-19 변경 동기화 (Render Cost Reallocation)
+Added:
+- builder preview와 `viewer-shared`는 secondary fill light 없이 기본 light rig를 구성하고, constrained profile에서는 directional shadow와 bloom을 먼저 제거하는 기준을 추가한다.
+
+Updated:
+- post FX 기준을 단순 on/off에서 `shared viewer=subtle vignette/noise`, `desk precision=selective bloom`, `walk/showcase=full bloom/vignette/noise + optional SSAO`로 세분화한다.
+
+Removed/Deprecated:
+- shared viewer와 builder preview가 full walk/showcase와 같은 fill-light/bloom/shadow pass를 기본으로 유지한다는 가정.
+
+## 2026-04-19 변경 동기화 (Desk Precision Measurements)
+Added:
+- desk precision mode에서 선택 자산의 위치/회전을 `mm/deg` overlay로 표시하는 품질 기준을 추가한다.
+
+Updated:
+- 정밀 편집 inspector 입력 기준을 meter/radian이 아니라 `mm/deg` 사용자 단위 기준으로 갱신한다.
+
+Removed/Deprecated:
+- 정밀 편집 inspector가 내부 renderer 단위를 그대로 보여주는 가정.
+
+## 2026-04-19 변경 동기화 (Desk Precision Surface Lock)
+Added:
+- desk precision mode에서 surface anchor 제품의 support surface lock 상태를 inspector/overlay에서 확인하는 상호작용 품질 기준을 추가한다.
+
+Updated:
+- 정밀 배치 확인 범위를 위치/회전 수치 외에 support surface size / margin / top 높이까지 확장한다.
+
+Removed/Deprecated:
+- support surface lock 상태를 사용자가 눈대중으로만 확인해도 충분하다는 가정.
+
+## 2026-04-19 변경 동기화 (Desk Precision Micro View)
+Added:
+- desk precision mode에서 support surface 내부 상대 위치를 확인하는 micro-view 시각화 기준을 추가한다.
+
+Updated:
+- 정밀 배치 확인 범위를 위치/회전 수치와 surface lock 정보 외에 surface-local position 시각화까지 확장한다.
+
+Removed/Deprecated:
+- support-local 위치를 숫자만으로 확인해도 충분하다는 가정.
+
+## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop)
+Added:
+- `KTX2Loader` + local basis transcoder sync 기준을 runtime texture decode 품질 항목에 추가했다.
+- room/desk top-view와 builder preview의 demand frameloop + explicit invalidation 규칙을 렌더 품질 기준에 추가했다.
+
+Updated:
+- 렌더 기본 비용 절감 기준을 DPR/post FX/light budget뿐 아니라 frame loop 정책까지 포함하도록 갱신했다.
+
+Removed/Deprecated:
+- top-view와 builder preview가 입력 유무와 관계없이 계속 frame을 그린다는 가정.
+
+## 2026-04-19 변경 동기화 (BVH Raycast Baseline)
+Added:
+- `useGLBAsset` 로드 경로에서 loaded scene geometry에 bounds tree를 생성하고, `THREE.Mesh.raycast`를 accelerated raycast로 교체하는 기준을 추가했다.
+
+Updated:
+- 정밀 편집 picking 성능 기준을 "telemetry로 지연 측정"뿐 아니라 "BVH-backed raycast 기본 사용"까지 포함하도록 확장한다.
+
+Removed/Deprecated:
+- desk precision picking이 raw triangle raycast 위에서만 동작한다는 가정.
+
+## 2026-04-20 변경 동기화 (BVH Worker Offload)
+Added:
+- large non-interleaved GLB geometry에 대해 bounds tree 생성을 Web Worker queue로 오프로딩하는 렌더 상호작용 기준을 추가했다.
+
+Updated:
+- `useGLBAsset` 품질 기준을 `BVH raycast 사용`에서 `BVH raycast + BVH generation offload`까지 확장한다.
+
+Removed/Deprecated:
+- dense geometry BVH 생성이 항상 main thread sync compute에만 의존한다는 가정.
+
+## 2026-04-19 변경 동기화 (SceneDocument Roundtrip Verify)
+Added:
+- sceneDocument roundtrip verify 스크립트가 placement/support/product metadata 재현성을 점검하는 품질 기준을 추가한다.
+
+Updated:
+- 저장/복원 품질 기준을 렌더 결과 확인뿐 아니라 sceneDocument parse/load 재현성 검증까지 포함하도록 확장한다.
+
+Removed/Deprecated:
+- sceneDocument roundtrip 회귀를 수동 뷰어 확인만으로 감지하던 기준.
+
+## 2026-04-19 변경 동기화 (Public Scene Payload Verify)
+Added:
+- public scene payload verify 스크립트가 shared viewer payload의 placement/support/product metadata 재현성을 점검하는 품질 기준을 추가한다.
+
+Updated:
+- 공유 경로 품질 기준을 shared viewer 렌더 결과 확인뿐 아니라 public payload 구성 검증까지 포함하도록 확장한다.
+
+Removed/Deprecated:
+- shared viewer payload 회귀를 수동 링크 열기만으로 감지하던 기준.
+
+## 2026-04-19 변경 동기화 (Showcase Scene Consistency Verify)
+Added:
+- showcase snapshot/card projection이 shared viewer public payload와 같은 version/preview asset summary를 유지하는지 점검하는 품질 기준을 추가한다.
+
+Updated:
+- Scene 데이터 소비 규칙을 `sceneDocument -> public payload -> showcase card projection` 검증 체인까지 포함하도록 확장한다.
+
+Removed/Deprecated:
+- gallery/community 카드가 shared viewer와 다른 preview version/asset summary를 참조해도 된다는 가정.
+
+## 2026-04-19 변경 동기화 (Desk Precision Extended Measurement)
+Added:
+- support surface 위 제품 footprint / projected footprint / edge clearance / relative yaw를 노출하는 측정 기준을 추가한다.
+
+Updated:
+- surface-local micro-view를 point marker 중심에서 `footprint + clearance` 확인 가능한 정밀 시각화로 확장한다.
+
+Removed/Deprecated:
+- support surface 위 제품이 usable area 안에 있는지 offset 숫자만으로 판단하던 기준.
+
+## 2026-04-20 변경 동기화 (Desk Precision Helper View)
+Added:
+- support surface 기준 front/side orthographic helper view와 `asset height / bottom gap / top reach` 측정 기준을 추가한다.
+
+Updated:
+- 정밀 배치 확인 범위를 top-down micro-view 단일 시점에서 `top-down + side/front section` 조합으로 확장한다.
+
+Removed/Deprecated:
+- support surface 위 제품의 수직 관계를 top height 숫자 하나로만 확인하던 기준.
+
+## 2026-04-20 변경 동기화 (Room Shell KTX2 Wiring)
+Added:
+- room shell floor/wall texture set의 `.ktx2` 우선 로드와 JPG/PNG fallback 품질 기준을 추가했다.
+- `textures:encode:room-shell:ktx2` / `textures:check:room-shell:ktx2`로 room shell KTX2 산출물 유무를 검증하는 운영 기준을 추가했다.
+
+Updated:
+- KTX2 준비 상태를 transcoder sync만이 아니라 room shell runtime wiring, encode/check 파이프라인, committed room shell `.ktx2` 산출물까지 포함하는 상태로 확장했다.
+
+Removed/Deprecated:
+- room shell texture KTX2 적용을 수동 파일 교체에만 의존하던 가정.
+
+## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement)
+Added:
+- curated deskterior manifest에 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 추가했다.
+- `verify:scene-document`, `verify:public-scene`가 위 계약을 포함한 product metadata roundtrip을 점검하는 기준을 추가했다.
+
+Updated:
+- scene data product metadata 기준을 실측/마감 중심에서 `실측/마감 + asset contract metadata`까지 확장했다.
+
+Removed/Deprecated:
+- save/load/public payload에서 source/license/pivot/collision/texture/lod 메타가 누락돼도 무방하다는 가정.
+
+## 2026-04-20 변경 동기화 (LOD Policy Operationalization)
+Added:
+- `lodProfile`를 room mode / desk precision / walk / builder preview 런타임 LOD 거리 정책으로 실제 소비하는 기준을 추가했다.
+- `verify:asset-lod` 스크립트로 complexity별 proxy fallback 거리와 manual-lod bonus를 검증하는 품질 기준을 추가했다.
+
+Updated:
+- deskterior 런타임 LOD를 “모든 자산 공통 high + box proxy”에서 `lodProfile + 모드별 거리 정책` 기반으로 구체화했다.
+
+Removed/Deprecated:
+- `lodProfile`가 문서용 메타 필드에만 머물고 런타임은 고정 거리만 사용한다는 가정.
+
+## 2026-04-20 변경 동기화 (Scene Instancing Phase 1)
+Added:
+- read-only top/walk와 builder preview에서 반복된 `single_mesh` low/medium complexity 자산을 instanced cluster로 렌더링하는 품질 기준을 추가했다.
+- `verify:asset-instancing` 스크립트로 editable top mode 제외, selected 제외, dynamic light 제외, manual LOD 제외 정책을 검증하는 기준을 추가했다.
+
+Updated:
+- `instancing/LOD 운영화` 상태를 `LOD policy만 적용`에서 `LOD policy + non-editable repeated asset instancing`까지 확장했다.
+
+Removed/Deprecated:
+- read-only/builder 장면에서도 반복 자산을 항상 개별 mesh clone으로만 유지해야 한다는 가정.
+
+## 2026-04-20 변경 동기화 (Editor Desk Precision Instancing)
+Added:
+- editor `desk precision` top-view에서 반복된 `single_mesh` low/medium complexity 자산을 instanced cluster로 유지하는 기준을 추가했다.
+
+Updated:
+- instancing 적용 범위를 `read-only top/walk + builder preview`에서 `read-only top/walk + builder preview + editor desk precision`까지 확장한다.
+- selected 자산과 `room mode` direct-drag 경로는 계속 개별 오브젝트를 유지하도록 품질 기준을 구체화한다.
+
+Removed/Deprecated:
+- editor top-view 전체가 instancing에서 무조건 제외되어야 한다는 가정.
+
+## 2026-04-20 변경 동기화 (Native gltfpack Optional Chain)
+Added:
+- native gltfpack pass의 보수 플래그 기준(`-cc -mi -kn -km -ke`)을 asset optimization 품질 규칙에 추가했다.
+
+Updated:
+- 고급 자산 최적화 체인을 `glTF Transform only`에서 `glTF Transform baseline + optional native gltfpack pass` 구조로 확장했다.
+
+Removed/Deprecated:
+- native gltfpack 적용 시 named node/material/extras 보존을 별도 기준 없이 운에 맡기던 상태.
+
+## 2026-04-20 변경 동기화 (PBR Neutral Tone Mapping Phase 1)
+Added:
+- `SceneViewport` renderer 설정이 mode-aware tone mapping / exposure 값을 반영하도록 갱신했다.
+- `desk precision`, `builder preview`, `viewer-showcase`는 Neutral tone mapping, `room mode`, `viewer-shared`, 기본 walk viewer는 ACES tone mapping을 사용하도록 기준을 추가했다.
+
+Updated:
+- 렌더링 기본 설정을 단일 ACES 고정 설명에서 `mode-aware ACES/Neutral split + exposure ladder` 기준으로 갱신한다.
+
+Removed/Deprecated:
+- `SceneViewport`의 고정 exposure 기본값이 모드별 tone mapping/exposure ladder를 덮어쓰던 상태.
+
+## 2026-04-20 변경 동기화 (SSR Feasibility Phase 1)
+Added:
+- `editor walk`와 `viewer-showcase` 슬롯에만 보수적 SSR(intensity/maxRoughness/thickness 제한, temporal resolve on)을 연결하는 기준을 추가했다.
+
+Updated:
+- 실사 강화 2차 범위를 “tone mapping split only”에서 `tone mapping split + selective SSR feasibility`까지 확장한다.
+
+Removed/Deprecated:
+- SSR feasibility가 문서 계획에만 있고 실제 render ladder에는 전혀 연결되지 않은 상태.
+
 ## 2026-04-18 변경 동기화 (Opening Asset + Top-Entry Optimization)
 Added:
 - builder/editor opening render에 Blender 기반 경량 GLB(`single/double/french door`, `single/wide window`) 자산 사용 기준을 추가.
@@ -196,6 +482,27 @@ Added:
 
 Updated:
 - 오픈소스 자산 활용 기준을 generic import에서 “CC0 provenance + category/brand/externalUrl 보강”까지 확장.
+- deskterior optimize 기준을 단순 meshopt extension write에서 `glTF Transform dedup + prune + meshopt(reorder/quantize 포함)` 체인으로 구체화했다.
 
 Removed/Deprecated:
 - Blender source만 추가하고 runtime/export/metadata/verify는 수동으로 맞춘다는 운영 가정.
+
+## 2026-04-20 변경 동기화 (Showcase Viewer Presentation Phase 1)
+Added:
+- gallery/community 카드 진입은 `/shared/[token]?source=showcase`로 통일하고, 해당 경로에서만 `viewer-showcase` 품질 ladder를 실제 사용하도록 기준을 추가했다.
+
+Updated:
+- SSR / Neutral tone mapping / richer post FX가 적용되는 `viewer-showcase` 슬롯을 “잠재 프로파일”이 아니라 “showcase 진입 전용 shared viewer presentation”으로 구체화했다.
+
+Removed/Deprecated:
+- gallery/community 카드와 일반 shared 링크가 항상 같은 lean viewer profile만 사용해야 한다는 가정.
+
+## 2026-04-20 변경 동기화 (Showcase Polish Phase 2)
+Added:
+- `viewer-showcase`는 `viewer-shared`보다 tighter walk FOV, 살짝 더 공격적인 top zoom, warm rim + stronger fill light polish를 사용하는 기준을 추가했다.
+
+Updated:
+- showcase presentation 정의를 “render-quality preset 분리”에서 “camera framing + light rig까지 포함한 curated viewer presentation”으로 확장한다.
+
+Removed/Deprecated:
+- showcase/shared viewer가 같은 camera preset과 같은 light rig를 공유해야 한다는 가정.

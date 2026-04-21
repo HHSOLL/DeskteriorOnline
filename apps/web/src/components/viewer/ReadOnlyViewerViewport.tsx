@@ -1,16 +1,28 @@
 import { SceneViewport } from "../editor/SceneViewport";
+import type { SharedViewerPresentation } from "../../lib/viewer/presentation";
 
 type ReadOnlyViewerViewportProps = {
   viewMode: "top" | "walk";
   selectedLabel: string | null;
   showReadOnlyNotice: boolean;
+  presentation: SharedViewerPresentation;
 };
 
 export function ReadOnlyViewerViewport({
   viewMode,
   selectedLabel,
-  showReadOnlyNotice
+  showReadOnlyNotice,
+  presentation
 }: ReadOnlyViewerViewportProps) {
+  const isShowcasePresentation = presentation === "showcase";
+  const viewLabel = isShowcasePresentation
+    ? viewMode === "top"
+      ? "쇼케이스 상단뷰"
+      : "쇼케이스 워크뷰"
+    : viewMode === "top"
+      ? "읽기 전용 상단뷰"
+      : "읽기 전용 워크뷰";
+
   const triggerZoomControl = (direction: "in" | "out") => {
     if (typeof window === "undefined") return;
     window.dispatchEvent(new CustomEvent("plan2space:zoom", { detail: { direction } }));
@@ -21,7 +33,7 @@ export function ReadOnlyViewerViewport({
       <div className="relative overflow-hidden p2s-workspace-viewport">
         <div className="pointer-events-none absolute left-4 top-4 z-[24] flex flex-wrap items-center gap-2">
           <div className="rounded-full border border-black/10 bg-white/92 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#4e463d]">
-            {viewMode === "top" ? "읽기 전용 상단뷰" : "읽기 전용 워크뷰"}
+            {viewLabel}
           </div>
           <div className="rounded-full border border-black/10 bg-white/92 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7a7064]">
             {selectedLabel ? `${selectedLabel} 선택됨` : "선택된 제품 없음"}
@@ -53,10 +65,10 @@ export function ReadOnlyViewerViewport({
         <SceneViewport
           className="h-[72vh] rounded-none border-0 shadow-none sm:h-[78vh]"
           camera={{ fov: 45, position: [0, 8, 14] }}
-          toneMappingExposure={1.12}
           chromeTone="light"
-          interactionMode="viewer"
+          interactionMode={isShowcasePresentation ? "viewer-showcase" : "viewer-shared"}
           showHud={true}
+          hudProfile="shared-viewer"
         />
 
         {(showReadOnlyNotice || selectedLabel) ? (

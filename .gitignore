@@ -7,8 +7,10 @@ dist
 .DS_Store
 coverage
 .codex
+.tools
 apps/web/.cache
 apps/web/.vercel
+apps/web/public/assets/transcoders
 vercel-labs
 .vercel
 supabase/.temp

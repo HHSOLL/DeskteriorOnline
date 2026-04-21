@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 export type EditorViewMode = "top" | "walk" | "builder-preview";
+export type EditorTopMode = "room" | "desk-precision";
 export type TransformMode = "translate" | "rotate";
 export type TransformSpace = "world" | "local";
 
@@ -13,6 +14,7 @@ export type EditorShellPreset = "editor" | "viewer";
 
 type EditorShellState = {
   viewMode: EditorViewMode;
+  topMode: EditorTopMode;
   selectedId: string | null;
   panels: EditorPanels;
   transformMode: TransformMode;
@@ -27,6 +29,7 @@ type EditorShellOverrides = Partial<Omit<EditorShellState, "panels">> & {
 
 type EditorState = {
   viewMode: EditorViewMode;
+  topMode: EditorTopMode;
   selectedId: string | null;
   panels: EditorPanels;
   transformMode: TransformMode;
@@ -34,6 +37,7 @@ type EditorState = {
   isTransforming: boolean;
   readOnly: boolean;
   setViewMode: (mode: EditorViewMode) => void;
+  setTopMode: (mode: EditorTopMode) => void;
   setSelectedId: (id: string | null) => void;
   openPanel: (panel: keyof EditorPanels) => void;
   closePanel: (panel: keyof EditorPanels) => void;
@@ -52,6 +56,7 @@ type EditorState = {
 
 const editorShellDefaults: EditorShellState = {
   viewMode: "top",
+  topMode: "room",
   selectedId: null,
   panels: {
     properties: false,
@@ -85,6 +90,7 @@ function resolveShellState(
 export const useEditorStore = create<EditorState>((set) => ({
   ...editorShellDefaults,
   setViewMode: (mode) => set({ viewMode: mode }),
+  setTopMode: (mode) => set({ topMode: mode }),
   setSelectedId: (id) => set({ selectedId: id }),
   openPanel: (panel) =>
     set((state) => ({ panels: { ...state.panels, [panel]: true } })),

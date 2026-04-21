@@ -13,7 +13,7 @@ import {
   type ShowcaseFilters,
   type ShowcaseSnapshotItem
 } from "../../lib/api/showcase";
-import { fetchShowcaseSnapshotFeed } from "../../lib/server/showcase";
+import { fetchShowcaseArchiveSummary, fetchShowcaseSnapshotFeed } from "../../lib/server/showcase";
 
 export const revalidate = 0;
 
@@ -68,28 +68,32 @@ export default async function GalleryPage({ searchParams }: { searchParams?: Sho
   });
   const currentCursor = readSearchParam(searchParams?.cursor) ?? null;
   const totalHint = parseTotalHint(readSearchParam(searchParams?.total) ?? null);
+  const archiveSummary = await fetchShowcaseArchiveSummary(filters).catch(() => null);
+  const resolvedTotalHint = totalHint ?? archiveSummary?.matchingTotal ?? null;
 
   const {
     items: snapshots,
-    total: totalPublished,
+    total: feedTotal,
     nextCursor,
     hasMore,
     error: showcaseError
-  } = await fetchShowcaseArchivePage(currentCursor, totalHint, filters);
+  } = await fetchShowcaseArchivePage(currentCursor, resolvedTotalHint, filters);
 
   const activeFilterCount =
     Number(filters.room !== "all") + Number(filters.tone !== "all") + Number(filters.density !== "all");
   const loadedCount = snapshots.length;
-  const loadMoreHref = nextCursor ? buildPageHref("/gallery", filters, nextCursor, totalPublished) : null;
+  const matchingTotal = archiveSummary?.matchingTotal ?? feedTotal;
+  const archiveTotal = archiveSummary?.archiveTotal ?? matchingTotal;
+  const loadMoreHref = nextCursor ? buildPageHref("/gallery", filters, nextCursor, matchingTotal) : null;
   const statusLabel = showcaseError
     ? "목록을 확인할 수 없음"
     : activeFilterCount === 0
       ? hasMore
-        ? `현재 페이지 ${loadedCount}개 / 전체 ${totalPublished}개`
-        : `발행 장면 ${totalPublished}개`
+        ? `현재 페이지 ${loadedCount}개 / 전체 ${matchingTotal}개`
+        : `발행 장면 ${matchingTotal}개`
       : hasMore
-        ? `현재 조건 결과 ${loadedCount}개 / 전체 ${totalPublished}개`
-        : `조건 결과 ${loadedCount}개 / 전체 ${totalPublished}개`;
+        ? `현재 페이지 ${loadedCount}개 / 조건 전체 ${matchingTotal}개`
+        : `조건 결과 ${matchingTotal}개 / 공개 전체 ${archiveTotal}개`;
 
   return (
     <div className="min-h-screen bg-[#f6f5f1] px-4 pb-20 pt-10 text-[#171411] sm:px-6 lg:px-10">

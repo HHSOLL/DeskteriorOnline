@@ -3,10 +3,11 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
-import { RotateCcw, RotateCw } from "lucide-react";
+import { Crosshair, LayoutGrid, RotateCcw, RotateCw } from "lucide-react";
 import { BuilderLibraryShelf } from "../../../../components/editor/BuilderLibraryShelf";
 import {
   useEditorStore,
+  type EditorTopMode,
   type EditorViewMode
 } from "../../../../lib/stores/useEditorStore";
 import { useProjectStore } from "../../../../lib/stores/useProjectStore";
@@ -20,9 +21,11 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { BuilderInspectorPanel } from "../../../../components/editor/BuilderInspectorPanel";
 import { BuilderLaunchState } from "../../../../components/editor/BuilderLaunchState";
+import { PrecisionMeasurementOverlay } from "../../../../components/editor/PrecisionMeasurementOverlay";
 import { ProjectEditorViewport } from "../../../../components/editor/ProjectEditorViewport";
 import { ProjectEditorHeader } from "../../../../components/editor/ProjectEditorHeader";
 import { ShareModal } from "../../../../components/editor/ShareModal";
+import { StudioModeToggle } from "../../../../components/editor/StudioModeToggle";
 import { useAssetCatalog } from "../../../../components/editor/useAssetCatalog";
 import { useEditorSaveSession } from "../../../../components/editor/useEditorSaveSession";
 import "../../../../lib/polyfills/progress-event";
@@ -43,9 +46,14 @@ import {
   toSceneStorePatch,
   type SceneDocumentBootstrap
 } from "../../../../lib/domain/scene-document";
+import { resolveTopViewInteractionPolicy } from "../../../../lib/editor/top-view-policy";
 import { constrainPlacementToAnchor, inferAnchorTypeForCatalogItem } from "../../../../lib/scene/anchors";
 import { normalizeSceneAnchorType } from "../../../../lib/scene/anchor-types";
 import { getLightingPreset, type LightingPresetId } from "../../../../lib/scene/lighting-presets";
+import {
+  formatSupportSurfaceLabel,
+  resolveSupportSurfaceLock
+} from "../../../../lib/scene/support-profiles";
 
 const STARTER_SET_OFFSETS: Array<[number, number]> = [
   [-2.2, -1.2],
@@ -80,7 +88,9 @@ export default function ProjectEditorPage() {
   const projectId = params.id as string;
 
   const viewMode = useEditorStore((state) => state.viewMode);
+  const topMode = useEditorStore((state) => state.topMode);
   const setViewMode = useEditorStore((state) => state.setViewMode);
+  const setTopMode = useEditorStore((state) => state.setTopMode);
   const applyShellPreset = useEditorStore((state) => state.applyShellPreset);
   const panels = useEditorStore((state) => state.panels);
   const setPanels = useEditorStore((state) => state.setPanels);
@@ -119,6 +129,17 @@ export default function ProjectEditorPage() {
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isWebGPUReady, setIsWebGPUReady] = useState(false);
+  const topViewPolicy = useMemo(
+    () => resolveTopViewInteractionPolicy(topMode),
+    [topMode]
+  );
+  const topModeOptions = useMemo(
+    () => [
+      { id: "room", label: "룸 배치", icon: LayoutGrid },
+      { id: "desk-precision", label: "데스크 정밀", icon: Crosshair }
+    ],
+    []
+  );
   const {
     catalog: libraryCatalog,
     categories: libraryCategories,
@@ -279,6 +300,69 @@ export default function ProjectEditorPage() {
     () => (selectedAsset ? findCatalogItem(libraryCatalog, selectedAsset) : null),
     [libraryCatalog, selectedAsset]
   );
+  const selectedSupportAsset = useMemo(
+    () =>
+      selectedAsset?.supportAssetId
+        ? assets.find((asset) => asset.id === selectedAsset.supportAssetId) ?? null
+        : null,
+    [assets, selectedAsset]
+  );
+  const selectedSupportCatalogItem = useMemo(
+    () => (selectedSupportAsset ? findCatalogItem(libraryCatalog, selectedSupportAsset) : null),
+    [libraryCatalog, selectedSupportAsset]
+  );
+  const selectedMeasurementAsset = useMemo(() => {
+    if (!selectedAsset) {
+      return null;
+    }
+
+    return {
+      assetId: selectedAsset.assetId,
+      position: selectedAsset.position,
+      rotation: selectedAsset.rotation,
+      scale: selectedAsset.scale,
+      product: {
+        dimensionsMm: selectedAsset.product?.dimensionsMm ?? selectedCatalogItem?.dimensionsMm ?? null
+      }
+    };
+  }, [selectedAsset, selectedCatalogItem]);
+  const selectedSupportSurfaceLock = useMemo(
+    () =>
+      selectedAsset && selectedSupportAsset && selectedMeasurementAsset
+        ? resolveSupportSurfaceLock(
+            selectedAsset.anchorType,
+            selectedMeasurementAsset,
+            selectedSupportAsset
+          )
+        : null,
+    [selectedAsset, selectedMeasurementAsset, selectedSupportAsset]
+  );
+  const selectedSurfaceLockInfo = useMemo(() => {
+    if (!selectedSupportAsset || !selectedSupportSurfaceLock) {
+      return null;
+    }
+
+    return {
+      supportLabel:
+        selectedSupportAsset.product?.name ??
+        selectedSupportCatalogItem?.label ??
+        formatAssetIdLabel(selectedSupportAsset.assetId),
+      surfaceLabel: formatSupportSurfaceLabel(selectedSupportSurfaceLock.surface.id),
+      sizeMm: selectedSupportSurfaceLock.sizeMm,
+      usableSizeMm: selectedSupportSurfaceLock.usableSizeMm,
+      marginMm: selectedSupportSurfaceLock.marginMm,
+      localOffsetMm: selectedSupportSurfaceLock.localOffsetMm,
+      topMm: selectedSupportSurfaceLock.topMm,
+      assetHeightMm: selectedSupportSurfaceLock.assetHeightMm,
+      bottomOffsetMm: selectedSupportSurfaceLock.bottomOffsetMm,
+      topOffsetMm: selectedSupportSurfaceLock.topOffsetMm,
+      footprintMm: selectedSupportSurfaceLock.footprintMm,
+      projectedFootprintMm: selectedSupportSurfaceLock.projectedFootprintMm,
+      relativeYawDeg: selectedSupportSurfaceLock.relativeYawDeg,
+      clearanceMm: selectedSupportSurfaceLock.clearanceMm,
+      withinUsableBounds: selectedSupportSurfaceLock.withinUsableBounds
+    };
+  }, [selectedSupportAsset, selectedSupportCatalogItem, selectedSupportSurfaceLock]);
 
   const createAssetId = useCallback(
     () =>
@@ -490,6 +574,10 @@ export default function ProjectEditorPage() {
   const launchPreviewItems = featuredLibraryCatalog.slice(0, 3);
   const headerTitle = currentProject?.name || (isSceneVisible ? "공간 편집 중" : hasSceneGeometry ? "상단뷰 준비 완료" : "공간 껍데기 필요");
   const activePanel = panels.assets ? "assets" : panels.properties ? "properties" : null;
+  const topModeNotice =
+    topMode === "room"
+      ? "룸 배치 모드: 제품 본체를 직접 드래그해 큰 위치를 잡습니다. 250mm snap과 월드 기준 정렬만 유지합니다."
+      : "데스크 정밀 모드: surface/anchor 기준의 미세 배치를 위해 gizmo를 사용합니다. 25mm / 15도 snap이 적용됩니다.";
 
   const savePayload = useMemo(
     () => ({
@@ -590,6 +678,20 @@ export default function ProjectEditorPage() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [closePanels, isTopEditorVisible, panels.assets, panels.properties]);
+
+  useEffect(() => {
+    if (viewMode !== "top") return;
+    setIsTransforming(false);
+    setTransformMode(topViewPolicy.preferredTransformMode);
+    setTransformSpace(topViewPolicy.preferredTransformSpace);
+  }, [
+    setIsTransforming,
+    setTransformMode,
+    setTransformSpace,
+    topViewPolicy.preferredTransformMode,
+    topViewPolicy.preferredTransformSpace,
+    viewMode
+  ]);
 
   if (isInitialLoad) {
     return (
@@ -714,6 +816,7 @@ export default function ProjectEditorPage() {
                                   visible
                                   layout="inline"
                                   className="min-h-0"
+                                  topMode={topMode}
                                   transformMode={transformMode}
                                   transformSpace={transformSpace}
                                   wallMaterialIndex={wallMaterialIndex}
@@ -724,6 +827,7 @@ export default function ProjectEditorPage() {
                                   assetsCount={assets.length}
                                   selectedAsset={selectedAsset}
                                   selectedAssetMeta={selectedCatalogItem}
+                                  surfaceLockInfo={selectedSurfaceLockInfo}
                                   onTransformModeChange={setTransformMode}
                                   onTransformSpaceChange={setTransformSpace}
                                   onWallMaterialChange={applyWallFinish}
@@ -800,7 +904,17 @@ export default function ProjectEditorPage() {
                         preserveDrawingBuffer: false
                       }
                     }
+                    modeBadge={viewMode === "top" ? topViewPolicy.shortLabel : undefined}
+                    bottomNotice={viewMode === "top" ? topModeNotice : undefined}
                   />
+                  {viewMode === "top" && topMode === "desk-precision" ? (
+                    <PrecisionMeasurementOverlay
+                      selectedAsset={selectedAsset}
+                      selectedAssetMeta={selectedCatalogItem}
+                      surfaceLockInfo={selectedSurfaceLockInfo}
+                      formatAssetLabel={formatAssetIdLabel}
+                    />
+                  ) : null}
                 </div>
               </div>
             </motion.div>
@@ -811,6 +925,18 @@ export default function ProjectEditorPage() {
       {isSceneVisible ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex justify-center px-3 sm:bottom-6">
           <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-black/10 bg-white/96 p-1.5 shadow-[0_16px_34px_rgba(16,18,22,0.14)]">
+            {viewMode === "top" ? (
+              <div className="rounded-full border border-black/10 bg-[#f7f7f4] p-1">
+                <StudioModeToggle
+                  value={topMode}
+                  modes={topModeOptions}
+                  onChange={(id) => setTopMode(id as EditorTopMode)}
+                  variant="solid"
+                  hideLabelsOnMobile
+                  className="gap-1"
+                />
+              </div>
+            ) : null}
             <div className="flex items-center gap-1 rounded-full bg-[#f4f4f1] p-1">
               <button
                 type="button"

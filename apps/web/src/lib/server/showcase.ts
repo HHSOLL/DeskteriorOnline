@@ -1,5 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { getSharePreviewMeta } from "../share/preview";
+import { compareShowcaseActivityRank } from "../showcase/activity";
+import { fetchShowcaseActivityMap } from "./showcase-activity";
 import { createSupabaseServerClient } from "../supabase/server";
 import type { Database } from "../../../../../types/database";
 import {
@@ -22,6 +24,7 @@ export type ShowcaseSnapshot = {
 
 export type ShowcaseSnapshotItem = ShowcaseSnapshot & {
   previewMeta: ReturnType<typeof getSharePreviewMeta>;
+  activity: import("../showcase/activity").ShowcasePersistedActivity | null;
 };
 export type ShowcaseSnapshotFeed = {
   items: ShowcaseSnapshotItem[];
@@ -30,12 +33,38 @@ export type ShowcaseSnapshotFeed = {
   hasMore: boolean;
 };
 
+export type ShowcaseArchiveSummary = {
+  matchingTotal: number;
+  archiveTotal: number;
+  latestPublishedAt: string | null;
+  topCollection: { label: string; count: number } | null;
+  featuredItem: ShowcaseSnapshotItem | null;
+};
+
 type ShowcaseProjectRow = {
   meta: Record<string, unknown> | null;
   thumbnail_path: string | null;
 };
 type ShowcaseVersionRow = {
   snapshot_path: string | null;
+};
+
+type ShowcaseProjectLike = {
+  meta: Record<string, unknown> | null;
+  thumbnail_path: string | null;
+};
+
+type ShowcaseVersionLike = {
+  snapshot_path: string | null;
+};
+
+type ShowcaseShareLike = {
+  id: string;
+  token: string;
+  project_id: string;
+  project_version_id: string | null;
+  preview_meta: unknown;
+  published_at: string;
 };
 
 type ShowcaseRow = {
@@ -108,6 +137,32 @@ async function resolveProjectThumbnail(thumbnailPath: string | null, metadata: R
   }
 
   return signed.data.signedUrl;
+}
+
+export function resolveShowcaseThumbnailSource(
+  project: ShowcaseProjectLike | null,
+  versionRow: ShowcaseVersionLike | null
+) {
+  return versionRow?.snapshot_path ?? project?.thumbnail_path ?? null;
+}
+
+export function buildShowcaseSnapshotItem(input: {
+  sharedProject: ShowcaseShareLike;
+  thumbnail?: string;
+  activity?: import("../showcase/activity").ShowcasePersistedActivity | null;
+}): ShowcaseSnapshotItem {
+  const { sharedProject, thumbnail, activity } = input;
+  return {
+    id: sharedProject.id,
+    token: sharedProject.token,
+    project_id: sharedProject.project_id,
+    project_version_id: sharedProject.project_version_id,
+    preview_meta: sharedProject.preview_meta,
+    published_at: sharedProject.published_at,
+    thumbnail,
+    previewMeta: getSharePreviewMeta(sharedProject.preview_meta),
+    activity: activity ?? null
+  };
 }
 
 function resolveProjectRow(value: ShowcaseProjectRow | ShowcaseProjectRow[] | null) {
@@ -269,24 +324,118 @@ async function collectFilteredPageRows(
   return matches;
 }
 
-async function mapShowcaseRows(rows: ShowcaseBatchRow[]) {
+async function scanShowcaseArchiveSummary(filters: ReturnType<typeof normalizeShowcaseFilters>) {
+  let matchingTotal = 0;
+  let batchCursor: ShowcaseCursorPayload | null = null;
+  let featuredRow: ShowcaseBatchRow | null = null;
+  let featuredActivity: import("../showcase/activity").ShowcasePersistedActivity | null = null;
+  let latestPublishedAt: string | null = null;
+  const collectionCounts = new Map<string, number>();
+  const batchSize = 120;
+
+  while (true) {
+    const batch = await fetchShowcaseBatch(batchCursor, batchSize);
+    if (batch.length === 0) {
+      break;
+    }
+    const matchingRows: ShowcaseBatchRow[] = [];
+
+    for (const row of batch) {
+      if (!matchesFilters(row, filters)) {
+        continue;
+      }
+      matchingRows.push(row);
+    }
+
+    const activityMap = await fetchShowcaseActivityMap(matchingRows.map((row) => row.id));
+
+    for (const row of matchingRows) {
+      const rowActivity = activityMap.get(row.id) ?? null;
+
+      matchingTotal += 1;
+      latestPublishedAt ??= row.published_at;
+      if (
+        !featuredRow ||
+        compareShowcaseActivityRank(
+          {
+            id: row.id,
+            published_at: row.published_at,
+            previewMeta: getSharePreviewMeta(row.preview_meta),
+            activity: rowActivity
+          },
+          {
+            id: featuredRow.id,
+            published_at: featuredRow.published_at,
+            previewMeta: getSharePreviewMeta(featuredRow.preview_meta),
+            activity: featuredActivity
+          }
+        ) < 0
+      ) {
+        featuredRow = row;
+        featuredActivity = rowActivity;
+      }
+
+      const assetSummary = getSharePreviewMeta(row.preview_meta)?.assetSummary;
+      for (const collection of assetSummary?.collections ?? []) {
+        collectionCounts.set(collection.label, (collectionCounts.get(collection.label) ?? 0) + collection.count);
+      }
+    }
+
+    if (batch.length < batchSize) {
+      break;
+    }
+
+    batchCursor = getItemCursor(batch[batch.length - 1]);
+  }
+
+  const topCollection =
+    Array.from(collectionCounts.entries())
+      .map(([label, count]) => ({ label, count }))
+      .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label))[0] ?? null;
+  const featuredItem = featuredRow
+    ? (
+        await mapShowcaseRows(
+          [featuredRow],
+          new Map([
+            [
+              featuredRow.id,
+              featuredActivity ?? {
+                viewCount: 0,
+                productFocusCount: 0,
+                lastEventAt: null
+              }
+            ]
+          ])
+        )
+      )[0] ?? null
+    : null;
+
+  return {
+    matchingTotal,
+    latestPublishedAt,
+    topCollection,
+    featuredItem
+  };
+}
+
+async function mapShowcaseRows(
+  rows: ShowcaseBatchRow[],
+  activityMap?: Map<string, import("../showcase/activity").ShowcasePersistedActivity>
+) {
+  const resolvedActivityMap =
+    activityMap ?? (await fetchShowcaseActivityMap(rows.map((row) => row.id)));
+
   return Promise.all(
     rows.map(async (item) => {
       const project = resolveProjectRow(item.projects);
       const version = resolveVersionRow(item.project_versions);
-      return {
-        id: item.id,
-        token: item.token,
-        project_id: item.project_id,
-        project_version_id: item.project_version_id,
-        preview_meta: item.preview_meta,
-        published_at: item.published_at,
-        thumbnail: await resolveProjectThumbnail(
-          version?.snapshot_path ?? project?.thumbnail_path ?? null,
-          project?.meta ?? null
-        ),
-        previewMeta: getSharePreviewMeta(item.preview_meta)
-      } satisfies ShowcaseSnapshotItem;
+      const thumbnail = await resolveProjectThumbnail(resolveShowcaseThumbnailSource(project, version), project?.meta ?? null);
+
+      return buildShowcaseSnapshotItem({
+        sharedProject: item,
+        thumbnail,
+        activity: resolvedActivityMap.get(item.id) ?? null
+      });
     })
   );
 }
@@ -362,6 +511,26 @@ export async function fetchShowcaseSnapshotFeed(input: number | ShowcaseFeedInpu
     total,
     nextCursor,
     hasMore
+  };
+}
+
+export async function fetchShowcaseArchiveSummary(
+  input: Pick<ShowcaseFeedInput, "room" | "tone" | "density"> = {}
+): Promise<ShowcaseArchiveSummary> {
+  const filters = normalizeShowcaseFilters({
+    room: input.room,
+    tone: input.tone,
+    density: input.density
+  });
+  const summary = await scanShowcaseArchiveSummary(filters);
+  const archiveTotal = hasActiveFilters(filters) ? await countAllShowcaseRows() : summary.matchingTotal;
+
+  return {
+    matchingTotal: summary.matchingTotal,
+    archiveTotal,
+    latestPublishedAt: summary.latestPublishedAt,
+    topCollection: summary.topCollection,
+    featuredItem: summary.featuredItem
   };
 }
 

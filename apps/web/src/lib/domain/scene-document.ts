@@ -1,5 +1,19 @@
 import { normalizeAssetSupportProfile } from "../scene/support-profiles";
-import type { ProductDimensionsMm, ProductPhysicalMetadata } from "../builder/catalog";
+import {
+  resolveScenePlacementVectors,
+  type ScenePlacementSnapshot
+} from "./scene-placement";
+import type {
+  ProductCollisionProxyMetadata,
+  ProductContractMetadata,
+  ProductDimensionsMm,
+  ProductLicenseMetadata,
+  ProductLodProfileMetadata,
+  ProductPhysicalMetadata,
+  ProductPivotMetadata,
+  ProductSourceMetadata,
+  ProductTextureSetMetadata
+} from "../builder/catalog";
 import type { AssetSupportProfile } from "../scene/support-profiles";
 import type {
   CameraAnchor,
@@ -56,10 +70,11 @@ export type ProductMetadata = {
   previewImageUrl?: string;
   supportAssetId?: string | null;
   supportProfile?: AssetSupportProfile | null;
-} & Partial<ProductPhysicalMetadata>;
+} & Partial<ProductPhysicalMetadata & ProductContractMetadata>;
 
 export type SceneObject = SceneAsset & {
   metadata?: ProductMetadata;
+  placement?: ScenePlacementSnapshot | null;
 };
 
 export type SceneNode = SceneObject;
@@ -72,7 +87,7 @@ export type MaterialOverride = {
 export type LightInstance = LightingSettings;
 
 export type SceneDocument = {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   roomShell: RoomShell;
   nodes: SceneNode[];
   materialOverride: MaterialOverride;
@@ -163,9 +178,26 @@ function toMetadataBoolean(value: unknown) {
   return false;
 }
 
+function toMetadataStrictBoolean(value: unknown) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "true") return true;
+    if (normalized === "false") return false;
+  }
+  return null;
+}
+
 function toMetadataDimensionValue(value: unknown) {
   const numeric = typeof value === "string" ? Number(value) : value;
   return typeof numeric === "number" && Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+}
+
+function toMetadataPositiveInteger(value: unknown) {
+  const numeric = typeof value === "string" ? Number(value) : value;
+  return typeof numeric === "number" && Number.isInteger(numeric) && numeric > 0 ? numeric : null;
 }
 
 function toMetadataDimensionsMm(value: unknown): ProductDimensionsMm | null {
@@ -185,6 +217,121 @@ function toMetadataDimensionsMm(value: unknown): ProductDimensionsMm | null {
     width,
     depth,
     height
+  };
+}
+
+function toMetadataSource(value: unknown): ProductSourceMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const kind = value.kind === "plan2space_blender" || value.kind === "open_source" ? value.kind : null;
+  const name = toMetadataText(value.name);
+  const metadataPath = toMetadataText(value.path);
+  const url = toMetadataUrl(value.url);
+
+  if (!kind || !name || (!metadataPath && !url)) {
+    return null;
+  }
+
+  return {
+    kind,
+    name,
+    path: metadataPath,
+    url
+  };
+}
+
+function toMetadataLicense(value: unknown): ProductLicenseMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const spdx = toMetadataText(value.spdx);
+  const label = toMetadataText(value.label);
+  const requiresAttribution = toMetadataStrictBoolean(value.requiresAttribution);
+
+  if (!spdx || !label || requiresAttribution === null) {
+    return null;
+  }
+
+  return {
+    spdx,
+    label,
+    requiresAttribution
+  };
+}
+
+function toMetadataPivot(value: unknown): ProductPivotMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const x = value.x === "left" || value.x === "center" || value.x === "right" ? value.x : null;
+  const y = value.y === "floor" || value.y === "center" || value.y === "top" ? value.y : null;
+  const z = value.z === "front" || value.z === "center" || value.z === "back" ? value.z : null;
+
+  if (!x || !y || !z) {
+    return null;
+  }
+
+  return { x, y, z };
+}
+
+function toMetadataCollisionProxy(value: unknown): ProductCollisionProxyMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  if (value.kind !== "box" || value.derivesFrom !== "dimensionsMm") {
+    return null;
+  }
+
+  return {
+    kind: "box",
+    derivesFrom: "dimensionsMm"
+  };
+}
+
+function toMetadataTextureSet(value: unknown): ProductTextureSetMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const workflow = value.workflow === "pbr_metallic_roughness" ? value.workflow : null;
+  const authored = value.authored === "procedural" || value.authored === "image_based" ? value.authored : null;
+  const ktx2Ready = toMetadataStrictBoolean(value.ktx2Ready);
+
+  if (!workflow || !authored || ktx2Ready === null) {
+    return null;
+  }
+
+  return {
+    workflow,
+    authored,
+    ktx2Ready
+  };
+}
+
+function toMetadataLodProfile(value: unknown): ProductLodProfileMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const strategy = value.strategy === "single_mesh" || value.strategy === "manual_lod" ? value.strategy : null;
+  const levelCount = toMetadataPositiveInteger(value.levelCount);
+  const maxDrawCalls = toMetadataPositiveInteger(value.maxDrawCalls);
+  const maxTriangleCount = toMetadataPositiveInteger(value.maxTriangleCount);
+
+  if (!strategy || levelCount === null || maxDrawCalls === null || maxTriangleCount === null) {
+    return null;
+  }
+
+  return {
+    strategy,
+    levelCount,
+    maxDrawCalls,
+    maxTriangleCount
   };
 }
 
@@ -216,7 +363,13 @@ function toSceneAssetProduct(
     finishColor: toMetadataText(metadata?.finishColor ?? productRecord?.finishColor),
     finishMaterial: toMetadataText(metadata?.finishMaterial ?? productRecord?.finishMaterial),
     detailNotes: toMetadataText(metadata?.detailNotes ?? productRecord?.detailNotes),
-    scaleLocked: toMetadataBoolean(metadata?.scaleLocked ?? productRecord?.scaleLocked)
+    scaleLocked: toMetadataBoolean(metadata?.scaleLocked ?? productRecord?.scaleLocked),
+    source: toMetadataSource(metadata?.source ?? productRecord?.source),
+    license: toMetadataLicense(metadata?.license ?? productRecord?.license),
+    pivot: toMetadataPivot(metadata?.pivot ?? productRecord?.pivot),
+    collisionProxy: toMetadataCollisionProxy(metadata?.collisionProxy ?? productRecord?.collisionProxy),
+    textureSet: toMetadataTextureSet(metadata?.textureSet ?? productRecord?.textureSet),
+    lodProfile: toMetadataLodProfile(metadata?.lodProfile ?? productRecord?.lodProfile)
   };
 }
 
@@ -265,7 +418,7 @@ function parseSceneDocumentFromVersion(version: Record<string, unknown>): SceneD
   const entranceId =
     typeof rawRoomShell.entranceId === "string" && rawRoomShell.entranceId.length > 0 ? rawRoomShell.entranceId : null;
   const mappedDocument: SceneDocument = {
-    schemaVersion: 1,
+    schemaVersion: rawDocument.schemaVersion === 2 ? 2 : 1,
     roomShell: {
       scale: toSafeNumber(rawRoomShell.scale, 1),
       scaleInfo: toScaleInfo(rawRoomShell.scaleInfo),
@@ -320,18 +473,31 @@ export function toSceneStorePatch(scene: SceneDocumentBootstrap): SceneStorePatc
     rooms: scene.document.roomShell.rooms,
     cameraAnchors: scene.document.roomShell.cameraAnchors,
     navGraph: scene.document.roomShell.navGraph,
-    assets: scene.document.nodes.map((node) => ({
-      ...node,
-      catalogItemId: node.metadata?.catalogItemId ?? node.catalogItemId,
-      product: toSceneAssetProduct(node.metadata, node.product) ?? node.product ?? null,
-      supportAssetId:
-        (node.metadata && typeof node.metadata.supportAssetId === "string" && node.metadata.supportAssetId.length > 0
-          ? node.metadata.supportAssetId
-          : typeof node.supportAssetId === "string" && node.supportAssetId.length > 0
-            ? node.supportAssetId
-            : null),
-      supportProfile: normalizeAssetSupportProfile(node.metadata?.supportProfile ?? node.supportProfile)
-    })),
+    assets: scene.document.nodes.map((node) => {
+      const { placement: _placement, ...sceneNode } = node;
+      const placement = resolveScenePlacementVectors({
+        placement: node.placement,
+        position: node.position,
+        rotation: node.rotation,
+        scale: node.scale
+      });
+
+      return {
+        ...sceneNode,
+        position: placement.position,
+        rotation: placement.rotation,
+        scale: placement.scale,
+        catalogItemId: node.metadata?.catalogItemId ?? node.catalogItemId,
+        product: toSceneAssetProduct(node.metadata, node.product) ?? node.product ?? null,
+        supportAssetId:
+          (node.metadata && typeof node.metadata.supportAssetId === "string" && node.metadata.supportAssetId.length > 0
+            ? node.metadata.supportAssetId
+            : typeof node.supportAssetId === "string" && node.supportAssetId.length > 0
+              ? node.supportAssetId
+              : null),
+        supportProfile: normalizeAssetSupportProfile(node.metadata?.supportProfile ?? node.supportProfile)
+      };
+    }),
     wallMaterialIndex: scene.document.materialOverride.wallMaterialIndex,
     floorMaterialIndex: scene.document.materialOverride.floorMaterialIndex,
     lighting: scene.document.lighting,

@@ -2,64 +2,18 @@
 
 import { useEffect, useMemo } from "react";
 import * as THREE from "three";
-import { useTexture } from "@react-three/drei";
+import { useLoader, useThree } from "@react-three/fiber";
 import { Geometry, Base, Subtraction } from "@react-three/csg";
+import { RuntimeTextureLoader } from "../../../lib/loaders/RuntimeTextureLoader";
+import { configureRuntimeAssetLoaders } from "../../../lib/loaders/AssetLoader";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useShellSelector } from "../../../lib/stores/scene-slices";
 import type { Wall } from "../../../lib/stores/useSceneStore";
 import { getWallRenderPlacement } from "../../../lib/geometry/wall-placement";
-
-type WallTextureConfig = {
-  topColor: string;
-  map: string;
-  roughnessMap: string;
-  normalMap: string;
-  bumpMap: string;
-  color: string;
-  roughness: number;
-  bumpScale: number;
-  normalScale: number;
-  envMapIntensity: number;
-};
-
-const WALL_TEXTURES: WallTextureConfig[] = [
-  {
-    topColor: "#d8d1c8",
-    map: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_diff_2k.jpg",
-    roughnessMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_rough_2k.jpg",
-    normalMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_disp_2k.png",
-    bumpMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_disp_2k.png",
-    color: "#f3f2ef",
-    roughness: 0.85,
-    bumpScale: 0.012,
-    normalScale: 0.3,
-    envMapIntensity: 0.5
-  },
-  {
-    topColor: "#babcc0",
-    map: "/assets/textures/painted_plaster_wall_2k.blend/textures/painted_plaster_wall_diff_2k.jpg",
-    roughnessMap: "/assets/textures/painted_plaster_wall_2k.blend/textures/painted_plaster_wall_disp_2k.png",
-    normalMap: "/assets/textures/painted_plaster_wall_2k.blend/textures/painted_plaster_wall_disp_2k.png",
-    bumpMap: "/assets/textures/painted_plaster_wall_2k.blend/textures/painted_plaster_wall_disp_2k.png",
-    color: "#e0e0e0",
-    roughness: 0.7,
-    bumpScale: 0.012,
-    normalScale: 0.3,
-    envMapIntensity: 0.4
-  },
-  {
-    topColor: "#6a6865",
-    map: "/assets/textures/concrete_wall_007_2k.blend/textures/concrete_wall_007_diff_2k.jpg",
-    roughnessMap: "/assets/textures/concrete_wall_007_2k.blend/textures/concrete_wall_007_disp_2k.png",
-    normalMap: "/assets/textures/concrete_wall_007_2k.blend/textures/concrete_wall_007_disp_2k.png",
-    bumpMap: "/assets/textures/concrete_wall_007_2k.blend/textures/concrete_wall_007_disp_2k.png",
-    color: "#333333",
-    roughness: 0.92,
-    bumpScale: 0.015,
-    normalScale: 0.35,
-    envMapIntensity: 0.25
-  }
-];
+import {
+  WALL_TEXTURE_PRESETS,
+  resolveRuntimeTextureSet
+} from "../../../lib/textures/room-shell-textures";
 
 function WallMesh({
   wallId,
@@ -200,13 +154,26 @@ function TopWallFootprint({
 }
 
 function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number; walls: Wall[] }) {
-  const textureConfig = WALL_TEXTURES[wallMaterialIndex % WALL_TEXTURES.length] ?? WALL_TEXTURES[0];
-  const textures = useTexture({
-    map: textureConfig.map,
-    roughnessMap: textureConfig.roughnessMap,
-    normalMap: textureConfig.normalMap,
-    bumpMap: textureConfig.bumpMap
-  });
+  const gl = useThree((state) => state.gl);
+  const textureConfig =
+    WALL_TEXTURE_PRESETS[wallMaterialIndex % WALL_TEXTURE_PRESETS.length] ?? WALL_TEXTURE_PRESETS[0];
+  configureRuntimeAssetLoaders(gl);
+  const textureUrls = useMemo(() => resolveRuntimeTextureSet(textureConfig), [textureConfig]);
+  const [map, roughnessMap, normalMap, bumpMap] = useLoader(RuntimeTextureLoader, [
+    textureUrls.map,
+    textureUrls.roughnessMap,
+    textureUrls.normalMap,
+    textureUrls.bumpMap
+  ]) as THREE.Texture[];
+  const textures = useMemo(
+    () => ({
+      map,
+      roughnessMap,
+      normalMap,
+      bumpMap
+    }),
+    [bumpMap, map, normalMap, roughnessMap]
+  );
 
   useEffect(() => {
     Object.values(textures).forEach((texture) => {

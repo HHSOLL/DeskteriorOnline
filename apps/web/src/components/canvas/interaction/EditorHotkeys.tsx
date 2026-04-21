@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
   useAssetSelector,
@@ -8,10 +9,9 @@ import {
   useSelectionSelector
 } from "../../../lib/stores/scene-slices";
 
-const ROTATE_STEP = Math.PI / 2;
-
 export default function EditorHotkeys() {
   const viewMode = useEditorStore((state) => state.viewMode);
+  const topMode = useEditorStore((state) => state.topMode);
   const setTransformMode = useEditorStore((state) => state.setTransformMode);
   const transformSpace = useEditorStore((state) => state.transformSpace);
   const setTransformSpace = useEditorStore((state) => state.setTransformSpace);
@@ -20,10 +20,11 @@ export default function EditorHotkeys() {
   const assets = useAssetSelector((slice) => slice.assets);
   const updateFurniture = useAssetSelector((slice) => slice.updateFurniture);
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
+  const topViewPolicy = resolveTopViewInteractionPolicy(topMode);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (viewMode !== "top" || readOnly) return;
+      if (viewMode !== "top" || readOnly || !topViewPolicy.allowTransformHotkeys) return;
       if (event.key.toLowerCase() === "g") {
         setTransformMode("translate");
         return;
@@ -37,7 +38,11 @@ export default function EditorHotkeys() {
       const asset = assets.find((item) => item.id === selectedAssetId);
       if (!asset) return;
       updateFurniture(selectedAssetId, {
-        rotation: [asset.rotation[0], asset.rotation[1] + ROTATE_STEP, asset.rotation[2]]
+        rotation: [
+          asset.rotation[0],
+          asset.rotation[1] + topViewPolicy.rotationSnap,
+          asset.rotation[2]
+        ]
       });
       recordSnapshot("Rotate asset");
       setTransformMode("rotate");
@@ -53,7 +58,8 @@ export default function EditorHotkeys() {
     setTransformSpace,
     transformSpace,
     updateFurniture,
-    viewMode
+    viewMode,
+    topViewPolicy
   ]);
 
   return null;

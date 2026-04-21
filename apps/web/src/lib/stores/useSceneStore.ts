@@ -1,5 +1,15 @@
 import { create } from "zustand";
-import type { ProductDimensionsMm, ProductPhysicalMetadata } from "../builder/catalog";
+import type {
+  ProductCollisionProxyMetadata,
+  ProductContractMetadata,
+  ProductDimensionsMm,
+  ProductLicenseMetadata,
+  ProductLodProfileMetadata,
+  ProductPhysicalMetadata,
+  ProductPivotMetadata,
+  ProductSourceMetadata,
+  ProductTextureSetMetadata
+} from "../builder/catalog";
 import { normalizeSceneAnchorType, type SceneAnchorType } from "../scene/anchor-types";
 import { constrainPlacementToAnchor } from "../scene/anchors";
 import {
@@ -146,7 +156,8 @@ export type SceneAsset = {
     options?: string | null;
     externalUrl?: string | null;
     thumbnail?: string | null;
-  } & ProductPhysicalMetadata | null;
+  } & ProductPhysicalMetadata &
+    ProductContractMetadata | null;
   anchorType?: SceneAnchorType;
   supportAssetId?: string | null;
   supportProfile?: AssetSupportProfile | null;
@@ -348,6 +359,15 @@ function normalizeProductBoolean(value: unknown) {
   return false;
 }
 
+function normalizeProductStrictBoolean(value: unknown) {
+  if (typeof value === "boolean") return value;
+  if (typeof value !== "string") return null;
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "true") return true;
+  if (normalized === "false") return false;
+  return null;
+}
+
 function normalizeProductDimensionValue(value: unknown) {
   const numeric = typeof value === "string" ? Number(value) : value;
   return typeof numeric === "number" && Number.isFinite(numeric) && numeric > 0 ? numeric : null;
@@ -366,6 +386,93 @@ function normalizeProductDimensions(value: unknown): ProductDimensionsMm | null 
   }
 
   return { width, depth, height };
+}
+
+function normalizeProductPositiveInteger(value: unknown) {
+  const numeric = typeof value === "string" ? Number(value) : value;
+  return typeof numeric === "number" && Number.isInteger(numeric) && numeric > 0 ? numeric : null;
+}
+
+function normalizeProductSource(value: unknown): ProductSourceMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const kind =
+    record.kind === "plan2space_blender" || record.kind === "open_source" ? record.kind : null;
+  const name = normalizeProductText(record.name);
+  const metadataPath = normalizeProductText(record.path);
+  const url = normalizeProductUrl(record.url);
+  if (!kind || !name || (!metadataPath && !url)) return null;
+  return {
+    kind,
+    name,
+    path: metadataPath,
+    url
+  };
+}
+
+function normalizeProductLicense(value: unknown): ProductLicenseMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const spdx = normalizeProductText(record.spdx);
+  const label = normalizeProductText(record.label);
+  const requiresAttribution = normalizeProductStrictBoolean(record.requiresAttribution);
+  if (!spdx || !label || requiresAttribution === null) return null;
+  return {
+    spdx,
+    label,
+    requiresAttribution
+  };
+}
+
+function normalizeProductPivot(value: unknown): ProductPivotMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const x = record.x === "left" || record.x === "center" || record.x === "right" ? record.x : null;
+  const y = record.y === "floor" || record.y === "center" || record.y === "top" ? record.y : null;
+  const z = record.z === "front" || record.z === "center" || record.z === "back" ? record.z : null;
+  if (!x || !y || !z) return null;
+  return { x, y, z };
+}
+
+function normalizeProductCollisionProxy(value: unknown): ProductCollisionProxyMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  if (record.kind !== "box" || record.derivesFrom !== "dimensionsMm") return null;
+  return {
+    kind: "box",
+    derivesFrom: "dimensionsMm"
+  };
+}
+
+function normalizeProductTextureSet(value: unknown): ProductTextureSetMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const workflow = record.workflow === "pbr_metallic_roughness" ? record.workflow : null;
+  const authored =
+    record.authored === "procedural" || record.authored === "image_based" ? record.authored : null;
+  const ktx2Ready = normalizeProductStrictBoolean(record.ktx2Ready);
+  if (!workflow || !authored || ktx2Ready === null) return null;
+  return {
+    workflow,
+    authored,
+    ktx2Ready
+  };
+}
+
+function normalizeProductLodProfile(value: unknown): ProductLodProfileMetadata | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const strategy = record.strategy === "single_mesh" || record.strategy === "manual_lod" ? record.strategy : null;
+  const levelCount = normalizeProductPositiveInteger(record.levelCount);
+  const maxDrawCalls = normalizeProductPositiveInteger(record.maxDrawCalls);
+  const maxTriangleCount = normalizeProductPositiveInteger(record.maxTriangleCount);
+  if (!strategy || levelCount === null || maxDrawCalls === null || maxTriangleCount === null) return null;
+  return {
+    strategy,
+    levelCount,
+    maxDrawCalls,
+    maxTriangleCount
+  };
 }
 
 function normalizeSceneAssetProduct(product: SceneAsset["product"]) {
@@ -389,7 +496,13 @@ function normalizeSceneAssetProduct(product: SceneAsset["product"]) {
     finishColor: normalizeProductText(product.finishColor),
     finishMaterial: normalizeProductText(product.finishMaterial),
     detailNotes: normalizeProductText(product.detailNotes),
-    scaleLocked: normalizeProductBoolean(product.scaleLocked)
+    scaleLocked: normalizeProductBoolean(product.scaleLocked),
+    source: normalizeProductSource(product.source),
+    license: normalizeProductLicense(product.license),
+    pivot: normalizeProductPivot(product.pivot),
+    collisionProxy: normalizeProductCollisionProxy(product.collisionProxy),
+    textureSet: normalizeProductTextureSet(product.textureSet),
+    lodProfile: normalizeProductLodProfile(product.lodProfile)
   } satisfies NonNullable<SceneAsset["product"]>;
 }
 

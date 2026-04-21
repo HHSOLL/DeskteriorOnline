@@ -38,6 +38,9 @@ npm run dev:web
 - `E2E_ROOM_FLOW_BASE_URL`
 - `E2E_ROOM_FLOW_SHARED_TOKEN`
 - `E2E_ROOM_FLOW_PROJECT_ID`
+- `NEXT_PUBLIC_ENABLE_REALTIME_LABS` (`1`일 때 local-only `/labs/realtime` 실험 게이트 활성화)
+- `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES` (`1`일 때 room shell floor/wall texture set이 `.ktx2` 우선 로드)
+- `NEXT_PUBLIC_KTX2_TRANSCODER_PATH` (기본값 `/assets/transcoders/basis/`)
 
 ## 스크립트
 
@@ -46,6 +49,15 @@ npm run dev:web
 npm --workspace apps/web run qa:primary
 npm --workspace apps/web run primary:e2e:room-flow
 npm --workspace apps/web run assets:sync:deskterior
+npm --workspace apps/web run assets:sync:ktx2-transcoder
+npm --workspace apps/web run assets:setup:gltfpack
+npm --workspace apps/web run assets:probe:gltfpack
+npm --workspace apps/web run textures:encode:room-shell:ktx2
+npm --workspace apps/web run textures:check:room-shell:ktx2
+npm --workspace apps/web run assets:optimize:deskterior
+npm --workspace apps/web run assets:optimize:deskterior:native -- --gltfpack-bin /absolute/path/to/gltfpack
+npm --workspace apps/web run assets:validate:deskterior
+npm --workspace apps/web run assets:verify:deskterior
 
 # strict 모드(실패를 fail-fast로 처리)
 E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
@@ -59,6 +71,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 
 - Blender 원본: `assets/blender/deskterior/*.blend`
 - 런타임 모델: `apps/web/public/assets/models/`
+- Khronos glTF 검증: `npm --workspace apps/web run assets:validate:deskterior`
 - 카탈로그 동기화: `npm --workspace apps/web run assets:sync:deskterior`
 - 오픈소스 자산은 라이선스 명시(CC0 우선)된 항목만 사용
 

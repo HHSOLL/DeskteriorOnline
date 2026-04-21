@@ -23,6 +23,30 @@ type PublicSceneShareRow = Pick<
   projects: PublicSceneProjectRow | PublicSceneProjectRow[] | null;
 };
 
+type PublicSceneProjectLike = {
+  id: string;
+  name: string;
+  description: string | null;
+  thumbnail_path: string | null;
+};
+
+type PublicSceneVersionLike = {
+  id: string;
+  version: number | null;
+  message: string | null;
+  customization: unknown;
+};
+
+type PublicSceneShareLike = {
+  id: string;
+  token: string;
+  project_id: string;
+  project_version_id: string;
+  permissions: string | null;
+  expires_at: string | null;
+  preview_meta: unknown;
+};
+
 export type PublicScenePayload = {
   shareId: string;
   token: string;
@@ -61,7 +85,7 @@ function resolveProjectRow(
   return value;
 }
 
-function resolvePinnedVersionNumber(previewMeta: SharePreviewMeta | null, versionRow: PublicSceneVersionRow) {
+function resolvePinnedVersionNumber(previewMeta: SharePreviewMeta | null, versionRow: PublicSceneVersionLike) {
   if (typeof previewMeta?.versionNumber === "number") {
     return previewMeta.versionNumber;
   }
@@ -88,6 +112,37 @@ function createPublicReadSupabaseClient(): SupabaseClient<Database> {
   }
 
   return createSupabaseServerClient();
+}
+
+export function buildPublicScenePayload(input: {
+  sharedProject: PublicSceneShareLike;
+  project: PublicSceneProjectLike;
+  versionRow: PublicSceneVersionLike;
+}): PublicScenePayload {
+  const { sharedProject, project, versionRow } = input;
+  const previewMeta = getSharePreviewMeta(sharedProject.preview_meta);
+  const sceneBootstrap = mapProjectVersionToSceneDocument(versionRow as unknown as Record<string, unknown>);
+
+  return {
+    shareId: sharedProject.id,
+    token: sharedProject.token,
+    projectId: sharedProject.project_id,
+    projectVersionId: sharedProject.project_version_id,
+    linkPermission: normalizeSharePermission(sharedProject.permissions),
+    expiresAt: sharedProject.expires_at,
+    pinnedVersionNumber: resolvePinnedVersionNumber(previewMeta, versionRow),
+    project: {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      thumbnailPath: project.thumbnail_path
+    },
+    projectName: previewMeta?.projectName ?? project.name,
+    projectDescription: previewMeta?.projectDescription ?? project.description,
+    previewMeta,
+    previewAssetSummary: previewMeta?.assetSummary ?? null,
+    sceneBootstrap
+  };
 }
 
 export async function fetchPublicSceneByToken(token: string): Promise<PublicScenePayload> {
@@ -137,27 +192,9 @@ export async function fetchPublicSceneByToken(token: string): Promise<PublicScen
     throw new PublicSceneError(404, "Pinned scene version not found.");
   }
 
-  const previewMeta = getSharePreviewMeta(sharedProject.preview_meta);
-  const sceneBootstrap = mapProjectVersionToSceneDocument(versionRow as unknown as Record<string, unknown>);
-
-  return {
-    shareId: sharedProject.id,
-    token: sharedProject.token,
-    projectId: sharedProject.project_id,
-    projectVersionId: sharedProject.project_version_id,
-    linkPermission: normalizeSharePermission(sharedProject.permissions),
-    expiresAt: sharedProject.expires_at,
-    pinnedVersionNumber: resolvePinnedVersionNumber(previewMeta, versionRow),
-    project: {
-      id: project.id,
-      name: project.name,
-      description: project.description,
-      thumbnailPath: project.thumbnail_path
-    },
-    projectName: previewMeta?.projectName ?? project.name,
-    projectDescription: previewMeta?.projectDescription ?? project.description,
-    previewMeta,
-    previewAssetSummary: previewMeta?.assetSummary ?? null,
-    sceneBootstrap
-  };
+  return buildPublicScenePayload({
+    sharedProject,
+    project,
+    versionRow
+  });
 }

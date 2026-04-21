@@ -21,6 +21,9 @@
 - `E2E_ROOM_FLOW_STRICT`
 - `E2E_ROOM_FLOW_PROJECT_ID`
 - `E2E_ROOM_FLOW_SHARED_TOKEN`
+- `NEXT_PUBLIC_ENABLE_REALTIME_LABS` (`1`일 때 local-only `/labs/realtime` 실험 게이트 노출)
+- `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES` (`1`일 때 room shell floor/wall texture set이 `.ktx2` 우선 로드)
+- `NEXT_PUBLIC_KTX2_TRANSCODER_PATH` (기본값 `/assets/transcoders/basis/`, 필요 시만 override)
 
 ### API (`apps/api/.env`)
 필수:
@@ -57,7 +60,7 @@
 12. 문/창문 추가하기
 13. 스타일과 조명 모드(직접등/간접등)를 선택한 뒤 에디터로 진입하기
 14. 에디터에서 데스크테리어 가구 추가하기
-15. 가구 이동/회전하고 `월드/로컬` 좌표계를 전환해보기
+15. 상단뷰에서 `룸 배치`와 `데스크 정밀`을 각각 열어 가구 이동/회전 정책이 달라지는지 확인하기
 16. 저장/발행하기
 17. 공유 토큰 열기
 18. 읽기 전용 뷰어에서 제품 클릭하기
@@ -66,28 +69,129 @@
 21. `추가`/`설정` 버튼이 각각 좌측 drawer를 열고, 재클릭/바깥 클릭 시 닫히며 동시에 둘 다 열리지 않는지 확인하기
 22. 워크뷰에서는 ceiling이 보이고 상단뷰에서는 ceiling이 숨겨지는지 확인하기
 23. 모바일 viewport에서 share modal이 화면 안에 들어오고 내부만 스크롤되는지 확인하기
-24. 상단뷰에서 바닥/벽을 클릭해도 재질이 바뀌지 않고, 가구 drag/transform gizmo 조작 중 카메라가 같이 돌지 않는지 확인하기
-25. builder lighting step에서 `직접등` 선택 시 beam glow가, `간접등` 선택 시 천장 확산광이 preview에 반영되는지 확인하기
+24. 상단뷰에서 바닥/벽을 클릭해도 재질이 바뀌지 않고, room mode에서는 direct drag만, desk precision mode에서는 gizmo만 활성인지 확인하기
+25. room mode에서는 250mm snap과 90도 회전 단계가, desk precision mode에서는 25mm snap과 15도 회전 단계가 적용되는지 확인하기
+26. desk precision mode에서 선택 자산을 고르면 inspector와 measurement overlay가 같은 X/Z/Y(mm), Yaw(deg), 실측 W/D/H(mm)를 일관되게 보여주는지 확인하기
+27. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay에 같은 support asset / support surface / surface size / margin / top 높이가 표시되고, 비-surface anchor에서는 lock off로 보이는지 확인하기
+28. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay의 micro-view marker가 같은 support-local 위치를 가리키고, offset 수치와도 일치하는지 확인하기
+29. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay가 같은 footprint / projected footprint / edge clearance / relative yaw를 보여주고, usable area를 넘기면 overflow 상태로 바뀌는지 확인하기
+30. desk precision mode에서 surface anchor 제품을 고르면 inspector와 overlay의 `front(X/H)` / `side(Z/H)` helper view가 같은 projected span, gap, reach를 보여주는지 확인하기
+31. desk precision mode에서 small asset 다수 장면에서도 hover/select 시작 지연이 `plan2space:interaction-latency` 기준으로 급격히 튀지 않는지 확인하기
+32. builder lighting step에서 `직접등` 선택 시 beam glow가, `간접등` 선택 시 천장 확산광이 preview에 반영되는지 확인하기
+33. room mode에서는 후처리/동적 조명이 꺼지고, desk precision mode에서는 정밀 확인에 필요한 저비용 bloom/조명만 선택적으로 올라오는지 확인하기
+34. shared viewer는 editor보다 더 가벼운 read-only preset으로 열리고, hotspot drawer 동작에는 영향이 없는지 확인하기
+35. shared viewer 첫 진입 시 어떤 제품도 자동 선택되지 않고, hotspot 또는 목록 선택 이후에만 상세 카드가 열리는지 확인하기
+36. gallery/community에서 room/tone/density 필터를 건 뒤 header count와 다음 페이지 total이 현재 필터 결과 기준으로 유지되는지 확인하기
+37. community에서 최신 게시, featured 장면, 주요 컬렉션 summary가 현재 페이지 카드 조각이 아니라 active filter scope 전체 기준으로 유지되는지 확인하기
+38. shared viewer와 builder preview가 constrained 환경에서 fill light + bloom 없이도 읽기 흐름을 유지하고, walk/showcase에서만 richer shadow/bloom이 유지되는지 확인하기
+39. `NEXT_PUBLIC_ENABLE_REALTIME_LABS=1`로 로컬 실행 시 `/labs/realtime`만 열리고, primary navigation에는 realtime/presence 진입점이 생기지 않는지 확인하기
+40. `assets:verify:deskterior` 실행 시 curated `p2s_*` 자산이 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약까지 모두 통과하는지 확인하기
+41. `verify:scene-document`, `verify:public-scene` 실행 시 위 product contract metadata가 save/load/share roundtrip에서 유지되는지 확인하기
+42. `verify:asset-lod` 실행 시 complex asset은 room mode에서 더 빨리 proxy fallback 되고, simple asset은 desk precision에서 full detail을 유지하는지 확인하기
+43. `verify:asset-instancing` 실행 시 read-only top/walk와 builder preview, editor `desk precision`, editor `room mode` idle에서 repeated `single_mesh` 자산이 cluster로 묶이고, room mode dragging 중에는 selected asset이 cluster 안에서 live drag 되다가 pointer-up 후 개별 경로로 빠지는지 확인하기
+44. desk precision / builder preview / richer showcase 경로는 Neutral tone mapping으로, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping으로 읽히며 하이라이트 clipping과 white balance가 mode 목적에 맞게 유지되는지 확인하기
+45. editor walk와 richer showcase 경로에서만 SSR이 보수적으로 올라오고, shared viewer / top-view / builder preview에서는 SSR이 꺼져 있는지 확인하기
+46. `verify:showcase-activity` 실행 시 recent/rich scene이 older/sparse scene보다 높은 activity rank를 받고, community featured / conversation link가 showcase presentation 경로를 유지하는지 확인하기
+47. showcase 카드 진입 shared viewer는 일반 shared 링크보다 walk framing이 더 타이트하고, top framing이 살짝 더 조여지며, walk mode에서 rim/fill light가 더 풍부하게 읽히는지 확인하기
+
+## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing QA)
+Added:
+- room mode top-view에서 repeated asset cluster를 눌렀을 때 direct drag가 끊기지 않고, drag 종료 후 선택 자산만 개별 오브젝트로 전환되는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- instancing QA 기준을 `desk precision` 중심에서 `desk precision + room mode idle/direct-drag handoff`까지 확장했다.
+
+Removed/Deprecated:
+- editor room top은 repeated asset instancing 대상이 아니라는 QA 가정.
+
+## 2026-04-20 변경 동기화 (Showcase Activity Ranking QA)
+Added:
+- `verify:showcase-activity`로 derived activity score / estimated engagement / ranking order를 회귀 검증하는 QA 항목을 추가했다.
+
+Updated:
+- community QA 기준을 “카드가 보이는지”에서 “featured/conversation ordering이 derived activity baseline을 따르고 showcase presentation 링크를 유지하는지”까지 확장했다.
+
+Removed/Deprecated:
+- community 활동 지표를 페이지 내부 ad-hoc 숫자로만 판단하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (Showcase Activity Persisted Events QA)
+Added:
+- shared viewer를 연 뒤 `view` 이벤트가 session 기준으로 1회만 쌓이고, 제품 핫스팟 선택 시 `product_focus`가 asset/session 기준으로 dedupe 되는지 확인하는 QA 항목을 추가한다.
+
+Updated:
+- community QA 기준을 “derived ranking이 맞는지”에서 “persisted `포커스/조회` count가 ranking/card 지표에 반영되는지”까지 확장한다.
+
+Removed/Deprecated:
+- persisted activity 경로 없이 `verify:showcase-activity` 한 항목만으로 P3를 닫는 QA 기준.
 
 실행 명령:
 
 ```bash
 npm --workspace apps/web run qa:primary
+npm --workspace apps/web run verify:scene-document
+npm --workspace apps/web run verify:public-scene
+npm --workspace apps/web run verify:showcase-scene
 E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 npm --workspace apps/web run primary:e2e:room-flow:full
 ```
 
 `primary:e2e:room-flow:full`은 Supabase 환경 변수가 없는 환경에서는 실행되지 않습니다.
 
+성능 계측 팁:
+- dev에서는 브라우저 콘솔에서 바로 `plan2space:renderer-stats`, `plan2space:interaction-latency` 이벤트를 구독하면 된다.
+- production build 측정 시에는 URL에 `?telemetry=1`을 붙이거나 콘솔에서 `window.__PLAN2SPACE_TELEMETRY__ = true`를 설정한 뒤 새로고침한다.
+- 최신 샘플은 `window.__PLAN2SPACE_LAST_RENDERER_STATS__`, `window.__PLAN2SPACE_LAST_INTERACTION_LATENCY__`에서도 확인할 수 있다.
+- regression report는 `window.__PLAN2SPACE_TELEMETRY_CAPTURE__.start(...)`로 측정을 시작하고 `stop(...)`으로 JSON entry를 얻는다.
+- 측정이 끝나면 `npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json`으로 예산과 coverage를 검증한다.
+- baseline 비교가 필요하면 `--baseline=/absolute/path/to/previous-report.json`을 같이 준다.
+
 ## 3) 배포 전 체크리스트
 
 - 빌더/에디터/뷰어 공통 레이아웃이 유지되는지 확인
 - 에디터 상단 bar, 좌측 rail, 우측 zoom rail, 하단 pill toolbar가 레퍼런스 7번 shell로 노출되는지 확인
 - 상단뷰에서는 `목록/속성/항목뷰/이동/회전` 보조 UI가 사라지고 `추가/설정` drawer 패턴만 남는지 확인
+- 상단뷰 하단 pill toolbar에서 `룸 배치` / `데스크 정밀` 토글이 보이고, 워크뷰에서는 사라지는지 확인
+- room mode와 desk precision mode 전환 시 체감 화질과 idle 비용이 달라지고, 워크뷰 품질에는 영향을 주지 않는지 확인
+- desk precision / builder preview / showcase 계열은 Neutral tone mapping, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping을 사용해도 surface/material 읽기 흐름이 어색해지지 않는지 확인
+- editor walk와 richer showcase 경로에서만 selective SSR이 반사 하이라이트를 보강하고, shared viewer / top-view / builder preview에는 비용이 전파되지 않는지 확인
+- room mode, desk precision mode, builder preview는 조작을 멈췄을 때 continuous redraw 없이 idle이 안정화되는지 확인
+- editor `desk precision` top-view에서는 반복 자산이 instanced cluster로 합쳐져도 단일 클릭 선택 후 gizmo 편집이 계속 가능하고, room mode direct drag는 계속 개별 오브젝트로 동작하는지 확인
+- desk precision mode에서 선택 자산의 inspector와 measurement overlay가 동일한 X/Z/Y(mm), Yaw(deg), 실측 W/D/H(mm) 기준으로 동기화되는지 확인
+- desk precision mode에서 surface anchor 제품의 inspector와 overlay가 동일한 support asset / support surface / surface size / margin / top 높이 기준으로 동기화되는지 확인
+- desk precision mode에서 surface anchor 제품의 inspector와 overlay micro-view가 동일한 support-local marker / offset 위치를 가리키는지 확인
+- desk precision mode에서 surface anchor 제품의 inspector와 overlay가 footprint / projected footprint / edge clearance / relative yaw 기준까지 동기화되는지 확인
+- 필요 시 브라우저 콘솔에서 `plan2space:renderer-stats` / `plan2space:interaction-latency` 이벤트를 구독해 draw call, texture, hover/select/drag-start 지연을 같이 기록하는지 확인
+- 필요 시 `window.__PLAN2SPACE_TELEMETRY_CAPTURE__`로 builder/editor/shared viewer 측정 세션을 각각 묶고 `perf:report:verify`로 JSON report를 검증하는지 확인
+- loaded GLB 자산이 많은 장면에서 hover/select 시작 지연이 BVH 적용 후에도 50ms 예산 안에 들어오는지 확인
+- large geometry가 있는 장면에서 브라우저 콘솔의 `plan2space:bvh-build` 이벤트가 `mode: "worker"`로 기록되고, small/interleaved geometry는 필요 시 `mode: "sync"`로 fallback 되는지 확인
+- `npm --workspace apps/web run assets:sync:ktx2-transcoder -- --check`가 basis transcoder public 파일을 PASS로 검증하는지 확인
+- `npm --workspace apps/web run verify:scene-document`가 placement/support/product metadata roundtrip 검증을 통과하는지 확인
+- `npm --workspace apps/web run verify:public-scene`가 shared viewer payload에서 placement/support/product metadata roundtrip 검증을 통과하는지 확인
+- `npm --workspace apps/web run verify:showcase-scene`가 gallery/community 카드 projection과 shared viewer public payload의 version/preview asset summary 정합성 검증을 통과하는지 확인
+- shared viewer가 generic showcase viewer와 다른 경량 preset으로 동작해도 제품 hotspot / drawer 읽기 흐름은 유지되는지 확인
+- shared viewer walk HUD는 터치 조작용 요소만 남고 crosshair는 보이지 않는지 확인
 - shared viewer가 상단 light bar, 우측 zoom rail, 하단 readonly status pill 기준으로 노출되는지 확인
+- shared viewer와 builder preview는 lean light rig(no fill light)를 유지하고, constrained 환경에서는 directional shadow + bloom이 제거되는지 확인
+- realtime/presence 평가는 `/labs/realtime` hidden route에서만 노출되고, 홈/에디터/뷰어/갤러리/커뮤니티에는 진입 링크가 생기지 않는지 확인
+- `verify:realtime-lab` 실행 시 room id 정규화, channel name, stale participant snapshot, cursor/view/selection presence, presenter/spotlight/ping, stale archive health, exit gate 규칙이 통과하는지 확인
+- `/labs/realtime?room=...`에서 같은 room id를 두 창으로 열면 occupancy snapshot이 증가하고, heartbeat가 15초 간격으로 갱신되는지 확인
+- 한 창을 닫거나 heartbeat가 45초 이상 끊긴 참가자는 stale로 표시되는지 확인
+- stale 참가자가 archive 임계치를 넘기면 occupancy visible count에서 빠지고 archived count가 증가하는지 확인
+- 같은 room에서 presence surface 위로 포인터를 움직이면 다른 창에서 cursor marker가 보이는지 확인
+- 한 창에서 room/desk/walk와 sample asset selection을 바꾸면 다른 창 badge와 occupancy snapshot에 같은 값이 반영되는지 확인
+- 한 창에서 presenter를 claim하면 다른 창에서 presenter label과 spotlight 상태가 갱신되는지 확인
+- 다른 창에서 follow presenter를 켜면 presenter의 mode/selection/spotlight가 로컬 badge에 반영되는지 확인
+- attention ping을 보내면 다른 창에서 마지막 ping snapshot이 보이는지 확인
+- sample draft board에서 자산을 잡고 드래그하면 다른 창 보드의 자산 위치가 같이 이동하는지 확인
+- 이미 다른 창이 잡고 있는 자산을 다시 잡으려 하면 conflict banner가 노출되는지 확인
+- 드래그를 놓으면 lock이 해제되고, occupancy/draft board에서 owner 표시가 사라지는지 확인
+- runtime pause를 누르면 presence/broadcast가 멈추고, resume 후 같은 room에 다시 reconnect되는지 확인
+- retry connection을 누르면 reconnect count가 증가하고 room channel이 다시 subscribe되는지 확인
+- exit gate 카드가 모두 `ready` 상태로 보이고, hidden local-only lab이라는 전제가 유지되는지 확인
 - 뷰어에 편집 affordance가 노출되지 않는지 확인
 - 갤러리/커뮤니티 카드가 `/shared/[token]` 읽기 전용 뷰어로 이동하는지 확인
 - 갤러리/커뮤니티 피드가 레퍼런스 8번 기준의 4열 카드 밀도와 상단 filter rail을 유지하는지 확인
+- 갤러리 필터 결과 수, 커뮤니티 latest/featured/top collection summary가 페이지네이션 이후에도 같은 filter scope 기준으로 유지되는지 확인
 - 커뮤니티가 갤러리와 달리 토론/챌린지/최신 게시물로 구분된 허브 구조를 가지는지 확인
 - `/studio`가 개인 프로젝트 아카이브 톤으로 정리되고 필터/검색이 동작하는지 확인
 - 제품 클릭 시 정보 drawer가 열리고 최소 필드가 노출되는지 확인
@@ -191,27 +295,77 @@ BLENDER_BIN="/Applications/Blender.app/Contents/MacOS/Blender" \
 npm --workspace apps/web run assets:sync:deskterior
 ```
 
-5. 파이프라인 정합성(source/runtime/manifest)을 검증한다.
+5. KTX2 basis transcoder public 파일을 동기화한다.
+
+```bash
+npm --workspace apps/web run assets:sync:ktx2-transcoder
+```
+
+6. 필요 시 room shell texture set의 `.ktx2` 산출물 유무를 확인하거나 인코딩한다.
+
+```bash
+PATH="/Users/sol/.nvm/versions/node/v20.11.1/bin:$PATH" npm --workspace apps/web run textures:check:room-shell:ktx2
+# encoder(ktx 또는 toktx)가 설치된 환경에서만:
+PATH="/Users/sol/.nvm/versions/node/v20.11.1/bin:$PATH" npm --workspace apps/web run textures:encode:room-shell:ktx2
+```
+
+7. glTF Transform 기반 `dedup + prune + meshopt(내부 reorder/quantize 포함)` 최적화와 budget re-check를 수행한다.
+
+```bash
+npm --workspace apps/web run assets:optimize:deskterior
+```
+
+강제 재적용이 필요하면:
+
+```bash
+npm --workspace apps/web run assets:optimize:deskterior -- --force --level high
+```
+
+native gltfpack binary가 있으면 먼저 probe한 뒤 optional pass를 붙일 수 있다.
+
+```bash
+npm --workspace apps/web run assets:setup:gltfpack
+npm --workspace apps/web run assets:probe:gltfpack
+npm --workspace apps/web run assets:optimize:deskterior:native -- --gltfpack-bin /absolute/path/to/gltfpack
+# 또는 기존 체인 뒤에 바로 연결
+npm --workspace apps/web run assets:optimize:deskterior -- --native-gltfpack --gltfpack-bin /absolute/path/to/gltfpack
+```
+
+7. Khronos glTF Validator로 런타임 GLB를 검증한다.
+
+```bash
+npm --workspace apps/web run assets:validate:deskterior
+```
+
+8. 파이프라인 정합성(source/runtime/manifest)을 검증한다.
 
 ```bash
 npm --workspace apps/web run assets:verify:deskterior
 ```
 
-6. 에디터에서 자산 배치 후 저장/발행하고 shared viewer에서 제품 정보를 검증한다.
+9. 에디터에서 자산 배치 후 저장/발행하고 shared viewer에서 제품 정보를 검증한다.
   - 실측 고정(`scaleLocked=true`) 제품은 Inspector의 `크기 비율` 입력이 비활성화되는지 확인
   - shared viewer 제품 카드에서 W/D/H, 마감 색상/재질, 디테일 노트가 보이는지 확인
   - 데스크/선반 계열 support 배치 시 실측 기반으로 상면(top) 클램핑이 자연스럽게 유지되는지 확인
   - floor/surface 배치 시 벽 관통 없이 wall clearance가 적용되고, 인접 자산과 과도한 중첩이 완화되는지 확인
-  - 상단뷰 하단 툴바와 속성 패널에서 `월드/로컬` 토글이 동일하게 동작하는지 확인
+  - room mode에서는 제품 본체 direct drag만, desk precision mode에서는 gizmo와 `월드/로컬` 토글만 동작하는지 확인
+  - desk precision mode에서 inspector와 measurement overlay가 선택 자산의 X/Z/Y(mm), Yaw(deg), 실측 W/D/H(mm)를 같은 값으로 유지하는지 확인
+  - desk precision mode에서 surface anchor 제품의 inspector와 overlay가 support asset / support surface / surface size / margin / top 높이를 같은 값으로 유지하는지 확인
+  - desk precision mode에서 surface anchor 제품의 inspector와 overlay micro-view marker가 같은 support-local 위치를 가리키고 offset 수치와 일치하는지 확인
   - gizmo 드래그 중 방 외곽으로 나가려 하면 live clamp가 걸리고, mouse-up 후 위치가 다시 튀지 않는지 확인
   - 상단뷰 room shell이 floor footprint를 감싸는 닫힌 strip 형태로 읽히는지 확인
   - finishColor/finishMaterial이 있는 제품은 GLB 표면 톤/질감이 기존 대비 반영되는지 확인
   - `DeskWood`/`DeskMetal`/`StandWood`/`StandPad`/`LampBody`/`LampAccent`/`LampBulb` 슬롯이 의도한 재질 특성으로 분리 반영되는지 확인
-7. 조명 제품은 뷰어에서 실제 광원 효과가 보이는지 확인한다.
+9. 조명 제품은 뷰어에서 실제 광원 효과가 보이는지 확인한다.
 
 실패 대응:
 - `assets:export:deskterior` 실패 시 `--report`로 누락/stale 원인을 먼저 확인한다.
+- `assets:optimize:deskterior`가 실패하면 draw call, triangle, runtime size budget 초과 asset부터 확인한다.
+- native gltfpack pass가 필요하면 먼저 `assets:probe:gltfpack`로 binary 경로를 확인하고, 없으면 `GLTFPACK_BIN` 또는 `--gltfpack-bin`으로 절대 경로를 준다.
+- repo-local 환경을 만들 때는 `assets:setup:gltfpack`로 `.tools/gltfpack/current/gltfpack`를 먼저 준비한다.
+- `assets:validate:deskterior`가 실패하면 해당 GLB의 구조 오류, 경고, draw call 수치를 먼저 확인한다.
 - `assets:verify:deskterior`가 실패하면 manifest의 `assetId`/필수 메타(`brand`, `externalUrl`, `description`, `category`, `options`)를 우선 수정한다.
+- support surface 자산에서 `assets:verify:deskterior`가 실패하면 `supportProfile.surfaces[].{id,anchorTypes,center,size,top,margin}` 계약을 먼저 맞춘다.
 - 규격 불일치가 발견되면 `.blend` 실측 값을 기준으로 `dimensionsMm`/`supportProfile`/`options`를 함께 갱신한다.
 - `p2s_desk_lamp_glow`의 `options`에는 반드시 `light-emitter` 힌트를 유지한다.
 
@@ -376,3 +530,196 @@ Updated:
 
 Removed/Deprecated:
 - 프리뷰 내부 FAB delete와 안내 카드 존재를 전제로 한 builder QA 포인트.
+
+## 2026-04-19 변경 동기화 (Room Mode + Desk Precision QA)
+Added:
+- 상단뷰 하단 pill toolbar의 `룸 배치` / `데스크 정밀` 토글 검증 항목 추가.
+- room mode의 250mm snap / 90도 회전, desk precision mode의 25mm snap / 15도 회전 검증 항목 추가.
+
+Updated:
+- 에디터 QA를 `상단뷰 공통 drag/transform`에서 `room mode=direct drag`, `desk precision mode=gizmo + local/world` 분리 확인으로 갱신.
+
+Removed/Deprecated:
+- 상단뷰 하나에서 direct drag와 gizmo가 항상 동시에 활성이라는 운영 점검 가정.
+
+## 2026-04-19 변경 동기화 (Desk Precision Measurements)
+Added:
+- desk precision mode에서 선택 자산의 X/Z/Y(mm), Yaw(deg), 실측 W/D/H(mm)를 inspector와 measurement overlay 양쪽에서 함께 검증하는 QA 항목을 추가.
+
+Updated:
+- 상단뷰 정밀 편집 점검 기준을 내부 meter/radian 추정보다 사용자 노출 단위인 `mm/deg` 일치 확인으로 갱신.
+
+Removed/Deprecated:
+- 정밀 편집 수치가 inspector 내부 값만 맞으면 충분하다는 QA 가정.
+
+## 2026-04-19 변경 동기화 (Desk Precision Surface Lock)
+Added:
+- desk precision mode에서 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 inspector와 overlay 양쪽에서 함께 검증하는 QA 항목을 추가.
+
+Updated:
+- 정밀 배치 QA 기준을 수치 측정만이 아니라 surface lock 상태 동기화 확인까지 확장.
+
+Removed/Deprecated:
+- support surface lock 상태를 사용자 추정에만 맡겨도 된다는 QA 가정.
+
+## 2026-04-19 변경 동기화 (Desk Precision Micro View)
+Added:
+- desk precision mode에서 surface anchor 제품의 support-local micro-view marker와 offset 수치를 inspector/overlay 양쪽에서 함께 검증하는 QA 항목을 추가.
+
+Updated:
+- 정밀 배치 QA 기준을 surface lock 상태 동기화에서 support-local marker 동기화 확인까지 확장.
+
+Removed/Deprecated:
+- support-local 위치를 숫자 텍스트만 맞으면 충분하다는 QA 가정.
+
+## 2026-04-19 변경 동기화 (SceneDocument Roundtrip Verify)
+Added:
+- `verify:scene-document` 실행으로 placement/support/product metadata roundtrip 검증을 수행하는 QA 항목을 추가.
+
+Updated:
+- 정밀 편집 회귀 확인을 UI 점검만이 아니라 저장/복원 재현성 스크립트 통과까지 포함하도록 확장.
+
+Removed/Deprecated:
+- save/load 재현성 검증을 수동 editor/shared viewer 확인에만 의존하던 QA 기준.
+
+## 2026-04-19 변경 동기화 (Public Scene Payload Verify)
+Added:
+- `verify:public-scene` 실행으로 shared viewer payload의 placement/support/product metadata 재현성을 검증하는 QA 항목을 추가.
+
+Updated:
+- publish/shared 재현성 점검을 수동 링크 확인만이 아니라 public payload verify 통과까지 포함하도록 확장.
+
+Removed/Deprecated:
+- shared viewer payload 회귀를 수동 링크 열기만으로 감지하던 QA 기준.
+
+## 2026-04-19 변경 동기화 (Showcase Scene Consistency Verify)
+Added:
+- `verify:showcase-scene` 실행으로 gallery/community 카드 projection과 shared viewer public payload의 version/preview asset summary 정합성을 검증하는 QA 항목을 추가.
+
+Updated:
+- publish/shared 재현성 점검을 `sceneDocument -> public payload -> showcase card projection` 연쇄 검증까지 포함하도록 확장했다.
+
+Removed/Deprecated:
+- gallery/community 카드 메타 회귀를 수동 피드 확인만으로 감지하던 QA 기준.
+
+## 2026-04-19 변경 동기화 (Desk Precision Extended Measurement)
+Added:
+- desk precision mode에서 surface anchor 제품의 footprint / projected footprint / edge clearance / relative yaw를 inspector/overlay/micro-view 양쪽에서 함께 검증하는 QA 항목을 추가.
+
+Updated:
+- 정밀 배치 QA 기준을 `offset + micro-view marker 확인`에서 `footprint가 usable area 안에 들어오는지 판단 가능한 측정 UI 확인`까지 확장했다.
+
+Removed/Deprecated:
+- support surface 배치 품질을 offset 숫자와 점 marker만으로 확인하던 QA 기준.
+
+## 2026-04-20 변경 동기화 (Desk Precision Helper View)
+Added:
+- desk precision mode에서 surface anchor 제품의 `front(X/H)` / `side(Z/H)` helper view가 inspector/overlay 양쪽에서 같은 projected span, gap, reach를 보여주는지 확인하는 QA 항목을 추가.
+
+Updated:
+- 정밀 배치 QA 기준을 `top-down micro-view + footprint 확인`에서 `side/front section helper view 확인`까지 확장했다.
+
+Removed/Deprecated:
+- support surface 위 수직 관계를 top height 숫자만 확인하면 충분하다는 QA 가정.
+
+## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop QA)
+Added:
+- `assets:sync:ktx2-transcoder -- --check`와 idle 안정화 확인 항목을 QA 체크리스트에 추가했다.
+- 자산 운영 단계에 basis transcoder public sync 절차를 추가했다.
+
+Updated:
+- 배포 전 체크리스트를 render ladder 확인에서 `frameloop demand + KTX2 runtime-ready` 운영 점검까지 포함하도록 갱신했다.
+
+Removed/Deprecated:
+- runtime transcoder 동기화 없이도 KTX2 준비 상태를 추정만으로 확인하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (Room Shell KTX2 Wiring QA)
+Added:
+- `textures:check:room-shell:ktx2`로 room shell texture set의 expected `.ktx2` 산출물 유무를 확인하는 QA 항목을 추가했다.
+
+Updated:
+- KTX2 QA 기준을 transcoder sync 확인에서 `transcoder sync + committed room shell ktx2 output check + runtime flag` 확인까지 확장했다.
+
+Removed/Deprecated:
+- room shell texture KTX2 준비 상태를 수동 파일 탐색만으로 판단하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (BVH Worker Offload QA)
+Added:
+- `plan2space:bvh-build` 이벤트로 large geometry가 worker offload 되는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- BVH QA 기준을 `hover/select latency` 확인에서 `hover/select latency + BVH build mode(worker/sync) 확인`까지 확장했다.
+
+Removed/Deprecated:
+- BVH generation path를 코드 추측만으로 판단하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (Deskterior Metadata Contract Reinforcement QA)
+Added:
+- `assets:verify:deskterior`가 curated `p2s_*` 자산의 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약까지 검증하는 QA 항목을 추가했다.
+- `verify:scene-document`, `verify:public-scene`가 위 product contract metadata roundtrip을 확인하는 QA 항목을 추가했다.
+
+Updated:
+- 자산 QA 기준을 source/runtime/manifest/surface metadata 확인에서 `source/runtime/manifest/surface metadata + asset contract metadata + save/share roundtrip`까지 확장했다.
+
+Removed/Deprecated:
+- curated deskterior 자산 메타 검증이 물리 메타와 supportProfile까지만 확인하면 충분하다는 가정.
+
+## 2026-04-20 변경 동기화 (Deskterior Optimize Chain Phase 1 QA)
+Added:
+- `assets:optimize:deskterior`가 `glTF Transform dedup + prune + meshopt` 체인을 실행한 뒤 `assets:validate:deskterior`를 다시 통과하는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- deskterior optimize QA 기준을 “meshopt 재적용 후 budget 확인”에서 “dedup/prune + meshopt 재적용 후 validate/verify/build 확인”까지 확장했다.
+
+Removed/Deprecated:
+- optimize 패스가 meshopt extension write 한 단계뿐이라서 geometry 정리 회귀를 따로 볼 필요가 없다는 가정.
+
+## 2026-04-20 변경 동기화 (LOD Policy Operationalization QA)
+Added:
+- `verify:asset-lod`로 complexity별 room/desk precision/walk fallback 거리 정책을 검증하는 QA 항목을 추가했다.
+
+Updated:
+- LOD QA 기준을 “모든 자산 공통 box proxy가 뜨는지”에서 `lodProfile + 모드별 거리 정책` 검증까지 확장했다.
+
+Removed/Deprecated:
+- 런타임 LOD가 자산 complexity와 무관한 고정 거리 규칙만 쓰면 된다는 가정.
+
+## 2026-04-20 변경 동기화 (Scene Instancing Phase 1 QA)
+Added:
+- `verify:asset-instancing`로 read-only top/walk + builder preview instancing eligibility와 repeated cluster grouping을 검증하는 QA 항목을 추가했다.
+
+Updated:
+- 반복 자산 QA 기준을 “눈으로 draw call이 줄어든 것 같아 보이는지” 수준에서 `instancing policy script + build 회귀` 기준으로 강화했다.
+
+Removed/Deprecated:
+- instancing 적용 여부를 수동 viewer 확인만으로 판단하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (Native gltfpack Optional Chain QA)
+Added:
+- `assets:probe:gltfpack`로 native binary availability를 확인하고, `assets:optimize:deskterior:native` 또는 `assets:optimize:deskterior -- --native-gltfpack` 경로를 점검하는 QA 항목을 추가했다.
+
+Updated:
+- 고급 asset optimize QA 기준을 glTF Transform only에서 `glTF Transform baseline + optional native gltfpack pass + validate/verify/build`까지 확장했다.
+
+Removed/Deprecated:
+- native gltfpack 적용 여부를 로컬 개인 alias나 수동 메모에만 의존하던 QA 방식.
+
+## 2026-04-20 변경 동기화 (Repo-local gltfpack Environment QA)
+Added:
+- `assets:setup:gltfpack`로 `.tools/gltfpack/current/gltfpack`를 만들고, 바로 `assets:probe:gltfpack`가 same path를 읽는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- native optimize 준비 절차를 “binary가 있으면 쓴다” 수준에서 `repo-local setup -> probe -> optimize -> validate/verify/build` 순서로 구체화했다.
+
+Removed/Deprecated:
+- 전역 PATH에 우연히 있는 gltfpack을 바로 쓰는 방식만 가정하던 QA 절차.
+
+## 2026-04-20 변경 동기화 (Showcase Viewer Presentation QA)
+Added:
+- gallery/community 카드 클릭 시 `/shared/[token]?source=showcase`로 이동하고, 해당 진입에서만 richer showcase presentation이 적용되는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- shared viewer QA 기준을 단일 `viewer-shared` 확인에서 “plain shared link는 lean profile 유지, showcase card 진입은 `viewer-showcase` 프로파일 사용”까지 확장했다.
+
+Removed/Deprecated:
+- gallery/community 유입과 일반 shared 링크를 같은 viewer profile로만 확인하던 QA 방식.

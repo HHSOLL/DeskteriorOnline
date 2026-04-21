@@ -288,7 +288,18 @@
     "description": "Free 4K model of a classic navy plastic school chair with tubular black metal legs, three-slot molded back, visible scuffs, and realistic painted-metal wear.",
     "options": "오픈소스 3D 자산 · school chair",
     "externalUrl": "https://polyhaven.com/",
-    "brand": "Poly Haven (CC0)"
+    "brand": "Poly Haven (CC0)",
+    "source": {
+      "kind": "open_source",
+      "name": "Poly Haven",
+      "path": null,
+      "url": "https://polyhaven.com/"
+    },
+    "license": {
+      "spdx": "CC0-1.0",
+      "label": "Creative Commons Zero v1.0 Universal",
+      "requiresAttribution": false
+    }
   },
   {
     "id": "SchoolDesk_01",
@@ -303,7 +314,18 @@
     "description": "Free 4K model of a classic single-seat school desk with a wood top, gray metal storage shelf and adjustable tubular metal legs with worn finish.",
     "options": "오픈소스 3D 자산 · school desk",
     "externalUrl": "https://polyhaven.com/",
-    "brand": "Poly Haven (CC0)"
+    "brand": "Poly Haven (CC0)",
+    "source": {
+      "kind": "open_source",
+      "name": "Poly Haven",
+      "path": null,
+      "url": "https://polyhaven.com/"
+    },
+    "license": {
+      "spdx": "CC0-1.0",
+      "label": "Creative Commons Zero v1.0 Universal",
+      "requiresAttribution": false
+    }
   },
   {
     "id": "Shelf_01",
@@ -546,7 +568,18 @@
     "description": "Free 8K model of an industrial, rigged desk lamp arm - clamp-mounted, articulated with springs, vintage workshop style.",
     "options": "오픈소스 3D 자산 · articulated lamp · light-emitter",
     "externalUrl": "https://polyhaven.com/a/desk_lamp_arm_01",
-    "brand": "Poly Haven (CC0)"
+    "brand": "Poly Haven (CC0)",
+    "source": {
+      "kind": "open_source",
+      "name": "Poly Haven",
+      "path": null,
+      "url": "https://polyhaven.com/a/desk_lamp_arm_01"
+    },
+    "license": {
+      "spdx": "CC0-1.0",
+      "label": "Creative Commons Zero v1.0 Universal",
+      "requiresAttribution": false
+    }
   },
   {
     "id": "dining_chair_02",
@@ -1197,7 +1230,18 @@
     "description": "Free 4K model of a worn wooden bookshelf with multiple shelves, distressed weathered grain, layered plywood edges, visible nail holes and rustic vintage finish.",
     "brand": "Poly Haven (CC0)",
     "options": "오픈소스 3D 자산 · bookshelf",
-    "externalUrl": "https://polyhaven.com/a/wooden_bookshelf_worn"
+    "externalUrl": "https://polyhaven.com/a/wooden_bookshelf_worn",
+    "source": {
+      "kind": "open_source",
+      "name": "Poly Haven",
+      "path": null,
+      "url": "https://polyhaven.com/a/wooden_bookshelf_worn"
+    },
+    "license": {
+      "spdx": "CC0-1.0",
+      "label": "Creative Commons Zero v1.0 Universal",
+      "requiresAttribution": false
+    }
   },
   {
     "id": "wooden_candlestick",
@@ -1584,7 +1628,18 @@
     "description": "Free 8K set of vintage leather-bound encyclopedia volumes with gold-embossed spines, alphabetic labels and realistic wear, warm brown tones.",
     "brand": "Poly Haven (CC0)",
     "options": "오픈소스 3D 자산 · books · desk decor",
-    "externalUrl": "https://polyhaven.com/a/book_encyclopedia_set_01"
+    "externalUrl": "https://polyhaven.com/a/book_encyclopedia_set_01",
+    "source": {
+      "kind": "open_source",
+      "name": "Poly Haven",
+      "path": null,
+      "url": "https://polyhaven.com/a/book_encyclopedia_set_01"
+    },
+    "license": {
+      "spdx": "CC0-1.0",
+      "label": "Creative Commons Zero v1.0 Universal",
+      "requiresAttribution": false
+    }
   },
   {
     "id": "boombox",
@@ -1599,7 +1654,18 @@
     "description": "Free 4K model of a vintage 80s portable boombox with dual speakers, cassette deck, tuner knobs, telescoping antenna and worn stickers, gritty urban wear.",
     "brand": "Poly Haven (CC0)",
     "options": "오픈소스 3D 자산 · speaker",
-    "externalUrl": "https://polyhaven.com/a/boombox"
+    "externalUrl": "https://polyhaven.com/a/boombox",
+    "source": {
+      "kind": "open_source",
+      "name": "Poly Haven",
+      "path": null,
+      "url": "https://polyhaven.com/a/boombox"
+    },
+    "license": {
+      "spdx": "CC0-1.0",
+      "label": "Creative Commons Zero v1.0 Universal",
+      "requiresAttribution": false
+    }
   },
   {
     "id": "brass_blowtorch",
@@ -2286,7 +2352,18 @@
     "description": "Free 4K model: retro wired gray gamepad with D-pad, four colored face buttons, start/select switches, worn plastic and long cable.",
     "brand": "Poly Haven (CC0)",
     "options": "오픈소스 3D 자산 · gamepad",
-    "externalUrl": "https://polyhaven.com/a/gamepad"
+    "externalUrl": "https://polyhaven.com/a/gamepad",
+    "source": {
+      "kind": "open_source",
+      "name": "Poly Haven",
+      "path": null,
+      "url": "https://polyhaven.com/a/gamepad"
+    },
+    "license": {
+      "spdx": "CC0-1.0",
+      "label": "Creative Commons Zero v1.0 Universal",
+      "requiresAttribution": false
+    }
   },
   {
     "id": "gaming_console",
@@ -2301,7 +2378,18 @@
     "description": "Free 8K model. Matte black gaming console with curved shell, front disc slot, circular illuminated power button, multiple front ports and ventilation details.",
     "brand": "Poly Haven (CC0)",
     "options": "오픈소스 3D 자산 · console",
-    "externalUrl": "https://polyhaven.com/a/gaming_console"
+    "externalUrl": "https://polyhaven.com/a/gaming_console",
+    "source": {
+      "kind": "open_source",
+      "name": "Poly Haven",
+      "path": null,
+      "url": "https://polyhaven.com/a/gaming_console"
+    },
+    "license": {
+      "spdx": "CC0-1.0",
+      "label": "Creative Commons Zero v1.0 Universal",
+      "requiresAttribution": false
+    }
   },
   {
     "id": "garden_gloves_01",
@@ -2470,7 +2558,38 @@
     "finishColor": "Natural oak",
     "finishMaterial": "Oak veneer over engineered wood",
     "detailNotes": "Rectangular desk with a straight apron and slab top. Dimensions reflect Blender-measured envelope for runtime fidelity.",
-    "scaleLocked": true
+    "scaleLocked": true,
+    "source": {
+      "kind": "plan2space_blender",
+      "name": "Plan2Space Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_desk_oak.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-Plan2Space-Internal",
+      "label": "Plan2Space Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 2000
+    }
   },
   {
     "id": "p2s_monitor_stand_wood",
@@ -2519,7 +2638,38 @@
     "finishColor": "Warm walnut",
     "finishMaterial": "Walnut veneer over plywood",
     "detailNotes": "Low-profile riser for one ultrawide or dual compact monitors. Dimensions reflect Blender-measured envelope.",
-    "scaleLocked": true
+    "scaleLocked": true,
+    "source": {
+      "kind": "plan2space_blender",
+      "name": "Plan2Space Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_monitor_stand.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-Plan2Space-Internal",
+      "label": "Plan2Space Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 8,
+      "maxTriangleCount": 2000
+    }
   },
   {
     "id": "p2s_desk_lamp_glow",
@@ -2544,7 +2694,38 @@
     "finishColor": "Matte ivory",
     "finishMaterial": "Powder-coated steel with frosted acrylic diffuser",
     "detailNotes": "Adjustable desk lamp with integrated warm emitter. Dimensions reflect Blender-measured envelope for accurate placement.",
-    "scaleLocked": true
+    "scaleLocked": true,
+    "source": {
+      "kind": "plan2space_blender",
+      "name": "Plan2Space Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_desk_lamp_glow.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-Plan2Space-Internal",
+      "label": "Plan2Space Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 12,
+      "maxTriangleCount": 6000
+    }
   },
   {
     "id": "p2s_ceramic_mug_sand",
@@ -2569,7 +2750,38 @@
     "finishColor": "Sand beige",
     "finishMaterial": "Glazed ceramic",
     "detailNotes": "Single handled mug with thick ceramic wall and soft satin glaze. Dimensions reflect Blender-measured envelope for shelf and desk placement.",
-    "scaleLocked": true
+    "scaleLocked": true,
+    "source": {
+      "kind": "plan2space_blender",
+      "name": "Plan2Space Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_ceramic_mug.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-Plan2Space-Internal",
+      "label": "Plan2Space Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 4,
+      "maxTriangleCount": 4000
+    }
   },
   {
     "id": "p2s_book_stack_warm",
@@ -2594,7 +2806,38 @@
     "finishColor": "Terracotta / mustard / cocoa",
     "finishMaterial": "Laminated paper cover over board",
     "detailNotes": "Three-book horizontal stack with a warm editorial palette for desk, shelf, and side table styling.",
-    "scaleLocked": true
+    "scaleLocked": true,
+    "source": {
+      "kind": "plan2space_blender",
+      "name": "Plan2Space Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_book_stack_warm.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-Plan2Space-Internal",
+      "label": "Plan2Space Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 6,
+      "maxTriangleCount": 2000
+    }
   },
   {
     "id": "p2s_desk_tray_oak",
@@ -2644,6 +2887,37 @@
           ]
         }
       ]
+    },
+    "source": {
+      "kind": "plan2space_blender",
+      "name": "Plan2Space Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_desk_tray_oak.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-Plan2Space-Internal",
+      "label": "Plan2Space Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 8,
+      "maxTriangleCount": 2000
     }
   },
   {
@@ -2669,7 +2943,38 @@
     "finishColor": "Graphite black",
     "finishMaterial": "Powder-coated metal with woven grille",
     "detailNotes": "Single compact desktop speaker with two front drivers and rounded cabinet edges for modern desk setups.",
-    "scaleLocked": true
+    "scaleLocked": true,
+    "source": {
+      "kind": "plan2space_blender",
+      "name": "Plan2Space Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_compact_speaker.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-Plan2Space-Internal",
+      "label": "Plan2Space Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 8,
+      "maxTriangleCount": 2000
+    }
   },
   {
     "id": "p2s_desk_planter_pilea",
@@ -2694,6 +2999,37 @@
     "finishColor": "Clay pot / fresh green",
     "finishMaterial": "Unglazed ceramic pot with plant foliage",
     "detailNotes": "Compact pilea planter with terracotta pot, soil insert, and layered leaves sized for desk corners and shelf styling.",
-    "scaleLocked": true
+    "scaleLocked": true,
+    "source": {
+      "kind": "plan2space_blender",
+      "name": "Plan2Space Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_desk_planter_pilea.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-Plan2Space-Internal",
+      "label": "Plan2Space Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 10,
+      "maxTriangleCount": 6000
+    }
   }
 ]

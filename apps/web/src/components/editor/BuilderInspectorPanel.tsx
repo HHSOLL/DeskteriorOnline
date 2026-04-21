@@ -2,20 +2,37 @@
 
 import { SlidersHorizontal, Trash2 } from "lucide-react";
 import type { LibraryCatalogItem } from "../../lib/builder/catalog";
+import {
+  degreesToRadians,
+  metersToMillimeters,
+  millimetersToMeters,
+  radiansToDegrees
+} from "../../lib/domain/scene-placement";
 import { SCENE_ANCHOR_TYPES, type SceneAnchorType } from "../../lib/scene/anchor-types";
+import { isSupportAnchorType } from "../../lib/scene/support-profiles";
+import {
+  PrecisionSurfaceMicroView,
+  type PrecisionSurfaceLockInfo
+} from "./PrecisionSurfaceMicroView";
+import { PrecisionSurfaceProjectionView } from "./PrecisionSurfaceProjectionView";
 import { builderFloorFinishes, builderWallFinishes } from "../../lib/builder/templates";
 import {
   LIGHTING_PRESETS,
   inferLightingPresetId,
   type LightingPresetId
 } from "../../lib/scene/lighting-presets";
-import type { TransformMode, TransformSpace } from "../../lib/stores/useEditorStore";
+import type {
+  EditorTopMode,
+  TransformMode,
+  TransformSpace
+} from "../../lib/stores/useEditorStore";
 import type { LightingSettings, SceneAsset } from "../../lib/stores/useSceneStore";
 
 type BuilderInspectorPanelProps = {
   visible: boolean;
   layout?: "overlay" | "inline";
   className?: string;
+  topMode: EditorTopMode;
   transformMode: TransformMode;
   transformSpace: TransformSpace;
   wallMaterialIndex: number;
@@ -26,6 +43,7 @@ type BuilderInspectorPanelProps = {
   assetsCount: number;
   selectedAsset: SceneAsset | null;
   selectedAssetMeta: LibraryCatalogItem | null;
+  surfaceLockInfo: PrecisionSurfaceLockInfo | null;
   onTransformModeChange: (mode: TransformMode) => void;
   onTransformSpaceChange: (space: TransformSpace) => void;
   onWallMaterialChange: (index: number) => void;
@@ -45,10 +63,15 @@ function formatDimensionsMm(
   return `W ${dimensions.width} / D ${dimensions.depth} / H ${dimensions.height} mm`;
 }
 
+function toRoundedDegree(value: number) {
+  return Math.round(radiansToDegrees(value) * 10) / 10;
+}
+
 export function BuilderInspectorPanel({
   visible,
   layout = "overlay",
   className,
+  topMode,
   transformMode,
   transformSpace,
   wallMaterialIndex,
@@ -59,6 +82,7 @@ export function BuilderInspectorPanel({
   assetsCount,
   selectedAsset,
   selectedAssetMeta,
+  surfaceLockInfo,
   onTransformModeChange,
   onTransformSpaceChange,
   onWallMaterialChange,
@@ -93,6 +117,31 @@ export function BuilderInspectorPanel({
     selectedAsset?.product?.scaleLocked ?? selectedAssetMeta?.scaleLocked ?? false;
   const dimensionsLabel = formatDimensionsMm(productDimensions);
   const activeLightingPresetId = inferLightingPresetId(lighting);
+  const topModeLabel = topMode === "room" ? "룸 배치" : "데스크 정밀";
+  const usesSurfaceLock = isSupportAnchorType(selectedAsset?.anchorType);
+  const surfaceLockStatus = surfaceLockInfo
+    ? surfaceLockInfo.withinUsableBounds
+      ? {
+          label: "Locked",
+          className: "border border-emerald-200 bg-emerald-50 text-emerald-700"
+        }
+      : {
+          label: "Overflow",
+          className: "border border-amber-200 bg-amber-50 text-amber-700"
+        }
+    : usesSurfaceLock
+      ? {
+          label: "Pending",
+          className: "border border-amber-200 bg-amber-50 text-amber-700"
+        }
+      : {
+          label: "Off",
+          className: "border border-black/10 bg-[#f4f1eb] text-[#7a7064]"
+        };
+  const topModeDescription =
+    topMode === "room"
+      ? "제품 본체를 직접 드래그해 큰 위치를 옮깁니다. 250mm 그리드와 월드 기준 정렬만 유지합니다."
+      : "선택한 제품에 gizmo를 붙여 surface/anchor 기준 미세 위치와 회전을 조정합니다. 25mm / 15도 snap이 적용됩니다.";
   const containerClassName =
     layout === "inline"
       ? `flex h-full min-h-0 flex-col bg-white ${className ?? ""}`.trim()
@@ -113,53 +162,67 @@ export function BuilderInspectorPanel({
       </div>
       <div className="flex-1 space-y-6 overflow-y-auto px-4 py-4">
         <div className="space-y-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">변형 모드</p>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { id: "translate", label: "이동" },
-              { id: "rotate", label: "회전" }
-            ].map((mode) => (
-              <button
-                key={mode.id}
-                type="button"
-                onClick={() => onTransformModeChange(mode.id as TransformMode)}
-                className={`rounded-full px-4 py-3 text-[10px] font-bold uppercase tracking-[0.16em] transition ${
-                  transformMode === mode.id
-                    ? "bg-[#1c1a17] text-white"
-                    : "border border-black/10 bg-[#f4f4f1] text-[#4e473d] hover:border-black/20 hover:bg-white"
-                }`}
-              >
-                {mode.label}
-              </button>
-            ))}
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">편집 정책</p>
+          <div className="rounded-[20px] border border-black/10 bg-[#faf9f7] p-4">
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#4e473d]">
+              {topModeLabel}
+            </div>
+            <p className="mt-2 text-[12px] leading-6 text-[#746b60]">{topModeDescription}</p>
           </div>
         </div>
 
-        <div className="space-y-3">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">좌표계</p>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { id: "world", label: "월드" },
-              { id: "local", label: "로컬" }
-            ].map((space) => (
-              <button
-                key={space.id}
-                type="button"
-                onClick={() => onTransformSpaceChange(space.id as TransformSpace)}
-                className={`rounded-full px-4 py-3 text-[10px] font-bold uppercase tracking-[0.16em] transition ${
-                  transformSpace === space.id
-                    ? "bg-[#1c1a17] text-white"
-                    : "border border-black/10 bg-[#f4f4f1] text-[#4e473d] hover:border-black/20 hover:bg-white"
-                }`}
-              >
-                {space.label}
-              </button>
-            ))}
-          </div>
-          <p className="text-[11px] leading-5 text-[#82796d]">
-            월드는 방 기준, 로컬은 선택한 제품 기준 축으로 이동/회전합니다.
-          </p>
-        </div>
+        {topMode === "desk-precision" ? (
+          <>
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">변형 모드</p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "translate", label: "이동" },
+                  { id: "rotate", label: "회전" }
+                ].map((mode) => (
+                  <button
+                    key={mode.id}
+                    type="button"
+                    onClick={() => onTransformModeChange(mode.id as TransformMode)}
+                    className={`rounded-full px-4 py-3 text-[10px] font-bold uppercase tracking-[0.16em] transition ${
+                      transformMode === mode.id
+                        ? "bg-[#1c1a17] text-white"
+                        : "border border-black/10 bg-[#f4f4f1] text-[#4e473d] hover:border-black/20 hover:bg-white"
+                    }`}
+                  >
+                    {mode.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">좌표계</p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "world", label: "월드" },
+                  { id: "local", label: "로컬" }
+                ].map((space) => (
+                  <button
+                    key={space.id}
+                    type="button"
+                    onClick={() => onTransformSpaceChange(space.id as TransformSpace)}
+                    className={`rounded-full px-4 py-3 text-[10px] font-bold uppercase tracking-[0.16em] transition ${
+                      transformSpace === space.id
+                        ? "bg-[#1c1a17] text-white"
+                        : "border border-black/10 bg-[#f4f4f1] text-[#4e473d] hover:border-black/20 hover:bg-white"
+                    }`}
+                  >
+                    {space.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] leading-5 text-[#82796d]">
+                월드는 방 기준, 로컬은 선택한 제품 기준 축으로 이동/회전합니다.
+              </p>
+            </div>
+          </>
+        ) : null}
 
         <div className="space-y-3">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">벽 마감</p>
@@ -368,15 +431,15 @@ export function BuilderInspectorPanel({
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <label className="space-y-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7a7064]">
-                  X
+                  X (mm)
                   <input
                     type="number"
-                    step="0.25"
-                    value={selectedAsset.position[0]}
+                    step="1"
+                    value={metersToMillimeters(selectedAsset.position[0])}
                     onChange={(event) =>
                       onUpdateAsset(selectedAsset.id, {
                         position: [
-                          Number(event.target.value),
+                          millimetersToMeters(Number(event.target.value)),
                           selectedAsset.position[1],
                           selectedAsset.position[2]
                         ]
@@ -386,17 +449,17 @@ export function BuilderInspectorPanel({
                   />
                 </label>
                 <label className="space-y-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7a7064]">
-                  Z
+                  Z (mm)
                   <input
                     type="number"
-                    step="0.25"
-                    value={selectedAsset.position[2]}
+                    step="1"
+                    value={metersToMillimeters(selectedAsset.position[2])}
                     onChange={(event) =>
                       onUpdateAsset(selectedAsset.id, {
                         position: [
                           selectedAsset.position[0],
                           selectedAsset.position[1],
-                          Number(event.target.value)
+                          millimetersToMeters(Number(event.target.value))
                         ]
                       })
                     }
@@ -404,17 +467,17 @@ export function BuilderInspectorPanel({
                   />
                 </label>
                 <label className="space-y-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7a7064]">
-                  Y
+                  Y (mm)
                   <input
                     type="number"
-                    step="0.1"
-                    value={selectedAsset.position[1]}
+                    step="1"
+                    value={metersToMillimeters(selectedAsset.position[1])}
                     disabled={isYManagedByAnchor}
                     onChange={(event) =>
                       onUpdateAsset(selectedAsset.id, {
                         position: [
                           selectedAsset.position[0],
-                          Number(event.target.value),
+                          millimetersToMeters(Number(event.target.value)),
                           selectedAsset.position[2]
                         ]
                       })
@@ -427,17 +490,17 @@ export function BuilderInspectorPanel({
                   />
                 </label>
                 <label className="space-y-2 text-[10px] font-bold uppercase tracking-[0.16em] text-[#7a7064]">
-                  Y축 회전
+                  Y축 회전 (deg)
                   <input
                     type="number"
-                    step="0.1"
-                    value={selectedAsset.rotation[1]}
+                    step="1"
+                    value={toRoundedDegree(selectedAsset.rotation[1])}
                     disabled={isRotationManagedByAnchor}
                     onChange={(event) =>
                       onUpdateAsset(selectedAsset.id, {
                         rotation: [
                           selectedAsset.rotation[0],
-                          Number(event.target.value),
+                          degreesToRadians(Number(event.target.value)),
                           selectedAsset.rotation[2]
                         ]
                       })
@@ -470,6 +533,193 @@ export function BuilderInspectorPanel({
                   />
                 </label>
               </div>
+              {topMode === "desk-precision" ? (
+                <div className="rounded-[18px] border border-black/10 bg-white p-3">
+                  <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#7a7064]">
+                    정밀 측정
+                  </div>
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-[#5f574d]">
+                    <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                      <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">X</div>
+                      <div className="mt-1 font-semibold text-[#1f1b16]">
+                        {metersToMillimeters(selectedAsset.position[0])} mm
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                      <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">Z</div>
+                      <div className="mt-1 font-semibold text-[#1f1b16]">
+                        {metersToMillimeters(selectedAsset.position[2])} mm
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                      <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">Y</div>
+                      <div className="mt-1 font-semibold text-[#1f1b16]">
+                        {metersToMillimeters(selectedAsset.position[1])} mm
+                      </div>
+                    </div>
+                    <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                      <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">회전</div>
+                      <div className="mt-1 font-semibold text-[#1f1b16]">
+                        {toRoundedDegree(selectedAsset.rotation[1])} deg
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+              {topMode === "desk-precision" ? (
+                <div className="rounded-[18px] border border-black/10 bg-white p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#7a7064]">
+                      Surface Lock
+                    </div>
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] ${surfaceLockStatus.className}`}
+                    >
+                      {surfaceLockStatus.label}
+                    </span>
+                  </div>
+
+                  {surfaceLockInfo ? (
+                    <>
+                      <div className="mt-3 text-sm font-semibold text-[#1f1b16]">
+                        {surfaceLockInfo.supportLabel}
+                      </div>
+                      <div className="mt-1 text-[11px] uppercase tracking-[0.14em] text-[#8b8277]">
+                        {surfaceLockInfo.surfaceLabel}
+                      </div>
+                      <div className="mt-2 text-[11px] leading-5 text-[#6f665b]">
+                        {surfaceLockInfo.withinUsableBounds
+                          ? "현재 footprint가 usable area 안에 들어와 있습니다."
+                          : "현재 footprint가 usable area 가장자리를 넘어서고 있습니다."}
+                      </div>
+                      <div className="mt-3">
+                        <PrecisionSurfaceMicroView surfaceLockInfo={surfaceLockInfo} />
+                      </div>
+                      <div className="mt-3">
+                        <PrecisionSurfaceProjectionView surfaceLockInfo={surfaceLockInfo} />
+                      </div>
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-[#5f574d]">
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Surface
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.sizeMm[0]} x {surfaceLockInfo.sizeMm[1]} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Margin
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.marginMm[0]} / {surfaceLockInfo.marginMm[1]} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Footprint
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.footprintMm[0]} x {surfaceLockInfo.footprintMm[1]} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Projected
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.projectedFootprintMm[0]} x {surfaceLockInfo.projectedFootprintMm[1]} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Usable
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.usableSizeMm[0]} x {surfaceLockInfo.usableSizeMm[1]} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Offset
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.localOffsetMm[0]} / {surfaceLockInfo.localOffsetMm[1]} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Top
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">{surfaceLockInfo.topMm} mm</div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Height
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.assetHeightMm} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Gap / Reach
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.bottomOffsetMm} / {surfaceLockInfo.topOffsetMm} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Clearance X
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            L {surfaceLockInfo.clearanceMm.left} / R {surfaceLockInfo.clearanceMm.right} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Clearance Z
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            T {surfaceLockInfo.clearanceMm.top} / B {surfaceLockInfo.clearanceMm.bottom} mm
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Yaw Delta
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {surfaceLockInfo.relativeYawDeg} deg
+                          </div>
+                        </div>
+                        <div className="rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2">
+                          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#8b8277]">
+                            Anchor
+                          </div>
+                          <div className="mt-1 font-semibold text-[#1f1b16]">
+                            {anchorLabel[selectedAsset.anchorType ?? "floor"]}
+                          </div>
+                        </div>
+                      </div>
+                      {!surfaceLockInfo.withinUsableBounds ? (
+                        <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] text-amber-700">
+                          최소 edge clearance가 {surfaceLockInfo.clearanceMm.min} mm 입니다. usable area 안으로 다시
+                          옮기거나 회전을 줄여 주세요.
+                        </div>
+                      ) : null}
+                    </>
+                  ) : usesSurfaceLock ? (
+                    <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-5 text-[#8a6a2c]">
+                      현재 기준면은 support surface를 사용하지만, 아직 잠긴 상면 정보를 확인하지 못했습니다.
+                    </div>
+                  ) : (
+                    <div className="mt-3 rounded-xl border border-black/10 bg-[#faf9f7] px-3 py-2 text-[11px] leading-5 text-[#6f665b]">
+                      floor / wall / ceiling 기준면은 surface lock을 사용하지 않습니다.
+                    </div>
+                  )}
+                </div>
+              ) : null}
               {isYManagedByAnchor || isRotationManagedByAnchor ? (
                 <div className="text-[10px] uppercase tracking-[0.14em] text-[#8b8277]">
                   현재 기준면이

@@ -2,11 +2,15 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { RigidBody } from "@react-three/rapier";
-import type { ThreeEvent } from "@react-three/fiber";
+import { CuboidCollider, RigidBody } from "@react-three/rapier";
+import { useThree, type ThreeEvent } from "@react-three/fiber";
+import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
 import { normalizeSceneAnchorType } from "../../../lib/scene/anchor-types";
+import { groupAssetsForInstancing } from "../../../lib/scene/asset-instancing";
+import { resolveAssetLodPlan, type AssetLodPlan } from "../../../lib/scene/asset-lod";
+import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
   useAssetSelector,
@@ -17,7 +21,6 @@ import {
 import type { SceneAsset } from "../../../lib/stores/useSceneStore";
 
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-const GRID_SNAP = 0.25;
 const MAX_DYNAMIC_EMITTERS = 6;
 const LIGHT_EMITTER_HINT_IDS = new Set([
   "p2s_desk_lamp_glow",
@@ -50,6 +53,11 @@ type FinishMetadata = {
   finishColor: string | null | undefined;
   finishMaterial: string | null | undefined;
   detailNotes: string | null | undefined;
+};
+
+type InstancedMeshEntry = {
+  key: string;
+  mesh: THREE.InstancedMesh;
 };
 
 type SlotFinishPolicy = {
@@ -404,7 +412,267 @@ function PlaceholderFurniture() {
   );
 }
 
-function ModelInstance({ asset }: { asset: SceneAsset }) {
+function measureColliderHalfExtents(asset: SceneAsset) {
+  const width = asset.product?.dimensionsMm?.width
+    ? (asset.product.dimensionsMm.width / 1000) * Math.max(asset.scale[0], 0.001)
+    : 0.8 * Math.max(asset.scale[0], 0.001);
+  const depth = asset.product?.dimensionsMm?.depth
+    ? (asset.product.dimensionsMm.depth / 1000) * Math.max(asset.scale[2], 0.001)
+    : 0.8 * Math.max(asset.scale[2], 0.001);
+  const height = asset.product?.dimensionsMm?.height
+    ? (asset.product.dimensionsMm.height / 1000) * Math.max(asset.scale[1], 0.001)
+    : 0.6 * Math.max(asset.scale[1], 0.001);
+
+  return {
+    halfWidth: Math.max(0.1, width / 2),
+    halfHeight: Math.max(0.1, height / 2),
+    halfDepth: Math.max(0.1, depth / 2)
+  };
+}
+
+function ClusteredWalkCollider({ asset }: { asset: SceneAsset }) {
+  const collider = useMemo(() => measureColliderHalfExtents(asset), [asset]);
+
+  return (
+    <RigidBody type="fixed" colliders={false} position={asset.position} rotation={asset.rotation}>
+      <CuboidCollider
+        args={[collider.halfWidth, collider.halfHeight, collider.halfDepth]}
+        position={[0, collider.halfHeight, 0]}
+      />
+    </RigidBody>
+  );
+}
+
+function InstancedFurnitureCluster({
+  assets,
+  readOnly
+}: {
+  assets: SceneAsset[];
+  readOnly: boolean;
+}) {
+  const camera = useThree((state) => state.camera);
+  const gl = useThree((state) => state.gl);
+  const invalidate = useThree((state) => state.invalidate);
+  const viewMode = useEditorStore((state) => state.viewMode);
+  const topMode = useEditorStore((state) => state.topMode);
+  const setIsTransforming = useEditorStore((state) => state.setIsTransforming);
+  const setSelectedAssetId = useSelectionSelector((slice) => slice.setSelectedAssetId);
+  const walls = useShellSelector((slice) => slice.walls);
+  const ceilings = useShellSelector((slice) => slice.ceilings);
+  const scale = useShellSelector((slice) => slice.scale);
+  const sceneAssets = useAssetSelector((slice) => slice.assets);
+  const updateFurniture = useAssetSelector((slice) => slice.updateFurniture);
+  const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
+  const dragCleanupRef = useRef<(() => void) | null>(null);
+  const topViewPolicy = useMemo(
+    () => resolveTopViewInteractionPolicy(topMode),
+    [topMode]
+  );
+  const gltf = useGLBAsset(assets[0]!.assetId);
+  const finishMetadata = useMemo<FinishMetadata>(
+    () => ({
+      finishColor: assets[0]?.product?.finishColor,
+      finishMaterial: assets[0]?.product?.finishMaterial,
+      detailNotes: assets[0]?.product?.detailNotes
+    }),
+    [assets]
+  );
+  const finishAppearance = useMemo(
+    () => resolveFinishAppearance(finishMetadata),
+    [finishMetadata]
+  );
+  const instancedMeshes = useMemo<InstancedMeshEntry[]>(() => {
+    const template = gltf.scene.clone(true);
+    applyFinishAppearanceToObject(template, finishAppearance);
+    template.updateWorldMatrix(true, true);
+
+    const clusterMeshes: InstancedMeshEntry[] = [];
+    const assetMatrix = new THREE.Matrix4();
+    const instanceMatrix = new THREE.Matrix4();
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+    const scale = new THREE.Vector3();
+
+    template.traverse((child) => {
+      if (!(child instanceof THREE.Mesh)) return;
+
+      const mesh = new THREE.InstancedMesh(child.geometry, child.material, assets.length);
+      mesh.name = `instanced:${assets[0]!.assetId}:${child.uuid}`;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.instanceMatrix.needsUpdate = true;
+
+      assets.forEach((asset, index) => {
+        position.fromArray(asset.position);
+        quaternion.setFromEuler(
+          new THREE.Euler(asset.rotation[0], asset.rotation[1], asset.rotation[2])
+        );
+        scale.fromArray(asset.scale);
+        assetMatrix.compose(position, quaternion, scale);
+        instanceMatrix.multiplyMatrices(assetMatrix, child.matrixWorld);
+        mesh.setMatrixAt(index, instanceMatrix);
+      });
+
+      clusterMeshes.push({
+        key: child.uuid,
+        mesh
+      });
+    });
+
+    return clusterMeshes;
+  }, [assets, finishAppearance, gltf.scene]);
+
+  useEffect(() => {
+    return () => {
+      dragCleanupRef.current?.();
+      dragCleanupRef.current = null;
+      instancedMeshes.forEach(({ mesh }) => {
+        const material = mesh.material;
+        if (Array.isArray(material)) {
+          material.forEach((entry) => entry.dispose());
+        } else {
+          material?.dispose();
+        }
+      });
+    };
+  }, [instancedMeshes]);
+
+  const allowRoomModeDirectDrag =
+    !readOnly && viewMode === "top" && topViewPolicy.allowDirectAssetDrag;
+  const allowInteractiveSelection =
+    readOnly || (viewMode === "top" && !topViewPolicy.allowDirectAssetDrag);
+  const allowPointerInteraction = allowRoomModeDirectDrag || allowInteractiveSelection;
+
+  const resolvePlacementFromPointer = (nativeEvent: PointerEvent, targetAsset: SceneAsset) => {
+    const rect = gl.domElement.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return null;
+    }
+
+    const pointer = new THREE.Vector2(
+      ((nativeEvent.clientX - rect.left) / rect.width) * 2 - 1,
+      -((nativeEvent.clientY - rect.top) / rect.height) * 2 + 1
+    );
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(pointer, camera);
+
+    const intersection = new THREE.Vector3();
+    if (!raycaster.ray.intersectPlane(groundPlane, intersection)) {
+      return null;
+    }
+
+    const snap = (value: number) =>
+      Math.round(value / topViewPolicy.translationSnap) * topViewPolicy.translationSnap;
+
+    return constrainPlacementToAnchor(
+      {
+        position: [snap(intersection.x), targetAsset.position[1], snap(intersection.z)],
+        rotation: targetAsset.rotation,
+        anchorType: targetAsset.anchorType,
+        supportAssetId: targetAsset.supportAssetId
+      },
+      {
+        walls,
+        ceilings,
+        scale,
+        sceneAssets,
+        activeAssetId: targetAsset.id
+      }
+    );
+  };
+
+  const handlePointerDown = (event: ThreeEvent<PointerEvent>) => {
+    const instanceId = event.instanceId;
+    if (instanceId === undefined || instanceId === null) return;
+    const targetAsset = assets[instanceId];
+    if (!targetAsset) return;
+    event.stopPropagation();
+    const startedAt = performance.now();
+    setSelectedAssetId(targetAsset.id);
+
+    if (allowRoomModeDirectDrag) {
+      dragCleanupRef.current?.();
+      setIsTransforming(true);
+      scheduleInteractionLatency("drag-start", startedAt, {
+        viewMode,
+        topMode,
+        targetId: targetAsset.id
+      });
+
+      let moved = false;
+      const handleWindowPointerMove = (nativeEvent: PointerEvent) => {
+        const anchoredPlacement = resolvePlacementFromPointer(nativeEvent, targetAsset);
+        if (!anchoredPlacement) return;
+        moved = true;
+        updateFurniture(targetAsset.id, {
+          anchorType: anchoredPlacement.anchorType,
+          supportAssetId: anchoredPlacement.supportAssetId,
+          position: anchoredPlacement.position,
+          rotation: anchoredPlacement.rotation
+        });
+        invalidate();
+      };
+      const handleWindowPointerUp = () => {
+        dragCleanupRef.current?.();
+        dragCleanupRef.current = null;
+        setIsTransforming(false);
+        if (moved) {
+          recordSnapshot("Move asset");
+        }
+        invalidate();
+      };
+
+      dragCleanupRef.current = () => {
+        window.removeEventListener("pointermove", handleWindowPointerMove);
+        window.removeEventListener("pointerup", handleWindowPointerUp);
+        window.removeEventListener("pointercancel", handleWindowPointerUp);
+      };
+
+      window.addEventListener("pointermove", handleWindowPointerMove);
+      window.addEventListener("pointerup", handleWindowPointerUp, { once: true });
+      window.addEventListener("pointercancel", handleWindowPointerUp, { once: true });
+      invalidate();
+      return;
+    }
+
+    if (!allowInteractiveSelection) return;
+    invalidate();
+    scheduleInteractionLatency("select", startedAt, {
+      viewMode,
+      topMode,
+      targetId: targetAsset.id
+    });
+  };
+
+  const handlePointerOver = () => {
+    if (!allowPointerInteraction || typeof document === "undefined") return;
+    document.body.style.cursor = "pointer";
+  };
+
+  const handlePointerOut = () => {
+    if (!allowPointerInteraction || typeof document === "undefined") return;
+    document.body.style.cursor = "default";
+  };
+
+  return (
+    <group>
+      {instancedMeshes.map(({ key, mesh }) => (
+        <primitive
+          key={key}
+          object={mesh}
+          onPointerDown={handlePointerDown}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
+        />
+      ))}
+      {readOnly && viewMode === "walk"
+        ? assets.map((asset) => <ClusteredWalkCollider key={`collider:${asset.id}`} asset={asset} />)
+        : null}
+    </group>
+  );
+}
+
+function ModelInstance({ asset, lodPlan }: { asset: SceneAsset; lodPlan: AssetLodPlan }) {
   const gltf = useGLBAsset(asset.assetId);
   const finishMetadata = useMemo<FinishMetadata>(
     () => ({
@@ -418,10 +686,15 @@ function ModelInstance({ asset }: { asset: SceneAsset }) {
     () => resolveFinishAppearance(finishMetadata),
     [finishMetadata]
   );
-  const lod = useMemo(() => {
-    const root = new THREE.LOD();
+  const model = useMemo(() => {
     const high = gltf.scene.clone(true);
     applyFinishAppearanceToObject(high, finishAppearance);
+
+    if (!lodPlan.useProxyBox || lodPlan.lowDetailDistance === null) {
+      return high;
+    }
+
+    const root = new THREE.LOD();
     const bbox = new THREE.Box3().setFromObject(high);
     const size = new THREE.Vector3();
     const center = new THREE.Vector3();
@@ -442,19 +715,19 @@ function ModelInstance({ asset }: { asset: SceneAsset }) {
     }
     const low = new THREE.Mesh(lowGeometry, lowMaterial);
     root.addLevel(high, 0);
-    root.addLevel(low, 8);
+    root.addLevel(low, lodPlan.lowDetailDistance);
     return root;
-  }, [finishAppearance, gltf.scene]);
+  }, [finishAppearance, gltf.scene, lodPlan.lowDetailDistance, lodPlan.useProxyBox]);
 
   useEffect(() => {
-    lod.traverse((child) => {
+    model.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.castShadow = true;
         child.receiveShadow = true;
       }
     });
     return () => {
-      lod.traverse((child) => {
+      model.traverse((child) => {
         if (child instanceof THREE.Mesh) {
           child.geometry?.dispose();
           const material = child.material;
@@ -466,13 +739,15 @@ function ModelInstance({ asset }: { asset: SceneAsset }) {
         }
       });
     };
-  }, [lod]);
+  }, [model]);
 
-  return <primitive object={lod} />;
+  return <primitive object={model} />;
 }
 
 function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enableDynamicLight: boolean }) {
+  const invalidate = useThree((state) => state.invalidate);
   const viewMode = useEditorStore((state) => state.viewMode);
+  const topMode = useEditorStore((state) => state.topMode);
   const isTransforming = useEditorStore((state) => state.isTransforming);
   const setIsTransforming = useEditorStore((state) => state.setIsTransforming);
   const readOnly = useEditorStore((state) => state.readOnly);
@@ -493,21 +768,54 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     rotation: [number, number, number];
   } | null>(null);
   const isSelected = selectedAssetId === asset.id;
+  const topViewPolicy = useMemo(
+    () => resolveTopViewInteractionPolicy(topMode),
+    [topMode]
+  );
+  const lodPlan = useMemo(
+    () =>
+      resolveAssetLodPlan({
+        asset,
+        viewMode,
+        topMode
+      }),
+    [asset, topMode, viewMode]
+  );
   const lightProfile = useMemo(
     () => (enableDynamicLight ? resolveAssetLightProfile(asset) : null),
     [asset, enableDynamicLight]
   );
+  const shouldRenderLight =
+    lightProfile != null &&
+    (viewMode !== "top" || topMode === "desk-precision");
 
   const handleReadOnlySelect = (event: ThreeEvent<PointerEvent>) => {
     if (!readOnly) return;
     event.stopPropagation();
+    const startedAt = performance.now();
     setSelectedAssetId(asset.id);
+    invalidate();
+    scheduleInteractionLatency("select", startedAt, {
+      viewMode,
+      topMode,
+      targetId: asset.id
+    });
   };
 
   const handlePointerDown = (event: ThreeEvent<PointerEvent>) => {
     if (viewMode !== "top" || isTransforming || readOnly) return;
     event.stopPropagation();
+    const startedAt = performance.now();
     setSelectedAssetId(asset.id);
+    invalidate();
+    if (!topViewPolicy.allowDirectAssetDrag) {
+      scheduleInteractionLatency("select", startedAt, {
+        viewMode,
+        topMode,
+        targetId: asset.id
+      });
+      return;
+    }
     setIsDragging(true);
     setIsTransforming(true);
     pendingPlacementRef.current = {
@@ -518,6 +826,12 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     };
     const target = event.nativeEvent.target as HTMLElement | null;
     target?.setPointerCapture(event.pointerId);
+    invalidate();
+    scheduleInteractionLatency("drag-start", startedAt, {
+      viewMode,
+      topMode,
+      targetId: asset.id
+    });
   };
 
   const handlePointerUp = (event: ThreeEvent<PointerEvent>) => {
@@ -533,6 +847,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     setIsTransforming(false);
     const target = event.nativeEvent.target as HTMLElement | null;
     target?.releasePointerCapture(event.pointerId);
+    invalidate();
   };
 
   const handlePointerMove = (event: ThreeEvent<PointerEvent>) => {
@@ -540,7 +855,8 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     event.stopPropagation();
     const intersection = new THREE.Vector3();
     if (!event.ray.intersectPlane(groundPlane, intersection)) return;
-    const snap = (value: number) => Math.round(value / GRID_SNAP) * GRID_SNAP;
+    const snap = (value: number) =>
+      Math.round(value / topViewPolicy.translationSnap) * topViewPolicy.translationSnap;
     const anchoredPlacement = constrainPlacementToAnchor(
       {
         position: [snap(intersection.x), asset.position[1], snap(intersection.z)],
@@ -564,6 +880,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     };
     groupRef.current?.position.set(...anchoredPlacement.position);
     groupRef.current?.rotation.set(...anchoredPlacement.rotation);
+    invalidate();
   };
 
   useEffect(() => {
@@ -580,13 +897,14 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     groupRef.current.position.set(...asset.position);
     groupRef.current.rotation.set(...asset.rotation);
     groupRef.current.scale.set(...asset.scale);
-  }, [asset.position, asset.rotation, asset.scale, isDragging, viewMode]);
+    invalidate();
+  }, [asset.position, asset.rotation, asset.scale, invalidate, isDragging, viewMode]);
 
   const content = isPlaceholderAsset(asset.assetId) ? (
     <PlaceholderFurniture />
   ) : (
     <Suspense fallback={<PlaceholderFurniture />}>
-      <ModelInstance asset={asset} />
+      <ModelInstance asset={asset} lodPlan={lodPlan} />
     </Suspense>
   );
 
@@ -596,12 +914,16 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
           onPointerDown: handleReadOnlySelect
         }
       : viewMode === "top"
-      ? {
-          onPointerDown: handlePointerDown,
-          onPointerUp: handlePointerUp,
-          onPointerMove: handlePointerMove,
-          onPointerLeave: handlePointerUp
-        }
+      ? topViewPolicy.allowDirectAssetDrag
+        ? {
+            onPointerDown: handlePointerDown,
+            onPointerUp: handlePointerUp,
+            onPointerMove: handlePointerMove,
+            onPointerLeave: handlePointerUp
+          }
+        : {
+            onPointerDown: handlePointerDown
+          }
       : {};
 
   if (viewMode === "walk") {
@@ -609,7 +931,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       <RigidBody type="fixed" colliders="cuboid" position={asset.position} rotation={asset.rotation}>
         <group name={`furniture:${asset.id}`} scale={asset.scale} {...groupProps}>
           {content}
-          {lightProfile ? (
+          {shouldRenderLight ? (
             <pointLight
               position={lightProfile.offset}
               color={lightProfile.color}
@@ -633,7 +955,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       {...groupProps}
     >
       {content}
-      {lightProfile && viewMode !== "top" ? (
+      {shouldRenderLight ? (
         <pointLight
           position={lightProfile.offset}
           color={lightProfile.color}
@@ -654,6 +976,11 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
 export default function Furniture({ allowDynamicLights }: { allowDynamicLights: boolean }) {
   const assets = useAssetSelector((slice) => slice.assets);
+  const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
+  const viewMode = useEditorStore((state) => state.viewMode);
+  const topMode = useEditorStore((state) => state.topMode);
+  const isTransforming = useEditorStore((state) => state.isTransforming);
+  const readOnly = useEditorStore((state) => state.readOnly);
   const emitterAssetIds = useMemo(() => {
     if (!allowDynamicLights) {
       return new Set<string>();
@@ -668,12 +995,41 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
     }
     return ids;
   }, [allowDynamicLights, assets]);
+  const instancingClusters = useMemo(
+    () =>
+      groupAssetsForInstancing({
+        assets,
+        viewMode,
+        topMode,
+        readOnly,
+        isTransforming,
+        selectedAssetId,
+        emitterAssetIds
+      }),
+    [assets, emitterAssetIds, isTransforming, readOnly, selectedAssetId, topMode, viewMode]
+  );
+  const instancedAssetIds = useMemo(() => {
+    const ids = new Set<string>();
+    instancingClusters.forEach((cluster) => {
+      cluster.assets.forEach((asset) => ids.add(asset.id));
+    });
+    return ids;
+  }, [instancingClusters]);
 
   return (
     <group>
-      {assets.map((asset) => (
-        <FurnitureItem key={asset.id} asset={asset} enableDynamicLight={emitterAssetIds.has(asset.id)} />
+      {instancingClusters.map((cluster) => (
+        <InstancedFurnitureCluster key={cluster.key} assets={cluster.assets} readOnly={readOnly} />
       ))}
+      {assets.map((asset) =>
+        instancedAssetIds.has(asset.id) ? null : (
+          <FurnitureItem
+            key={asset.id}
+            asset={asset}
+            enableDynamicLight={emitterAssetIds.has(asset.id)}
+          />
+        )
+      )}
     </group>
   );
 }

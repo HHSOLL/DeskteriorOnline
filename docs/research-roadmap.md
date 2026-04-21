@@ -10,20 +10,22 @@
 - 코드 반영:
   - `apps/web/scripts/export-deskterior-runtime.ts`
   - `apps/web/scripts/sync-deskterior-catalog.ts`
+  - `apps/web/scripts/validate-deskterior-gltf.ts`
   - `apps/web/scripts/verify-deskterior-pipeline.ts`
 - 운영 명령:
   1. `npm --workspace apps/web run assets:export:deskterior -- --report`
   2. `npm --workspace apps/web run assets:export:deskterior`
   3. `npm --workspace apps/web run assets:sync:deskterior`
-  4. `npm --workspace apps/web run assets:verify:deskterior`
+  4. `npm --workspace apps/web run assets:validate:deskterior`
+  5. `npm --workspace apps/web run assets:verify:deskterior`
 
 참고:
 - Khronos glTF Blender I/O (Blender 기본 내장 importer/exporter): <https://github.com/KhronosGroup/glTF-Blender-IO>
 - glTF 2.0 spec: <https://github.com/KhronosGroup/glTF/tree/main/specification/2.0>
 
-### 2) 검증 도구 추가 계획 (다음 스프린트)
-- glTF 포맷/리소스 유효성 자동 검증을 `assets:verify:deskterior`에 옵션으로 통합
-  - 후보: glTF-Validator (`npm`, CLI, JSON report)
+### 2) 검증/최적화 추가 계획
+- glTF 포맷/리소스 유효성 자동 검증은 `assets:validate:deskterior`로 분리 적용
+  - 적용 도구: glTF-Validator (`npm`, JSON report)
   - 참고: <https://github.com/KhronosGroup/glTF-Validator>
 - 런타임 최적화(파일 크기/로딩 속도) 자동화
   - 후보 A: gltfpack

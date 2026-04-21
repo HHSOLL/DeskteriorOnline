@@ -13,6 +13,12 @@ Plan2Space의 메인 자산 경로는 **deskterior 카탈로그 + Blender/오픈
 npm --workspace apps/web run assets:export:deskterior -- --report
 npm --workspace apps/web run assets:export:deskterior
 npm --workspace apps/web run assets:sync:deskterior
+npm --workspace apps/web run assets:sync:ktx2-transcoder
+npm --workspace apps/web run assets:setup:gltfpack
+npm --workspace apps/web run assets:probe:gltfpack
+npm --workspace apps/web run assets:optimize:deskterior
+npm --workspace apps/web run assets:optimize:deskterior:native -- --gltfpack-bin /absolute/path/to/gltfpack
+npm --workspace apps/web run assets:validate:deskterior
 npm --workspace apps/web run assets:verify:deskterior
 ```
 
@@ -20,8 +26,14 @@ npm --workspace apps/web run assets:verify:deskterior
 
 - Blender source(.blend) 존재/신선도 검사 + 런타임 GLB export
 - Plan2Space 제작 deskterior 자산(p2s_*) upsert
-- 오픈소스 desk/chair/lamp 메타데이터(brand/options/externalUrl) 보강
-- 제품 인스펙터 표준 필드(thumbnail/price/options/externalUrl/brand) 유지
+- basis transcoder public sync(`apps/web/public/assets/transcoders/basis`)
+- glTF Transform 기반 `dedup + prune + meshopt(내부 reorder/quantize 포함)` 최적화와 budget re-check
+- optional native `gltfpack -cc -mi -kn -km -ke` 패스와 probe/wrapper 체인
+- curated supportProfile surface/anchor metadata 검증
+- curated `p2s_*` source/license/pivot/collisionProxy/textureSet/lodProfile metadata 검증
+- Khronos glTF Validator 기반 구조/리소스 검증
+- 오픈소스 desk/chair/lamp 메타데이터(brand/options/externalUrl/source/license) 보강
+- 제품 인스펙터 표준 필드(thumbnail/price/options/externalUrl/brand)와 자산 계약 메타(source/license/pivot/collisionProxy/textureSet/lodProfile) 유지
 
 운영 규칙:
 - 신규 curated binary를 `apps/web/public/assets/*`에 직접 추가하지 않는다.
@@ -49,6 +61,14 @@ npm --workspace apps/web run assets:verify:deskterior
 현재 상태:
 - curated catalog는 아직 `apps/web/public/assets/*`를 fallback runtime으로 사용한다.
 - generated asset은 Supabase Storage(`assets-glb`)를 사용한다.
+- curated deskterior manifest는 이제 실측/마감 메타뿐 아니라 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약도 같이 유지한다.
+- `lodProfile`는 검증용 메타에만 머물지 않고 room/desk precision/walk 런타임 LOD fallback 거리 정책에도 사용된다.
+- `lodProfile.strategy="single_mesh"`인 low/medium complexity 반복 자산은 read-only top/walk와 builder preview에서 instanced cluster 후보로 소비된다.
+- repo-local gltfpack 환경은 `.tools/gltfpack/current/gltfpack`를 canonical path로 사용하고, `assets:setup:gltfpack`가 최신 승인 버전(v1.1)을 이 경로에 설치한다.
+- native gltfpack pass는 기본 비활성이고, `GLTFPACK_BIN` 또는 `--gltfpack-bin`으로 바이너리를 지정했을 때만 실행한다.
+- KTX2 runtime decode 경로는 준비됐고, `assets:sync:ktx2-transcoder`가 three basis transcoder를 public 경로에 동기화한다.
+- room shell floor/wall texture set은 `textures:encode:room-shell:ktx2` / `textures:check:room-shell:ktx2`로 `.ktx2` 산출물을 관리하고, 런타임 전환은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`로 제어한다.
+- room shell texture set의 첫 `.ktx2` encode pass는 완료됐고, 현재 저장소에는 16개 room shell `.ktx2` 산출물이 포함된다.
 - 2026-04-18 정리에서 legacy floorplan/intake/revision live data와 `floor-plans` bucket이 제거되었고, active bucket은 `assets-glb`, `project-media`만 남는다.
 
 ## 4) 레거시/보조 경로: Worker 생성형 GLB

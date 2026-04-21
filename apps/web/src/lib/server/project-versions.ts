@@ -1,7 +1,19 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "../../../../../types/database";
-import type { ProductDimensionsMm } from "../builder/catalog";
+import type {
+  ProductCollisionProxyMetadata,
+  ProductDimensionsMm,
+  ProductLicenseMetadata,
+  ProductLodProfileMetadata,
+  ProductPivotMetadata,
+  ProductSourceMetadata,
+  ProductTextureSetMetadata
+} from "../builder/catalog";
+import {
+  resolveScenePlacementVectors,
+  serializeScenePlacement
+} from "../domain/scene-placement";
 import { deriveBlankRoomShell } from "../domain/room-shell";
 import type { Floor, Opening, ScaleInfo, Wall } from "../stores/useSceneStore";
 
@@ -196,9 +208,26 @@ function normalizeAssetMetadataBoolean(value: unknown) {
   return false;
 }
 
+function normalizeAssetMetadataStrictBoolean(value: unknown) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "true") return true;
+    if (normalized === "false") return false;
+  }
+  return null;
+}
+
 function normalizeAssetMetadataDimensionValue(value: unknown) {
   const numeric = typeof value === "string" ? Number(value) : value;
   return typeof numeric === "number" && Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+}
+
+function normalizeAssetMetadataPositiveInteger(value: unknown) {
+  const numeric = typeof value === "string" ? Number(value) : value;
+  return typeof numeric === "number" && Number.isInteger(numeric) && numeric > 0 ? numeric : null;
 }
 
 function normalizeAssetMetadataDimensionsMm(value: unknown): ProductDimensionsMm | null {
@@ -218,6 +247,121 @@ function normalizeAssetMetadataDimensionsMm(value: unknown): ProductDimensionsMm
     width,
     depth,
     height
+  };
+}
+
+function normalizeAssetMetadataSource(value: unknown): ProductSourceMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const kind = value.kind === "plan2space_blender" || value.kind === "open_source" ? value.kind : null;
+  const name = normalizeAssetMetadataText(value.name);
+  const metadataPath = normalizeAssetMetadataText(value.path);
+  const url = normalizeAssetMetadataUrl(value.url);
+
+  if (!kind || !name || (!metadataPath && !url)) {
+    return null;
+  }
+
+  return {
+    kind,
+    name,
+    path: metadataPath,
+    url
+  };
+}
+
+function normalizeAssetMetadataLicense(value: unknown): ProductLicenseMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const spdx = normalizeAssetMetadataText(value.spdx);
+  const label = normalizeAssetMetadataText(value.label);
+  const requiresAttribution = normalizeAssetMetadataStrictBoolean(value.requiresAttribution);
+
+  if (!spdx || !label || requiresAttribution === null) {
+    return null;
+  }
+
+  return {
+    spdx,
+    label,
+    requiresAttribution
+  };
+}
+
+function normalizeAssetMetadataPivot(value: unknown): ProductPivotMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const x = value.x === "left" || value.x === "center" || value.x === "right" ? value.x : null;
+  const y = value.y === "floor" || value.y === "center" || value.y === "top" ? value.y : null;
+  const z = value.z === "front" || value.z === "center" || value.z === "back" ? value.z : null;
+
+  if (!x || !y || !z) {
+    return null;
+  }
+
+  return { x, y, z };
+}
+
+function normalizeAssetMetadataCollisionProxy(value: unknown): ProductCollisionProxyMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  if (value.kind !== "box" || value.derivesFrom !== "dimensionsMm") {
+    return null;
+  }
+
+  return {
+    kind: "box",
+    derivesFrom: "dimensionsMm"
+  };
+}
+
+function normalizeAssetMetadataTextureSet(value: unknown): ProductTextureSetMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const workflow = value.workflow === "pbr_metallic_roughness" ? value.workflow : null;
+  const authored = value.authored === "procedural" || value.authored === "image_based" ? value.authored : null;
+  const ktx2Ready = normalizeAssetMetadataStrictBoolean(value.ktx2Ready);
+
+  if (!workflow || !authored || ktx2Ready === null) {
+    return null;
+  }
+
+  return {
+    workflow,
+    authored,
+    ktx2Ready
+  };
+}
+
+function normalizeAssetMetadataLodProfile(value: unknown): ProductLodProfileMetadata | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  const strategy = value.strategy === "single_mesh" || value.strategy === "manual_lod" ? value.strategy : null;
+  const levelCount = normalizeAssetMetadataPositiveInteger(value.levelCount);
+  const maxDrawCalls = normalizeAssetMetadataPositiveInteger(value.maxDrawCalls);
+  const maxTriangleCount = normalizeAssetMetadataPositiveInteger(value.maxTriangleCount);
+
+  if (!strategy || levelCount === null || maxDrawCalls === null || maxTriangleCount === null) {
+    return null;
+  }
+
+  return {
+    strategy,
+    levelCount,
+    maxDrawCalls,
+    maxTriangleCount
   };
 }
 
@@ -243,6 +387,12 @@ function buildAssetProductMetadata(asset: Record<string, unknown>) {
   const finishMaterial = normalizeAssetMetadataText(product?.finishMaterial ?? asset.finishMaterial);
   const detailNotes = normalizeAssetMetadataText(product?.detailNotes ?? asset.detailNotes);
   const scaleLocked = normalizeAssetMetadataBoolean(product?.scaleLocked ?? asset.scaleLocked);
+  const source = normalizeAssetMetadataSource(product?.source ?? asset.source);
+  const license = normalizeAssetMetadataLicense(product?.license ?? asset.license);
+  const pivot = normalizeAssetMetadataPivot(product?.pivot ?? asset.pivot);
+  const collisionProxy = normalizeAssetMetadataCollisionProxy(product?.collisionProxy ?? asset.collisionProxy);
+  const textureSet = normalizeAssetMetadataTextureSet(product?.textureSet ?? asset.textureSet);
+  const lodProfile = normalizeAssetMetadataLodProfile(product?.lodProfile ?? asset.lodProfile);
 
   return {
     ...(productId ? { productId } : {}),
@@ -258,7 +408,26 @@ function buildAssetProductMetadata(asset: Record<string, unknown>) {
     finishColor,
     finishMaterial,
     detailNotes,
-    scaleLocked
+    scaleLocked,
+    source,
+    license,
+    pivot,
+    collisionProxy,
+    textureSet,
+    lodProfile
+  };
+}
+
+function buildSerializedAssetPlacement(asset: Record<string, unknown>) {
+  const vectors = resolveScenePlacementVectors({
+    position: asset.position,
+    rotation: asset.rotation,
+    scale: asset.scale
+  });
+
+  return {
+    vectors,
+    snapshot: serializeScenePlacement(vectors)
   };
 }
 
@@ -410,11 +579,12 @@ function buildSceneDocument(
   const normalizedLighting = resolveLightingSettings(lighting);
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     roomShell: resolvedRoomShell,
     nodes: assets.map((asset) => {
       const anchorType = normalizeAssetAnchor(asset.anchorType);
       const productMetadata = buildAssetProductMetadata(asset);
+      const placement = buildSerializedAssetPlacement(asset);
       return {
         id: asset.id,
         assetId: asset.assetId,
@@ -423,9 +593,10 @@ function buildSceneDocument(
         supportAssetId:
           typeof asset.supportAssetId === "string" && asset.supportAssetId.length > 0 ? asset.supportAssetId : null,
         supportProfile: asset.supportProfile ?? null,
-        position: asset.position,
-        rotation: asset.rotation,
-        scale: asset.scale,
+        placement: placement.snapshot,
+        position: placement.vectors.position,
+        rotation: placement.vectors.rotation,
+        scale: placement.vectors.scale,
         materialId: asset.materialId ?? null,
         metadata: {
           anchorType,
@@ -460,19 +631,21 @@ function buildProjectVersionCustomization(
   const sceneDocument = buildSceneDocument(roomShell, assets, materials, lighting);
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     furniture: assets.map((asset) => {
       const anchorType = normalizeAssetAnchor(asset.anchorType);
       const productMetadata = buildAssetProductMetadata(asset);
+      const placement = buildSerializedAssetPlacement(asset);
       return {
         id: asset.id,
         modelId: asset.assetId,
         anchor: anchorType,
         supportAssetId:
           typeof asset.supportAssetId === "string" && asset.supportAssetId.length > 0 ? asset.supportAssetId : null,
-        position: asset.position,
-        rotation: asset.rotation,
-        scale: asset.scale,
+        placement: placement.snapshot,
+        position: placement.vectors.position,
+        rotation: placement.vectors.rotation,
+        scale: placement.vectors.scale,
         metadata: {
           path: asset.assetId,
           anchorType,
@@ -500,6 +673,19 @@ function buildProjectVersionCustomization(
       lighting: normalizedLighting
     },
     sceneDocument
+  };
+}
+
+export function buildSceneDocumentBootstrapFromSavePayload(rawPayload: unknown) {
+  const payload = SaveVersionSchema.parse(rawPayload);
+  const resolvedRoomShell = buildRoomShell(payload.roomShell);
+
+  return {
+    document: buildSceneDocument(payload.roomShell, payload.assets, payload.materials, payload.lighting),
+    entranceId: resolvedRoomShell.entranceId,
+    diagnostics: {
+      source: "save-payload"
+    }
   };
 }
 
