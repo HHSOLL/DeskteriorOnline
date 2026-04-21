@@ -879,12 +879,13 @@ Updated:
 Removed/Deprecated:
 - persisted activity 없이 `preview_meta + published_at` 추정치만으로 P3 활동성 지표를 마감할 수 있다는 이전 상태 설명.
 
-## 2026-04-21 변경 동기화 (Vercel Incident Hardening)
+## 2026-04-21 변경 동기화 (Editor Walk/Top QA Fixes)
 Added:
-- Vercel/Supabase 운영 hardening 완료 항목에 `sb_publishable`/`sb_secret` 전환, Preview/Production `Sensitive` env 정리, automation bypass 단일화, `autoExposeSystemEnvs=false`를 추가한다.
+- 배포 QA 이슈 대응 범위로 `project name inline edit/save`, `shared top 360 orbit`, `room shell texture fallback`, `desk precision detail pin` 작업을 추가했다.
 
 Updated:
-- 원격 환경 변수 운영 기준을 `preview parity`에서 `preview parity + credential rotation + control-plane hardening`까지 확장한다.
+- P2 편집 품질 범위를 “mode split + precision overlay”에서 “mode split + precision overlay + top/walk presentation regression fixes”까지 확장한다.
+- P3 shared viewer 범위를 “walk/shared/showcase shell”에서 “read-only top orbit + clearer walkthrough fallback”까지 확장한다.
 
 Removed/Deprecated:
-- legacy JWT `anon`/`service_role` 키와 다중 automation bypass secret을 운영 env에 계속 남겨두는 가정.
+- 배포 환경에서 top-view flat shell과 walk-view texture failure를 별도 후속으로 미룬다는 가정.

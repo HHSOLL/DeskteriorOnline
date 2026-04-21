@@ -726,3 +726,16 @@ Updated:
 
 Removed/Deprecated:
 - gallery/community 유입과 일반 shared 링크를 같은 viewer profile로만 확인하던 QA 방식.
+
+## 2026-04-21 변경 동기화 (Editor Walk/Top QA Fixes)
+Added:
+- editor header에서 프로젝트 이름을 직접 입력한 뒤 저장/새로고침/재진입 후에도 같은 이름이 유지되는지 확인하는 QA 항목을 추가했다.
+- shared viewer top-view에서 drag orbit으로 360도 회전과 zoom이 되는지, walk-view 전환도 계속 가능한지 확인하는 QA 항목을 추가했다.
+- desk precision에서 선택 자산과 desk support asset이 proxy/cluster로 뭉개지지 않고 full-detail로 보이는지 확인하는 QA 항목을 추가했다.
+
+Updated:
+- walk-view QA 기준을 “진입 가능한지”에서 “room shell texture failure가 있어도 fallback으로 floor/wall이 보여 검정 화면이 남지 않는지”까지 확장한다.
+- top-view QA 기준을 “flat shell이 보이는지”에서 “textured floor와 상향된 가독성으로 회전 변화가 식별되는지”까지 확장한다.
+
+Removed/Deprecated:
+- 프로젝트 이름은 builder에서만 정하고 editor에서는 바꿀 수 없다는 QA 가정.

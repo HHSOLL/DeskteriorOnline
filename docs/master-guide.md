@@ -118,6 +118,20 @@ Updated:
 Removed/Deprecated:
 - community 활동성을 derived estimate만으로 장기 운영하는 가정.
 
+## 2026-04-21 변경 동기화 (Editor Walk/Top QA Fixes)
+Added:
+- editor 상단 bar에서 프로젝트 이름을 직접 수정하고 저장 payload의 `projectName`으로 같이 보낼 수 있는 규칙을 추가했다.
+- read-only shared/showcase top-view는 고정 orthographic이 아니라 orbit 기반 360도 감상 카메라를 허용하는 규칙을 추가했다.
+- desk precision에서 선택 자산과 해당 support asset은 instancing/LOD proxy보다 full-detail 표시를 우선하는 규칙을 추가했다.
+
+Updated:
+- top-view 품질 기준을 `flat floor footprint 우선`에서 `textured floor + 상향된 DPR + fill light 허용` 기준으로 갱신한다.
+- room shell texture decode는 `.ktx2` 실패 시 원본 JPG/PNG로 즉시 fallback 되는 경로를 기본 계약으로 강화한다.
+
+Removed/Deprecated:
+- editor header가 프로젝트 이름을 hardcoded subtitle로만 보여주고 직접 수정은 불가능하다는 가정.
+- shared viewer top-view가 회전 버튼/고정 시점만 제공한다는 가정.
+
 ## 2026-04-14 변경 동기화 (IKEA Kreativ Pivot Hard Cleanup)
 Added:
 - IKEA Kreativ 스타일 room-first + deskterior + community 3D viewing을 canonical 제품 정의로 고정.
