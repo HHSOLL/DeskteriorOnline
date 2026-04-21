@@ -129,6 +129,8 @@ Added:
 Updated:
 - top-view 품질 기준을 `flat floor footprint 우선`에서 `textured floor + 상향된 DPR + fill light 허용` 기준으로 갱신한다.
 - room shell texture decode는 `.ktx2` 실패 시 원본 JPG/PNG로 즉시 fallback 되는 경로를 기본 계약으로 강화한다.
+- editor top-view room shell은 footprint strip만이 아니라 full-height wall mesh도 함께 렌더해 builder preview와 유사한 shell legibility를 유지하도록 갱신한다.
+- editor walk-view 기본 진입 anchor는 entrance 우선이 아니라 room center 우선으로 두어 첫 진입 시 wall clip으로 검정 화면이 발생하지 않도록 갱신한다.
 
 Removed/Deprecated:
 - editor header가 프로젝트 이름을 hardcoded subtitle로만 보여주고 직접 수정은 불가능하다는 가정.
@@ -255,6 +257,7 @@ Added:
 Updated:
 - builder preview wall mesh는 local centerline이 아니라 "floor outline 내측면 정렬 + 코너 겹침 보정" 기준으로 렌더하도록 갱신.
 - builder preview 기본 orbit 카메라는 room shell 전체 코너가 한 번에 보이도록 더 멀고 높은 framing을 기본값으로 사용한다.
+- builder shape 선택지는 `rect`, `L`, `cut`, `T`, `U`, `slanted`, `offset`, `gallery bay`까지 기본 제공하고, 벽/바닥 마감은 7종/9종 이상을 기본 제공한다.
 
 Removed/Deprecated:
 - builder wall mesh가 floor outline 중심선 위에 그대로 앉아도 preview 품질이 충분하다는 가정.

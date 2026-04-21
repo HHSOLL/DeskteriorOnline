@@ -68,13 +68,23 @@ export const WINDOW_STYLE_LABEL: Record<WindowStyle, string> = {
 export const WALL_FINISH_SWATCH: Record<number, string> = {
   0: "#f2efe9",
   1: "#d6cdbd",
-  2: "#9ea5a8"
+  2: "#9ea5a8",
+  3: "#d2d0ca",
+  4: "#ada59d",
+  5: "#bf946b",
+  6: "#8f6c52"
 };
 
 export const FLOOR_FINISH_SWATCH: Record<number, string> = {
   0: "linear-gradient(135deg, #c9ab7f 0%, #b98e61 100%)",
   1: "linear-gradient(135deg, #807a75 0%, #5f5954 100%)",
-  2: "linear-gradient(135deg, #d2cdc4 0%, #b9b2a6 100%)"
+  2: "linear-gradient(135deg, #d2cdc4 0%, #b9b2a6 100%)",
+  3: "linear-gradient(135deg, #c3a480 0%, #aa875f 100%)",
+  4: "linear-gradient(135deg, #aa8159 0%, #8e6947 100%)",
+  5: "linear-gradient(135deg, #8e6544 0%, #6e4f35 100%)",
+  6: "linear-gradient(135deg, #ece6dd 0%, #d3ccc0 100%)",
+  7: "linear-gradient(135deg, #bcc1c5 0%, #9aa0a4 100%)",
+  8: "linear-gradient(135deg, #7d6e62 0%, #605248 100%)"
 };
 
 export const LIGHTING_MODE_LABEL: Record<BuilderLightingMode, string> = {
