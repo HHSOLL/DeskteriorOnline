@@ -1,6 +1,7 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -27,9 +28,11 @@ export function Providers({ children }: { children: ReactNode }) {
             },
         },
     }));
+    const [authWelcomeVisible, setAuthWelcomeVisible] = useState(false);
     const initialize = useAuthStore((state) => state.initialize);
     const router = useRouter();
     const lastAuthToastRef = useRef<string | null>(null);
+    const authWelcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -73,7 +76,14 @@ export function Providers({ children }: { children: ReactNode }) {
         }
         if (lastAuthToastRef.current !== status) {
             if (status === "success") {
-                toast.success("Welcome to DeskteriorOnline Studio");
+                if (authWelcomeTimerRef.current) {
+                    clearTimeout(authWelcomeTimerRef.current);
+                }
+                setAuthWelcomeVisible(true);
+                authWelcomeTimerRef.current = setTimeout(() => {
+                    setAuthWelcomeVisible(false);
+                    authWelcomeTimerRef.current = null;
+                }, 2200);
             } else if (status === "error") {
                 toast.error(authMessage ?? "로그인에 실패했습니다.");
             }
@@ -85,9 +95,38 @@ export function Providers({ children }: { children: ReactNode }) {
         router.replace(`${url.pathname}${url.search}${url.hash}`, { scroll: false });
     }, [router]);
 
+    useEffect(() => {
+        return () => {
+            if (authWelcomeTimerRef.current) {
+                clearTimeout(authWelcomeTimerRef.current);
+            }
+        };
+    }, []);
+
     return (
         <QueryClientProvider client={queryClient}>
             {children}
+            <AnimatePresence>
+                {authWelcomeVisible ? (
+                    <motion.div
+                        key="auth-welcome"
+                        initial={{ opacity: 0, y: 14, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                        transition={{ duration: 0.28, ease: "easeOut" }}
+                        className="pointer-events-none fixed inset-0 z-[10000] flex items-center justify-center px-4"
+                    >
+                        <div className="rounded-[28px] border border-stone-200/90 bg-white/92 px-7 py-5 text-center shadow-[0_35px_90px_-45px_rgba(15,23,42,0.45)] backdrop-blur-xl">
+                            <div className="text-[11px] font-semibold uppercase tracking-[0.34em] text-stone-500">
+                                DeskteriorOnline
+                            </div>
+                            <div className="mt-2 text-base font-semibold text-stone-900">
+                                DeskteriorOnline에 오신 것을 환영합니다.
+                            </div>
+                        </div>
+                    </motion.div>
+                ) : null}
+            </AnimatePresence>
         </QueryClientProvider>
     );
 }
