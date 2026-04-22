@@ -18,6 +18,7 @@ export type ObjectHandle = {
   objectId: string;
   assetHandle: AssetHandle;
   visible: boolean;
+  materialId: string | null;
   matrix: Float32Array | null;
   version: number;
   batchKey: string | null;

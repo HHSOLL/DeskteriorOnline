@@ -1,15 +1,34 @@
 "use client";
 
 import type { Engine, RuntimeWorldTransform } from "@deskterioronline/engine-core";
+import type { ThreeRendererAdapter } from "@deskterioronline/renderer-three";
 import * as THREE from "three";
 import type { SceneAsset } from "../stores/useSceneStore";
 
 const TRANSFORM_EPSILON = 1e-5;
+const tempMatrix = new THREE.Matrix4();
+const tempPosition = new THREE.Vector3();
+const tempQuaternion = new THREE.Quaternion();
+const tempScale = new THREE.Vector3();
+const tempEuler = new THREE.Euler();
 
 export function resolveRuntimeAssetTransform(
+  runtimeRenderer: ThreeRendererAdapter | null | undefined,
   engine: Engine | null | undefined,
   asset: SceneAsset
 ): RuntimeWorldTransform {
+  const rendererMatrix = runtimeRenderer?.getTransform(asset.id);
+  if (rendererMatrix) {
+    tempMatrix.fromArray(rendererMatrix);
+    tempMatrix.decompose(tempPosition, tempQuaternion, tempScale);
+    tempEuler.setFromQuaternion(tempQuaternion, "XYZ");
+    return {
+      position: [tempPosition.x, tempPosition.y, tempPosition.z],
+      rotation: [tempEuler.x, tempEuler.y, tempEuler.z],
+      scale: [tempScale.x, tempScale.y, tempScale.z]
+    };
+  }
+
   const runtimeObject = engine?.runtimeScene.objectRegistry.get(asset.id);
   const resolved = runtimeObject?.previewTransform ?? runtimeObject?.transform;
   if (resolved) {

@@ -25,6 +25,25 @@ function buildDefaultTransform(): RuntimeWorldTransform {
   };
 }
 
+function resolveObjectMaterialId(document: SceneDocumentV2, objectDocument: SceneObjectDocument) {
+  const directAssignment = document.materials.find(
+    (entry) => entry.objectId === objectDocument.id && typeof entry.materialId === "string"
+  );
+  if (directAssignment?.materialId) {
+    return directAssignment.materialId;
+  }
+
+  const legacyMaterialId =
+    objectDocument.metadata &&
+    typeof objectDocument.metadata === "object" &&
+    "legacyMaterialId" in objectDocument.metadata &&
+    typeof objectDocument.metadata.legacyMaterialId === "string"
+      ? objectDocument.metadata.legacyMaterialId
+      : null;
+
+  return legacyMaterialId ?? null;
+}
+
 function resolveSurface(
   objectDocument: SceneObjectDocument,
   runtimeAssets: Map<string, RuntimeAsset>,
@@ -112,6 +131,7 @@ export class SceneCompiler {
         assetId: objectDocument.assetId,
         runtimeAssetId:
           objectDocument.runtimeAssetId ?? objectDocument.catalogItemId ?? objectDocument.assetId,
+        materialId: resolveObjectMaterialId(document, objectDocument),
         objectDocument,
         placement: objectDocument.placement,
         transform,

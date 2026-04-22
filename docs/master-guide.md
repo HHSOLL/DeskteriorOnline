@@ -826,3 +826,14 @@ Updated:
 
 Removed/Deprecated:
 - `renderer-three`가 아직 제품 경로와 완전히 분리된 패키지 골격일 뿐이라는 설명.
+
+## 2026-04-23 변경 동기화 (Renderer Snapshot Material Sync Phase 3C)
+Added:
+- legacy asset `materialId`를 `SceneDocumentV2.materials` assignment와 runtime object snapshot으로 승격하는 기준을 추가했다.
+- single object renderer compatibility path도 runtime engine 직접 참조보다 renderer adapter snapshot을 우선 소비하도록 기준을 확장했다.
+
+Updated:
+- renderer migration 기준을 “instanced cluster만 renderer adapter snapshot을 직접 소비”에서 “selected/single object path와 instanced cluster 모두 renderer adapter snapshot을 우선 소비” 상태로 갱신한다.
+
+Removed/Deprecated:
+- legacy asset `materialId`가 runtime renderer 경계에서는 metadata 잔재로만 남고 object snapshot에는 반영되지 않는 가정.

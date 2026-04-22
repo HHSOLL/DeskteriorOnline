@@ -44,7 +44,7 @@ const legacyState: LegacySceneStoreStateLike = {
       position: [1.2, 0, 1.1],
       rotation: [0, 0, 0],
       scale: [1, 1, 1],
-      materialId: null
+      materialId: "oak-natural"
     },
     {
       id: "desk-2",
@@ -83,6 +83,8 @@ try {
   const handle = adapter.getObjectHandle("desk-1");
   assert(handle, "renderer adapter should create an object handle");
   assert(handle.matrix?.length === 16, "renderer adapter should store a 4x4 matrix");
+  assert(handle.materialId === "oak-natural", "renderer adapter should retain object material assignment");
+  assert(adapter.materials.get("desk-1") === "oak-natural", "material registry should mirror object material assignment");
 
   const batch = adapter.batches.get("p2s_desk_oak:default");
   assert(batch, "renderer adapter should create an instance batch");

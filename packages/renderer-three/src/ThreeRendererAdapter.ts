@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import type { RuntimeScene, RuntimeWorldTransform } from "@deskterioronline/engine-core";
 import { AssetInstanceManager } from "./AssetInstanceManager";
 import { InstanceBatchManager } from "./InstanceBatchManager";
@@ -25,6 +26,11 @@ export class ThreeRendererAdapter implements RendererAdapter {
   private canvas: HTMLCanvasElement | null = null;
   private lastSyncedSceneGeneration: number | null = null;
   private lastSyncedObjectCount = 0;
+  private readonly tempPosition = new THREE.Vector3();
+  private readonly tempQuaternion = new THREE.Quaternion();
+  private readonly tempScale = new THREE.Vector3();
+  private readonly tempEuler = new THREE.Euler(0, 0, 0, "XYZ");
+  private readonly tempMatrix = new THREE.Matrix4();
   readonly scheduler = new RenderScheduler((reason) => this.backend.invalidate(reason));
   readonly instances = new AssetInstanceManager();
   readonly batches = new InstanceBatchManager();
@@ -34,40 +40,12 @@ export class ThreeRendererAdapter implements RendererAdapter {
   readonly runtimeAssets = new Map<string, AssetHandle>();
 
   private composeMatrix(transform: RuntimeWorldTransform) {
-    const [x, y, z] = transform.rotation;
-    const [sx, sy, sz] = transform.scale;
-    const [px, py, pz] = transform.position;
-
-    const a = Math.cos(x);
-    const b = Math.sin(x);
-    const c = Math.cos(y);
-    const d = Math.sin(y);
-    const e = Math.cos(z);
-    const f = Math.sin(z);
-
-    const ae = a * e;
-    const af = a * f;
-    const be = b * e;
-    const bf = b * f;
-
-    return new Float32Array([
-      c * e * sx,
-      (af + be * d) * sx,
-      (bf - ae * d) * sx,
-      0,
-      -c * f * sy,
-      (ae - bf * d) * sy,
-      (be + af * d) * sy,
-      0,
-      d * sz,
-      -b * c * sz,
-      a * c * sz,
-      0,
-      px,
-      py,
-      pz,
-      1
-    ]);
+    this.tempPosition.set(...transform.position);
+    this.tempEuler.set(...transform.rotation);
+    this.tempQuaternion.setFromEuler(this.tempEuler);
+    this.tempScale.set(...transform.scale);
+    this.tempMatrix.compose(this.tempPosition, this.tempQuaternion, this.tempScale);
+    return new Float32Array(this.tempMatrix.elements);
   }
 
   private ensureAssetHandle(runtimeAssetId: string, assetId: string) {
@@ -126,6 +104,7 @@ export class ThreeRendererAdapter implements RendererAdapter {
   disposeObject(objectId: string) {
     this.batches.removeObject(objectId);
     this.instances.delete(objectId);
+    this.materials.delete(objectId);
     this.transforms.delete(objectId);
   }
 
@@ -162,6 +141,14 @@ export class ThreeRendererAdapter implements RendererAdapter {
         this.instances.get(runtimeObject.id) ?? this.createInstance(assetHandle, runtimeObject.id);
       const batchKey = `${runtimeAssetId}:${runtimeObject.objectDocument.materialVariantId ?? "default"}`;
       objectHandle.batchKey = batchKey;
+      if (objectHandle.materialId !== runtimeObject.materialId) {
+        objectHandle.materialId = runtimeObject.materialId;
+        if (runtimeObject.materialId) {
+          this.materials.set(runtimeObject.id, runtimeObject.materialId);
+        } else {
+          this.materials.delete(runtimeObject.id);
+        }
+      }
 
       const members = batchGroups.get(batchKey) ?? [];
       members.push(runtimeObject.id);
