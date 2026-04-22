@@ -32,8 +32,15 @@ export class Engine {
     return result;
   }
 
+  beginObjectPreview(objectId: string) {
+    return this.commands.execute(this.runtimeScene, {
+      type: "BEGIN_TRANSFORM_PREVIEW",
+      objectId
+    });
+  }
+
   previewObjectTransform(objectId: string, transform: Partial<RuntimeWorldTransform>) {
-    this.commands.execute(this.runtimeScene, { type: "BEGIN_TRANSFORM_PREVIEW", objectId });
+    this.beginObjectPreview(objectId);
     return this.commands.execute(this.runtimeScene, {
       type: "UPDATE_TRANSFORM_PREVIEW",
       objectId,

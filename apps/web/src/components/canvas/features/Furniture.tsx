@@ -15,6 +15,12 @@ import {
   type AssetLodPlan
 } from "../../../lib/scene/asset-lod";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
+import {
+  beginRuntimeAssetPreview,
+  cancelRuntimeAssetPreview,
+  commitRuntimeAssetUpdateToStore,
+  previewRuntimeAssetTransform
+} from "../../../lib/runtime/runtime-asset-bridge";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
   useAssetSelector,
@@ -62,6 +68,7 @@ type FinishMetadata = {
 type InstancedMeshEntry = {
   key: string;
   mesh: THREE.InstancedMesh;
+  sourceMatrix: THREE.Matrix4;
 };
 
 type SlotFinishPolicy = {
@@ -465,7 +472,6 @@ function InstancedFurnitureCluster({
   const ceilings = useShellSelector((slice) => slice.ceilings);
   const scale = useShellSelector((slice) => slice.scale);
   const sceneAssets = useAssetSelector((slice) => slice.assets);
-  const updateFurniture = useAssetSelector((slice) => slice.updateFurniture);
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
   const dragCleanupRef = useRef<(() => void) | null>(null);
   const topViewPolicy = useMemo(
@@ -519,7 +525,8 @@ function InstancedFurnitureCluster({
 
       clusterMeshes.push({
         key: child.uuid,
-        mesh
+        mesh,
+        sourceMatrix: child.matrixWorld.clone()
       });
     });
 
@@ -546,6 +553,36 @@ function InstancedFurnitureCluster({
   const allowInteractiveSelection =
     readOnly || (viewMode === "top" && !topViewPolicy.allowDirectAssetDrag);
   const allowPointerInteraction = allowRoomModeDirectDrag || allowInteractiveSelection;
+
+  const applyPreviewPlacementToInstance = useMemo(() => {
+    const assetMatrix = new THREE.Matrix4();
+    const instanceMatrix = new THREE.Matrix4();
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+    const scaleVector = new THREE.Vector3();
+
+    return (
+      instanceId: number,
+      targetAsset: SceneAsset,
+      placement: {
+        position: [number, number, number];
+        rotation: [number, number, number];
+      }
+    ) => {
+      position.fromArray(placement.position);
+      quaternion.setFromEuler(
+        new THREE.Euler(placement.rotation[0], placement.rotation[1], placement.rotation[2])
+      );
+      scaleVector.fromArray(targetAsset.scale);
+      assetMatrix.compose(position, quaternion, scaleVector);
+
+      instancedMeshes.forEach((entry) => {
+        instanceMatrix.multiplyMatrices(assetMatrix, entry.sourceMatrix);
+        entry.mesh.setMatrixAt(instanceId, instanceMatrix);
+        entry.mesh.instanceMatrix.needsUpdate = true;
+      });
+    };
+  }, [instancedMeshes]);
 
   const resolvePlacementFromPointer = (nativeEvent: PointerEvent, targetAsset: SceneAsset) => {
     const rect = gl.domElement.getBoundingClientRect();
@@ -596,6 +633,7 @@ function InstancedFurnitureCluster({
 
     if (allowRoomModeDirectDrag) {
       dragCleanupRef.current?.();
+      beginRuntimeAssetPreview(targetAsset.id);
       setIsTransforming(true);
       scheduleInteractionLatency("drag-start", startedAt, {
         viewMode,
@@ -604,24 +642,42 @@ function InstancedFurnitureCluster({
       });
 
       let moved = false;
+      let pendingPlacement: {
+        anchorType: SceneAsset["anchorType"];
+        supportAssetId: SceneAsset["supportAssetId"];
+        position: [number, number, number];
+        rotation: [number, number, number];
+      } | null = null;
       const handleWindowPointerMove = (nativeEvent: PointerEvent) => {
         const anchoredPlacement = resolvePlacementFromPointer(nativeEvent, targetAsset);
         if (!anchoredPlacement) return;
         moved = true;
-        updateFurniture(targetAsset.id, {
+        pendingPlacement = {
           anchorType: anchoredPlacement.anchorType,
           supportAssetId: anchoredPlacement.supportAssetId,
           position: anchoredPlacement.position,
           rotation: anchoredPlacement.rotation
+        };
+        previewRuntimeAssetTransform(targetAsset.id, {
+          position: anchoredPlacement.position,
+          rotation: anchoredPlacement.rotation,
+          scale: targetAsset.scale
         });
+        applyPreviewPlacementToInstance(instanceId, targetAsset, anchoredPlacement);
         invalidate();
       };
       const handleWindowPointerUp = () => {
         dragCleanupRef.current?.();
         dragCleanupRef.current = null;
         setIsTransforming(false);
-        if (moved) {
+        if (moved && pendingPlacement) {
+          commitRuntimeAssetUpdateToStore({
+            objectId: targetAsset.id,
+            updates: pendingPlacement
+          });
           recordSnapshot("Move asset");
+        } else {
+          cancelRuntimeAssetPreview(targetAsset.id);
         }
         invalidate();
       };
@@ -761,7 +817,6 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   const ceilings = useShellSelector((slice) => slice.ceilings);
   const scale = useShellSelector((slice) => slice.scale);
   const sceneAssets = useAssetSelector((slice) => slice.assets);
-  const updateFurniture = useAssetSelector((slice) => slice.updateFurniture);
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
   const [isDragging, setIsDragging] = useState(false);
   const groupRef = useRef<THREE.Group | null>(null);
@@ -840,6 +895,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     }
     setIsDragging(true);
     setIsTransforming(true);
+    beginRuntimeAssetPreview(asset.id);
     pendingPlacementRef.current = {
       anchorType: asset.anchorType,
       supportAssetId: asset.supportAssetId,
@@ -861,8 +917,13 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     event.stopPropagation();
     const pendingPlacement = pendingPlacementRef.current;
     if (isDragging && pendingPlacement) {
-      updateFurniture(asset.id, pendingPlacement);
+      commitRuntimeAssetUpdateToStore({
+        objectId: asset.id,
+        updates: pendingPlacement
+      });
       recordSnapshot("Move asset");
+    } else {
+      cancelRuntimeAssetPreview(asset.id);
     }
     pendingPlacementRef.current = null;
     setIsDragging(false);
@@ -900,6 +961,11 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       position: anchoredPlacement.position,
       rotation: anchoredPlacement.rotation
     };
+    previewRuntimeAssetTransform(asset.id, {
+      position: anchoredPlacement.position,
+      rotation: anchoredPlacement.rotation,
+      scale: asset.scale
+    });
     groupRef.current?.position.set(...anchoredPlacement.position);
     groupRef.current?.rotation.set(...anchoredPlacement.rotation);
     invalidate();
@@ -907,12 +973,13 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
   useEffect(() => {
     return () => {
+      cancelRuntimeAssetPreview(asset.id);
       pendingPlacementRef.current = null;
       if (isDragging) {
         setIsTransforming(false);
       }
     };
-  }, [isDragging, setIsTransforming]);
+  }, [asset.id, isDragging, setIsTransforming]);
 
   useEffect(() => {
     if (viewMode === "walk" || isDragging || !groupRef.current) return;

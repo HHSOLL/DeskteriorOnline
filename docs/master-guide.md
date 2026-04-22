@@ -795,3 +795,13 @@ Updated:
 
 Removed/Deprecated:
 - `apps/web` 내부 React/Zustand 경로가 장기적으로 renderer/placement hot path까지 직접 책임진다는 가정.
+
+## 2026-04-22 변경 동기화 (Runtime Editor Bridge Phase 2)
+Added:
+- instanced cluster direct-drag, top-view gizmo transform, 회전 hotkey가 `runtime asset preview -> pointer-up commit` 브리지 경로를 사용할 수 있도록 `deskterioronline:runtime-document-patch` 이벤트와 runtime patch helper를 추가했다.
+
+Updated:
+- editor top-view 조작 기준을 “일부 경로는 local preview, 일부 경로는 store 직접 mutation”에서 “preview는 runtime/local object 경로, commit은 store/document bridge 경로”로 더 엄격하게 정렬한다.
+
+Removed/Deprecated:
+- instanced cluster direct-drag가 pointer move마다 `useSceneStore.updateFurniture`를 직접 호출해야 한다는 가정.

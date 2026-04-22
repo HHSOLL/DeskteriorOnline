@@ -909,3 +909,14 @@ Updated:
 
 Removed/Deprecated:
 - 첫 단계에서 `asset-compiler`, `ui-kit`, `math`, `geometry`, extra apps/services`까지 동시에 열어야 한다는 가정.
+
+## 2026-04-22 변경 동기화 (Document/Runtime Split Follow-up)
+Added:
+- `runtime-asset-bridge`를 추가해 top-view direct drag, gizmo transform, rotation hotkey가 runtime preview를 거친 뒤 commit 시점에만 store/document bridge를 통과하도록 연결했다.
+- `verify:runtime-editor-bridge` smoke 검증을 추가해 preview 중 store 불변성과 commit 시 runtime patch + store update를 같이 점검한다.
+
+Updated:
+- `Document/Runtime Split`의 다음 실구현 범위를 “runtime skeleton 존재”에서 “실제 editor transform 경로 일부가 runtime preview/commit 브리지로 전환됨” 상태로 갱신한다.
+
+Removed/Deprecated:
+- top-view instanced drag 경로가 Phase 2 이전 상태 그대로 pointer-move store churn을 유지한다는 설명.

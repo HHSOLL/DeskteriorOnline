@@ -115,6 +115,7 @@ E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 - `renderer-stats`는 약 1초 간격으로 FPS / draw calls / triangles / textures / geometries를 보낸다.
 - `interaction-latency`는 hover / select / drag-start / gizmo-drag-start의 next-paint 기준 지연을 보낸다.
 - `bvh-build`는 geometry UUID / triangle count / duration / worker|sync mode를 기록해 large geometry BVH offload 동작 여부를 확인한다.
+- `runtime-document-patch`는 top-view transform commit 시 runtime patch 개수와 대상 object를 기록해 preview/commit 분리 여부를 확인할 수 있다.
 
 ```js
 window.addEventListener("deskterioronline:renderer-stats", (event) => {

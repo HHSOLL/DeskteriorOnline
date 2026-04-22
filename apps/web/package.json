@@ -28,6 +28,7 @@
     "assets:probe:gltfpack": "node --import tsx scripts/optimize-deskterior-runtime.ts --gltfpack-probe",
     "verify:scene-document": "node --import tsx scripts/verify-scene-document-roundtrip.ts",
     "verify:runtime-engine": "node --import tsx scripts/verify-runtime-engine-foundation.ts",
+    "verify:runtime-editor-bridge": "node --import tsx scripts/verify-runtime-editor-bridge.ts",
     "verify:placement-kernel": "node --import tsx scripts/verify-placement-kernel-foundation.ts",
     "verify:asset-instancing": "node --import tsx scripts/verify-asset-instancing-policy.ts",
     "verify:asset-lod": "node --import tsx scripts/verify-asset-lod-policy.ts",

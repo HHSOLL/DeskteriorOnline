@@ -7,6 +7,12 @@ import * as THREE from "three";
 import type { TransformControls as TransformControlsImpl } from "three-stdlib";
 import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
+import {
+  beginRuntimeAssetPreview,
+  cancelRuntimeAssetPreview,
+  commitRuntimeAssetUpdateToStore,
+  previewRuntimeAssetTransform
+} from "../../../lib/runtime/runtime-asset-bridge";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import type { Floor, RoomZone, Wall } from "../../../lib/stores/useSceneStore";
@@ -152,7 +158,6 @@ export default function AssetTransformControls() {
   const readOnly = useEditorStore((state) => state.readOnly);
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const assets = useAssetSelector((slice) => slice.assets);
-  const updateFurniture = useAssetSelector((slice) => slice.updateFurniture);
   const walls = useShellSelector((slice) => slice.walls);
   const floors = useShellSelector((slice) => slice.floors);
   const ceilings = useShellSelector((slice) => slice.ceilings);
@@ -162,6 +167,7 @@ export default function AssetTransformControls() {
 
   const [target, setTarget] = useState<THREE.Object3D | null>(null);
   const controlsRef = useRef<ExtendedTransformControls | null>(null);
+  const previewAssetIdRef = useRef<string | null>(null);
   const selectedAsset = useMemo(
     () => assets.find((asset) => asset.id === selectedAssetId) ?? null,
     [assets, selectedAssetId]
@@ -174,6 +180,24 @@ export default function AssetTransformControls() {
     () => resolvePlacementBounds(floors, rooms, walls, scale),
     [floors, rooms, scale, walls]
   );
+
+  useEffect(() => {
+    return () => {
+      if (previewAssetIdRef.current) {
+        cancelRuntimeAssetPreview(previewAssetIdRef.current);
+        previewAssetIdRef.current = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (target || !previewAssetIdRef.current) {
+      return;
+    }
+
+    cancelRuntimeAssetPreview(previewAssetIdRef.current);
+    previewAssetIdRef.current = null;
+  }, [target]);
 
   useEffect(() => {
     if (
@@ -257,6 +281,13 @@ export default function AssetTransformControls() {
       target.scale.set(...selectedAsset.scale);
     }
 
+    const nextScale = scaleLocked ? selectedAsset.scale : vector3ToTuple(target.scale);
+    previewRuntimeAssetTransform(selectedAsset.id, {
+      position: anchoredPlacement.position,
+      rotation: anchoredPlacement.rotation,
+      scale: nextScale
+    });
+
     invalidate();
 
     return {
@@ -275,17 +306,18 @@ export default function AssetTransformControls() {
     const constrained = applyLiveConstraints();
     if (!constrained) return false;
 
-    updateFurniture(
-      selectedAssetId,
-      constrained.scaleLocked
+    commitRuntimeAssetUpdateToStore({
+      objectId: selectedAssetId,
+      updates: constrained.scaleLocked
         ? constrained.updates
         : {
             ...constrained.updates,
             scale: vector3ToTuple(target.scale)
           }
-    );
+    });
+    previewAssetIdRef.current = null;
     return true;
-  }, [applyLiveConstraints, selectedAssetId, target, updateFurniture]);
+  }, [applyLiveConstraints, selectedAssetId, target]);
 
   if (viewMode !== "top" || readOnly || !target || !topViewPolicy.allowTransformControls) {
     return null;
@@ -303,6 +335,10 @@ export default function AssetTransformControls() {
       onObjectChange={applyLiveConstraints}
       onMouseDown={() => {
         const startedAt = performance.now();
+        if (selectedAssetId) {
+          previewAssetIdRef.current = selectedAssetId;
+          beginRuntimeAssetPreview(selectedAssetId);
+        }
         setIsTransforming(true);
         invalidate();
         scheduleInteractionLatency("gizmo-drag-start", startedAt, {
@@ -316,6 +352,9 @@ export default function AssetTransformControls() {
         const didCommit = commitTarget();
         if (didCommit) {
           recordSnapshot("Transform asset");
+        } else if (selectedAssetId) {
+          cancelRuntimeAssetPreview(selectedAssetId);
+          previewAssetIdRef.current = null;
         }
         invalidate();
       }}
