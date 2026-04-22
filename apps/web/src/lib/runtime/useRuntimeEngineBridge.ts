@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import type { Engine } from "@deskterioronline/engine-core";
+import type { RuntimeEngineBridgeState } from "./runtime-engine-context";
 import { useAssetStore, useShellStore } from "../stores/scene-slices";
 import {
   buildRuntimeAssetsFromStore,
@@ -91,8 +92,12 @@ export function useRuntimeEngineBridge() {
   }, [runtimeAssets, runtimeInput, sceneDocument, signature]);
 
   return {
-    engine: engineRef.current,
+    engineRef,
+    sceneDocumentId: sceneDocument.id,
     sceneDocument,
     runtimeAssets
+  } satisfies RuntimeEngineBridgeState & {
+    sceneDocument: typeof sceneDocument;
+    runtimeAssets: typeof runtimeAssets;
   };
 }

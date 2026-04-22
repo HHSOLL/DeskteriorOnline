@@ -920,3 +920,14 @@ Updated:
 
 Removed/Deprecated:
 - top-view instanced drag 경로가 Phase 2 이전 상태 그대로 pointer-move store churn을 유지한다는 설명.
+
+## 2026-04-22 변경 동기화 (Renderer Compatibility Follow-up)
+Added:
+- `runtime-engine-context`와 `runtime-render-sync` helper를 추가해 선택 자산 렌더 경로가 runtime object registry preview/transform을 직접 읽도록 연결했다.
+- `verify:runtime-render-sync` smoke 검증을 추가해 runtime preview transform이 renderer object mutation helper로 반영되는지 점검한다.
+
+Updated:
+- `Renderer Adapter` 이전 compatibility 목표를 “CanvasHost에서 runtime bootstrap만 수행”에서 “CanvasHost + selected asset renderer sync까지 연결” 상태로 갱신한다.
+
+Removed/Deprecated:
+- renderer compatibility path가 아직 transform 소비 측면에서는 전부 legacy asset props에만 의존한다는 설명.

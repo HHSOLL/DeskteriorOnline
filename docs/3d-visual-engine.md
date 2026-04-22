@@ -573,3 +573,13 @@ Updated:
 
 Removed/Deprecated:
 - instanced cluster drag preview를 위해 per-pointer-move store update를 허용하던 이전 경로.
+
+## 2026-04-22 변경 동기화 (Selected Asset Runtime Render Sync)
+Added:
+- selected top-view asset는 runtime object registry의 preview/transform 값을 `useFrame` mutation 경로로 직접 반영하는 기준을 추가했다.
+
+Updated:
+- renderer compatibility layer의 transform 소비 규칙을 “legacy prop 반영 + 일부 local preview”에서 “selected asset는 runtime transform 우선, commit 이후엔 legacy prop와 재수렴” 구조로 강화한다.
+
+Removed/Deprecated:
+- gizmo preview가 target object local mutation에만 머무르고 renderer compatibility layer에서는 runtime object registry를 소비하지 않는다는 가정.
