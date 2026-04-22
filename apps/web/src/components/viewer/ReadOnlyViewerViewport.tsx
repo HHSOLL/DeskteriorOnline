@@ -1,4 +1,4 @@
-import { SceneViewport } from "../editor/SceneViewport";
+import { CanvasHost } from "../editor/CanvasHost";
 import type { SharedViewerPresentation } from "../../lib/viewer/presentation";
 
 type ReadOnlyViewerViewportProps = {
@@ -62,7 +62,7 @@ export function ReadOnlyViewerViewport({
           </div>
         </div>
 
-        <SceneViewport
+        <CanvasHost
           className="h-[72vh] rounded-none border-0 shadow-none sm:h-[78vh]"
           camera={{ fov: 45, position: [0, 8, 14] }}
           chromeTone="light"

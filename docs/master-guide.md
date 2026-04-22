@@ -55,11 +55,15 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 
 ## 아키텍처 경계
 - Frontend: `apps/web` (active product surface)
+- Runtime foundation: `packages/scene-schema`, `packages/engine-core`, `packages/renderer-three`, `packages/placement-kernel`
 - API: `apps/api` (asset generation enqueue + health)
 - Worker: `apps/worker` (asset generation processing)
 - Supabase: auth/storage/database
 - Asset pipeline: `assets/blender/deskterior`(source) + `apps/web/public/assets/models`(legacy fallback runtime) + `apps/web/public/assets/catalog/manifest.json`(catalog manifest)
 - Target asset delivery: Supabase storage/CDN 기반 `catalog-public`(curated runtime), `project-media`(private snapshot/thumbnail), `assets-glb` 또는 후속 private bucket(생성형 자산 staging/publish) 구조를 사용한다.
+- `apps/web`는 UI shell과 canvas host를 우선 책임지고, drag/hover/preview hot path mutation은 점진적으로 runtime foundation으로 이동한다.
+- 저장 문서와 런타임 조작 상태를 같은 React/Zustand mutation 경로로 직접 공유하지 않는다.
+- `SceneDocument`의 canonical unit은 `mm`이며, meter 변환은 renderer/runtime 경계에서만 허용한다.
 
 ## 활성 웹 계약
 - `GET /api/v1/projects/:projectId/bootstrap`
@@ -779,3 +783,15 @@ Updated:
 
 Removed/Deprecated:
 - `viewer-showcase` 프로파일이 제품 경로에 연결되지 않은 dead configuration 상태.
+
+## 2026-04-22 변경 동기화 (Commercial Engine Refactor Foundation)
+Added:
+- `packages/scene-schema`, `packages/engine-core`, `packages/renderer-three`, `packages/placement-kernel`를 신규 runtime foundation 패키지 경계로 추가했다.
+- editor/shared viewport 위에 `CanvasHost` 기반 runtime engine bootstrap compatibility path를 추가했다.
+
+Updated:
+- `apps/web`의 역할을 scene mutation 직접 소유 경로에서 UI shell + canvas host 중심 경로로 재정렬한다.
+- 저장 문서와 drag/hover/preview hot path를 분리하는 구조 전환을 canonical architecture에 포함한다.
+
+Removed/Deprecated:
+- `apps/web` 내부 React/Zustand 경로가 장기적으로 renderer/placement hot path까지 직접 책임진다는 가정.

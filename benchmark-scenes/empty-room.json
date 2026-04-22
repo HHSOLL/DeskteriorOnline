@@ -1,0 +1,85 @@
+{
+  "id": "empty-room",
+  "title": "Empty Room",
+  "description": "Baseline room shell without interactive furniture.",
+  "document": {
+    "schemaVersion": 2,
+    "id": "bench-empty-room",
+    "version": 1,
+    "units": "mm",
+    "room": {
+      "scaleInfo": {
+        "valueMmPerMeter": 1000,
+        "source": "user_measure",
+        "confidence": 1
+      },
+      "walls": [
+        {
+          "id": "wall-a",
+          "startMm": [0, 0],
+          "endMm": [4200, 0],
+          "thicknessMm": 120,
+          "heightMm": 2400,
+          "type": "exterior"
+        },
+        {
+          "id": "wall-b",
+          "startMm": [4200, 0],
+          "endMm": [4200, 3200],
+          "thicknessMm": 120,
+          "heightMm": 2400,
+          "type": "exterior"
+        },
+        {
+          "id": "wall-c",
+          "startMm": [4200, 3200],
+          "endMm": [0, 3200],
+          "thicknessMm": 120,
+          "heightMm": 2400,
+          "type": "exterior"
+        },
+        {
+          "id": "wall-d",
+          "startMm": [0, 3200],
+          "endMm": [0, 0],
+          "thicknessMm": 120,
+          "heightMm": 2400,
+          "type": "exterior"
+        }
+      ],
+      "openings": [],
+      "floors": [
+        {
+          "id": "floor-01",
+          "outlineMm": [[0, 0], [4200, 0], [4200, 3200], [0, 3200]],
+          "materialId": null,
+          "roomId": "room-01",
+          "roomType": "other",
+          "label": "Benchmark Room"
+        }
+      ],
+      "ceilings": [],
+      "rooms": [],
+      "cameraAnchors": [],
+      "navGraph": {
+        "nodes": [],
+        "edges": []
+      }
+    },
+    "objects": [],
+    "materials": [],
+    "cameras": [],
+    "environment": {
+      "lighting": {
+        "mode": "direct"
+      }
+    }
+  },
+  "runtimeAssets": [],
+  "budgetHints": {
+    "drawCallsBudget": 120,
+    "triangleBudget": 200000,
+    "objectCountBudget": 0,
+    "textureBudgetMb": 128
+  }
+}

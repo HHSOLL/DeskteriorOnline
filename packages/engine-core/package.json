@@ -1,0 +1,12 @@
+{
+  "name": "@deskterioronline/engine-core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@deskterioronline/scene-schema": "0.0.0"
+  }
+}

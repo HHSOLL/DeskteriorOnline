@@ -52,6 +52,17 @@
 - dense desk: 책상 위 소형 오브젝트 30개 이상 배치된 정밀 편집 장면
 - high fidelity toggle: shadow, post FX, lighting preset이 켜진 시각 품질 확인 장면
 
+Baseline artifacts:
+- `benchmark-scenes/empty-room.json`
+- `benchmark-scenes/standard-room.json`
+- `benchmark-scenes/dense-desk.json`
+- `benchmark-scenes/heavy-assets.json`
+- `benchmark-runner/collect-baseline.ts`
+
+```bash
+npm --workspace apps/web run benchmarks:collect:baseline
+```
+
 ## Primary Contract Check
 
 - 스크립트: `apps/web/scripts/e2e-primary-room-flow.ts`
@@ -254,3 +265,13 @@ Updated:
 
 Removed/Deprecated:
 - top-view와 builder preview가 idle 상태에서도 연속 프레임을 그려도 무방하다는 가정.
+
+## 2026-04-22 변경 동기화 (Benchmark Scene Baseline Artifacts)
+Added:
+- benchmark scene 4종과 baseline collection runner를 성능 예산의 공식 artifact로 추가했다.
+
+Updated:
+- baseline 측정 절차를 telemetry capture JSON뿐 아니라 `benchmark-scenes` + `benchmark-runner` 기반 scene inventory와 함께 유지하도록 확장했다.
+
+Removed/Deprecated:
+- benchmark scenario 정의가 문서 텍스트에만 있고 저장소 artifact가 없던 상태.

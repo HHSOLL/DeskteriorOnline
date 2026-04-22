@@ -1,0 +1,125 @@
+{
+  "generatedAt": "2026-04-22T10:06:37.672Z",
+  "entries": [
+    {
+      "scenario": "dense-desk",
+      "title": "Dense Desk",
+      "description": "Desk precision benchmark with many small accessories and surface-local placements.",
+      "documentId": "bench-dense-desk",
+      "objects": 12,
+      "uniqueAssets": 11,
+      "surfacePlacements": 11,
+      "runtimeAssetCount": 11,
+      "declaredTriangleBudget": 121500,
+      "budgetHints": {
+        "drawCallsBudget": 320,
+        "triangleBudget": 450000,
+        "objectCountBudget": 100,
+        "textureBudgetMb": 384
+      },
+      "telemetry": {
+        "scenario": "dense-desk",
+        "fpsAvg": null,
+        "frameTimeP95Ms": null,
+        "reactRenderCount": null,
+        "raycastLatencyP95Ms": null,
+        "assetLoadMs": null,
+        "firstUsableMs": null,
+        "drawCalls": null,
+        "triangles": null,
+        "gpuMemoryEstimateMb": null,
+        "inputLatencyP95Ms": null
+      }
+    },
+    {
+      "scenario": "empty-room",
+      "title": "Empty Room",
+      "description": "Baseline room shell without interactive furniture.",
+      "documentId": "bench-empty-room",
+      "objects": 0,
+      "uniqueAssets": 0,
+      "surfacePlacements": 0,
+      "runtimeAssetCount": 0,
+      "declaredTriangleBudget": 0,
+      "budgetHints": {
+        "drawCallsBudget": 120,
+        "triangleBudget": 200000,
+        "objectCountBudget": 0,
+        "textureBudgetMb": 128
+      },
+      "telemetry": {
+        "scenario": "empty-room",
+        "fpsAvg": null,
+        "frameTimeP95Ms": null,
+        "reactRenderCount": null,
+        "raycastLatencyP95Ms": null,
+        "assetLoadMs": null,
+        "firstUsableMs": null,
+        "drawCalls": null,
+        "triangles": null,
+        "gpuMemoryEstimateMb": null,
+        "inputLatencyP95Ms": null
+      }
+    },
+    {
+      "scenario": "heavy-assets",
+      "title": "Heavy Assets",
+      "description": "Large runtime asset mix for asset streaming and proxy-first loading checks.",
+      "documentId": "bench-heavy-assets",
+      "objects": 4,
+      "uniqueAssets": 4,
+      "surfacePlacements": 1,
+      "runtimeAssetCount": 4,
+      "declaredTriangleBudget": 220000,
+      "budgetHints": {
+        "drawCallsBudget": 340,
+        "triangleBudget": 650000,
+        "objectCountBudget": 40,
+        "textureBudgetMb": 512
+      },
+      "telemetry": {
+        "scenario": "heavy-assets",
+        "fpsAvg": null,
+        "frameTimeP95Ms": null,
+        "reactRenderCount": null,
+        "raycastLatencyP95Ms": null,
+        "assetLoadMs": null,
+        "firstUsableMs": null,
+        "drawCalls": null,
+        "triangles": null,
+        "gpuMemoryEstimateMb": null,
+        "inputLatencyP95Ms": null
+      }
+    },
+    {
+      "scenario": "standard-room",
+      "title": "Standard Room",
+      "description": "Single desk setup with common editor furniture.",
+      "documentId": "bench-standard-room",
+      "objects": 3,
+      "uniqueAssets": 3,
+      "surfacePlacements": 1,
+      "runtimeAssetCount": 3,
+      "declaredTriangleBudget": 96000,
+      "budgetHints": {
+        "drawCallsBudget": 220,
+        "triangleBudget": 250000,
+        "objectCountBudget": 12,
+        "textureBudgetMb": 256
+      },
+      "telemetry": {
+        "scenario": "standard-room",
+        "fpsAvg": null,
+        "frameTimeP95Ms": null,
+        "reactRenderCount": null,
+        "raycastLatencyP95Ms": null,
+        "assetLoadMs": null,
+        "firstUsableMs": null,
+        "drawCalls": null,
+        "triangles": null,
+        "gpuMemoryEstimateMb": null,
+        "inputLatencyP95Ms": null
+      }
+    }
+  ]
+}
