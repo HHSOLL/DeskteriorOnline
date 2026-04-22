@@ -70,26 +70,37 @@ export function useRuntimeEngineBridge() {
 
   const sceneDocument = useMemo(() => buildSceneDocumentV2FromStore(runtimeInput), [runtimeInput]);
   const runtimeAssets = useMemo(() => buildRuntimeAssetsFromStore(runtimeInput), [runtimeInput]);
-  const signature = useMemo(
+  const roomSignature = useMemo(
     () =>
       JSON.stringify({
         room: sceneDocument.room,
+        environment: sceneDocument.environment
+      }),
+    [sceneDocument]
+  );
+  const objectSignature = useMemo(
+    () =>
+      JSON.stringify({
         objects: sceneDocument.objects,
         materials: sceneDocument.materials
       }),
     [sceneDocument]
   );
+  const previousRoomSignatureRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!engineRef.current) {
       engineRef.current = createEditorRuntimeEngine(runtimeInput);
-    } else {
+    } else if (previousRoomSignatureRef.current !== roomSignature) {
       engineRef.current.replaceDocument(sceneDocument, runtimeAssets);
+    } else {
+      engineRef.current.syncDocument(sceneDocument, runtimeAssets);
     }
 
+    previousRoomSignatureRef.current = roomSignature;
     window.__DESKTERIORONLINE_RUNTIME_ENGINE__ = engineRef.current ?? undefined;
     window.__DESKTERIORONLINE_RUNTIME_DOCUMENT_ID__ = sceneDocument.id;
-  }, [runtimeAssets, runtimeInput, sceneDocument, signature]);
+  }, [objectSignature, roomSignature, runtimeAssets, runtimeInput, sceneDocument]);
 
   return {
     engineRef,

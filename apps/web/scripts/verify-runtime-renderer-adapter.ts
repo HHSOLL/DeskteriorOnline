@@ -101,6 +101,37 @@ try {
   assert((adapter.getObjectHandle("desk-1")?.version ?? 0) > previousVersion, "dirty sync should bump object version");
   assert(engine.runtimeScene.dirtyObjectIds.size === 0, "renderer sync should consume dirty runtime ids");
 
+  const assetSwapDocument = migrateLegacySceneStoreStateToV2(
+    {
+      ...legacyState,
+      assets: [
+        {
+          id: "desk-1",
+          assetId: "p2s_desk_lamp_glow",
+          catalogItemId: "p2s_desk_lamp_glow",
+          position: [1.85, 0, 1.4],
+          rotation: [0, 0.2, 0],
+          scale: [1, 1, 1],
+          materialId: "lamp-brass"
+        },
+        legacyState.assets[1]!
+      ]
+    },
+    {
+      id: "verify-runtime-renderer-adapter",
+      version: 2
+    }
+  );
+
+  const generationBeforeAssetSwap = engine.runtimeScene.generation;
+  engine.syncDocument(assetSwapDocument);
+  const assetSwapSync = adapter.syncRuntimeScene(engine.runtimeScene);
+  assert(engine.runtimeScene.generation === generationBeforeAssetSwap, "same-room asset swap should not force a structural generation bump");
+  assert(assetSwapSync.syncedCount >= 1, "asset swap should resync at least one renderer object");
+  assert(adapter.getObjectHandle("desk-1")?.assetHandle.assetId === "p2s_desk_lamp_glow", "renderer object handle should refresh asset binding on incremental sync");
+  assert(adapter.batches.get("p2s_desk_lamp_glow:default")?.objectIds.includes("desk-1"), "asset-swapped object should move into the new batch");
+  assert(adapter.batches.get("p2s_desk_oak:default")?.objectIds.includes("desk-1") !== true, "asset-swapped object should leave the previous batch");
+
   const replacementDocument = migrateLegacySceneStoreStateToV2(
     {
       ...legacyState,
@@ -135,6 +166,7 @@ try {
       {
         initialSync,
         dirtySync,
+        assetSwapSync,
         replacedSync,
         batchSize: adapter.batches.get("p2s_desk_oak:default")?.objectIds.length ?? 0,
         desk1Version: adapter.getObjectHandle("desk-1")?.version ?? 0

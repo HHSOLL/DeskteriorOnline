@@ -605,3 +605,14 @@ Updated:
 
 Removed/Deprecated:
 - single object transform sync가 renderer adapter를 우회해도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Incremental Runtime Scene Reconciliation)
+Added:
+- same-room object lifecycle 변경은 runtime scene ref를 유지한 채 object registry만 incremental reconcile 하는 기준을 추가했다.
+- same-object asset swap은 renderer object handle/batch를 다시 묶고, removed object는 runtime selection/hover에서 즉시 정리하는 기준을 추가했다.
+
+Updated:
+- renderer compatibility 전제를 “store commit 후 새 runtime scene이 공급될 수 있음”에서 “가능한 한 같은 runtime scene ref를 유지하고 dirty object만 재수렴”으로 강화한다.
+
+Removed/Deprecated:
+- object add/remove/material 변경이 renderer compatibility를 위해 항상 full runtime scene replace를 필요로 한다는 가정.
