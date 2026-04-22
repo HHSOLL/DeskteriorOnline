@@ -41,6 +41,7 @@ export class ScenePatchBuilder {
 
         return {
           ...objectDocument,
+          visible: runtimeObject.visible,
           placement: clonePlacement(runtimeObject.placement),
           ...(runtimeObject.objectDocument.runtimeAssetId
             ? { runtimeAssetId: runtimeObject.objectDocument.runtimeAssetId }

@@ -17,7 +17,11 @@ import {
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
 import { useRuntimeRendererAdapter } from "../../../lib/runtime/runtime-renderer-context";
-import { applyRuntimeTransformToObject, resolveRuntimeAssetTransform } from "../../../lib/runtime/runtime-render-sync";
+import {
+  applyRuntimeTransformToObject,
+  resolveRuntimeAssetTransform,
+  resolveRuntimeAssetVisibility
+} from "../../../lib/runtime/runtime-render-sync";
 import {
   beginRuntimeAssetPreview,
   cancelRuntimeAssetPreview,
@@ -907,6 +911,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   const shouldRenderLight =
     lightProfile != null &&
     (viewMode !== "top" || topMode === "desk-precision");
+  const isVisible = resolveRuntimeAssetVisibility(runtimeRenderer, runtimeEngine, asset);
 
   const handleReadOnlySelect = (event: ThreeEvent<PointerEvent>) => {
     if (!readOnly) return;
@@ -1069,6 +1074,10 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
           }
       : {};
 
+  if (!isVisible) {
+    return null;
+  }
+
   if (viewMode === "walk") {
     return (
       <RigidBody type="fixed" colliders="cuboid" position={asset.position} rotation={asset.rotation}>
@@ -1119,40 +1128,47 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
 export default function Furniture({ allowDynamicLights }: { allowDynamicLights: boolean }) {
   const assets = useAssetSelector((slice) => slice.assets);
+  const runtimeEngine = useRuntimeEngine();
+  const runtimeRenderer = useRuntimeRendererAdapter();
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const isTransforming = useEditorStore((state) => state.isTransforming);
   const readOnly = useEditorStore((state) => state.readOnly);
+  const visibleAssets = useMemo(
+    () =>
+      assets.filter((asset) => resolveRuntimeAssetVisibility(runtimeRenderer, runtimeEngine, asset)),
+    [assets, runtimeEngine, runtimeRenderer]
+  );
   const emitterAssetIds = useMemo(() => {
     if (!allowDynamicLights) {
       return new Set<string>();
     }
     const ids = new Set<string>();
     let count = 0;
-    for (const asset of assets) {
+    for (const asset of visibleAssets) {
       if (count >= MAX_DYNAMIC_EMITTERS) break;
       if (!isLightingAsset(asset)) continue;
       ids.add(asset.id);
       count += 1;
     }
     return ids;
-  }, [allowDynamicLights, assets]);
+  }, [allowDynamicLights, visibleAssets]);
   const pinnedAssetIds = useMemo(() => {
     const ids = new Set<string>();
     if (selectedAssetId) {
       ids.add(selectedAssetId);
-      const selectedAsset = assets.find((asset) => asset.id === selectedAssetId);
+      const selectedAsset = visibleAssets.find((asset) => asset.id === selectedAssetId);
       if (viewMode === "top" && topMode === "desk-precision" && selectedAsset?.supportAssetId) {
         ids.add(selectedAsset.supportAssetId);
       }
     }
     return ids;
-  }, [assets, selectedAssetId, topMode, viewMode]);
+  }, [selectedAssetId, topMode, viewMode, visibleAssets]);
   const instancingClusters = useMemo(
     () =>
       groupAssetsForInstancing({
-        assets,
+        assets: visibleAssets,
         viewMode,
         topMode,
         readOnly,
@@ -1161,7 +1177,7 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
         pinnedAssetIds,
         emitterAssetIds
       }),
-    [assets, emitterAssetIds, isTransforming, pinnedAssetIds, readOnly, selectedAssetId, topMode, viewMode]
+    [emitterAssetIds, isTransforming, pinnedAssetIds, readOnly, selectedAssetId, topMode, viewMode, visibleAssets]
   );
   const instancedAssetIds = useMemo(() => {
     const ids = new Set<string>();
@@ -1176,7 +1192,7 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
       {instancingClusters.map((cluster) => (
         <InstancedFurnitureCluster key={cluster.key} assets={cluster.assets} readOnly={readOnly} />
       ))}
-      {assets.map((asset) =>
+      {visibleAssets.map((asset) =>
         instancedAssetIds.has(asset.id) ? null : (
           <FurnitureItem
             key={asset.id}

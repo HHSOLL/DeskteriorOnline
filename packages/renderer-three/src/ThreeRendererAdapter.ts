@@ -145,6 +145,7 @@ export class ThreeRendererAdapter implements RendererAdapter {
       ) {
         objectHandle.assetHandle = assetHandle;
       }
+      objectHandle.visible = runtimeObject.visible;
       const batchKey = `${runtimeAssetId}:${runtimeObject.objectDocument.materialVariantId ?? "default"}`;
       objectHandle.batchKey = batchKey;
       if (objectHandle.materialId !== runtimeObject.materialId) {

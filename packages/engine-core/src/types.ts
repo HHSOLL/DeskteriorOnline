@@ -18,6 +18,7 @@ export type RuntimeObjectRecord = {
   assetId: string;
   runtimeAssetId: string | null;
   materialId: string | null;
+  visible: boolean;
   objectDocument: SceneObjectDocument;
   placement: PlacementRecord;
   transform: RuntimeWorldTransform;

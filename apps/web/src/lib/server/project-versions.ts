@@ -588,6 +588,7 @@ function buildSceneDocument(
       return {
         id: asset.id,
         assetId: asset.assetId,
+        visible: normalizeAssetMetadataBoolean(asset.visible ?? true),
         catalogItemId: typeof asset.catalogItemId === "string" && asset.catalogItemId.length > 0 ? asset.catalogItemId : null,
         anchorType,
         supportAssetId:
@@ -600,6 +601,7 @@ function buildSceneDocument(
         materialId: asset.materialId ?? null,
         metadata: {
           anchorType,
+          visible: normalizeAssetMetadataBoolean(asset.visible ?? true),
           ...(typeof asset.supportAssetId === "string" && asset.supportAssetId.length > 0
             ? { supportAssetId: asset.supportAssetId }
             : {}),
@@ -639,6 +641,7 @@ function buildProjectVersionCustomization(
       return {
         id: asset.id,
         modelId: asset.assetId,
+        visible: normalizeAssetMetadataBoolean(asset.visible ?? true),
         anchor: anchorType,
         supportAssetId:
           typeof asset.supportAssetId === "string" && asset.supportAssetId.length > 0 ? asset.supportAssetId : null,
@@ -649,6 +652,7 @@ function buildProjectVersionCustomization(
         metadata: {
           path: asset.assetId,
           anchorType,
+          visible: normalizeAssetMetadataBoolean(asset.visible ?? true),
           ...(typeof asset.supportAssetId === "string" && asset.supportAssetId.length > 0
             ? { supportAssetId: asset.supportAssetId }
             : {}),

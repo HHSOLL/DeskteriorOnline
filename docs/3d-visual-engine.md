@@ -616,3 +616,13 @@ Updated:
 
 Removed/Deprecated:
 - object add/remove/material 변경이 renderer compatibility를 위해 항상 full runtime scene replace를 필요로 한다는 가정.
+
+## 2026-04-23 변경 동기화 (Runtime Visibility Consumption)
+Added:
+- single object path와 instancing candidate set은 runtime visibility를 기준으로 hidden object를 제외해야 한다.
+
+Updated:
+- renderer compatibility layer의 소비 범위를 transform/material snapshot에서 transform/material/visibility snapshot으로 확장한다.
+
+Removed/Deprecated:
+- hidden object가 runtime renderer handle에 남아 있어도 실제 draw path에서 문제 없다는 가정.

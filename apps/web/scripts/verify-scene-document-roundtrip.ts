@@ -115,6 +115,7 @@ const payload = {
       id: "lamp-1",
       assetId: "p2s_desk_lamp_glow",
       catalogItemId: "desk-lamp-glow",
+      visible: false,
       anchorType: "desk_surface",
       supportAssetId: "desk-1",
       position: [1.52, 0.77, 1.02],
@@ -213,6 +214,7 @@ try {
 
   assert(deskAsset.anchorType === "floor", `desk anchor mismatch: ${deskAsset.anchorType}`);
   assert(lampAsset.anchorType === "desk_surface", `lamp anchor mismatch: ${lampAsset.anchorType}`);
+  assert(lampAsset.visible === false, "lamp visibility should roundtrip through sceneDocument");
   assert(lampAsset.supportAssetId === "desk-1", `lamp supportAssetId mismatch: ${lampAsset.supportAssetId}`);
   assert(
     lampAsset.product?.dimensionsMm?.height === 420,
@@ -231,6 +233,7 @@ try {
   const savedLampPlacement = lampNode.placement;
   assert(savedDeskPlacement, "desk placement snapshot missing");
   assert(savedLampPlacement, "lamp placement snapshot missing");
+  assert(lampNode.visible === false, "sceneDocument node visibility should be preserved");
 
   const loadedDeskPlacement = serializeScenePlacement({
     position: deskAsset.position,

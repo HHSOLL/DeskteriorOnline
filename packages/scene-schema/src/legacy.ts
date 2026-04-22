@@ -26,6 +26,7 @@ export type LegacySceneAssetLike = {
   id: string;
   assetId: string;
   catalogItemId?: string | null;
+  visible?: boolean;
   product?: Record<string, unknown> | null;
   anchorType?: string | null;
   supportAssetId?: string | null;
@@ -286,6 +287,7 @@ function mapObjects(assets: LegacySceneAssetLike[]): SceneObjectDocument[] {
     id: asset.id,
     assetId: asset.assetId,
     runtimeAssetId: asset.catalogItemId ?? asset.assetId,
+    visible: asset.visible !== false,
     placement: mapPlacement(asset),
     catalogItemId: asset.catalogItemId ?? null,
     anchorType: asset.anchorType ?? null,

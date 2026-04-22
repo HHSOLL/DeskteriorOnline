@@ -55,6 +55,7 @@ export type RoomShell = {
 
 export type ProductMetadata = {
   catalogItemId?: string | null;
+  visible?: boolean;
   productId?: string;
   label?: string;
   name?: string;
@@ -487,6 +488,7 @@ export function toSceneStorePatch(scene: SceneDocumentBootstrap): SceneStorePatc
         position: placement.position,
         rotation: placement.rotation,
         scale: placement.scale,
+        visible: toMetadataBoolean(node.metadata?.visible ?? node.visible ?? true),
         catalogItemId: node.metadata?.catalogItemId ?? node.catalogItemId,
         product: toSceneAssetProduct(node.metadata, node.product) ?? node.product ?? null,
         supportAssetId:

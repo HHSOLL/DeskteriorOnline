@@ -102,6 +102,38 @@ try {
   engine.runtimeScene.selectionState.selectedObjectId = "lamp-1";
   engine.runtimeScene.hoverState.hoveredObjectId = "lamp-1";
 
+  const visibilityDocument = migrateLegacySceneStoreStateToV2(
+    {
+      ...baseState,
+      assets: [
+        {
+          ...baseState.assets[0]!,
+          materialId: "oak-dark",
+          visible: false
+        },
+        {
+          id: "lamp-1",
+          assetId: "p2s_desk_lamp_glow",
+          catalogItemId: "p2s_desk_lamp_glow",
+          position: [1.55, 0.74, 1.04],
+          rotation: [0, 0.2, 0],
+          scale: [1, 1, 1],
+          materialId: "lamp-brass"
+        }
+      ]
+    },
+    {
+      id: "verify-runtime-engine-document-sync",
+      version: 2
+    }
+  );
+
+  const generationBeforeVisibilitySync = engine.runtimeScene.generation;
+  engine.syncDocument(visibilityDocument);
+  assert(engine.runtimeScene.generation === generationBeforeVisibilitySync, "visibility toggle should not bump scene generation");
+  assert(engine.runtimeScene.objectRegistry.get("desk-1")?.visible === false, "visibility toggle should sync into runtime object");
+  assert(engine.runtimeScene.dirtyObjectIds.has("desk-1"), "visibility toggle should mark the object dirty for renderer sync");
+
   const removedDocument = migrateLegacySceneStoreStateToV2(
     {
       ...baseState,
@@ -134,7 +166,8 @@ try {
       {
         generation: engine.runtimeScene.generation,
         objectCount: engine.runtimeScene.objectRegistry.size,
-        deskMaterial: engine.runtimeScene.objectRegistry.get("desk-1")?.materialId ?? null
+        deskMaterial: engine.runtimeScene.objectRegistry.get("desk-1")?.materialId ?? null,
+        deskVisible: engine.runtimeScene.objectRegistry.get("desk-1")?.visible ?? null
       },
       null,
       2
