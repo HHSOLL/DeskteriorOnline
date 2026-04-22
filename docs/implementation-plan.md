@@ -931,3 +931,15 @@ Updated:
 
 Removed/Deprecated:
 - renderer compatibility path가 아직 transform 소비 측면에서는 전부 legacy asset props에만 의존한다는 설명.
+
+## 2026-04-22 변경 동기화 (Renderer Adapter Runtime Sync)
+Added:
+- `RuntimeRendererSync`와 `runtime-renderer-context`를 추가해 `CanvasHost` 하위 canvas tree가 `renderer-three` 어댑터를 직접 소비하도록 연결했다.
+- `verify:runtime-renderer-adapter` smoke 검증을 추가해 runtime scene dirty object sync, object handle matrix, instance batch 생성을 점검한다.
+- renderer adapter는 runtime scene generation 변경과 object removal까지 처리해 document replace 이후 stale handle/batch를 정리한다.
+
+Updated:
+- `Renderer Adapter` 단계의 실구현 상태를 “selected asset transform 소비”에서 “selected asset + instanced cluster가 renderer adapter snapshot과 버전 기반 sync를 사용함” 상태로 갱신한다.
+
+Removed/Deprecated:
+- instanced cluster imperative sync가 여전히 scene store asset props 변경에만 의존한다는 설명.

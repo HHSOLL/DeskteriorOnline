@@ -117,6 +117,8 @@ E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 - `bvh-build`는 geometry UUID / triangle count / duration / worker|sync mode를 기록해 large geometry BVH offload 동작 여부를 확인한다.
 - `runtime-document-patch`는 top-view transform commit 시 runtime patch 개수와 대상 object를 기록해 preview/commit 분리 여부를 확인할 수 있다.
 - selected asset transform preview는 renderer object mutation 경로로 반영되어, commit 전에도 React re-render 없이 visual update가 가능한 상태를 유지해야 한다.
+- instanced cluster는 dirty object 기준 matrix/version sync만 수행하고, 동일 batch 전체를 매번 재생성하지 않는 방향을 유지해야 한다.
+- runtime scene이 document replace로 재컴파일될 때도 scene generation 기준으로 stale renderer snapshot을 재사용하지 않아야 한다.
 
 ```js
 window.addEventListener("deskterioronline:renderer-stats", (event) => {

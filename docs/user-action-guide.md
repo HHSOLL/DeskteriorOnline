@@ -224,6 +224,7 @@ npm --workspace apps/web run benchmarks:collect:baseline
 npm --workspace apps/web run verify:runtime-engine
 npm --workspace apps/web run verify:runtime-editor-bridge
 npm --workspace apps/web run verify:runtime-render-sync
+npm --workspace apps/web run verify:runtime-renderer-adapter
 npm --workspace apps/web run verify:placement-kernel
 ```
 
@@ -232,6 +233,7 @@ npm --workspace apps/web run verify:placement-kernel
 - runtime preview가 source `SceneDocument`를 직접 mutate 하지 않는지
 - runtime editor bridge preview가 store를 건드리지 않고, commit 시 runtime patch와 store update를 함께 만드는지
 - runtime render sync helper가 selected asset preview transform을 renderer object mutation으로 그대로 반영하는지
+- runtime renderer adapter가 dirty runtime object를 object handle matrix와 instance batch로 동기화하는지
 - placement kernel alpha가 surface-local placement patch를 생성하는지
 
 ## 3-1) DB 레거시 정리 적용 체크리스트
@@ -795,3 +797,13 @@ Updated:
 
 Removed/Deprecated:
 - selected asset preview 렌더 sync가 브라우저 수동 확인만 있으면 충분하다는 가정.
+
+## 2026-04-22 변경 동기화 (Runtime Renderer Adapter QA)
+Added:
+- `verify:runtime-renderer-adapter` smoke 명령과 runtime object handle/batch sync 확인 포인트를 추가했다.
+
+Updated:
+- 초기 renderer compatibility QA 범위를 selected asset preview 반영에서 instanced cluster renderer adapter sync, document replace 이후 stale handle cleanup 확인까지 확장했다.
+
+Removed/Deprecated:
+- renderer adapter sync 검증이 런타임 수동 확인만으로 충분하다는 가정.

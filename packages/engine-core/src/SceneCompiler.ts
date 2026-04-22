@@ -79,6 +79,8 @@ function resolveSurfaceLocalTransform(
 }
 
 export class SceneCompiler {
+  private generation = 0;
+
   static resolvePlacementTransform(
     objectDocument: SceneObjectDocument,
     placement: PlacementRecord,
@@ -93,6 +95,7 @@ export class SceneCompiler {
   }
 
   compile(document: SceneDocumentV2, runtimeAssets: Iterable<RuntimeAsset> = []): RuntimeScene {
+    this.generation += 1;
     const runtimeAssetMap = new Map(Array.from(runtimeAssets).map((asset) => [asset.assetId, asset]));
     const objectRegistry = new Map<string, RuntimeObjectRecord>();
 
@@ -112,13 +115,15 @@ export class SceneCompiler {
         objectDocument,
         placement: objectDocument.placement,
         transform,
-        previewTransform: null
+        previewTransform: null,
+        transformRevision: 0
       });
     }
 
     return {
       id: document.id,
       units: "mm",
+      generation: this.generation,
       sourceDocument: document,
       room: document.room,
       runtimeAssets: runtimeAssetMap,

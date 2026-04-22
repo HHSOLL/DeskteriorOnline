@@ -18,6 +18,11 @@ export type ObjectHandle = {
   objectId: string;
   assetHandle: AssetHandle;
   visible: boolean;
+  matrix: Float32Array | null;
+  version: number;
+  batchKey: string | null;
+  sceneGeneration: number;
+  transformRevision: number;
 };
 
 export interface RendererBackend {

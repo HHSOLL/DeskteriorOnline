@@ -16,6 +16,7 @@ import {
 } from "../../../lib/scene/asset-lod";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
+import { useRuntimeRendererAdapter } from "../../../lib/runtime/runtime-renderer-context";
 import { applyRuntimeTransformToObject, resolveRuntimeAssetTransform } from "../../../lib/runtime/runtime-render-sync";
 import {
   beginRuntimeAssetPreview,
@@ -466,6 +467,7 @@ function InstancedFurnitureCluster({
   const camera = useThree((state) => state.camera);
   const gl = useThree((state) => state.gl);
   const invalidate = useThree((state) => state.invalidate);
+  const runtimeRenderer = useRuntimeRendererAdapter();
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const setIsTransforming = useEditorStore((state) => state.setIsTransforming);
@@ -476,6 +478,7 @@ function InstancedFurnitureCluster({
   const sceneAssets = useAssetSelector((slice) => slice.assets);
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
   const dragCleanupRef = useRef<(() => void) | null>(null);
+  const syncedVersionsRef = useRef<Record<string, number>>({});
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
@@ -585,6 +588,41 @@ function InstancedFurnitureCluster({
       });
     };
   }, [instancedMeshes]);
+
+  useFrame(() => {
+    if (!runtimeRenderer) {
+      return;
+    }
+
+    let updated = false;
+    const assetMatrix = new THREE.Matrix4();
+    const instanceMatrix = new THREE.Matrix4();
+
+    assets.forEach((asset, index) => {
+      const handle = runtimeRenderer.getObjectHandle(asset.id);
+      if (!handle?.matrix) {
+        return;
+      }
+
+      const previousVersion = syncedVersionsRef.current[asset.id] ?? -1;
+      if (handle.version === previousVersion) {
+        return;
+      }
+
+      syncedVersionsRef.current[asset.id] = handle.version;
+      assetMatrix.fromArray(handle.matrix);
+      instancedMeshes.forEach((entry) => {
+        instanceMatrix.multiplyMatrices(assetMatrix, entry.sourceMatrix);
+        entry.mesh.setMatrixAt(index, instanceMatrix);
+        entry.mesh.instanceMatrix.needsUpdate = true;
+      });
+      updated = true;
+    });
+
+    if (updated) {
+      invalidate();
+    }
+  });
 
   const resolvePlacementFromPointer = (nativeEvent: PointerEvent, targetAsset: SceneAsset) => {
     const rect = gl.domElement.getBoundingClientRect();

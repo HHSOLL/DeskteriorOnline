@@ -16,6 +16,7 @@ export class TransformBuffer {
     }
 
     object.previewTransform = cloneTransform(object.transform);
+    object.transformRevision += 1;
     scene.dirtyObjectIds.add(objectId);
     return object;
   }
@@ -32,6 +33,7 @@ export class TransformBuffer {
       rotation: transform.rotation ? [...transform.rotation] : base.rotation,
       scale: transform.scale ? [...transform.scale] : base.scale
     };
+    object.transformRevision += 1;
     scene.dirtyObjectIds.add(objectId);
     return object.previewTransform;
   }
@@ -44,6 +46,7 @@ export class TransformBuffer {
 
     object.transform = cloneTransform(object.previewTransform);
     object.previewTransform = null;
+    object.transformRevision += 1;
     scene.dirtyObjectIds.add(objectId);
     return object.transform;
   }
@@ -55,6 +58,7 @@ export class TransformBuffer {
     }
 
     object.previewTransform = null;
+    object.transformRevision += 1;
     scene.dirtyObjectIds.add(objectId);
     return object.transform;
   }

@@ -583,3 +583,14 @@ Updated:
 
 Removed/Deprecated:
 - gizmo preview가 target object local mutation에만 머무르고 renderer compatibility layer에서는 runtime object registry를 소비하지 않는다는 가정.
+
+## 2026-04-22 변경 동기화 (Instance Cluster Renderer Adapter Sync)
+Added:
+- instanced cluster는 runtime renderer adapter의 matrix/version snapshot을 읽어 dirty object만 imperative하게 재동기화하는 기준을 추가했다.
+- renderer adapter snapshot은 scene generation 변경과 stale object disposal을 반영해 instanced batch membership을 재수렴한다.
+
+Updated:
+- instancing compatibility 규칙을 “local preview + commit 후 rerender”에서 “local preview + renderer adapter dirty sync + commit 후 store 재수렴” 구조로 강화한다.
+
+Removed/Deprecated:
+- instanced cluster가 pointer-up 이후 store rerender 전까지는 runtime preview/commit 결과를 직접 소비하지 못한다는 가정.

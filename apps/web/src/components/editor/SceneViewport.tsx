@@ -6,6 +6,7 @@ import type { ReactNode, ComponentProps } from "react";
 import { Suspense, useEffect, useMemo } from "react";
 import * as THREE from "three";
 import CameraRig from "../canvas/core/CameraRig";
+import RuntimeRendererSync from "../canvas/debug/RuntimeRendererSync";
 import ScenePerformanceTelemetry from "../canvas/debug/ScenePerformanceTelemetry";
 import PhysicsWorld from "../canvas/core/PhysicsWorld";
 import SceneEnvironment from "../canvas/core/SceneEnvironment";
@@ -165,6 +166,7 @@ export function SceneViewport({
         <Suspense fallback={null}>
           <SceneRendererSettings quality={quality} toneMappingExposure={toneMappingExposure} />
           <ScenePerformanceTelemetry interactionMode={resolvedInteractionMode} />
+          <RuntimeRendererSync />
           {viewMode === "walk" ? <PhysicsWorld>{sceneContent}</PhysicsWorld> : sceneContent}
           <PostEffects quality={quality} />
         </Suspense>
