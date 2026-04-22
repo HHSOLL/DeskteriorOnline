@@ -279,3 +279,13 @@ Updated:
 
 Removed/Deprecated:
 - benchmark scenario 정의가 문서 텍스트에만 있고 저장소 artifact가 없던 상태.
+
+## 2026-04-23 변경 동기화 (Renderer Snapshot Priority Budget)
+Added:
+- single object 경로도 renderer adapter snapshot을 우선 소비해 renderer-side object mutation과 instanced batch sync가 같은 invalidation 경로를 공유해야 한다는 기준을 추가했다.
+
+Updated:
+- compatibility renderer 예산을 “selected asset/instanced cluster 일부 경로”에서 “single object + instanced cluster 전체 snapshot 우선” 기준으로 확장한다.
+
+Removed/Deprecated:
+- single object 경로가 별도 runtime read 경로를 유지해도 성능 예산에 영향이 없다는 가정.

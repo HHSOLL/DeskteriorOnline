@@ -807,3 +807,13 @@ Updated:
 
 Removed/Deprecated:
 - renderer adapter sync 검증이 런타임 수동 확인만으로 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Renderer Snapshot Priority QA)
+Added:
+- `verify:runtime-render-sync`는 single object helper가 renderer adapter matrix snapshot과 material assignment를 같이 소비하는지 확인한다.
+
+Updated:
+- runtime renderer QA 범위를 “selected asset transform + instanced cluster batch sync”에서 “single object renderer snapshot priority + material assignment snapshot”까지 확장한다.
+
+Removed/Deprecated:
+- single object renderer sync에서 runtime engine fallback만 확인해도 충분하다는 가정.

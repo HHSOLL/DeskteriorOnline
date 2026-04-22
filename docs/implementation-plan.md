@@ -943,3 +943,14 @@ Updated:
 
 Removed/Deprecated:
 - instanced cluster imperative sync가 여전히 scene store asset props 변경에만 의존한다는 설명.
+
+## 2026-04-23 변경 동기화 (Renderer Adapter Single-Object Follow-up)
+Added:
+- legacy material assignment를 `SceneDocumentV2.materials -> runtime object -> renderer adapter material registry`로 이어지는 snapshot 경로에 포함했다.
+- single object render sync helper가 runtime engine fallback 전에 renderer adapter matrix snapshot을 우선 소비하도록 확장했다.
+
+Updated:
+- `Renderer Adapter` 단계의 실구현 상태를 “selected asset + instanced cluster sync”에서 “selected/single object + instanced cluster가 모두 renderer adapter snapshot을 우선 소비” 상태로 갱신한다.
+
+Removed/Deprecated:
+- single object 경로가 runtime preview 시점에도 engine object registry를 직접 읽어야 한다는 설명.

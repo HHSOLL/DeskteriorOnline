@@ -298,11 +298,29 @@ function mapObjects(assets: LegacySceneAssetLike[]): SceneObjectDocument[] {
   }));
 }
 
+function mapLegacyObjectMaterials(assets: LegacySceneAssetLike[]) {
+  return assets.flatMap((asset) => {
+    if (!asset.materialId) {
+      return [];
+    }
+
+    return [
+      {
+        id: `object:${asset.id}:default`,
+        objectId: asset.id,
+        materialId: asset.materialId,
+        materialVariantId: null
+      }
+    ];
+  });
+}
+
 export function migrateLegacySceneDocumentToV2(
   input: LegacySceneDocumentLike,
   options?: { id?: string; version?: number }
 ): SceneDocumentV2 {
   const roomShell = input.roomShell;
+  const legacyAssets = input.nodes ?? [];
   return {
     schemaVersion: 2,
     id: options?.id ?? "scene-runtime-migration",
@@ -318,7 +336,7 @@ export function migrateLegacySceneDocumentToV2(
       cameraAnchors: mapCameraAnchors(roomShell.cameraAnchors ?? []),
       navGraph: mapNavGraph(roomShell.navGraph ?? {})
     },
-    objects: input.objects ?? mapObjects(input.nodes ?? []),
+    objects: input.objects ?? mapObjects(legacyAssets),
     materials:
       input.materials ??
       [
@@ -335,7 +353,8 @@ export function migrateLegacySceneDocumentToV2(
             typeof input.materialOverride?.floorMaterialIndex === "number"
               ? `floor:${input.materialOverride.floorMaterialIndex}`
               : null
-        }
+        },
+        ...mapLegacyObjectMaterials(legacyAssets)
       ],
     cameras: [],
     environment: {

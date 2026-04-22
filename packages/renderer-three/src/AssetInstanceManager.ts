@@ -8,6 +8,7 @@ export class AssetInstanceManager {
       objectId,
       assetHandle,
       visible: true,
+      materialId: null,
       matrix: null,
       version: 0,
       batchKey: null,

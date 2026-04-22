@@ -8,4 +8,8 @@ export class MaterialRegistry {
   get(objectId: string) {
     return this.materialIds.get(objectId) ?? null;
   }
+
+  delete(objectId: string) {
+    this.materialIds.delete(objectId);
+  }
 }

@@ -847,6 +847,7 @@ function ModelInstance({ asset, lodPlan }: { asset: SceneAsset; lodPlan: AssetLo
 function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enableDynamicLight: boolean }) {
   const invalidate = useThree((state) => state.invalidate);
   const runtimeEngine = useRuntimeEngine();
+  const runtimeRenderer = useRuntimeRendererAdapter();
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const isTransforming = useEditorStore((state) => state.isTransforming);
@@ -1026,10 +1027,10 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     if (viewMode === "walk" || isDragging || !groupRef.current) return;
     applyRuntimeTransformToObject(
       groupRef.current,
-      resolveRuntimeAssetTransform(runtimeEngine, asset)
+      resolveRuntimeAssetTransform(runtimeRenderer, runtimeEngine, asset)
     );
     invalidate();
-  }, [asset, invalidate, isDragging, runtimeEngine, viewMode]);
+  }, [asset, invalidate, isDragging, runtimeEngine, runtimeRenderer, viewMode]);
 
   useFrame(() => {
     if (!groupRef.current || isDragging || !isSelected) {
@@ -1038,7 +1039,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
     applyRuntimeTransformToObject(
       groupRef.current,
-      resolveRuntimeAssetTransform(runtimeEngine, asset)
+      resolveRuntimeAssetTransform(runtimeRenderer, runtimeEngine, asset)
     );
   });
 

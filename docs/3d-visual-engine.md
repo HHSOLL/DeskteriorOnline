@@ -594,3 +594,14 @@ Updated:
 
 Removed/Deprecated:
 - instanced cluster가 pointer-up 이후 store rerender 전까지는 runtime preview/commit 결과를 직접 소비하지 못한다는 가정.
+
+## 2026-04-23 변경 동기화 (Single Object Renderer Snapshot Priority)
+Added:
+- single object renderer compatibility path도 renderer adapter의 matrix snapshot을 우선 사용하고, runtime engine object registry는 fallback으로만 참조하는 기준을 추가했다.
+- object별 material assignment snapshot을 renderer adapter handle/material registry에 유지하는 기준을 추가했다.
+
+Updated:
+- renderer compatibility 규칙을 “instanced cluster는 adapter snapshot, selected object는 runtime transform”에서 “single object와 instanced cluster 모두 adapter snapshot 우선” 구조로 강화한다.
+
+Removed/Deprecated:
+- single object transform sync가 renderer adapter를 우회해도 된다는 가정.
