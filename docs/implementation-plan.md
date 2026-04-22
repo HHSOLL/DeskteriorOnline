@@ -989,3 +989,16 @@ Updated:
 
 Removed/Deprecated:
 - focus placement prototype이 asset persistence bridge 없이 바로 full HUD부터 붙는다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 4 Asset Compiler Alpha Slice 1)
+Added:
+- `packages/asset-compiler` 패키지와 `apps/web/scripts/asset-compiler.ts` command surface를 추가했다.
+- `asset:compile`, `asset:validate`, `asset:optimize`, `asset:verify`, `asset:publish`, `verify:asset-compiler` 스크립트를 추가했다.
+- `asset:publish`는 alpha `runtime-packages.json`와 per-asset package descriptor를 생성한다.
+
+Updated:
+- `Phase 4 Asset Compiler Alpha` 상태를 “미착수”에서 “slice 1: package scaffold + command surface + alpha runtime package publish 완료”로 갱신한다.
+- current phase의 남은 범위를 `ingest CLI`, `export/sync/validate/optimize 로직의 package 내부 이전`, `QA report enrichment`, `publish gate 강화`로 정리한다.
+
+Removed/Deprecated:
+- Phase 4가 시작되기 전까지 curated asset 정의와 compiler entrypoint가 app-local script에만 남아 있어도 된다는 가정.

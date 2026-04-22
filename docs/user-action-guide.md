@@ -180,6 +180,8 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - `npm --workspace apps/web run verify:scene-document`가 placement/support/product metadata roundtrip 검증을 통과하는지 확인
 - `npm --workspace apps/web run verify:public-scene`가 shared viewer payload에서 placement/support/product metadata roundtrip 검증을 통과하는지 확인
 - `npm --workspace apps/web run verify:showcase-scene`가 gallery/community 카드 projection과 shared viewer public payload의 version/preview asset summary 정합성 검증을 통과하는지 확인
+- `npm --workspace apps/web run asset:publish`가 `runtime-packages.json`와 `runtime-packages/*.json`을 생성하는지 확인
+- `npm --workspace apps/web run verify:asset-compiler`가 alpha runtime package index와 descriptor 정합성을 통과하는지 확인
 - shared viewer가 generic showcase viewer와 다른 경량 preset으로 동작해도 제품 hotspot / drawer 읽기 흐름은 유지되는지 확인
 - shared viewer walk HUD는 터치 조작용 요소만 남고 crosshair는 보이지 않는지 확인
 - shared viewer가 상단 light bar, 우측 zoom rail, 하단 readonly status pill 기준으로 노출되는지 확인
@@ -853,3 +855,13 @@ Updated:
 
 Removed/Deprecated:
 - walk mode 정밀 배치 회귀를 수동 viewport 체험으로만 확인해도 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha QA)
+Added:
+- `asset:publish`와 `verify:asset-compiler`를 curated asset pipeline의 기본 smoke 명령에 추가했다.
+
+Updated:
+- curated asset QA 범위를 manifest 검증에서 `runtime package descriptor publish`까지 확장한다.
+
+Removed/Deprecated:
+- asset compiler 시작 단계에서는 publish artifact 검증이 필요 없다는 가정.

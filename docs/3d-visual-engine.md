@@ -102,6 +102,7 @@ Removed/Deprecated:
 - 저장 경계에서는 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, renderer/store는 meter float 파생값만 소비한다.
 - 제품 물리 메타데이터(`dimensionsMm`, `finishColor`, `finishMaterial`, `detailNotes`, `scaleLocked`)를 누락 없이 전달한다.
 - curated deskterior 자산은 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 product metadata와 함께 save/load/public payload roundtrip에서 유지한다.
+- curated runtime asset publish는 `packages/asset-compiler`가 생성한 alpha `runtime-packages.json`와 per-asset package descriptor를 기준으로 다음 compiler 단계로 승격한다.
 - `verify:scene-document`는 save payload -> sceneDocument -> parse/load roundtrip에서 placement/support metadata/product metadata가 유지되는지 점검한다.
 - `verify:public-scene`는 shared_projects + pinned version + preview meta에서 shared viewer payload가 같은 placement/support/product metadata를 재현하는지 점검한다.
 - `verify:showcase-scene`는 gallery/community 카드 projection이 shared viewer public payload와 같은 version/preview asset summary를 유지하는지 점검한다.
@@ -637,3 +638,13 @@ Updated:
 
 Removed/Deprecated:
 - walk mode에서 정밀 배치를 시작해도 top-view gizmo나 store direct mutation을 다시 써도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha Publish)
+Added:
+- curated asset publish의 첫 단계로 manifest 외에 per-asset runtime package descriptor를 같이 생성하는 기준을 추가했다.
+
+Updated:
+- 런타임 자산 전달 기준을 “manifest + GLB path”에서 “manifest + runtime package descriptor(alpha)” 구조로 확장한다.
+
+Removed/Deprecated:
+- runtime package artifact 없이 manifest만 있으면 compiler phase를 닫을 수 있다는 가정.

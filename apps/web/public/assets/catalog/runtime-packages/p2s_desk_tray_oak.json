@@ -1,0 +1,91 @@
+{
+  "schemaVersion": "asset-package-alpha-v1",
+  "generatedAt": "2026-04-22T17:15:59.294Z",
+  "key": "p2s_desk_tray_oak",
+  "manifestId": "p2s_desk_tray_oak",
+  "label": "P2S 오크 데스크 트레이",
+  "assetId": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+  "sourcePath": "assets/blender/deskterior/p2s_desk_tray_oak.blend",
+  "runtimePath": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+  "dimensionsMm": {
+    "width": 240,
+    "depth": 160,
+    "height": 36
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_desk_tray_oak.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 8,
+      "maxTriangleCount": 2000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "tray-base",
+        "anchorTypes": [
+          "desk_surface",
+          "shelf_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          0.22,
+          0.14
+        ],
+        "top": 0.012,
+        "margin": [
+          0.01,
+          0.01
+        ]
+      }
+    ]
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb"
+      }
+    ],
+    "proxyPath": null,
+    "collidersPath": null,
+    "supportSurfacesEmbedded": true,
+    "attachmentPointsPath": null,
+    "qaReportEmbedded": true
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}
