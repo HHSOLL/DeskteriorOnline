@@ -223,6 +223,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 npm --workspace apps/web run benchmarks:collect:baseline
 npm --workspace apps/web run verify:runtime-engine
 npm --workspace apps/web run verify:runtime-editor-bridge
+npm --workspace apps/web run verify:runtime-render-sync
 npm --workspace apps/web run verify:placement-kernel
 ```
 
@@ -230,6 +231,7 @@ npm --workspace apps/web run verify:placement-kernel
 - benchmark baseline 템플릿이 `benchmark-scenes/*` 4개 시나리오를 모두 수집하는지
 - runtime preview가 source `SceneDocument`를 직접 mutate 하지 않는지
 - runtime editor bridge preview가 store를 건드리지 않고, commit 시 runtime patch와 store update를 함께 만드는지
+- runtime render sync helper가 selected asset preview transform을 renderer object mutation으로 그대로 반영하는지
 - placement kernel alpha가 surface-local placement patch를 생성하는지
 
 ## 3-1) DB 레거시 정리 적용 체크리스트
@@ -783,3 +785,13 @@ Updated:
 
 Removed/Deprecated:
 - preview/commit 분리 검증이 engine-core 단위 smoke만으로 충분하다는 가정.
+
+## 2026-04-22 변경 동기화 (Runtime Render Sync QA)
+Added:
+- `verify:runtime-render-sync` smoke 명령과 selected asset renderer sync 확인 포인트를 추가했다.
+
+Updated:
+- 초기 renderer compatibility QA 범위를 runtime bootstrap + commit bridge에서 runtime transform consumption까지 확장했다.
+
+Removed/Deprecated:
+- selected asset preview 렌더 sync가 브라우저 수동 확인만 있으면 충분하다는 가정.

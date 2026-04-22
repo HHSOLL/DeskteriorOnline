@@ -805,3 +805,13 @@ Updated:
 
 Removed/Deprecated:
 - instanced cluster direct-drag가 pointer move마다 `useSceneStore.updateFurniture`를 직접 호출해야 한다는 가정.
+
+## 2026-04-22 변경 동기화 (Runtime Render Sync Phase 3)
+Added:
+- `CanvasHost`가 runtime engine context를 내려주고, 선택 자산 렌더 경로가 runtime object registry의 preview/transform 값을 직접 읽을 수 있는 compatibility layer를 추가했다.
+
+Updated:
+- renderer compatibility path의 기준을 “SceneViewport 내부 React props 기반 transform”에서 “선택 자산은 runtime transform 우선, 나머지는 legacy prop fallback”으로 한 단계 더 전진시킨다.
+
+Removed/Deprecated:
+- renderer compatibility layer가 window global만 보고 동작하고, canvas 하위 트리에서는 runtime engine을 직접 소비하지 못한다는 가정.

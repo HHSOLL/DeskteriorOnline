@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
-import { useThree, type ThreeEvent } from "@react-three/fiber";
+import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
@@ -15,6 +15,8 @@ import {
   type AssetLodPlan
 } from "../../../lib/scene/asset-lod";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
+import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
+import { applyRuntimeTransformToObject, resolveRuntimeAssetTransform } from "../../../lib/runtime/runtime-render-sync";
 import {
   beginRuntimeAssetPreview,
   cancelRuntimeAssetPreview,
@@ -806,6 +808,7 @@ function ModelInstance({ asset, lodPlan }: { asset: SceneAsset; lodPlan: AssetLo
 
 function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enableDynamicLight: boolean }) {
   const invalidate = useThree((state) => state.invalidate);
+  const runtimeEngine = useRuntimeEngine();
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const isTransforming = useEditorStore((state) => state.isTransforming);
@@ -983,11 +986,23 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
   useEffect(() => {
     if (viewMode === "walk" || isDragging || !groupRef.current) return;
-    groupRef.current.position.set(...asset.position);
-    groupRef.current.rotation.set(...asset.rotation);
-    groupRef.current.scale.set(...asset.scale);
+    applyRuntimeTransformToObject(
+      groupRef.current,
+      resolveRuntimeAssetTransform(runtimeEngine, asset)
+    );
     invalidate();
-  }, [asset.position, asset.rotation, asset.scale, invalidate, isDragging, viewMode]);
+  }, [asset, invalidate, isDragging, runtimeEngine, viewMode]);
+
+  useFrame(() => {
+    if (!groupRef.current || isDragging || !isSelected) {
+      return;
+    }
+
+    applyRuntimeTransformToObject(
+      groupRef.current,
+      resolveRuntimeAssetTransform(runtimeEngine, asset)
+    );
+  });
 
   const content = isPlaceholderAsset(asset.assetId) ? (
     <PlaceholderFurniture />
