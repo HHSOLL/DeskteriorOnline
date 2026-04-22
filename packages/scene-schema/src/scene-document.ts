@@ -105,6 +105,7 @@ export type SceneObjectDocument = {
   assetId: string;
   runtimeAssetId?: string | null;
   materialVariantId?: string | null;
+  visible?: boolean;
   placement: PlacementRecord;
   catalogItemId?: string | null;
   anchorType?: string | null;

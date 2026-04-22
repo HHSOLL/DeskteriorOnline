@@ -23,6 +23,7 @@ function hasObjectShapeChanged(previous: RuntimeObjectRecord, next: RuntimeObjec
     previous.assetId !== next.assetId ||
     previous.runtimeAssetId !== next.runtimeAssetId ||
     previous.materialId !== next.materialId ||
+    previous.visible !== next.visible ||
     serializeComparable(previous.placement) !== serializeComparable(next.placement) ||
     serializeComparable(previous.transform) !== serializeComparable(next.transform)
   );
@@ -82,6 +83,7 @@ export class Engine {
         assetId: compiled.assetId,
         runtimeAssetId: compiled.runtimeAssetId,
         materialId: compiled.materialId,
+        visible: compiled.visible,
         objectDocument,
         placement: compiled.placement,
         transform: changed ? cloneRuntimeTransform(compiled.transform) : previous.transform,

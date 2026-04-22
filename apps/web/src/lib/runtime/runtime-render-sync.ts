@@ -42,6 +42,24 @@ export function resolveRuntimeAssetTransform(
   };
 }
 
+export function resolveRuntimeAssetVisibility(
+  runtimeRenderer: ThreeRendererAdapter | null | undefined,
+  engine: Engine | null | undefined,
+  asset: SceneAsset
+) {
+  const rendererHandle = runtimeRenderer?.getObjectHandle(asset.id);
+  if (rendererHandle) {
+    return rendererHandle.visible;
+  }
+
+  const runtimeObject = engine?.runtimeScene.objectRegistry.get(asset.id);
+  if (runtimeObject) {
+    return runtimeObject.visible;
+  }
+
+  return asset.visible !== false;
+}
+
 function differs(left: number, right: number) {
   return Math.abs(left - right) > TRANSFORM_EPSILON;
 }

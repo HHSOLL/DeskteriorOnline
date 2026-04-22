@@ -123,6 +123,7 @@ export class SceneCompiler {
       runtimeAssetId:
         objectDocument.runtimeAssetId ?? objectDocument.catalogItemId ?? objectDocument.assetId,
       materialId: resolveObjectMaterialId(document, objectDocument),
+      visible: objectDocument.visible !== false,
       objectDocument,
       placement: objectDocument.placement,
       transform,

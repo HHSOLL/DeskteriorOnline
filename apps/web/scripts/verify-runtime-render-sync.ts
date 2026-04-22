@@ -7,7 +7,8 @@ import {
 import * as THREE from "three";
 import {
   applyRuntimeTransformToObject,
-  resolveRuntimeAssetTransform
+  resolveRuntimeAssetTransform,
+  resolveRuntimeAssetVisibility
 } from "../src/lib/runtime/runtime-render-sync";
 import type { SceneAsset } from "../src/lib/stores/useSceneStore";
 
@@ -100,6 +101,7 @@ try {
 
   const unchanged = applyRuntimeTransformToObject(object, previewTransform);
   assert(!unchanged, "applying the same preview twice should be a no-op");
+  assert(resolveRuntimeAssetVisibility(adapter, engine, asset) === true, "runtime visibility should default to visible");
 
   console.log("runtime render sync ok");
   console.log(
@@ -107,7 +109,8 @@ try {
       {
         objectPosition: [object.position.x, object.position.y, object.position.z],
         objectRotation: [object.rotation.x, object.rotation.y, object.rotation.z],
-        materialId: adapter.getObjectHandle(asset.id)?.materialId ?? null
+        materialId: adapter.getObjectHandle(asset.id)?.materialId ?? null,
+        visible: resolveRuntimeAssetVisibility(adapter, engine, asset)
       },
       null,
       2

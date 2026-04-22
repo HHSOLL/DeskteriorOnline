@@ -300,3 +300,13 @@ Updated:
 
 Removed/Deprecated:
 - object lifecycle 변경 시 full runtime document recompilation 비용을 상시 허용하는 가정.
+
+## 2026-04-23 변경 동기화 (Visibility Lifecycle Budget)
+Added:
+- hidden object는 same-room sync에서 full replace 없이 빠르게 제외되고, instancing/single-object render path에서 draw 후보 자체를 줄이는 방향을 기본 예산으로 본다.
+
+Updated:
+- incremental lifecycle budget 범위를 placement/material 갱신에서 visibility exclusion까지 확장한다.
+
+Removed/Deprecated:
+- hidden object가 renderer batch나 single-object path에 남아도 draw cost 예산에 영향이 미미하다는 가정.

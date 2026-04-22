@@ -966,3 +966,14 @@ Updated:
 
 Removed/Deprecated:
 - runtime bridge가 asset lifecycle 변경마다 `replaceDocument()`만 사용해야 한다는 설명.
+
+## 2026-04-23 변경 동기화 (Visibility Runtime Bridge Slice)
+Added:
+- `SceneAsset.visible -> SceneDocumentV2.object.visible -> RuntimeObjectRecord.visible -> renderer handle.visible` 경로를 추가했다.
+- `Furniture`는 hidden object를 visible asset set 기준으로 제외해 instancing/single-object path 모두 runtime visibility를 따른다.
+
+Updated:
+- `Phase 3` compatibility path 범위를 transform/material lifecycle에서 visibility lifecycle까지 확장한다.
+
+Removed/Deprecated:
+- visibility가 store render에서만 처리되고 runtime bridge/renderer adapter는 모를 수 있다는 설명.

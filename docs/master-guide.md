@@ -849,3 +849,14 @@ Updated:
 
 Removed/Deprecated:
 - same-room object 변경마다 runtime scene을 항상 새로 컴파일해야 한다는 가정.
+
+## 2026-04-23 변경 동기화 (Runtime Visibility Lifecycle Phase 3E)
+Added:
+- `sceneDocument`와 runtime object registry는 object visibility를 canonical object lifecycle 필드로 같이 유지해야 한다.
+- same-room visibility 토글은 full runtime scene replace 없이 incremental sync + dirty renderer sync로 반영해야 한다.
+
+Updated:
+- runtime lifecycle 범위를 `asset/material/placement`에서 `asset/material/placement/visibility`까지 확장한다.
+
+Removed/Deprecated:
+- visibility가 React-only render concern이라 runtime foundation으로 올릴 필요가 없다는 가정.

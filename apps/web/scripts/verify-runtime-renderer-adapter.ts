@@ -101,6 +101,28 @@ try {
   assert((adapter.getObjectHandle("desk-1")?.version ?? 0) > previousVersion, "dirty sync should bump object version");
   assert(engine.runtimeScene.dirtyObjectIds.size === 0, "renderer sync should consume dirty runtime ids");
 
+  const visibilityDocument = migrateLegacySceneStoreStateToV2(
+    {
+      ...legacyState,
+      assets: [
+        {
+          ...legacyState.assets[0]!,
+          visible: false
+        },
+        legacyState.assets[1]!
+      ]
+    },
+    {
+      id: "verify-runtime-renderer-adapter",
+      version: 2
+    }
+  );
+
+  engine.syncDocument(visibilityDocument);
+  const visibilitySync = adapter.syncRuntimeScene(engine.runtimeScene);
+  assert(visibilitySync.syncedCount >= 1, "visibility change should still resync the dirty renderer object");
+  assert(adapter.getObjectHandle("desk-1")?.visible === false, "renderer object handle should reflect runtime visibility");
+
   const assetSwapDocument = migrateLegacySceneStoreStateToV2(
     {
       ...legacyState,
@@ -166,10 +188,12 @@ try {
       {
         initialSync,
         dirtySync,
+        visibilitySync,
         assetSwapSync,
         replacedSync,
         batchSize: adapter.batches.get("p2s_desk_oak:default")?.objectIds.length ?? 0,
-        desk1Version: adapter.getObjectHandle("desk-1")?.version ?? 0
+        desk1Version: adapter.getObjectHandle("desk-1")?.version ?? 0,
+        desk1Visible: adapter.getObjectHandle("desk-1")?.visible ?? null
       },
       null,
       2

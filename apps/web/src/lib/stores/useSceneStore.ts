@@ -147,6 +147,7 @@ export type SceneAsset = {
   id: string;
   assetId: string;
   catalogItemId?: string | null;
+  visible?: boolean;
   product?: {
     id: string;
     name: string;
@@ -509,6 +510,7 @@ function normalizeSceneAssetProduct(product: SceneAsset["product"]) {
 function normalizeSceneAsset(asset: SceneAsset): SceneAsset {
   return {
     ...asset,
+    visible: asset.visible !== false,
     catalogItemId: typeof asset.catalogItemId === "string" && asset.catalogItemId.length > 0 ? asset.catalogItemId : null,
     product: normalizeSceneAssetProduct(asset.product),
     anchorType: normalizeSceneAnchorType(asset.anchorType),
