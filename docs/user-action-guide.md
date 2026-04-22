@@ -222,12 +222,14 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 ```bash
 npm --workspace apps/web run benchmarks:collect:baseline
 npm --workspace apps/web run verify:runtime-engine
+npm --workspace apps/web run verify:runtime-editor-bridge
 npm --workspace apps/web run verify:placement-kernel
 ```
 
 확인 포인트:
 - benchmark baseline 템플릿이 `benchmark-scenes/*` 4개 시나리오를 모두 수집하는지
 - runtime preview가 source `SceneDocument`를 직접 mutate 하지 않는지
+- runtime editor bridge preview가 store를 건드리지 않고, commit 시 runtime patch와 store update를 함께 만드는지
 - placement kernel alpha가 surface-local placement patch를 생성하는지
 
 ## 3-1) DB 레거시 정리 적용 체크리스트
@@ -771,3 +773,13 @@ Updated:
 
 Removed/Deprecated:
 - baseline benchmark scene 정의가 문서 메모에만 있고 실행 명령이 없다는 상태.
+
+## 2026-04-22 변경 동기화 (Runtime Editor Bridge QA)
+Added:
+- `verify:runtime-editor-bridge` smoke 명령과 direct drag/gizmo/hotkey commit 브리지 확인 포인트를 추가했다.
+
+Updated:
+- 초기 상용 엔진 리팩터링 QA 범위를 runtime foundation skeleton에서 editor transform commit bridge 검증까지 확장했다.
+
+Removed/Deprecated:
+- preview/commit 분리 검증이 engine-core 단위 smoke만으로 충분하다는 가정.

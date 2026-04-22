@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
+import { commitRuntimeAssetUpdateToStore } from "../../../lib/runtime/runtime-asset-bridge";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
   useAssetSelector,
@@ -18,7 +19,6 @@ export default function EditorHotkeys() {
   const readOnly = useEditorStore((state) => state.readOnly);
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const assets = useAssetSelector((slice) => slice.assets);
-  const updateFurniture = useAssetSelector((slice) => slice.updateFurniture);
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
   const topViewPolicy = resolveTopViewInteractionPolicy(topMode);
 
@@ -37,12 +37,15 @@ export default function EditorHotkeys() {
       if (!selectedAssetId) return;
       const asset = assets.find((item) => item.id === selectedAssetId);
       if (!asset) return;
-      updateFurniture(selectedAssetId, {
-        rotation: [
-          asset.rotation[0],
-          asset.rotation[1] + topViewPolicy.rotationSnap,
-          asset.rotation[2]
-        ]
+      commitRuntimeAssetUpdateToStore({
+        objectId: selectedAssetId,
+        updates: {
+          rotation: [
+            asset.rotation[0],
+            asset.rotation[1] + topViewPolicy.rotationSnap,
+            asset.rotation[2]
+          ]
+        }
       });
       recordSnapshot("Rotate asset");
       setTransformMode("rotate");
@@ -57,7 +60,6 @@ export default function EditorHotkeys() {
     setTransformMode,
     setTransformSpace,
     transformSpace,
-    updateFurniture,
     viewMode,
     topViewPolicy
   ]);

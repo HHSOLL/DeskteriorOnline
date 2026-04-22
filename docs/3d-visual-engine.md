@@ -562,3 +562,14 @@ Updated:
 
 Removed/Deprecated:
 - viewport 컴포넌트가 장기적으로 document mutation과 runtime transform mutation을 동시에 소유한다는 가정.
+
+## 2026-04-22 변경 동기화 (Runtime Preview Commit Bridge)
+Added:
+- instanced cluster direct-drag는 instance matrix local preview를 사용하고 pointer-up 시점에만 store/document bridge commit을 수행하는 기준을 추가했다.
+- top-view gizmo transform과 회전 hotkey는 runtime preview를 먼저 갱신하고 commit 시 `deskterioronline:runtime-document-patch` 이벤트로 patch를 노출하는 기준을 추가했다.
+
+Updated:
+- drag/hover/placement preview hot path 규칙을 “가능하면 local preview”에서 “runtime/local preview 우선, store mutation은 commit 전용”으로 강화한다.
+
+Removed/Deprecated:
+- instanced cluster drag preview를 위해 per-pointer-move store update를 허용하던 이전 경로.
