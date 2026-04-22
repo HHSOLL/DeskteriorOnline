@@ -289,3 +289,14 @@ Updated:
 
 Removed/Deprecated:
 - single object 경로가 별도 runtime read 경로를 유지해도 성능 예산에 영향이 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Incremental Object Lifecycle Budget)
+Added:
+- same-room asset add/remove/material/placement commit은 full runtime scene replace보다 object-level incremental sync를 우선 사용해야 한다는 예산 기준을 추가했다.
+- same-object asset swap도 full runtime replace 없이 handle/batch 재수렴으로 처리해야 한다는 기준을 추가했다.
+
+Updated:
+- runtime bridge 비용 기준을 “store commit 후 renderer 재수렴”에서 “store commit 후 incremental object reconcile + dirty renderer sync” 구조로 강화한다.
+
+Removed/Deprecated:
+- object lifecycle 변경 시 full runtime document recompilation 비용을 상시 허용하는 가정.

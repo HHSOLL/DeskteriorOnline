@@ -222,6 +222,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 ```bash
 npm --workspace apps/web run benchmarks:collect:baseline
 npm --workspace apps/web run verify:runtime-engine
+npm --workspace apps/web run verify:runtime-engine-document-sync
 npm --workspace apps/web run verify:runtime-editor-bridge
 npm --workspace apps/web run verify:runtime-render-sync
 npm --workspace apps/web run verify:runtime-renderer-adapter
@@ -231,6 +232,8 @@ npm --workspace apps/web run verify:placement-kernel
 확인 포인트:
 - benchmark baseline 템플릿이 `benchmark-scenes/*` 4개 시나리오를 모두 수집하는지
 - runtime preview가 source `SceneDocument`를 직접 mutate 하지 않는지
+- same-room object add/remove/material 변경이 full runtime scene replace 없이 incremental sync로 반영되는지
+- same-object asset 교체가 renderer batch/handle에 반영되고, removed object selection/hover가 정리되는지
 - runtime editor bridge preview가 store를 건드리지 않고, commit 시 runtime patch와 store update를 함께 만드는지
 - runtime render sync helper가 selected asset preview transform을 renderer object mutation으로 그대로 반영하는지
 - runtime renderer adapter가 dirty runtime object를 object handle matrix와 instance batch로 동기화하는지
@@ -817,3 +820,13 @@ Updated:
 
 Removed/Deprecated:
 - single object renderer sync에서 runtime engine fallback만 확인해도 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Incremental Runtime Engine QA)
+Added:
+- `verify:runtime-engine-document-sync` smoke 명령과 same-room object add/remove/material 변경이 full runtime scene replace 없이 반영되는지 확인하는 포인트를 추가했다.
+
+Updated:
+- runtime foundation QA 범위를 preview/commit 분리와 renderer snapshot 소비에서 `incremental object lifecycle sync`까지 확장한다.
+
+Removed/Deprecated:
+- object lifecycle 변경 검증이 `replaceDocument()` 기반 경로만 확인해도 충분하다는 가정.

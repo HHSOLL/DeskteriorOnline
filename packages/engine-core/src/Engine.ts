@@ -4,7 +4,29 @@ import { History } from "./History";
 import { SceneCompiler } from "./SceneCompiler";
 import { ScenePatchBuilder } from "./ScenePatchBuilder";
 import { TransformBuffer } from "./TransformBuffer";
-import type { RuntimeScene, RuntimeWorldTransform, SceneObjectPatch } from "./types";
+import type { RuntimeObjectRecord, RuntimeScene, RuntimeWorldTransform, SceneObjectPatch } from "./types";
+
+function serializeComparable(value: unknown) {
+  return JSON.stringify(value);
+}
+
+function cloneRuntimeTransform(transform: RuntimeWorldTransform): RuntimeWorldTransform {
+  return {
+    position: [...transform.position] as RuntimeWorldTransform["position"],
+    rotation: [...transform.rotation] as RuntimeWorldTransform["rotation"],
+    scale: [...transform.scale] as RuntimeWorldTransform["scale"]
+  };
+}
+
+function hasObjectShapeChanged(previous: RuntimeObjectRecord, next: RuntimeObjectRecord) {
+  return (
+    previous.assetId !== next.assetId ||
+    previous.runtimeAssetId !== next.runtimeAssetId ||
+    previous.materialId !== next.materialId ||
+    serializeComparable(previous.placement) !== serializeComparable(next.placement) ||
+    serializeComparable(previous.transform) !== serializeComparable(next.transform)
+  );
+}
 
 export class Engine {
   readonly history = new History();
@@ -21,6 +43,76 @@ export class Engine {
 
   replaceDocument(document: SceneDocumentV2, runtimeAssets: Iterable<RuntimeAsset> = []) {
     this.runtimeScene = this.compiler.compile(document, runtimeAssets);
+    return this.runtimeScene;
+  }
+
+  syncDocument(document: SceneDocumentV2, runtimeAssets: Iterable<RuntimeAsset> = []) {
+    const nextRuntimeAssets = this.compiler.createRuntimeAssetMap(runtimeAssets);
+    const nextRegistry = new Map<string, RuntimeObjectRecord>();
+    const currentRegistry = this.runtimeScene.objectRegistry;
+    const nextIds = new Set(document.objects.map((objectDocument) => objectDocument.id));
+    let generationChanged = false;
+
+    currentRegistry.forEach((runtimeObject, objectId) => {
+      if (nextIds.has(objectId)) {
+        return;
+      }
+      this.runtimeScene.dirtyObjectIds.delete(objectId);
+      generationChanged = true;
+    });
+
+    for (const objectDocument of document.objects) {
+      const compiled = this.compiler.createObjectRecord(
+        document,
+        objectDocument,
+        nextRegistry,
+        nextRuntimeAssets
+      );
+      const previous = currentRegistry.get(objectDocument.id);
+      if (!previous) {
+        nextRegistry.set(objectDocument.id, compiled);
+        this.runtimeScene.dirtyObjectIds.add(objectDocument.id);
+        generationChanged = true;
+        continue;
+      }
+
+      const changed = hasObjectShapeChanged(previous, compiled);
+      const nextObject: RuntimeObjectRecord = {
+        ...previous,
+        assetId: compiled.assetId,
+        runtimeAssetId: compiled.runtimeAssetId,
+        materialId: compiled.materialId,
+        objectDocument,
+        placement: compiled.placement,
+        transform: changed ? cloneRuntimeTransform(compiled.transform) : previous.transform,
+        previewTransform: null,
+        transformRevision: changed ? previous.transformRevision + 1 : previous.transformRevision
+      };
+      if (changed) {
+        this.runtimeScene.dirtyObjectIds.add(objectDocument.id);
+      }
+      nextRegistry.set(objectDocument.id, nextObject);
+    }
+
+    this.runtimeScene.sourceDocument = document;
+    this.runtimeScene.room = document.room;
+    this.runtimeScene.runtimeAssets = nextRuntimeAssets;
+    this.runtimeScene.objectRegistry = nextRegistry;
+    if (
+      this.runtimeScene.selectionState.selectedObjectId &&
+      !nextIds.has(this.runtimeScene.selectionState.selectedObjectId)
+    ) {
+      this.runtimeScene.selectionState.selectedObjectId = null;
+    }
+    if (
+      this.runtimeScene.hoverState.hoveredObjectId &&
+      !nextIds.has(this.runtimeScene.hoverState.hoveredObjectId)
+    ) {
+      this.runtimeScene.hoverState.hoveredObjectId = null;
+    }
+    if (generationChanged) {
+      this.runtimeScene.generation += 1;
+    }
     return this.runtimeScene;
   }
 

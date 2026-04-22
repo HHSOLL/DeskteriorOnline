@@ -837,3 +837,15 @@ Updated:
 
 Removed/Deprecated:
 - legacy asset `materialId`가 runtime renderer 경계에서는 metadata 잔재로만 남고 object snapshot에는 반영되지 않는 가정.
+
+## 2026-04-23 변경 동기화 (Incremental Runtime Document Sync Phase 3D)
+Added:
+- room shell이 유지되는 asset add/remove/material/placement 변경은 `runtimeScene` 전체 교체 대신 object-level incremental sync로 흘리는 기준을 추가했다.
+- runtime engine bridge는 same-room 문서 변경에서 `replaceDocument()`보다 `syncDocument()`를 우선 사용한다.
+- same-room incremental sync는 removed object의 runtime selection/hover를 정리하고, `assetId/runtimeAssetId` 변경도 renderer object lifecycle에 반영해야 한다.
+
+Updated:
+- runtime foundation 경계를 “store change 후 문서 재컴파일로 재수렴”에서 “room 변경만 full replace, object 변경은 incremental sync” 구조로 강화한다.
+
+Removed/Deprecated:
+- same-room object 변경마다 runtime scene을 항상 새로 컴파일해야 한다는 가정.

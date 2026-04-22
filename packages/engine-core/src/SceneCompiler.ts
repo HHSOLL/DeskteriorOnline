@@ -100,6 +100,37 @@ function resolveSurfaceLocalTransform(
 export class SceneCompiler {
   private generation = 0;
 
+  createRuntimeAssetMap(runtimeAssets: Iterable<RuntimeAsset> = []) {
+    return new Map(Array.from(runtimeAssets).map((asset) => [asset.assetId, asset]));
+  }
+
+  createObjectRecord(
+    document: SceneDocumentV2,
+    objectDocument: SceneObjectDocument,
+    objectIndex: Map<string, RuntimeObjectRecord>,
+    runtimeAssetMap: Map<string, RuntimeAsset>
+  ): RuntimeObjectRecord {
+    const transform = SceneCompiler.resolvePlacementTransform(
+      objectDocument,
+      objectDocument.placement,
+      objectIndex,
+      runtimeAssetMap
+    );
+
+    return {
+      id: objectDocument.id,
+      assetId: objectDocument.assetId,
+      runtimeAssetId:
+        objectDocument.runtimeAssetId ?? objectDocument.catalogItemId ?? objectDocument.assetId,
+      materialId: resolveObjectMaterialId(document, objectDocument),
+      objectDocument,
+      placement: objectDocument.placement,
+      transform,
+      previewTransform: null,
+      transformRevision: 0
+    };
+  }
+
   static resolvePlacementTransform(
     objectDocument: SceneObjectDocument,
     placement: PlacementRecord,
@@ -115,29 +146,14 @@ export class SceneCompiler {
 
   compile(document: SceneDocumentV2, runtimeAssets: Iterable<RuntimeAsset> = []): RuntimeScene {
     this.generation += 1;
-    const runtimeAssetMap = new Map(Array.from(runtimeAssets).map((asset) => [asset.assetId, asset]));
+    const runtimeAssetMap = this.createRuntimeAssetMap(runtimeAssets);
     const objectRegistry = new Map<string, RuntimeObjectRecord>();
 
     for (const objectDocument of document.objects) {
-      const transform = SceneCompiler.resolvePlacementTransform(
-        objectDocument,
-        objectDocument.placement,
-        objectRegistry,
-        runtimeAssetMap
+      objectRegistry.set(
+        objectDocument.id,
+        this.createObjectRecord(document, objectDocument, objectRegistry, runtimeAssetMap)
       );
-
-      objectRegistry.set(objectDocument.id, {
-        id: objectDocument.id,
-        assetId: objectDocument.assetId,
-        runtimeAssetId:
-          objectDocument.runtimeAssetId ?? objectDocument.catalogItemId ?? objectDocument.assetId,
-        materialId: resolveObjectMaterialId(document, objectDocument),
-        objectDocument,
-        placement: objectDocument.placement,
-        transform,
-        previewTransform: null,
-        transformRevision: 0
-      });
     }
 
     return {

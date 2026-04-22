@@ -954,3 +954,15 @@ Updated:
 
 Removed/Deprecated:
 - single object 경로가 runtime preview 시점에도 engine object registry를 직접 읽어야 한다는 설명.
+
+## 2026-04-23 변경 동기화 (Runtime Engine Incremental Object Sync)
+Added:
+- `Engine.syncDocument()`와 `verify:runtime-engine-document-sync` smoke 검증을 추가해 same-room object add/remove/material/placement 변경을 incremental runtime sync로 처리한다.
+- `useRuntimeEngineBridge`는 room/environment 변화만 full replace로 보내고, object/material 변화는 incremental sync로 보낸다.
+- renderer adapter는 same-object `assetId/runtimeAssetId` 교체와 removed selection/hover cleanup까지 incremental lifecycle 범위에 포함한다.
+
+Updated:
+- `Document/Runtime Split` 이후 브리지 상태를 “store commit 후 전체 document replace 재수렴”에서 “room은 replace, object는 incremental sync” 상태로 갱신한다.
+
+Removed/Deprecated:
+- runtime bridge가 asset lifecycle 변경마다 `replaceDocument()`만 사용해야 한다는 설명.

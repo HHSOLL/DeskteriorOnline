@@ -139,6 +139,12 @@ export class ThreeRendererAdapter implements RendererAdapter {
       const assetHandle = this.ensureAssetHandle(runtimeAssetId, runtimeObject.assetId);
       const objectHandle =
         this.instances.get(runtimeObject.id) ?? this.createInstance(assetHandle, runtimeObject.id);
+      if (
+        objectHandle.assetHandle.runtimeAssetId !== assetHandle.runtimeAssetId ||
+        objectHandle.assetHandle.assetId !== assetHandle.assetId
+      ) {
+        objectHandle.assetHandle = assetHandle;
+      }
       const batchKey = `${runtimeAssetId}:${runtimeObject.objectDocument.materialVariantId ?? "default"}`;
       objectHandle.batchKey = batchKey;
       if (objectHandle.materialId !== runtimeObject.materialId) {
