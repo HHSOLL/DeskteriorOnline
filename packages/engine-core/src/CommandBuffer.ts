@@ -58,6 +58,7 @@ export class CommandBuffer {
           runtimeObject.transform = command.transform;
           runtimeObject.previewTransform = null;
         }
+        runtimeObject.transformRevision += 1;
         scene.dirtyObjectIds.add(command.objectId);
         return runtimeObject;
       default:

@@ -21,11 +21,13 @@ export type RuntimeObjectRecord = {
   placement: PlacementRecord;
   transform: RuntimeWorldTransform;
   previewTransform: RuntimeWorldTransform | null;
+  transformRevision: number;
 };
 
 export type RuntimeScene = {
   id: string;
   units: "mm";
+  generation: number;
   sourceDocument: SceneDocumentV2;
   room: SceneDocumentV2["room"];
   runtimeAssets: Map<string, RuntimeAsset>;

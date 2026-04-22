@@ -815,3 +815,14 @@ Updated:
 
 Removed/Deprecated:
 - renderer compatibility layer가 window global만 보고 동작하고, canvas 하위 트리에서는 runtime engine을 직접 소비하지 못한다는 가정.
+
+## 2026-04-22 변경 동기화 (Renderer Adapter Sync Phase 3B)
+Added:
+- `renderer-three` 어댑터가 runtime scene object registry와 dirty object 집합을 직접 동기화하고, asset/material 기준 instance batch를 유지하는 compatibility sync 계층을 추가했다.
+- renderer sync는 runtime scene generation과 object transform revision을 기준으로 문서 재컴파일 이후에도 stale matrix를 재사용하지 않도록 유지한다.
+
+Updated:
+- renderer migration 경로를 “runtime transform 직접 소비”에서 “runtime transform -> renderer adapter snapshot -> instanced cluster imperative sync” 단계까지 확장한다.
+
+Removed/Deprecated:
+- `renderer-three`가 아직 제품 경로와 완전히 분리된 패키지 골격일 뿐이라는 설명.
