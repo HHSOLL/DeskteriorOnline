@@ -60,6 +60,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - Worker: `apps/worker` (asset generation processing)
 - Supabase: auth/storage/database
 - Asset pipeline: `assets/blender/deskterior`(source) + `apps/web/public/assets/models`(legacy fallback runtime) + `apps/web/public/assets/catalog/manifest.json`(catalog manifest)
+- Asset compiler alpha: `packages/asset-compiler`가 curated asset 정의, alpha runtime package descriptor, compiler command surface를 소유한다.
 - Target asset delivery: Supabase storage/CDN 기반 `catalog-public`(curated runtime), `project-media`(private snapshot/thumbnail), `assets-glb` 또는 후속 private bucket(생성형 자산 staging/publish) 구조를 사용한다.
 - `apps/web`는 UI shell과 canvas host를 우선 책임지고, drag/hover/preview hot path mutation은 점진적으로 runtime foundation으로 이동한다.
 - 저장 문서와 런타임 조작 상태를 같은 React/Zustand mutation 경로로 직접 공유하지 않는다.
@@ -873,3 +874,14 @@ Updated:
 
 Removed/Deprecated:
 - walk mode 정밀 배치가 문서 수준 계획만 있고 제품 경로에는 아직 진입점이 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha Phase 4A)
+Added:
+- `packages/asset-compiler` 패키지를 추가해 curated deskterior asset 정의와 compiler command surface를 `apps/web/scripts` 밖으로 승격했다.
+- `asset:publish`는 `apps/web/public/assets/catalog/runtime-packages.json`와 per-asset `runtime-packages/*.json` descriptor를 생성해 alpha `RuntimeAssetPackage` 인덱스를 유지한다.
+
+Updated:
+- curated asset pipeline 기준을 “manifest + 개별 스크립트 묶음”에서 “asset-compiler package + legacy script adapter + runtime package catalog” 구조로 한 단계 전진시킨다.
+
+Removed/Deprecated:
+- curated asset 정의가 `apps/web/scripts/deskterior-curated-assets.ts` 안에서만 canonical 하다는 가정.

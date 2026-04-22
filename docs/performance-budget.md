@@ -301,6 +301,16 @@ Updated:
 Removed/Deprecated:
 - object lifecycle 변경 시 full runtime document recompilation 비용을 상시 허용하는 가정.
 
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha Guardrail)
+Added:
+- curated asset publish는 manifest만이 아니라 alpha runtime package descriptor를 같이 남겨야 하며, package index 누락은 compiler gate 실패로 본다.
+
+Updated:
+- asset pipeline guardrail 범위를 `GLB validate/verify`에서 `GLB validate/verify + runtime package publish`까지 확장한다.
+
+Removed/Deprecated:
+- runtime package artifact가 없어도 asset pipeline 회귀를 충분히 추적할 수 있다는 가정.
+
 ## 2026-04-23 변경 동기화 (Visibility Lifecycle Budget)
 Added:
 - hidden object는 same-room sync에서 full replace 없이 빠르게 제외되고, instancing/single-object render path에서 draw 후보 자체를 줄이는 방향을 기본 예산으로 본다.

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "asset-package-alpha-v1",
+  "generatedAt": "2026-04-22T17:15:59.294Z",
+  "key": "p2s_compact_speaker",
+  "manifestId": "p2s_compact_speaker",
+  "label": "P2S 컴팩트 스피커",
+  "assetId": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb",
+  "sourcePath": "assets/blender/deskterior/p2s_compact_speaker.blend",
+  "runtimePath": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb",
+  "dimensionsMm": {
+    "width": 90,
+    "depth": 141,
+    "height": 220
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_compact_speaker.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 8,
+      "maxTriangleCount": 2000
+    }
+  },
+  "supportProfile": null,
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb"
+      }
+    ],
+    "proxyPath": null,
+    "collidersPath": null,
+    "supportSurfacesEmbedded": false,
+    "attachmentPointsPath": null,
+    "qaReportEmbedded": true
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}
