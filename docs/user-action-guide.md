@@ -217,6 +217,19 @@ npm --workspace apps/web run primary:e2e:room-flow:full
   - 디테일 노트
   - 원본 상품 링크
 
+## 2-1) Runtime Foundation Smoke Commands
+
+```bash
+npm --workspace apps/web run benchmarks:collect:baseline
+npm --workspace apps/web run verify:runtime-engine
+npm --workspace apps/web run verify:placement-kernel
+```
+
+확인 포인트:
+- benchmark baseline 템플릿이 `benchmark-scenes/*` 4개 시나리오를 모두 수집하는지
+- runtime preview가 source `SceneDocument`를 직접 mutate 하지 않는지
+- placement kernel alpha가 surface-local placement patch를 생성하는지
+
 ## 3-1) DB 레거시 정리 적용 체크리스트
 
 대상 마이그레이션:
@@ -748,3 +761,13 @@ Updated:
 
 Removed/Deprecated:
 - 프로젝트 이름은 builder에서만 정하고 editor에서는 바꿀 수 없다는 QA 가정.
+
+## 2026-04-22 변경 동기화 (Runtime Foundation Smoke QA)
+Added:
+- `benchmarks:collect:baseline`, `verify:runtime-engine`, `verify:placement-kernel` smoke 명령과 확인 포인트를 추가했다.
+
+Updated:
+- 초기 상용 엔진 리팩터링 QA 범위를 화면 회귀 확인뿐 아니라 document/runtime split alpha 검증까지 확장했다.
+
+Removed/Deprecated:
+- baseline benchmark scene 정의가 문서 메모에만 있고 실행 명령이 없다는 상태.

@@ -4,11 +4,14 @@
 
 ## 렌더링 기본 설정
 `apps/web/src/components/editor/SceneViewport.tsx`
+`apps/web/src/components/editor/CanvasHost.tsx`
 - ToneMapping: `room mode` / `viewer-shared` / 기본 walk-viewer는 `ACESFilmicToneMapping`, `desk precision` / `builder-preview` / `viewer-showcase`는 `NeutralToneMapping`
 - `toneMappingExposure`는 `resolveSceneRenderQuality`가 모드/디바이스별로 관리하고, `SceneViewport` prop override는 예외적인 수동 보정에만 사용한다.
 - `physicallyCorrectLights = true`
 - `outputColorSpace = SRGB`
 - Shadow: `PCFSoftShadowMap`
+- `CanvasHost`는 runtime engine bootstrap compatibility path를 소유하고, `SceneViewport`는 renderer compatibility layer 역할을 우선 유지한다.
+- drag/hover/placement preview hot path는 React props보다 runtime transform buffer + invalidate 경로를 우선 사용한다.
 
 ## 조명/환경
 `apps/web/src/components/canvas/core/SceneEnvironment.tsx`
@@ -549,3 +552,13 @@ Updated:
 Removed/Deprecated:
 - shared/read-only top-view가 고정 orthographic + 회전 버튼만 제공한다는 가정.
 - top-view에서 textured floor를 기본적으로 금지하던 이전 최적화 가정.
+
+## 2026-04-22 변경 동기화 (CanvasHost Runtime Bridge)
+Added:
+- editor/shared viewer가 `CanvasHost`를 통해 runtime engine을 병렬 부트스트랩하는 compatibility 경로를 추가했다.
+
+Updated:
+- `SceneViewport`를 장기적인 scene ownership 계층이 아니라 renderer compatibility layer로 위치 조정한다.
+
+Removed/Deprecated:
+- viewport 컴포넌트가 장기적으로 document mutation과 runtime transform mutation을 동시에 소유한다는 가정.

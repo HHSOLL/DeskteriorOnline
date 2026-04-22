@@ -896,3 +896,16 @@ Updated:
 
 Removed/Deprecated:
 - 배포 환경에서 top-view flat shell과 walk-view texture failure를 별도 후속으로 미룬다는 가정.
+
+## 2026-04-22 변경 동기화 (Revised Commercial Engine Refactor Kickoff)
+Added:
+- `benchmark-scenes` 4종과 `benchmark-runner/collect-baseline.ts` 기반 baseline artifact 경로를 추가했다.
+- `packages/scene-schema`, `packages/engine-core`, `packages/renderer-three`, `packages/placement-kernel` alpha skeleton을 추가했다.
+- `verify:runtime-engine`, `verify:placement-kernel`, `benchmarks:collect:baseline` 스크립트를 추가했다.
+
+Updated:
+- 초기 리팩터링 실행 순서를 `Baseline -> Minimal Package Split -> Asset Contract First -> Document/Runtime Split` 기준으로 재정렬한다.
+- viewport migration을 `CanvasHost -> runtime bridge -> legacy SceneViewport` compatibility path 기준으로 시작한다.
+
+Removed/Deprecated:
+- 첫 단계에서 `asset-compiler`, `ui-kit`, `math`, `geometry`, extra apps/services`까지 동시에 열어야 한다는 가정.

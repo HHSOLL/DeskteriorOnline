@@ -17,7 +17,13 @@ try {
 
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@webinterior/shared"],
+  transpilePackages: [
+    "@webinterior/shared",
+    "@deskterioronline/scene-schema",
+    "@deskterioronline/engine-core",
+    "@deskterioronline/renderer-three",
+    "@deskterioronline/placement-kernel"
+  ],
   images: {
     remotePatterns: supabaseRemotePattern
   },

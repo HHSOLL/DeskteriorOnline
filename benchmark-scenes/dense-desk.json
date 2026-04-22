@@ -1,0 +1,95 @@
+{
+  "id": "dense-desk",
+  "title": "Dense Desk",
+  "description": "Desk precision benchmark with many small accessories and surface-local placements.",
+  "document": {
+    "schemaVersion": 2,
+    "id": "bench-dense-desk",
+    "version": 1,
+    "units": "mm",
+    "room": {
+      "scaleInfo": { "valueMmPerMeter": 1000, "source": "user_measure", "confidence": 1 },
+      "walls": [],
+      "openings": [],
+      "floors": [
+        {
+          "id": "floor-01",
+          "outlineMm": [[0, 0], [4200, 0], [4200, 3200], [0, 3200]],
+          "materialId": null,
+          "roomId": "room-01",
+          "roomType": "other",
+          "label": "Dense Desk Room"
+        }
+      ],
+      "ceilings": [],
+      "rooms": [],
+      "cameraAnchors": [],
+      "navGraph": { "nodes": [], "edges": [] }
+    },
+    "objects": [
+      {
+        "id": "desk-01",
+        "assetId": "p2s_desk_oak",
+        "runtimeAssetId": "p2s_desk_oak",
+        "placement": {
+          "mode": "world",
+          "world": { "positionMm": [2100, 0, 1500], "rotationMilliDeg": [0, 0, 0], "scalePermille": [1000, 1000, 1000] }
+        }
+      },
+      { "id": "keyboard-01", "assetId": "p2s_keyboard_tkl", "runtimeAssetId": "p2s_keyboard_tkl", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": 0, "vMm": 90, "normalOffsetMm": 0, "rotationMilliDeg": 0 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "mouse-01", "assetId": "p2s_mouse_wireless", "runtimeAssetId": "p2s_mouse_wireless", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": 320, "vMm": 80, "normalOffsetMm": 0, "rotationMilliDeg": 18000 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "speaker-l", "assetId": "p2s_compact_speaker", "runtimeAssetId": "p2s_compact_speaker", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": -500, "vMm": -180, "normalOffsetMm": 0, "rotationMilliDeg": 8000 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "speaker-r", "assetId": "p2s_compact_speaker", "runtimeAssetId": "p2s_compact_speaker", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": 500, "vMm": -180, "normalOffsetMm": 0, "rotationMilliDeg": -8000 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "mug-01", "assetId": "p2s_ceramic_mug", "runtimeAssetId": "p2s_ceramic_mug", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": 420, "vMm": 180, "normalOffsetMm": 0, "rotationMilliDeg": 14000 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "lamp-01", "assetId": "p2s_desk_lamp_glow", "runtimeAssetId": "p2s_desk_lamp_glow", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": -560, "vMm": 120, "normalOffsetMm": 0, "rotationMilliDeg": 0 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "planter-01", "assetId": "p2s_desk_planter_pilea", "runtimeAssetId": "p2s_desk_planter_pilea", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": -610, "vMm": -40, "normalOffsetMm": 0, "rotationMilliDeg": 0 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "tray-01", "assetId": "p2s_desk_tray_oak", "runtimeAssetId": "p2s_desk_tray_oak", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": -300, "vMm": 170, "normalOffsetMm": 0, "rotationMilliDeg": 0 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "notebook-01", "assetId": "p2s_notebook_a5", "runtimeAssetId": "p2s_notebook_a5", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": 110, "vMm": -90, "normalOffsetMm": 0, "rotationMilliDeg": -9000 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "phone-01", "assetId": "p2s_phone_stand", "runtimeAssetId": "p2s_phone_stand", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": 210, "vMm": -160, "normalOffsetMm": 0, "rotationMilliDeg": 12000 }, "scalePermille": [1000, 1000, 1000] } },
+      { "id": "book-stack-01", "assetId": "p2s_book_stack_warm", "runtimeAssetId": "p2s_book_stack_warm", "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "desktop_top", "attachmentType": "place_on_surface", "localPose": { "uMm": -120, "vMm": -170, "normalOffsetMm": 0, "rotationMilliDeg": -6000 }, "scalePermille": [1000, 1000, 1000] } }
+    ],
+    "materials": [],
+    "cameras": [],
+    "environment": { "lighting": { "mode": "direct" } }
+  },
+  "runtimeAssets": [
+    {
+      "assetId": "p2s_desk_oak",
+      "units": "mm",
+      "dimensionsMm": { "width": 1600, "depth": 700, "height": 740 },
+      "scaleLocked": true,
+      "pivot": { "x": "center", "y": "floor", "z": "center" },
+      "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false },
+      "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "desk.glb", "triangleCount": 38000, "drawCallBudget": 8 }], "proxy": "desk.proxy.glb", "defaultLod": 0, "triangleBudget": 38000, "textureBudgetMb": 32 },
+      "colliders": [{ "id": "desk-box", "kind": "box", "sizeMm": { "width": 1600, "depth": 700, "height": 740 }, "centerMm": [0, 370, 0] }],
+      "supportSurfaces": [
+        {
+          "id": "desktop_top",
+          "type": "desktop_top",
+          "localFrame": { "originMm": [0, 740, 0], "tangentU": [1, 0, 0], "tangentV": [0, 0, 1], "normal": [0, 1, 0] },
+          "boundsMm": { "min": [-700, -300], "max": [700, 300] },
+          "allowedAttachments": ["place_on_surface", "edge_clamp"]
+        }
+      ],
+      "attachmentPoints": [],
+      "materialVariants": [{ "id": "oak-default", "label": "Oak" }],
+      "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 1600, "depth": 700, "height": 740 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" }
+    },
+    { "assetId": "p2s_keyboard_tkl", "units": "mm", "dimensionsMm": { "width": 360, "depth": 140, "height": 34 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "keyboard.glb", "triangleCount": 12000, "drawCallBudget": 4 }], "proxy": "keyboard.proxy.glb", "defaultLod": 0, "triangleBudget": 12000, "textureBudgetMb": 8 }, "colliders": [{ "id": "keyboard-box", "kind": "box", "sizeMm": { "width": 360, "depth": 140, "height": 34 }, "centerMm": [0, 17, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 360, "depth": 140, "height": 34 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_mouse_wireless", "units": "mm", "dimensionsMm": { "width": 84, "depth": 126, "height": 52 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "mouse.glb", "triangleCount": 9000, "drawCallBudget": 3 }], "proxy": "mouse.proxy.glb", "defaultLod": 0, "triangleBudget": 9000, "textureBudgetMb": 6 }, "colliders": [{ "id": "mouse-box", "kind": "box", "sizeMm": { "width": 84, "depth": 126, "height": 52 }, "centerMm": [0, 26, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 84, "depth": 126, "height": 52 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_compact_speaker", "units": "mm", "dimensionsMm": { "width": 140, "depth": 160, "height": 260 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "speaker.glb", "triangleCount": 10000, "drawCallBudget": 4 }], "proxy": "speaker.proxy.glb", "defaultLod": 0, "triangleBudget": 10000, "textureBudgetMb": 6 }, "colliders": [{ "id": "speaker-box", "kind": "box", "sizeMm": { "width": 140, "depth": 160, "height": 260 }, "centerMm": [0, 130, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 140, "depth": 160, "height": 260 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_ceramic_mug", "units": "mm", "dimensionsMm": { "width": 120, "depth": 90, "height": 110 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "mug.glb", "triangleCount": 5000, "drawCallBudget": 2 }], "proxy": "mug.proxy.glb", "defaultLod": 0, "triangleBudget": 5000, "textureBudgetMb": 4 }, "colliders": [{ "id": "mug-box", "kind": "box", "sizeMm": { "width": 120, "depth": 90, "height": 110 }, "centerMm": [0, 55, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 120, "depth": 90, "height": 110 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_desk_lamp_glow", "units": "mm", "dimensionsMm": { "width": 220, "depth": 180, "height": 420 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "lamp.glb", "triangleCount": 16000, "drawCallBudget": 6 }], "proxy": "lamp.proxy.glb", "defaultLod": 0, "triangleBudget": 16000, "textureBudgetMb": 10 }, "colliders": [{ "id": "lamp-box", "kind": "box", "sizeMm": { "width": 220, "depth": 180, "height": 420 }, "centerMm": [0, 210, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 220, "depth": 180, "height": 420 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_desk_planter_pilea", "units": "mm", "dimensionsMm": { "width": 150, "depth": 150, "height": 240 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "planter.glb", "triangleCount": 12000, "drawCallBudget": 4 }], "proxy": "planter.proxy.glb", "defaultLod": 0, "triangleBudget": 12000, "textureBudgetMb": 6 }, "colliders": [{ "id": "planter-box", "kind": "box", "sizeMm": { "width": 150, "depth": 150, "height": 240 }, "centerMm": [0, 120, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 150, "depth": 150, "height": 240 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_desk_tray_oak", "units": "mm", "dimensionsMm": { "width": 260, "depth": 170, "height": 48 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "tray.glb", "triangleCount": 8000, "drawCallBudget": 3 }], "proxy": "tray.proxy.glb", "defaultLod": 0, "triangleBudget": 8000, "textureBudgetMb": 4 }, "colliders": [{ "id": "tray-box", "kind": "box", "sizeMm": { "width": 260, "depth": 170, "height": 48 }, "centerMm": [0, 24, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 260, "depth": 170, "height": 48 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_notebook_a5", "units": "mm", "dimensionsMm": { "width": 210, "depth": 150, "height": 22 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "notebook.glb", "triangleCount": 3000, "drawCallBudget": 2 }], "proxy": "notebook.proxy.glb", "defaultLod": 0, "triangleBudget": 3000, "textureBudgetMb": 2 }, "colliders": [{ "id": "notebook-box", "kind": "box", "sizeMm": { "width": 210, "depth": 150, "height": 22 }, "centerMm": [0, 11, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 210, "depth": 150, "height": 22 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_phone_stand", "units": "mm", "dimensionsMm": { "width": 90, "depth": 110, "height": 135 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "phone-stand.glb", "triangleCount": 4000, "drawCallBudget": 2 }], "proxy": "phone-stand.proxy.glb", "defaultLod": 0, "triangleBudget": 4000, "textureBudgetMb": 3 }, "colliders": [{ "id": "phone-stand-box", "kind": "box", "sizeMm": { "width": 90, "depth": 110, "height": 135 }, "centerMm": [0, 67, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 90, "depth": 110, "height": 135 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } },
+    { "assetId": "p2s_book_stack_warm", "units": "mm", "dimensionsMm": { "width": 220, "depth": 160, "height": 70 }, "scaleLocked": true, "pivot": { "x": "center", "y": "floor", "z": "center" }, "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false }, "runtime": { "lods": [{ "id": "lod0", "level": 0, "model": "book-stack.glb", "triangleCount": 4500, "drawCallBudget": 2 }], "proxy": "book-stack.proxy.glb", "defaultLod": 0, "triangleBudget": 4500, "textureBudgetMb": 3 }, "colliders": [{ "id": "book-stack-box", "kind": "box", "sizeMm": { "width": 220, "depth": 160, "height": 70 }, "centerMm": [0, 35, 0] }], "supportSurfaces": [], "attachmentPoints": [], "materialVariants": [{ "id": "default", "label": "Default" }], "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 220, "depth": 160, "height": 70 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" } }
+  ],
+  "budgetHints": {
+    "drawCallsBudget": 320,
+    "triangleBudget": 450000,
+    "objectCountBudget": 100,
+    "textureBudgetMb": 384
+  }
+}

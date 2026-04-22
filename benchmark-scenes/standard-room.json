@@ -1,0 +1,183 @@
+{
+  "id": "standard-room",
+  "title": "Standard Room",
+  "description": "Single desk setup with common editor furniture.",
+  "document": {
+    "schemaVersion": 2,
+    "id": "bench-standard-room",
+    "version": 1,
+    "units": "mm",
+    "room": {
+      "scaleInfo": {
+        "valueMmPerMeter": 1000,
+        "source": "user_measure",
+        "confidence": 1
+      },
+      "walls": [
+        { "id": "wall-a", "startMm": [0, 0], "endMm": [4800, 0], "thicknessMm": 120, "heightMm": 2400, "type": "exterior" },
+        { "id": "wall-b", "startMm": [4800, 0], "endMm": [4800, 3400], "thicknessMm": 120, "heightMm": 2400, "type": "exterior" },
+        { "id": "wall-c", "startMm": [4800, 3400], "endMm": [0, 3400], "thicknessMm": 120, "heightMm": 2400, "type": "exterior" },
+        { "id": "wall-d", "startMm": [0, 3400], "endMm": [0, 0], "thicknessMm": 120, "heightMm": 2400, "type": "exterior" }
+      ],
+      "openings": [],
+      "floors": [
+        {
+          "id": "floor-01",
+          "outlineMm": [[0, 0], [4800, 0], [4800, 3400], [0, 3400]],
+          "materialId": null,
+          "roomId": "room-01",
+          "roomType": "other",
+          "label": "Standard Benchmark Room"
+        }
+      ],
+      "ceilings": [],
+      "rooms": [],
+      "cameraAnchors": [],
+      "navGraph": { "nodes": [], "edges": [] }
+    },
+    "objects": [
+      {
+        "id": "desk-01",
+        "assetId": "p2s_desk_oak",
+        "runtimeAssetId": "p2s_desk_oak",
+        "placement": {
+          "mode": "world",
+          "world": {
+            "positionMm": [2400, 0, 1700],
+            "rotationMilliDeg": [0, 0, 0],
+            "scalePermille": [1000, 1000, 1000]
+          }
+        }
+      },
+      {
+        "id": "chair-01",
+        "assetId": "p2s_chair_task",
+        "runtimeAssetId": "p2s_chair_task",
+        "placement": {
+          "mode": "world",
+          "world": {
+            "positionMm": [2400, 0, 2200],
+            "rotationMilliDeg": [0, 180000, 0],
+            "scalePermille": [1000, 1000, 1000]
+          }
+        }
+      },
+      {
+        "id": "monitor-01",
+        "assetId": "p2s_monitor_27",
+        "runtimeAssetId": "p2s_monitor_27",
+        "placement": {
+          "mode": "surface_local",
+          "supportObjectId": "desk-01",
+          "surfaceId": "desktop_top",
+          "attachmentType": "place_on_surface",
+          "localPose": { "uMm": 0, "vMm": -160, "normalOffsetMm": 0, "rotationMilliDeg": 0 },
+          "scalePermille": [1000, 1000, 1000]
+        }
+      }
+    ],
+    "materials": [],
+    "cameras": [],
+    "environment": {
+      "lighting": {
+        "mode": "direct"
+      }
+    }
+  },
+  "runtimeAssets": [
+    {
+      "assetId": "p2s_desk_oak",
+      "units": "mm",
+      "dimensionsMm": { "width": 1600, "depth": 700, "height": 740 },
+      "scaleLocked": true,
+      "pivot": { "x": "center", "y": "floor", "z": "center" },
+      "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false },
+      "runtime": {
+        "lods": [{ "id": "lod0", "level": 0, "model": "desk.glb", "triangleCount": 38000, "drawCallBudget": 8 }],
+        "proxy": "desk.proxy.glb",
+        "defaultLod": 0,
+        "triangleBudget": 38000,
+        "textureBudgetMb": 32
+      },
+      "colliders": [{ "id": "desk-box", "kind": "box", "sizeMm": { "width": 1600, "depth": 700, "height": 740 }, "centerMm": [0, 370, 0] }],
+      "supportSurfaces": [
+        {
+          "id": "desktop_top",
+          "type": "desktop_top",
+          "localFrame": {
+            "originMm": [0, 740, 0],
+            "tangentU": [1, 0, 0],
+            "tangentV": [0, 0, 1],
+            "normal": [0, 1, 0]
+          },
+          "boundsMm": { "min": [-700, -300], "max": [700, 300] },
+          "allowedAttachments": ["place_on_surface", "edge_clamp"]
+        }
+      ],
+      "attachmentPoints": [],
+      "materialVariants": [{ "id": "oak-default", "label": "Oak" }],
+      "qaStatus": {
+        "status": "passed",
+        "measuredBoundsMm": { "width": 1600, "depth": 700, "height": 740 },
+        "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 },
+        "validatorVersion": "alpha"
+      }
+    },
+    {
+      "assetId": "p2s_chair_task",
+      "units": "mm",
+      "dimensionsMm": { "width": 620, "depth": 640, "height": 1160 },
+      "scaleLocked": true,
+      "pivot": { "x": "center", "y": "floor", "z": "center" },
+      "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false },
+      "runtime": {
+        "lods": [{ "id": "lod0", "level": 0, "model": "chair.glb", "triangleCount": 42000, "drawCallBudget": 12 }],
+        "proxy": "chair.proxy.glb",
+        "defaultLod": 0,
+        "triangleBudget": 42000,
+        "textureBudgetMb": 28
+      },
+      "colliders": [{ "id": "chair-box", "kind": "box", "sizeMm": { "width": 620, "depth": 640, "height": 1160 }, "centerMm": [0, 580, 0] }],
+      "supportSurfaces": [],
+      "attachmentPoints": [],
+      "materialVariants": [{ "id": "chair-default", "label": "Task Chair" }],
+      "qaStatus": {
+        "status": "passed",
+        "measuredBoundsMm": { "width": 620, "depth": 640, "height": 1160 },
+        "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 },
+        "validatorVersion": "alpha"
+      }
+    },
+    {
+      "assetId": "p2s_monitor_27",
+      "units": "mm",
+      "dimensionsMm": { "width": 610, "depth": 220, "height": 470 },
+      "scaleLocked": true,
+      "pivot": { "x": "center", "y": "floor", "z": "center" },
+      "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false },
+      "runtime": {
+        "lods": [{ "id": "lod0", "level": 0, "model": "monitor.glb", "triangleCount": 16000, "drawCallBudget": 6 }],
+        "proxy": "monitor.proxy.glb",
+        "defaultLod": 0,
+        "triangleBudget": 16000,
+        "textureBudgetMb": 16
+      },
+      "colliders": [{ "id": "monitor-box", "kind": "box", "sizeMm": { "width": 610, "depth": 220, "height": 470 }, "centerMm": [0, 235, 0] }],
+      "supportSurfaces": [],
+      "attachmentPoints": [],
+      "materialVariants": [{ "id": "monitor-default", "label": "27 Inch Monitor" }],
+      "qaStatus": {
+        "status": "passed",
+        "measuredBoundsMm": { "width": 610, "depth": 220, "height": 470 },
+        "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 },
+        "validatorVersion": "alpha"
+      }
+    }
+  ],
+  "budgetHints": {
+    "drawCallsBudget": 220,
+    "triangleBudget": 250000,
+    "objectCountBudget": 12,
+    "textureBudgetMb": 256
+  }
+}

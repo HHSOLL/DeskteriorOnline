@@ -1,0 +1,214 @@
+{
+  "id": "heavy-assets",
+  "title": "Heavy Assets",
+  "description": "Large runtime asset mix for asset streaming and proxy-first loading checks.",
+  "document": {
+    "schemaVersion": 2,
+    "id": "bench-heavy-assets",
+    "version": 1,
+    "units": "mm",
+    "room": {
+      "scaleInfo": { "valueMmPerMeter": 1000, "source": "user_measure", "confidence": 1 },
+      "walls": [],
+      "openings": [],
+      "floors": [
+        {
+          "id": "floor-01",
+          "outlineMm": [[0, 0], [5600, 0], [5600, 3800], [0, 3800]],
+          "materialId": null,
+          "roomId": "room-01",
+          "roomType": "other",
+          "label": "Heavy Asset Room"
+        }
+      ],
+      "ceilings": [],
+      "rooms": [],
+      "cameraAnchors": [],
+      "navGraph": { "nodes": [], "edges": [] }
+    },
+    "objects": [
+      {
+        "id": "desk-01",
+        "assetId": "p2s_desk_oak",
+        "runtimeAssetId": "p2s_desk_oak",
+        "placement": { "mode": "world", "world": { "positionMm": [1800, 0, 1600], "rotationMilliDeg": [0, 0, 0], "scalePermille": [1000, 1000, 1000] } }
+      },
+      {
+        "id": "monitor-arm-01",
+        "assetId": "p2s_monitor_arm_dual",
+        "runtimeAssetId": "p2s_monitor_arm_dual",
+        "placement": { "mode": "surface_local", "supportObjectId": "desk-01", "surfaceId": "rear_edge", "attachmentType": "edge_clamp", "localPose": { "uMm": 0, "vMm": 0, "normalOffsetMm": -20, "rotationMilliDeg": 0 }, "scalePermille": [1000, 1000, 1000] }
+      },
+      {
+        "id": "monitor-01",
+        "assetId": "p2s_monitor_32",
+        "runtimeAssetId": "p2s_monitor_32",
+        "placement": { "mode": "world", "world": { "positionMm": [1800, 1120, 1240], "rotationMilliDeg": [0, 0, 0], "scalePermille": [1000, 1000, 1000] } }
+      },
+      {
+        "id": "shelf-01",
+        "assetId": "p2s_shelf_wall",
+        "runtimeAssetId": "p2s_shelf_wall",
+        "placement": { "mode": "world", "world": { "positionMm": [4200, 0, 600], "rotationMilliDeg": [0, -90000, 0], "scalePermille": [1000, 1000, 1000] } }
+      }
+    ],
+    "materials": [],
+    "cameras": [],
+    "environment": { "lighting": { "mode": "direct" } }
+  },
+  "runtimeAssets": [
+    {
+      "assetId": "p2s_desk_oak",
+      "units": "mm",
+      "dimensionsMm": { "width": 1600, "depth": 700, "height": 740 },
+      "scaleLocked": true,
+      "pivot": { "x": "center", "y": "floor", "z": "center" },
+      "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false },
+      "runtime": {
+        "lods": [
+          { "id": "lod0", "level": 0, "model": "desk-hq.glb", "triangleCount": 82000, "drawCallBudget": 10 },
+          { "id": "lod1", "level": 1, "model": "desk-mid.glb", "triangleCount": 36000, "drawCallBudget": 6 }
+        ],
+        "proxy": "desk.proxy.glb",
+        "defaultLod": 0,
+        "triangleBudget": 82000,
+        "textureBudgetMb": 48
+      },
+      "colliders": [{ "id": "desk-box", "kind": "box", "sizeMm": { "width": 1600, "depth": 700, "height": 740 }, "centerMm": [0, 370, 0] }],
+      "supportSurfaces": [
+        {
+          "id": "rear_edge",
+          "type": "desk_edge",
+          "localFrame": { "originMm": [0, 720, -330], "tangentU": [1, 0, 0], "tangentV": [0, 1, 0], "normal": [0, 0, -1] },
+          "boundsMm": { "min": [-700, -40], "max": [700, 40] },
+          "thicknessMm": 28,
+          "allowedAttachments": ["edge_clamp"]
+        }
+      ],
+      "attachmentPoints": [],
+      "materialVariants": [{ "id": "oak-default", "label": "Oak" }],
+      "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 1600, "depth": 700, "height": 740 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" }
+    },
+    {
+      "assetId": "p2s_monitor_arm_dual",
+      "units": "mm",
+      "dimensionsMm": { "width": 980, "depth": 180, "height": 640 },
+      "scaleLocked": true,
+      "pivot": { "x": "center", "y": "floor", "z": "center" },
+      "sourceProvenance": { "method": "cad", "license": "internal", "attributionRequired": false },
+      "runtime": {
+        "lods": [
+          { "id": "lod0", "level": 0, "model": "monitor-arm-hq.glb", "triangleCount": 76000, "drawCallBudget": 12 },
+          { "id": "lod1", "level": 1, "model": "monitor-arm-mid.glb", "triangleCount": 28000, "drawCallBudget": 7 }
+        ],
+        "proxy": "monitor-arm.proxy.glb",
+        "defaultLod": 0,
+        "triangleBudget": 76000,
+        "textureBudgetMb": 36
+      },
+      "colliders": [{ "id": "arm-box", "kind": "box", "sizeMm": { "width": 980, "depth": 180, "height": 640 }, "centerMm": [0, 320, 0] }],
+      "supportSurfaces": [],
+      "attachmentPoints": [
+        {
+          "id": "edge-clamp",
+          "type": "edge_clamp",
+          "localPositionMm": [0, 0, 0],
+          "localNormal": [0, 0, -1],
+          "localTangent": [1, 0, 0],
+          "compatibleWith": ["rear_edge"],
+          "constraints": {
+            "minClearanceMm": 120,
+            "requiredThicknessMm": [18, 85]
+          }
+        }
+      ],
+      "materialVariants": [{ "id": "default", "label": "Default" }],
+      "articulation": {
+        "type": "monitor_arm",
+        "joints": [
+          { "id": "base", "parent": null, "type": "revolute", "axis": [0, 1, 0], "limitDeg": [-90, 90], "defaultValue": 0 },
+          { "id": "elbow", "parent": "base", "type": "revolute", "axis": [0, 0, 1], "limitDeg": [-65, 65], "defaultValue": 0 }
+        ],
+        "endEffector": { "id": "vesa_plate", "compatiblePatternsMm": "both" },
+        "solver": { "type": "analytic", "iterations": 8, "toleranceMm": 2 }
+      },
+      "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 980, "depth": 180, "height": 640 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" }
+    },
+    {
+      "assetId": "p2s_monitor_32",
+      "units": "mm",
+      "dimensionsMm": { "width": 715, "depth": 240, "height": 510 },
+      "scaleLocked": true,
+      "pivot": { "x": "center", "y": "floor", "z": "center" },
+      "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false },
+      "runtime": {
+        "lods": [
+          { "id": "lod0", "level": 0, "model": "monitor32.glb", "triangleCount": 34000, "drawCallBudget": 7 },
+          { "id": "lod1", "level": 1, "model": "monitor32-mid.glb", "triangleCount": 15000, "drawCallBudget": 4 }
+        ],
+        "proxy": "monitor32.proxy.glb",
+        "defaultLod": 0,
+        "triangleBudget": 34000,
+        "textureBudgetMb": 24
+      },
+      "colliders": [{ "id": "monitor32-box", "kind": "box", "sizeMm": { "width": 715, "depth": 240, "height": 510 }, "centerMm": [0, 255, 0] }],
+      "supportSurfaces": [],
+      "attachmentPoints": [
+        {
+          "id": "vesa-100",
+          "type": "vesa_mount",
+          "localPositionMm": [0, 260, -24],
+          "localNormal": [0, 0, -1],
+          "localTangent": [1, 0, 0],
+          "compatibleWith": ["vesa_plate"],
+          "constraints": {
+            "vesaPatternMm": [100, 100]
+          }
+        }
+      ],
+      "materialVariants": [{ "id": "default", "label": "Default" }],
+      "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 715, "depth": 240, "height": 510 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" }
+    },
+    {
+      "assetId": "p2s_shelf_wall",
+      "units": "mm",
+      "dimensionsMm": { "width": 1200, "depth": 280, "height": 240 },
+      "scaleLocked": true,
+      "pivot": { "x": "center", "y": "floor", "z": "center" },
+      "sourceProvenance": { "method": "manual", "license": "internal", "attributionRequired": false },
+      "runtime": {
+        "lods": [
+          { "id": "lod0", "level": 0, "model": "shelf.glb", "triangleCount": 28000, "drawCallBudget": 6 },
+          { "id": "lod1", "level": 1, "model": "shelf-mid.glb", "triangleCount": 12000, "drawCallBudget": 3 }
+        ],
+        "proxy": "shelf.proxy.glb",
+        "defaultLod": 0,
+        "triangleBudget": 28000,
+        "textureBudgetMb": 20
+      },
+      "colliders": [{ "id": "shelf-box", "kind": "box", "sizeMm": { "width": 1200, "depth": 280, "height": 240 }, "centerMm": [0, 120, 0] }],
+      "supportSurfaces": [],
+      "attachmentPoints": [
+        {
+          "id": "wall-screw-01",
+          "type": "wall_screw",
+          "localPositionMm": [-420, 110, -10],
+          "localNormal": [0, 0, -1],
+          "localTangent": [1, 0, 0],
+          "compatibleWith": ["wall"],
+          "constraints": {
+            "minClearanceMm": 60
+          }
+        }
+      ],
+      "materialVariants": [{ "id": "oak-default", "label": "Oak" }],
+      "qaStatus": { "status": "passed", "measuredBoundsMm": { "width": 1200, "depth": 280, "height": 240 }, "dimensionErrorMm": { "width": 0, "depth": 0, "height": 0 }, "validatorVersion": "alpha" }
+    }
+  ],
+  "budgetHints": {
+    "drawCallsBudget": 340,
+    "triangleBudget": 650000,
+    "objectCountBudget": 40,
+    "textureBudgetMb": 512
+  }
+}
