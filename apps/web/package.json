@@ -33,6 +33,7 @@
     "verify:runtime-render-sync": "node --import tsx scripts/verify-runtime-render-sync.ts",
     "verify:runtime-renderer-adapter": "node --import tsx scripts/verify-runtime-renderer-adapter.ts",
     "verify:placement-kernel": "node --import tsx scripts/verify-placement-kernel-foundation.ts",
+    "verify:focus-placement": "node --import tsx scripts/verify-focus-placement-prototype.ts",
     "verify:asset-instancing": "node --import tsx scripts/verify-asset-instancing-policy.ts",
     "verify:asset-lod": "node --import tsx scripts/verify-asset-lod-policy.ts",
     "verify:public-scene": "node --import tsx scripts/verify-public-scene-payload.ts",

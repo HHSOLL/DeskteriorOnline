@@ -626,3 +626,14 @@ Updated:
 
 Removed/Deprecated:
 - hidden object가 runtime renderer handle에 남아 있어도 실제 draw path에서 문제 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Focus Placement Walk Prototype)
+Added:
+- walk mode의 `Focus Placement`는 선택된 배치 대상 자산을 runtime preview로만 움직이고, `Enter` 전에는 `SceneDocument`를 건드리지 않는 HUD/keyboard session으로 동작해야 한다.
+- active focus placement session 중 crosshair는 `Confirm/Cancel` affordance를 우선 표시하고, 상세 상태는 별도 HUD 패널에서 `surface`, `offset`, `rotation`, `warning/error`를 보여줘야 한다.
+
+Updated:
+- walkthrough 정밀 배치 품질 기준을 “향후 시스템 분리 예정”에서 “desk top 한정 alpha session이 runtime preview와 keyboard nudge로 동작”하는 상태로 갱신한다.
+
+Removed/Deprecated:
+- walk mode에서 정밀 배치를 시작해도 top-view gizmo나 store direct mutation을 다시 써도 된다는 가정.

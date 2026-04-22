@@ -860,3 +860,16 @@ Updated:
 
 Removed/Deprecated:
 - visibility가 React-only render concern이라 runtime foundation으로 올릴 필요가 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Focus Placement Prototype Phase 5.5A)
+Added:
+- walk mode에서 선택된 배치 대상 자산이 있을 때, `desktop_top` support surface를 가진 가구를 바라보고 `E`로 `Focus Placement` 세션에 진입하는 첫 프로토타입을 추가했다.
+- focus placement는 `useFocusPlacementStore`의 transient session, `FocusPlacementController`, `FocusPlacementHud`로 분리하고, Arrow/Q/E/Enter/Esc 입력은 runtime preview 경로만 사용한다.
+- focus placement commit은 `surface_local` placement와 `supportAssetId`를 store/document/runtime에 함께 남겨 책상 기준 관계를 유지한다.
+
+Updated:
+- walkthrough 정밀 배치 상태를 “향후 별도 interaction mode”에서 “desk top 한정 첫 실사용 prototype 진입 완료”로 갱신한다.
+- walk-mode 정밀 배치는 top-view transform control 재사용이 아니라 runtime placement transaction과 keyboard micro-adjust를 기본으로 하는 방향으로 고정한다.
+
+Removed/Deprecated:
+- walk mode 정밀 배치가 문서 수준 계획만 있고 제품 경로에는 아직 진입점이 없다는 가정.

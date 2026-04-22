@@ -3,6 +3,7 @@ import {
   resolveScenePlacementVectors,
   type ScenePlacementSnapshot
 } from "./scene-placement";
+import type { PlacementRecord } from "@deskterioronline/scene-schema";
 import type {
   ProductCollisionProxyMetadata,
   ProductContractMetadata,
@@ -75,7 +76,7 @@ export type ProductMetadata = {
 
 export type SceneObject = SceneAsset & {
   metadata?: ProductMetadata;
-  placement?: ScenePlacementSnapshot | null;
+  placement?: ScenePlacementSnapshot | PlacementRecord | null;
 };
 
 export type SceneNode = SceneObject;
@@ -488,6 +489,7 @@ export function toSceneStorePatch(scene: SceneDocumentBootstrap): SceneStorePatc
         position: placement.position,
         rotation: placement.rotation,
         scale: placement.scale,
+        placement: node.placement ?? null,
         visible: toMetadataBoolean(node.metadata?.visible ?? node.visible ?? true),
         catalogItemId: node.metadata?.catalogItemId ?? node.catalogItemId,
         product: toSceneAssetProduct(node.metadata, node.product) ?? node.product ?? null,

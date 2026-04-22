@@ -310,3 +310,14 @@ Updated:
 
 Removed/Deprecated:
 - hidden object가 renderer batch나 single-object path에 남아도 draw cost 예산에 영향이 미미하다는 가정.
+
+## 2026-04-23 변경 동기화 (Focus Placement Prototype Budget)
+Added:
+- walk-mode focus placement preview는 `runtime preview only -> Enter commit` 구조를 유지하고, keyboard nudge 동안 `runtime-document-patch`가 발생하지 않는 것을 기본 예산으로 본다.
+- `verify:focus-placement`를 통해 `surface_local` commit이 한 번의 patch로 끝나고, store가 runtime placement를 그대로 소비하는지 확인하는 기준을 추가했다.
+
+Updated:
+- interaction budget 범위를 top-view drag/hover 중심에서 walk-mode focus placement preview/commit까지 확장한다.
+
+Removed/Deprecated:
+- walk-mode 정밀 배치가 아직 제품 경로에 없으므로 별도 예산을 둘 필요가 없다는 가정.

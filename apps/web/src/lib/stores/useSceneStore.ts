@@ -16,6 +16,7 @@ import {
   normalizeAssetSupportProfile,
   type AssetSupportProfile
 } from "../scene/support-profiles";
+import type { PlacementRecord } from "@deskterioronline/scene-schema";
 
 export type Vector2 = [number, number];
 export type Vector3 = [number, number, number];
@@ -148,6 +149,7 @@ export type SceneAsset = {
   assetId: string;
   catalogItemId?: string | null;
   visible?: boolean;
+  placement?: PlacementRecord | null;
   product?: {
     id: string;
     name: string;
@@ -511,6 +513,7 @@ function normalizeSceneAsset(asset: SceneAsset): SceneAsset {
   return {
     ...asset,
     visible: asset.visible !== false,
+    placement: asset.placement ?? null,
     catalogItemId: typeof asset.catalogItemId === "string" && asset.catalogItemId.length > 0 ? asset.catalogItemId : null,
     product: normalizeSceneAssetProduct(asset.product),
     anchorType: normalizeSceneAnchorType(asset.anchorType),

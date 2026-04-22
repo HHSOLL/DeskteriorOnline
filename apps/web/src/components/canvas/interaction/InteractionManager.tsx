@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef } fr
 import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
+import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
 import { useInteractionStore } from "../../../lib/stores/useInteractionStore";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 
@@ -28,6 +29,7 @@ const INTERACTION_DISTANCE = 2.4;
 export default function InteractionManager({ children }: InteractionManagerProps) {
   const viewMode = useEditorStore((state) => state.viewMode);
   const readOnly = useEditorStore((state) => state.readOnly);
+  const hasActiveFocusPlacement = useFocusPlacementStore((state) => Boolean(state.activeSession));
   const setHint = useInteractionStore((state) => state.setHint);
   const hoveredRef = useRef<THREE.Object3D | null>(null);
   const targetsRef = useRef<THREE.Object3D[]>([]);
@@ -137,7 +139,7 @@ export default function InteractionManager({ children }: InteractionManagerProps
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (viewMode !== "walk" || readOnly) return;
+      if (viewMode !== "walk" || readOnly || hasActiveFocusPlacement) return;
       if (event.key.toLowerCase() !== "e") return;
       const target = hoveredRef.current;
       const callback = target?.userData?.onInteract as undefined | (() => void);
@@ -145,7 +147,7 @@ export default function InteractionManager({ children }: InteractionManagerProps
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [readOnly, viewMode]);
+  }, [hasActiveFocusPlacement, readOnly, viewMode]);
 
   return (
     <InteractionRegistryContext.Provider value={{ register, unregister }}>

@@ -111,6 +111,7 @@ try {
 
   const storeAfterCommit = useSceneStore.getState().assets.find((asset) => asset.id === "desk-1");
   assert(storeAfterCommit?.position[0] === 1.8, "commit should update the store asset");
+  assert(storeAfterCommit?.placement?.mode === "world", "standard transform commit should keep world placement");
   assert(patches.length === 1, `expected one runtime patch, received ${patches.length}`);
   assert(patches[0]?.objectId === "desk-1", "runtime patch should target the moved asset");
 

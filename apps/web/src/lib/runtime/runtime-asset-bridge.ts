@@ -1,7 +1,9 @@
 "use client";
 
 import type { Engine, RuntimeWorldTransform, SceneObjectPatch } from "@deskterioronline/engine-core";
+import { clonePlacementRecord, isSurfacePlacementRecord } from "@deskterioronline/scene-schema";
 import { useSceneStore, type SceneAsset } from "../stores/useSceneStore";
+import type { SceneAnchorType } from "../scene/anchor-types";
 
 declare global {
   interface Window {
@@ -69,6 +71,68 @@ export function resolveRuntimeWorldTransformFromAsset(
   };
 }
 
+function resolveAnchorTypeFromRuntimePlacement(
+  engine: Engine,
+  asset: SceneAsset,
+  placement: NonNullable<SceneAsset["placement"]>
+): SceneAnchorType {
+  if (!isSurfacePlacementRecord(placement)) {
+    return asset.anchorType ?? "floor";
+  }
+
+  const supportObject = engine.runtimeScene.objectRegistry.get(placement.supportObjectId);
+  const runtimeAssetId =
+    supportObject?.runtimeAssetId ??
+    supportObject?.objectDocument.runtimeAssetId ??
+    supportObject?.objectDocument.catalogItemId ??
+    supportObject?.assetId ??
+    null;
+  const supportSurface = runtimeAssetId
+    ? engine.runtimeScene.runtimeAssets
+        .get(runtimeAssetId)
+        ?.supportSurfaces.find((surface) => surface.id === placement.surfaceId) ?? null
+    : null;
+
+  switch (supportSurface?.type) {
+    case "desktop_top":
+      return "desk_surface";
+    case "shelf_top":
+      return "shelf_surface";
+    case "wall":
+    case "pegboard":
+      return "wall";
+    case "floor":
+      return "floor";
+    default:
+      return asset.anchorType ?? "furniture_surface";
+  }
+}
+
+function buildRuntimeStoreUpdate(
+  engine: Engine,
+  asset: SceneAsset,
+  objectId: string
+): Partial<SceneAsset> | null {
+  const runtimeObject = engine.runtimeScene.objectRegistry.get(objectId);
+  if (!runtimeObject) {
+    return null;
+  }
+
+  const transform = runtimeObject.previewTransform ?? runtimeObject.transform;
+  const placement = clonePlacementRecord(runtimeObject.placement);
+
+  return {
+    position: [...transform.position] as SceneAsset["position"],
+    rotation: [...transform.rotation] as SceneAsset["rotation"],
+    scale: [...transform.scale] as SceneAsset["scale"],
+    placement,
+    anchorType: resolveAnchorTypeFromRuntimePlacement(engine, asset, placement),
+    supportAssetId: isSurfacePlacementRecord(placement)
+      ? placement.supportObjectId
+      : asset.supportAssetId ?? null
+  };
+}
+
 export function beginRuntimeAssetPreview(objectId: string, engine?: Engine | null) {
   return resolveRuntimeEngine(engine)?.beginObjectPreview(objectId) ?? null;
 }
@@ -124,8 +188,46 @@ export function commitRuntimeAssetUpdateToStore({
       objectId,
       engine: runtimeEngine
     });
+
+    const runtimeStoreUpdate = buildRuntimeStoreUpdate(runtimeEngine, asset, objectId);
+    sceneStore.updateFurniture(objectId, runtimeStoreUpdate ? { ...updates, ...runtimeStoreUpdate } : updates);
+    return patches;
   }
 
   sceneStore.updateFurniture(objectId, updates);
+  return patches;
+}
+
+export function commitRuntimePlacementToStore({
+  objectId,
+  engine,
+  store
+}: {
+  objectId: string;
+  engine?: Engine | null;
+  store?: SceneStoreLike;
+}) {
+  const sceneStore = store ?? useSceneStore.getState();
+  const asset = sceneStore.assets.find((candidate) => candidate.id === objectId);
+  if (!asset) {
+    return [];
+  }
+
+  const runtimeEngine = resolveRuntimeEngine(engine);
+  if (!runtimeEngine) {
+    return [];
+  }
+
+  const runtimeStoreUpdate = buildRuntimeStoreUpdate(runtimeEngine, asset, objectId);
+  if (!runtimeStoreUpdate) {
+    return [];
+  }
+
+  const patches = runtimeEngine.buildDocumentPatch();
+  publishRuntimeDocumentPatches(patches, {
+    objectId,
+    engine: runtimeEngine
+  });
+  sceneStore.updateFurniture(objectId, runtimeStoreUpdate);
   return patches;
 }
