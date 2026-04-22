@@ -20,9 +20,11 @@ import InteractiveDoors from "../canvas/features/InteractiveDoors";
 import InteractiveLights from "../canvas/features/InteractiveLights";
 import AssetTransformControls from "../canvas/interaction/AssetTransformControls";
 import EditorHotkeys from "../canvas/interaction/EditorHotkeys";
+import FocusPlacementController from "../canvas/interaction/FocusPlacementController";
 import InteractionManager from "../canvas/interaction/InteractionManager";
 import ViewerProductHotspots from "../canvas/interaction/ViewerProductHotspots";
 import Crosshair from "../overlay/hud/Crosshair";
+import FocusPlacementHud from "../overlay/hud/FocusPlacementHud";
 import MobileControls from "../overlay/hud/MobileControls";
 import MobileTouchHint from "../overlay/hud/MobileTouchHint";
 import { configureRuntimeAssetLoaders } from "../../lib/loaders/AssetLoader";
@@ -167,6 +169,7 @@ export function SceneViewport({
           <SceneRendererSettings quality={quality} toneMappingExposure={toneMappingExposure} />
           <ScenePerformanceTelemetry interactionMode={resolvedInteractionMode} />
           <RuntimeRendererSync />
+          {resolvedInteractionMode === "editor" ? <FocusPlacementController /> : null}
           {viewMode === "walk" ? <PhysicsWorld>{sceneContent}</PhysicsWorld> : sceneContent}
           <PostEffects quality={quality} />
         </Suspense>
@@ -175,6 +178,7 @@ export function SceneViewport({
       {showHud && hudProfile !== "none" ? (
         <>
           {hudProfile === "full" ? <Crosshair /> : null}
+          {resolvedInteractionMode === "editor" ? <FocusPlacementHud /> : null}
           <MobileTouchHint />
           <MobileControls />
         </>

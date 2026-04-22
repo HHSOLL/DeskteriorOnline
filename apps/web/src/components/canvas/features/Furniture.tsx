@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
+import type { SupportSurface } from "@deskterioronline/scene-schema";
 import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
@@ -28,6 +29,7 @@ import {
   commitRuntimeAssetUpdateToStore,
   previewRuntimeAssetTransform
 } from "../../../lib/runtime/runtime-asset-bridge";
+import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
   useAssetSelector,
@@ -35,6 +37,7 @@ import {
   useSelectionSelector,
   useShellSelector
 } from "../../../lib/stores/scene-slices";
+import { useInteractionRegistry } from "../interaction/InteractionManager";
 import type { SceneAsset } from "../../../lib/stores/useSceneStore";
 
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -92,6 +95,35 @@ type SlotFinishPolicy = {
 
 function isPlaceholderAsset(assetId: string) {
   return assetId.startsWith("placeholder:");
+}
+
+function findHighlightMesh(root: THREE.Object3D | null) {
+  if (!root) {
+    return null;
+  }
+
+  let highlightMesh: THREE.Mesh | null = null;
+  root.traverse((child) => {
+    if (!highlightMesh && child instanceof THREE.Mesh) {
+      highlightMesh = child;
+    }
+  });
+  return highlightMesh;
+}
+
+function resolveFocusSurfaceLabel(surface: SupportSurface) {
+  switch (surface.type) {
+    case "desktop_top":
+      return "Desk Top";
+    case "desk_edge":
+      return "Desk Edge";
+    case "desk_underside":
+      return "Under Desk";
+    case "wall":
+      return "Wall";
+    default:
+      return surface.id;
+  }
 }
 
 function isLightingAsset(asset: SceneAsset) {
@@ -852,11 +884,13 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   const invalidate = useThree((state) => state.invalidate);
   const runtimeEngine = useRuntimeEngine();
   const runtimeRenderer = useRuntimeRendererAdapter();
+  const interactionRegistry = useInteractionRegistry();
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const isTransforming = useEditorStore((state) => state.isTransforming);
   const setIsTransforming = useEditorStore((state) => state.setIsTransforming);
   const readOnly = useEditorStore((state) => state.readOnly);
+  const requestFocusPlacement = useFocusPlacementStore((state) => state.requestFocusPlacement);
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const setSelectedAssetId = useSelectionSelector((slice) => slice.setSelectedAssetId);
   const walls = useShellSelector((slice) => slice.walls);
@@ -873,10 +907,31 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     rotation: [number, number, number];
   } | null>(null);
   const isSelected = selectedAssetId === asset.id;
+  const selectedAsset = useMemo(
+    () => sceneAssets.find((candidate) => candidate.id === selectedAssetId) ?? null,
+    [sceneAssets, selectedAssetId]
+  );
   const selectedSupportAssetId = useMemo(
     () => sceneAssets.find((candidate) => candidate.id === selectedAssetId)?.supportAssetId ?? null,
     [sceneAssets, selectedAssetId]
   );
+  const focusSurface = useMemo(() => {
+    const runtimeAssetId = asset.catalogItemId ?? asset.assetId;
+    const runtimeAsset = runtimeEngine?.runtimeScene.runtimeAssets.get(runtimeAssetId);
+    return (
+      runtimeAsset?.supportSurfaces.find(
+        (surface) =>
+          surface.type === "desktop_top" &&
+          surface.allowedAttachments.includes("place_on_surface")
+      ) ?? null
+    );
+  }, [asset.assetId, asset.catalogItemId, runtimeEngine]);
+  const canOfferFocusPlacement =
+    !readOnly &&
+    viewMode === "walk" &&
+    Boolean(focusSurface) &&
+    Boolean(selectedAsset) &&
+    selectedAsset?.id !== asset.id;
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
@@ -1029,6 +1084,48 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   }, [asset.id, isDragging, setIsTransforming]);
 
   useEffect(() => {
+    const group = groupRef.current;
+    if (!group || !canOfferFocusPlacement || !focusSurface || !selectedAsset) {
+      return;
+    }
+
+    const highlightMesh = findHighlightMesh(group);
+    group.userData.interactive = true;
+    group.userData.interactionLabel = "정밀 배치";
+    group.userData.onInteract = () =>
+      requestFocusPlacement({
+        objectId: selectedAsset.id,
+        supportObjectId: asset.id,
+        surfaceId: focusSurface.id,
+        attachmentType: "place_on_surface",
+        objectLabel: selectedAsset.product?.name ?? selectedAsset.assetId,
+        supportLabel: asset.product?.name ?? asset.assetId,
+        surfaceLabel: resolveFocusSurfaceLabel(focusSurface)
+      });
+    if (highlightMesh) {
+      group.userData.highlightMesh = highlightMesh;
+    }
+
+    interactionRegistry?.register(group);
+    return () => {
+      interactionRegistry?.unregister(group);
+      delete group.userData.interactive;
+      delete group.userData.interactionLabel;
+      delete group.userData.onInteract;
+      delete group.userData.highlightMesh;
+    };
+  }, [
+    asset.assetId,
+    asset.id,
+    asset.product?.name,
+    canOfferFocusPlacement,
+    focusSurface,
+    interactionRegistry,
+    requestFocusPlacement,
+    selectedAsset
+  ]);
+
+  useEffect(() => {
     if (viewMode === "walk" || isDragging || !groupRef.current) return;
     applyRuntimeTransformToObject(
       groupRef.current,
@@ -1081,7 +1178,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   if (viewMode === "walk") {
     return (
       <RigidBody type="fixed" colliders="cuboid" position={asset.position} rotation={asset.rotation}>
-        <group name={`furniture:${asset.id}`} scale={asset.scale} {...groupProps}>
+        <group ref={groupRef} name={`furniture:${asset.id}`} scale={asset.scale} {...groupProps}>
           {content}
           {shouldRenderLight ? (
             <pointLight

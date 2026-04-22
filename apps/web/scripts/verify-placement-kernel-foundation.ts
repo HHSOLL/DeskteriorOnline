@@ -165,6 +165,8 @@ try {
     normalOffsetMm: 0,
     rotationMilliDeg: 12000
   });
+  const previewPlacement = transaction.previewWorldTransform();
+  assert(previewPlacement?.mode === "world", "preview should expose world placement while dragging");
   const committed = transaction.commit();
   assert(committed.mode === "surface_local", "placement commit should persist a surface-local placement");
 

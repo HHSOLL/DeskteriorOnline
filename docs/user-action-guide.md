@@ -841,3 +841,15 @@ Updated:
 
 Removed/Deprecated:
 - visibility 회귀는 수동 viewport 확인으로만 잡아도 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Focus Placement Prototype QA)
+Added:
+- walk mode에서 배치할 자산 하나를 선택한 뒤 책상 상판을 바라보고 `E`로 focus placement HUD가 열리는지 확인하는 QA 항목을 추가했다.
+- focus placement HUD가 Arrow 이동, Alt+Arrow 미세 이동, Q/E 회전, Enter 확정, Esc 취소를 안내하고 실제 preview/commit 결과와 일치하는지 확인하는 항목을 추가했다.
+- `verify:focus-placement` smoke 명령으로 `surface_local` commit과 `supportAssetId`/`anchorType` 브리지를 검증하는 절차를 추가했다.
+
+Updated:
+- runtime foundation QA 범위를 `incremental object lifecycle + visibility sync`에서 `focus placement prototype entry/preview/commit`까지 확장한다.
+
+Removed/Deprecated:
+- walk mode 정밀 배치 회귀를 수동 viewport 체험으로만 확인해도 충분하다는 가정.

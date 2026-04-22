@@ -10,6 +10,7 @@ import type {
   ProductSourceMetadata,
   ProductTextureSetMetadata
 } from "../builder/catalog";
+import { clonePlacementRecord, type PlacementRecord } from "@deskterioronline/scene-schema";
 import {
   resolveScenePlacementVectors,
   serializeScenePlacement
@@ -424,11 +425,35 @@ function buildSerializedAssetPlacement(asset: Record<string, unknown>) {
     rotation: asset.rotation,
     scale: asset.scale
   });
+  const placement = normalizePlacementRecord(asset.placement);
 
   return {
     vectors,
-    snapshot: serializeScenePlacement(vectors)
+    snapshot: placement ?? serializeScenePlacement(vectors)
   };
+}
+
+function normalizePlacementRecord(value: unknown): PlacementRecord | null {
+  if (!isRecord(value) || typeof value.mode !== "string") {
+    return null;
+  }
+
+  if (value.mode === "world" && isRecord(value.world)) {
+    return clonePlacementRecord(value as PlacementRecord);
+  }
+
+  if (
+    value.mode === "surface_local" &&
+    typeof value.supportObjectId === "string" &&
+    typeof value.surfaceId === "string" &&
+    typeof value.attachmentType === "string" &&
+    isRecord(value.localPose) &&
+    Array.isArray(value.scalePermille)
+  ) {
+    return clonePlacementRecord(value as PlacementRecord);
+  }
+
+  return null;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

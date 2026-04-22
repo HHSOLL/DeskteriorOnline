@@ -977,3 +977,15 @@ Updated:
 
 Removed/Deprecated:
 - visibility가 store render에서만 처리되고 runtime bridge/renderer adapter는 모를 수 있다는 설명.
+
+## 2026-04-23 변경 동기화 (Focus Placement Prototype Phase 5.5A)
+Added:
+- `useFocusPlacementStore`, `FocusPlacementController`, `FocusPlacementHud`를 추가해 walkthrough 기반 `desktop_top` 한정 focus placement session을 제품 경로에 연결했다.
+- `verify:focus-placement` smoke 검증을 추가해 placement transaction preview, `surface_local` commit, `supportAssetId`/`anchorType` store bridge를 확인한다.
+
+Updated:
+- `Phase 5.5 Focus Placement Prototype` 상태를 “미착수”에서 “desk-top / selected-asset / keyboard nudge / commit alpha 완료”로 갱신한다.
+- current phase의 남은 범위를 `camera-forward focus surface resolve polish`, `local grid overlay`, `asset compatibility filter`, `collision overlay`, `edge/underside/wall 확장`으로 정리한다.
+
+Removed/Deprecated:
+- focus placement prototype이 asset persistence bridge 없이 바로 full HUD부터 붙는다는 가정.
