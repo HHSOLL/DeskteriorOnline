@@ -5,7 +5,7 @@ import * as THREE from "three";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
-import { useInteractionStore } from "../../../lib/stores/useInteractionStore";
+import { useInteractionStore, type InteractionHint } from "../../../lib/stores/useInteractionStore";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 
 type InteractionManagerProps = {
@@ -83,7 +83,7 @@ export default function InteractionManager({ children }: InteractionManagerProps
         }
       });
     }
-    const hint = target?.userData?.interactionLabel as string | undefined;
+    const hint = target?.userData?.interactionHint as InteractionHint | undefined;
     setHint(hint ?? null);
     invalidate();
   }, [invalidate, setHint]);

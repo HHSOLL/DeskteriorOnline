@@ -17,6 +17,7 @@ import {
 } from "../../../lib/scene/asset-lod";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
+import { resolveFocusPlacementAvailability } from "../../../lib/runtime/focus-placement-session";
 import { useRuntimeRendererAdapter } from "../../../lib/runtime/runtime-renderer-context";
 import {
   applyRuntimeTransformToObject,
@@ -926,12 +927,17 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       ) ?? null
     );
   }, [asset.assetId, asset.catalogItemId, runtimeEngine]);
-  const canOfferFocusPlacement =
-    !readOnly &&
-    viewMode === "walk" &&
-    Boolean(focusSurface) &&
-    Boolean(selectedAsset) &&
-    selectedAsset?.id !== asset.id;
+  const focusPlacementAvailability = useMemo(
+    () =>
+      resolveFocusPlacementAvailability({
+        selectedAsset,
+        supportAsset: asset,
+        focusSurface
+      }),
+    [asset, focusSurface, selectedAsset]
+  );
+  const canRegisterFocusPlacement = !readOnly && viewMode === "walk" && Boolean(focusSurface);
+  const canOfferFocusPlacement = canRegisterFocusPlacement && focusPlacementAvailability.enabled;
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
@@ -1085,23 +1091,36 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
   useEffect(() => {
     const group = groupRef.current;
-    if (!group || !canOfferFocusPlacement || !focusSurface || !selectedAsset) {
+    if (!group || !canRegisterFocusPlacement || !focusSurface) {
       return;
     }
 
     const highlightMesh = findHighlightMesh(group);
     group.userData.interactive = true;
-    group.userData.interactionLabel = "정밀 배치";
-    group.userData.onInteract = () =>
-      requestFocusPlacement({
-        objectId: selectedAsset.id,
-        supportObjectId: asset.id,
-        surfaceId: focusSurface.id,
-        attachmentType: "place_on_surface",
-        objectLabel: selectedAsset.product?.name ?? selectedAsset.assetId,
-        supportLabel: asset.product?.name ?? asset.assetId,
-        surfaceLabel: resolveFocusSurfaceLabel(focusSurface)
-      });
+    group.userData.interactionLabel = focusPlacementAvailability.hint;
+    group.userData.interactionHint = {
+      label: focusPlacementAvailability.hint,
+      actionable: focusPlacementAvailability.enabled,
+      tone: focusPlacementAvailability.tone
+    };
+    group.userData.onInteract =
+      canOfferFocusPlacement && selectedAsset
+        ? () =>
+            requestFocusPlacement({
+              objectId: selectedAsset.id,
+              supportObjectId: asset.id,
+              surfaceId: focusSurface.id,
+              attachmentType: "place_on_surface",
+              objectLabel: selectedAsset.product?.name ?? selectedAsset.assetId,
+              supportLabel: asset.product?.name ?? asset.assetId,
+              surfaceLabel: resolveFocusSurfaceLabel(focusSurface),
+              surfaceType: focusSurface.type,
+              surfaceBoundsMm: focusSurface.boundsMm,
+              noPlaceZones: focusSurface.noPlaceZones ?? [],
+              preferredZones: focusSurface.preferredZones ?? [],
+              objectDimensionsMm: selectedAsset.product?.dimensionsMm ?? null
+            })
+        : undefined;
     if (highlightMesh) {
       group.userData.highlightMesh = highlightMesh;
     }
@@ -1111,6 +1130,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       interactionRegistry?.unregister(group);
       delete group.userData.interactive;
       delete group.userData.interactionLabel;
+      delete group.userData.interactionHint;
       delete group.userData.onInteract;
       delete group.userData.highlightMesh;
     };
@@ -1118,8 +1138,12 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     asset.assetId,
     asset.id,
     asset.product?.name,
+    canRegisterFocusPlacement,
     canOfferFocusPlacement,
     focusSurface,
+    focusPlacementAvailability.enabled,
+    focusPlacementAvailability.hint,
+    focusPlacementAvailability.tone,
     interactionRegistry,
     requestFocusPlacement,
     selectedAsset

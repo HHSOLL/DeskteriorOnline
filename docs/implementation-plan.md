@@ -990,6 +990,20 @@ Updated:
 Removed/Deprecated:
 - focus placement prototype이 asset persistence bridge 없이 바로 full HUD부터 붙는다는 가정.
 
+## 2026-04-23 변경 동기화 (Phase 5.5 Focus Placement Prototype Complete)
+Added:
+- `resolveFocusPlacementAvailability`와 interaction hint tone을 추가해 walk mode에서 desk surface를 바라볼 때 `정밀 배치`, `제품 선택 필요`, `규격 없음` 같은 진입 힌트를 제품 경로에서 바로 보여주게 했다.
+- `FocusPlacementHud`는 local grid minimap, preferred/no-place zone count, snapped footprint 상태, collision/warning count를 함께 보여주는 richer status HUD로 확장됐다.
+- focus placement request/session은 `surfaceBoundsMm`, `preferredZones`, `noPlaceZones`, `objectDimensionsMm`를 포함해 HUD가 support surface 로컬 맥락을 직접 렌더링할 수 있게 됐다.
+- `verify:focus-placement`는 availability helper, snapped session pose, blocked HUD feedback, Enter 전 patch 0건, commit 이후 patch 1건까지 함께 검증한다.
+
+Updated:
+- `Phase 5.5 Focus Placement Prototype` 상태를 “desk-top / selected-asset / keyboard nudge / commit alpha 완료”에서 “desktop_top flow의 availability hint + local grid + collision/status HUD + snapped session consistency 완료”로 갱신한다.
+- 다음 phase의 우선순위를 `Phase 6 Full Focus Placement Mode(edge/underside/wall/compatibility expansion)`로 올린다.
+
+Removed/Deprecated:
+- `camera-forward focus surface resolve polish`, `local grid overlay`, `asset compatibility filter`, `collision overlay`가 여전히 Phase 5.5 잔여라는 상태 설명.
+
 ## 2026-04-23 변경 동기화 (Phase 4 Asset Compiler Alpha Slice 1)
 Added:
 - `packages/asset-compiler` 패키지와 `apps/web/scripts/asset-compiler.ts` command surface를 추가했다.

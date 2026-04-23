@@ -343,6 +343,17 @@ Updated:
 Removed/Deprecated:
 - walk-mode 정밀 배치가 아직 제품 경로에 없으므로 별도 예산을 둘 필요가 없다는 가정.
 
+## 2026-04-23 변경 동기화 (Focus Placement Prototype Budget Complete)
+Added:
+- focus placement session은 snapped pose, HUD status, document patch count가 drift 없이 같은 frame budget 안에서 유지돼야 한다.
+- compatibility/blocked hint는 preview나 commit과 별개로 lightweight store update만 사용하고 document/runtime patch를 만들지 않는 것을 기본 예산으로 본다.
+
+Updated:
+- focus placement budget 범위를 `preview only -> Enter commit`에서 `preview only + snapped HUD consistency + compatibility hint lightweight update`까지 확장한다.
+
+Removed/Deprecated:
+- local grid/status HUD 추가가 별도 상호작용 budget 없이도 관리된다는 가정.
+
 ## 2026-04-23 변경 동기화 (Placement Kernel Guard Budget)
 Added:
 - placement commit 경로는 evaluated candidate가 없으면 즉시 실패해야 하며, invalid candidate가 preview 상태에서 document patch를 만들지 않는 것을 기본 budget으로 본다.

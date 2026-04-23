@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { CollisionReport, ConstraintReport } from "@deskterioronline/placement-kernel";
-import type { SurfaceLocalPose } from "@deskterioronline/scene-schema";
+import type { DimensionsMm, SurfaceLocalPose, SupportSurface } from "@deskterioronline/scene-schema";
 
 export type FocusPlacementRequest = {
   objectId: string;
@@ -10,6 +10,11 @@ export type FocusPlacementRequest = {
   objectLabel: string;
   supportLabel: string;
   surfaceLabel: string;
+  surfaceType: SupportSurface["type"];
+  surfaceBoundsMm: SupportSurface["boundsMm"];
+  noPlaceZones: NonNullable<SupportSurface["noPlaceZones"]>;
+  preferredZones: NonNullable<SupportSurface["preferredZones"]>;
+  objectDimensionsMm: DimensionsMm | null;
 };
 
 export type FocusPlacementSession = FocusPlacementRequest & {

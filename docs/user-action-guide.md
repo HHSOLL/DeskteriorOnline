@@ -874,6 +874,18 @@ Updated:
 Removed/Deprecated:
 - walk mode 정밀 배치 회귀를 수동 viewport 체험으로만 확인해도 충분하다는 가정.
 
+## 2026-04-23 변경 동기화 (Focus Placement Prototype QA Complete)
+Added:
+- desk surface를 바라보되 선택 자산이 없을 때 crosshair hint가 `배치할 제품을 먼저 선택하세요`로 바뀌는지 확인한다.
+- 호환되는 자산을 선택하면 crosshair hint가 actionable 상태로 바뀌고, HUD가 preferred/no-place zone count와 local grid minimap을 함께 보여주는지 확인한다.
+- invalid candidate일 때 HUD badge가 blocked로 바뀌고 Enter 전 `runtime-document-patch`가 계속 0건인지 확인한다.
+
+Updated:
+- focus placement QA 범위를 `entry/preview/commit`에서 `entry hint + snapped HUD state + blocked/collision feedback`까지 확장한다.
+
+Removed/Deprecated:
+- focus placement 진입 가능 여부와 상태 tone은 수동 체감으로만 확인해도 된다는 가정.
+
 ## 2026-04-23 변경 동기화 (Asset Compiler Alpha QA)
 Added:
 - `asset:publish`와 `verify:asset-compiler`를 curated asset pipeline의 기본 smoke 명령에 추가했다.
