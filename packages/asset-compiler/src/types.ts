@@ -60,12 +60,17 @@ export type CuratedSupportProfileExpectation = {
     size: [number, number];
     top: number;
     margin?: [number, number];
+    surfaceType?: SupportSurface["type"];
+    allowedAttachments?: SupportSurface["allowedAttachments"];
+    thicknessMm?: number;
+    localFrame?: SupportSurface["localFrame"];
   }>;
 };
 
 export type CuratedAttachmentAuthoring = {
   mode: "none" | "manual_required";
   reason: string;
+  points?: AttachmentPoint[];
 };
 
 export type CuratedDeskteriorAsset = {

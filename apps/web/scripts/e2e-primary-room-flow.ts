@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { execFileSync, spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -39,8 +40,20 @@ type FlowArtifacts = {
   token: string | null;
 };
 
+type ManagedServerHandle = {
+  child: ChildProcessWithoutNullStreams;
+  baseUrl: URL;
+};
+
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const WEB_ROOT = path.resolve(SCRIPT_DIR, "..");
+const NPM_BIN = process.platform === "win32" ? "npm.cmd" : "npm";
+const CRITICAL_PRODUCTION_ARTIFACTS = [
+  path.join(WEB_ROOT, ".next", "BUILD_ID"),
+  path.join(WEB_ROOT, ".next", "server", "app", "studio", "builder", "page.js"),
+  path.join(WEB_ROOT, ".next", "server", "app", "shared", "[token]", "page.js"),
+  path.join(WEB_ROOT, ".next", "server", "app", "(editor)", "project", "[id]", "page.js")
+] as const;
 
 function getArg(name: string, fallback = "") {
   const prefix = `--${name}=`;
@@ -125,6 +138,117 @@ function loadFlowEnvFallback() {
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function isBaseUrlReachable(baseUrl: URL) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 1500);
+  try {
+    const response = await fetch(new URL("/", baseUrl), {
+      headers: { "user-agent": "deskterioronline-room-first-e2e/1.0" },
+      redirect: "manual",
+      signal: controller.signal
+    });
+    return response.ok || response.status === 302 || response.status === 303;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function hasValidProductionBuild() {
+  return CRITICAL_PRODUCTION_ARTIFACTS.every((filePath) => fs.existsSync(filePath));
+}
+
+function ensureFreshProductionBuild() {
+  fs.rmSync(path.join(WEB_ROOT, ".next"), { recursive: true, force: true });
+  execFileSync(NPM_BIN, ["run", "build"], {
+    cwd: WEB_ROOT,
+    stdio: "inherit",
+    env: process.env
+  });
+  if (!hasValidProductionBuild()) {
+    throw new Error("Production build completed without required route artifacts.");
+  }
+}
+
+async function waitForServerReady(baseUrl: URL, child: ChildProcessWithoutNullStreams, timeoutMs = 120_000) {
+  const startedAt = Date.now();
+
+  while (Date.now() - startedAt < timeoutMs) {
+    if (child.exitCode !== null) {
+      throw new Error(`Managed local server exited before readiness (exit=${child.exitCode}).`);
+    }
+
+    if (await isBaseUrlReachable(baseUrl)) {
+      return;
+    }
+
+    await sleep(500);
+  }
+
+  throw new Error(`Managed local server did not become reachable within ${timeoutMs}ms.`);
+}
+
+async function maybeStartManagedLocalServer(baseUrl: URL) {
+  const isDefaultLocalTarget =
+    (baseUrl.hostname === "127.0.0.1" || baseUrl.hostname === "localhost") &&
+    baseUrl.port === "3100" &&
+    !process.env.E2E_ROOM_FLOW_BASE_URL &&
+    !getArg("base-url");
+
+  if (!isDefaultLocalTarget) {
+    return null;
+  }
+
+  if (await isBaseUrlReachable(baseUrl)) {
+    return null;
+  }
+
+  if (!hasValidProductionBuild()) {
+    console.log("[INFO] strict room-flow: production build artifacts missing or stale, rebuilding locally");
+    ensureFreshProductionBuild();
+  }
+
+  console.log(`[INFO] strict room-flow: starting managed local server at ${baseUrl.toString()}`);
+  const child = spawn(
+    NPM_BIN,
+    ["run", "start", "--", "-p", baseUrl.port || "3100", "-H", baseUrl.hostname],
+    {
+      cwd: WEB_ROOT,
+      env: process.env,
+      stdio: "pipe"
+    }
+  );
+
+  child.stdout.on("data", (chunk) => {
+    process.stdout.write(`[managed-server] ${chunk.toString()}`);
+  });
+  child.stderr.on("data", (chunk) => {
+    process.stderr.write(`[managed-server] ${chunk.toString()}`);
+  });
+
+  await waitForServerReady(baseUrl, child);
+  return { child, baseUrl } satisfies ManagedServerHandle;
+}
+
+async function stopManagedLocalServer(handle: ManagedServerHandle | null) {
+  if (!handle || handle.child.exitCode !== null) {
+    return;
+  }
+
+  handle.child.kill("SIGTERM");
+
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < 5_000) {
+    if (handle.child.exitCode !== null) {
+      return;
+    }
+    await sleep(100);
+  }
+
+  handle.child.kill("SIGKILL");
 }
 
 async function checkRoute(baseUrl: URL, route: string): Promise<RouteResult> {
@@ -445,7 +569,7 @@ async function runFullPrimaryFlow(baseUrl: URL) {
 function printGuide(mode: Mode, failures: number) {
   if (failures === 0) {
     console.log(`room-first contract checks passed (mode=${mode})`);
-    return;
+    return false;
   }
 
   console.error("Room-first primary UX E2E를 strict 모드로 실행하려면 접근 가능한 base URL을 준비하세요.");
@@ -459,7 +583,7 @@ function printGuide(mode: Mode, failures: number) {
   console.error("  npm --workspace apps/web run primary:e2e:room-flow:full");
 
   console.error(`strict 검증 실패: ${failures}개 항목 실패`);
-  process.exit(1);
+  return true;
 }
 
 async function runRouteChecks(baseUrl: URL) {
@@ -491,78 +615,84 @@ async function main() {
   const strict = hasArg("strict") || process.env.E2E_ROOM_FLOW_STRICT === "1";
 
   const baseUrl = new URL(baseUrlInput);
+  const managedLocalServer = await maybeStartManagedLocalServer(baseUrl);
 
   const sharedToken = process.env.E2E_ROOM_FLOW_SHARED_TOKEN;
   const editorProjectId = process.env.E2E_ROOM_FLOW_PROJECT_ID;
+  try {
+    const routeResults = await runRouteChecks(baseUrl);
 
-  const routeResults = await runRouteChecks(baseUrl);
-
-  if (sharedToken) {
-    const sharedResult = await checkRoute(baseUrl, `/shared/${sharedToken}`);
-    routeResults.push(sharedResult);
-    const status = sharedResult.ok ? "PASS" : "WARN";
-    console.log(`[${status}] shared-token: /shared/${sharedToken} -> ${sharedResult.status}`);
-    if (!sharedResult.ok) {
-      console.log(`  - ${sharedResult.reason}`);
-    }
-  }
-
-  if (editorProjectId) {
-    const projectResult = await checkRoute(baseUrl, `/project/${editorProjectId}`);
-    routeResults.push(projectResult);
-    const status = projectResult.ok ? "PASS" : "WARN";
-    console.log(`[${status}] project-route: /project/${editorProjectId} -> ${projectResult.status}`);
-    if (!projectResult.ok) {
-      console.log(`  - ${projectResult.reason}`);
-    }
-  }
-
-  let failures = routeResults.filter((entry) => !entry.ok).length;
-
-  const shouldRunFlow = mode === "flow" || process.env.E2E_ROOM_FLOW_FULL === "1";
-
-  if (shouldRunFlow) {
-    try {
-      const flow = await runFullPrimaryFlow(baseUrl);
-      console.log(`[PASS] full-flow completed: project=${flow.projectId}, version=${flow.versionId}, share=${flow.shareId}`);
-    } catch (error) {
-      failures += 1;
-      const message = error instanceof Error ? error.message : String(error);
-      if (message.includes("Missing required env")) {
-        console.error(
-          "[FAIL] full-flow: flow 모드는 Supabase env가 필요합니다. (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY)"
-        );
-      } else {
-        console.error(`[FAIL] full-flow: ${message}`);
+    if (sharedToken) {
+      const sharedResult = await checkRoute(baseUrl, `/shared/${sharedToken}`);
+      routeResults.push(sharedResult);
+      const status = sharedResult.ok ? "PASS" : "WARN";
+      console.log(`[${status}] shared-token: /shared/${sharedToken} -> ${sharedResult.status}`);
+      if (!sharedResult.ok) {
+        console.log(`  - ${sharedResult.reason}`);
       }
     }
-  }
 
-  if (mode === "contract") {
-    if (strict) {
-      printGuide(mode, failures);
+    if (editorProjectId) {
+      const projectResult = await checkRoute(baseUrl, `/project/${editorProjectId}`);
+      routeResults.push(projectResult);
+      const status = projectResult.ok ? "PASS" : "WARN";
+      console.log(`[${status}] project-route: /project/${editorProjectId} -> ${projectResult.status}`);
+      if (!projectResult.ok) {
+        console.log(`  - ${projectResult.reason}`);
+      }
+    }
+
+    let failures = routeResults.filter((entry) => !entry.ok).length;
+
+    const shouldRunFlow = mode === "flow" || process.env.E2E_ROOM_FLOW_FULL === "1";
+
+    if (shouldRunFlow) {
+      try {
+        const flow = await runFullPrimaryFlow(baseUrl);
+        console.log(`[PASS] full-flow completed: project=${flow.projectId}, version=${flow.versionId}, share=${flow.shareId}`);
+      } catch (error) {
+        failures += 1;
+        const message = error instanceof Error ? error.message : String(error);
+        if (message.includes("Missing required env")) {
+          console.error(
+            "[FAIL] full-flow: flow 모드는 Supabase env가 필요합니다. (NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY)"
+          );
+        } else {
+          console.error(`[FAIL] full-flow: ${message}`);
+        }
+      }
+    }
+
+    if (mode === "contract") {
+      if (strict) {
+        if (printGuide(mode, failures)) {
+          process.exitCode = 1;
+        }
+        return;
+      }
+
+      if (failures > 0) {
+        console.log(`계약점검 경고: ${failures}개 항목에서 실패가 있습니다.`);
+        console.log("권장: E2E_ROOM_FLOW_STRICT=1로 재실행해 CI fail-fast로 확인하세요.");
+      } else {
+        console.log("contract point-pass: route shell 접근성이 확보되었습니다.");
+      }
+    }
+
+    if (!strict && mode === "smoke" && !shouldRunFlow) {
+      console.log("[SKIP] room-first smoke 모드는 실패를 실패로 간주하지 않고 점검 리포트를 종료합니다.");
+      console.log("강제 실패가 필요한 경우 E2E_ROOM_FLOW_STRICT=1 또는 --mode=contract로 실행하세요.");
       return;
     }
 
     if (failures > 0) {
-      console.log(`계약점검 경고: ${failures}개 항목에서 실패가 있습니다.`);
-      console.log("권장: E2E_ROOM_FLOW_STRICT=1로 재실행해 CI fail-fast로 확인하세요.");
+      process.exitCode = 1;
+      console.error(`room-first ${mode} checks failed: ${failures}`);
     } else {
-      console.log("contract point-pass: route shell 접근성이 확보되었습니다.");
+      console.log(`room-first ${mode} checks passed`);
     }
-  }
-
-  if (!strict && mode === "smoke" && !shouldRunFlow) {
-    console.log("[SKIP] room-first smoke 모드는 실패를 실패로 간주하지 않고 점검 리포트를 종료합니다.");
-    console.log("강제 실패가 필요한 경우 E2E_ROOM_FLOW_STRICT=1 또는 --mode=contract로 실행하세요.");
-    return;
-  }
-
-  if (failures > 0) {
-    process.exitCode = 1;
-    console.error(`room-first ${mode} checks failed: ${failures}`);
-  } else {
-    console.log(`room-first ${mode} checks passed`);
+  } finally {
+    await stopManagedLocalServer(managedLocalServer);
   }
 }
 

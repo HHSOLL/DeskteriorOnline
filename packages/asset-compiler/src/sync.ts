@@ -202,6 +202,63 @@ function buildCuratedInserts(curatedAssets: ReturnType<typeof getCuratedDeskteri
       ...requireCuratedContract(curatedAssets, "p2s_compact_speaker")
     },
     {
+      id: "p2s_wireless_mouse",
+      label: "P2S 무선 마우스",
+      category: "Electronics",
+      assetId: "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+      scale: [1, 1, 1],
+      description: "책상 상판 포커스 배치를 검증하기 위한 실측형 무선 마우스 카탈로그 자산입니다.",
+      brand: "DeskteriorOnline Studio",
+      price: "₩49,000",
+      options: "70x115x38 mm · desktop_top focus placement",
+      externalUrl: "https://www.ikea.com/kr/ko/search/?q=%EB%AC%B4%EC%84%A0%20%EB%A7%88%EC%9A%B0%EC%8A%A4",
+      dimensionsMm: { width: 70, depth: 115, height: 38 },
+      finishColor: "Graphite black",
+      finishMaterial: "Soft-touch plastic with rubber scroll wheel",
+      detailNotes:
+        "Compact wireless mouse authored as a shipping runtime package for golden-flow desk-top placement.",
+      scaleLocked: true,
+      ...requireCuratedContract(curatedAssets, "p2s_wireless_mouse")
+    },
+    {
+      id: "p2s_low_profile_keyboard",
+      label: "P2S 로우 프로파일 키보드",
+      category: "Electronics",
+      assetId: "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+      scale: [1, 1, 1],
+      description: "책상 상판 정밀 배치와 저장/복원 플로우를 검증하기 위한 텐키리스 키보드 자산입니다.",
+      brand: "DeskteriorOnline Studio",
+      price: "₩89,000",
+      options: "320x125x18 mm · desktop_top focus placement",
+      externalUrl: "https://www.ikea.com/kr/ko/search/?q=%ED%82%A4%EB%B3%B4%EB%93%9C",
+      dimensionsMm: { width: 320, depth: 125, height: 18 },
+      finishColor: "Warm charcoal",
+      finishMaterial: "Matte plastic chassis with low-profile keycaps",
+      detailNotes:
+        "Low-profile keyboard authored as a shipping runtime package for golden-flow desk-top placement.",
+      scaleLocked: true,
+      ...requireCuratedContract(curatedAssets, "p2s_low_profile_keyboard")
+    },
+    {
+      id: "p2s_under_desk_tray_mount",
+      label: "P2S 언더데스크 케이블 트레이",
+      category: "Storage",
+      assetId: "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+      scale: [1, 1, 1],
+      description: "책상 하부에 나사로 고정하는 케이블 트레이입니다. mounted focus placement 검증용 attachment point를 포함합니다.",
+      brand: "DeskteriorOnline Studio",
+      price: "₩45,000",
+      options: "520x220x90 mm · underside_screw mounted",
+      externalUrl: "https://www.ikea.com/kr/ko/search/?q=%EC%BC%80%EC%9D%B4%EB%B8%94%20%ED%8A%B8%EB%A0%88%EC%9D%B4",
+      dimensionsMm: { width: 520, depth: 220, height: 90 },
+      finishColor: "Powder coated black",
+      finishMaterial: "Steel basket with screw rails",
+      detailNotes:
+        "Under-desk cable tray with authored underside_screw attachment point compatible with desk_underside support surfaces.",
+      scaleLocked: true,
+      ...requireCuratedContract(curatedAssets, "p2s_under_desk_tray_mount")
+    },
+    {
       id: "p2s_desk_planter_pilea",
       label: "P2S 필레아 데스크 플랜터",
       category: "Plants",

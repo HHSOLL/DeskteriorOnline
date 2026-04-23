@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-23T21:41:00.301Z",
+  "key": "p2s_low_profile_keyboard",
+  "manifestId": "p2s_low_profile_keyboard",
+  "label": "P2S 로우 프로파일 키보드",
+  "assetId": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+  "sourcePath": "assets/blender/deskterior/p2s_low_profile_keyboard.blend",
+  "runtimePath": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+  "dimensionsMm": {
+    "width": 320,
+    "depth": 125,
+    "height": 18
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_low_profile_keyboard.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 80,
+      "maxTriangleCount": 20000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "surface placeable keyboard; no mounted attachment points required for publish"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+    "productId": "p2s_low_profile_keyboard",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 320,
+      "depth": 125,
+      "height": 18
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "DeskteriorOnline Studio",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+          "triangleCount": 20000,
+          "drawCallBudget": 80
+        }
+      ],
+      "proxy": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 20000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 320,
+          "depth": 125,
+          "height": 18
+        },
+        "centerMm": [
+          0,
+          9,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 로우 프로파일 키보드",
+        "finishColor": "Warm charcoal",
+        "finishMaterial": "Matte plastic chassis with low-profile keycaps",
+        "detailNotes": "Low-profile keyboard authored as a shipping runtime package for golden-flow desk-top placement."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 320,
+        "depth": 125,
+        "height": 18
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/blender/deskterior/p2s_low_profile_keyboard.blend",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

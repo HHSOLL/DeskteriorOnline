@@ -311,7 +311,10 @@ export async function buildCuratedPipelineSummary(): Promise<VerificationSummary
       });
     }
 
-    if (asset.attachmentAuthoring.mode === "manual_required") {
+    if (
+      asset.attachmentAuthoring.mode === "manual_required" &&
+      (!asset.attachmentAuthoring.points || asset.attachmentAuthoring.points.length === 0)
+    ) {
       createError(errors, "asset.attachment_authoring_missing", "Curated asset requires attachment authoring before publish.", {
         assetKey: asset.key,
         manifestId: asset.manifestId

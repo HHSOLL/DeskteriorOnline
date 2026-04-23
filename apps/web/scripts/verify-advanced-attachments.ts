@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { createEngine } from "@deskterioronline/engine-core";
 import { MonitorArmSolver, PlacementKernel } from "@deskterioronline/placement-kernel";
 import {
@@ -10,6 +12,22 @@ function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);
   }
+}
+
+function loadPublishedRuntimeAsset(assetKey: string): RuntimeAsset {
+  const descriptorPath = path.resolve(
+    process.cwd(),
+    "public",
+    "assets",
+    "catalog",
+    "runtime-packages",
+    `${assetKey}.json`
+  );
+  const descriptor = JSON.parse(readFileSync(descriptorPath, "utf8")) as {
+    runtimeAsset?: RuntimeAsset;
+  };
+  assert(descriptor.runtimeAsset, `${assetKey} published runtime package is missing runtimeAsset`);
+  return descriptor.runtimeAsset;
 }
 
 const state: LegacySceneStoreStateLike = {
@@ -380,6 +398,77 @@ try {
     "monitor-arm solver should flag unreachable targets when joint limits are exceeded"
   );
 
+  const publishedDesk = loadPublishedRuntimeAsset("p2s_desk_oak");
+  const publishedTray = loadPublishedRuntimeAsset("p2s_under_desk_tray_mount");
+  assert(
+    publishedDesk.supportSurfaces.some(
+      (surface) =>
+        surface.id === "desk-underside" &&
+        surface.type === "desk_underside" &&
+        surface.allowedAttachments.includes("underside_screw")
+    ),
+    "published desk package must include an underside screw-compatible support surface"
+  );
+  assert(
+    publishedTray.attachmentPoints.some(
+      (point) =>
+        point.type === "underside_screw" &&
+        (point.compatibleWith.includes("desk-underside") ||
+          point.compatibleWith.includes("desk_underside"))
+    ),
+    "published under-desk tray package must include a compatible underside_screw attachment point"
+  );
+
+  const publishedState: LegacySceneStoreStateLike = {
+    ...state,
+    assets: [
+      {
+        id: "desk-published",
+        assetId: publishedDesk.assetId,
+        catalogItemId: publishedDesk.assetId,
+        position: [1.6, 0, 1.2],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1]
+      },
+      {
+        id: "tray-published",
+        assetId: publishedTray.assetId,
+        catalogItemId: publishedTray.assetId,
+        position: [0, 0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1]
+      }
+    ]
+  };
+  const publishedDocument = migrateLegacySceneStoreStateToV2(publishedState, {
+    id: "verify-published-under-desk-attachment",
+    version: 2
+  });
+  const publishedEngine = createEngine(publishedDocument, [publishedDesk, publishedTray]);
+  const publishedKernel = new PlacementKernel(publishedEngine);
+  const trayTransaction = publishedKernel.begin({
+    objectId: "tray-published",
+    supportObjectId: "desk-published",
+    attachmentType: "underside_screw"
+  });
+  const trayState = trayTransaction.update({
+    uMm: 0,
+    vMm: 0,
+    normalOffsetMm: 90,
+    rotationMilliDeg: 0
+  });
+  assert(
+    trayState.constraintReport?.valid === true,
+    "published under-desk tray must pass real desk_underside attachment validation"
+  );
+  const trayCommitted = trayTransaction.commit();
+  assert(
+    trayCommitted.attachmentType === "underside_screw" &&
+      trayCommitted.supportObjectId === "desk-published" &&
+      trayCommitted.surfaceId === "desk-underside",
+    "published under-desk tray commit must persist the desk underside attachment relation"
+  );
+
   console.log("advanced attachments ok");
   console.log(
     JSON.stringify(
@@ -387,6 +476,8 @@ try {
         edgeClampValid: edgeClampState.constraintReport?.valid ?? false,
         vesaValid: vesaState.constraintReport?.valid ?? false,
         vesaPlacement: vesaCommitted,
+        publishedUnderDeskTrayValid: trayState.constraintReport?.valid ?? false,
+        publishedUnderDeskTrayPlacement: trayCommitted,
         articulationReachableJoints: articulationReachable.joints,
         articulationUnreachableErrors: articulationUnreachable.errors.map((issue) => issue.code)
       },

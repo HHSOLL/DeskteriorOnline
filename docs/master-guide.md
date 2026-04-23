@@ -42,6 +42,8 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `SceneViewport` 기반 경로는 telemetry가 켜져 있을 때 live performance budget HUD로 draw call / FPS floor / heap growth / interaction latency / BVH offload 경고를 즉시 노출해야 한다.
 - 성능 회귀 보고는 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__`로 캡처한 JSON entry와 `perf:report:verify` CLI 검증을 기본 절차로 사용한다.
 - `qa:primary:perf`는 `type-check + lint + build + verify:performance-budget + verify:asset-instancing + verify:asset-lod + verify:benchmark-baseline`를 한 번에 묶는 self-contained performance gate로 유지한다.
+- editor undo/redo는 snapshot history를 기준으로 `Cmd/Ctrl+Z`, `Shift+Cmd/Ctrl+Z`, `Ctrl+Y` 단축키로 즉시 접근 가능해야 한다.
+- `primary:e2e:room-flow:strict`는 외부 `E2E_ROOM_FLOW_BASE_URL`이 없을 때 로컬 production build/server를 스스로 올려 route shell contract를 self-contained하게 검증해야 한다.
 - runtime HUD 경고와 regression report 검증은 같은 성능 budget helper를 기준으로 drift 없이 유지한다.
 - loaded GLB 자산의 picking은 `three-mesh-bvh` 기반 bounds tree raycast를 기본값으로 사용한다.
 - loaded GLB 자산의 bounds tree 생성은 large non-interleaved geometry에 한해 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync fallback을 사용한다.
@@ -52,6 +54,8 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - builder preview는 `frameloop="demand"`를 유지하지만, editor top-view(room / desk precision)와 editor walk-view는 black flicker 회귀를 막기 위해 안정성 우선 프로필에서 `frameloop="always"`를 사용한다.
 - 실측 고정 제품(`scaleLocked=true`)은 에디터에서 임의 스케일 변경을 허용하지 않는다.
 - 데스크/선반 표면 배치는 실측 규격이 있으면 해당 값 기반으로 support surface를 계산한다.
+- 기본 desk runtime package는 `desktop_top`만이 아니라 실제 mounted validation용 `desk_edge`, `desk_underside` support surface를 함께 노출해야 한다.
+- catalog -> scene store -> runtime bridge 경로는 authored `supportProfile`의 `surfaceType`, `allowedAttachments`, `thicknessMm`, `localFrame`를 손실 없이 유지해야 한다.
 - floor/surface 배치는 active asset footprint 기반 wall clearance + 자산 간 분리(relaxation)를 적용한다.
 - Blender 슬롯(`DeskWood`, `DeskMetal`, `StandWood`, `StandPad`, `LampBody`, `LampAccent`, `LampBulb`)은 slot-aware finish 매핑을 우선 적용한다.
 - project thumbnail storage가 일시적으로 준비되지 않았더라도 version save와 editor 진입은 계속되어야 한다.

@@ -1,6 +1,5 @@
 import { access, copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import sharp from "sharp";
 import type {
   AssetQaReport,
   AttachmentPoint,
@@ -124,6 +123,93 @@ function normalizeSupportProfile(value: unknown): CuratedSupportProfileExpectati
           ? ([surface.margin[0], surface.margin[1]] as [number, number])
           : undefined;
 
+      const localFrame =
+        isObjectRecord(surface.localFrame) &&
+        Array.isArray(surface.localFrame.originMm) &&
+        Array.isArray(surface.localFrame.tangentU) &&
+        Array.isArray(surface.localFrame.tangentV) &&
+        Array.isArray(surface.localFrame.normal) &&
+        surface.localFrame.originMm.length === 3 &&
+        surface.localFrame.tangentU.length === 3 &&
+        surface.localFrame.tangentV.length === 3 &&
+        surface.localFrame.normal.length === 3 &&
+        surface.localFrame.originMm.every((entry) => typeof entry === "number") &&
+        surface.localFrame.tangentU.every((entry) => typeof entry === "number") &&
+        surface.localFrame.tangentV.every((entry) => typeof entry === "number") &&
+        surface.localFrame.normal.every((entry) => typeof entry === "number")
+          ? {
+              originMm: [
+                surface.localFrame.originMm[0],
+                surface.localFrame.originMm[1],
+                surface.localFrame.originMm[2]
+              ] as [number, number, number],
+              tangentU: [
+                surface.localFrame.tangentU[0],
+                surface.localFrame.tangentU[1],
+                surface.localFrame.tangentU[2]
+              ] as [number, number, number],
+              tangentV: [
+                surface.localFrame.tangentV[0],
+                surface.localFrame.tangentV[1],
+                surface.localFrame.tangentV[2]
+              ] as [number, number, number],
+              normal: [
+                surface.localFrame.normal[0],
+                surface.localFrame.normal[1],
+                surface.localFrame.normal[2]
+              ] as [number, number, number]
+            }
+          : undefined;
+
+      const surfaceType =
+        surface.surfaceType === "floor" ||
+        surface.surfaceType === "wall" ||
+        surface.surfaceType === "desktop_top" ||
+        surface.surfaceType === "shelf_top" ||
+        surface.surfaceType === "desk_edge" ||
+        surface.surfaceType === "desk_underside" ||
+        surface.surfaceType === "monitor_back" ||
+        surface.surfaceType === "pegboard"
+          ? surface.surfaceType
+          : undefined;
+
+      const allowedAttachments =
+        Array.isArray(surface.allowedAttachments) &&
+        surface.allowedAttachments.every((entry) => typeof entry === "string")
+          ? surface.allowedAttachments.filter(
+              (
+                entry
+              ): entry is
+                | "place_on_surface"
+                | "edge_clamp"
+                | "underside_screw"
+                | "vesa_mount"
+                | "grommet_hole"
+                | "wall_screw"
+                | "adhesive_patch"
+                | "magnetic_attach"
+                | "cable_route"
+                | "peg_slot"
+                | "wall_attach" =>
+                entry === "place_on_surface" ||
+                entry === "edge_clamp" ||
+                entry === "underside_screw" ||
+                entry === "vesa_mount" ||
+                entry === "grommet_hole" ||
+                entry === "wall_screw" ||
+                entry === "adhesive_patch" ||
+                entry === "magnetic_attach" ||
+                entry === "cable_route" ||
+                entry === "peg_slot" ||
+                entry === "wall_attach"
+            )
+          : undefined;
+
+      const thicknessMm =
+        typeof surface.thicknessMm === "number" && Number.isFinite(surface.thicknessMm) && surface.thicknessMm > 0
+          ? surface.thicknessMm
+          : undefined;
+
       return [
         {
           id: surface.id,
@@ -134,7 +220,11 @@ function normalizeSupportProfile(value: unknown): CuratedSupportProfileExpectati
           center: [centerX, centerY] as [number, number],
           size: [sizeX, sizeY] as [number, number],
           top: surface.top,
-          ...(margin ? { margin } : {})
+          ...(margin ? { margin } : {}),
+          ...(surfaceType ? { surfaceType } : {}),
+          ...(allowedAttachments ? { allowedAttachments } : {}),
+          ...(thicknessMm ? { thicknessMm } : {}),
+          ...(localFrame ? { localFrame } : {})
         }
       ];
     })
@@ -200,13 +290,15 @@ function buildSupportSurfaces(
     const marginY = surface.margin?.[1] ?? 0;
     return {
       id: surface.id,
-      type: resolveSupportSurfaceType(surface.anchorTypes),
-      localFrame: {
-        originMm: [Math.round(surface.center[0] * 1000), topMm, Math.round(surface.center[1] * 1000)],
-        tangentU: [1000, 0, 0],
-        tangentV: [0, 0, 1000],
-        normal: [0, 1000, 0]
-      },
+      type: surface.surfaceType ?? resolveSupportSurfaceType(surface.anchorTypes),
+      localFrame:
+        surface.localFrame ??
+        ({
+          originMm: [Math.round(surface.center[0] * 1000), topMm, Math.round(surface.center[1] * 1000)],
+          tangentU: [1000, 0, 0],
+          tangentV: [0, 0, 1000],
+          normal: [0, 1000, 0]
+        } satisfies SupportSurface["localFrame"]),
       boundsMm: {
         min: [
           Math.round((surface.center[0] - surface.size[0] / 2 + marginX) * 1000),
@@ -217,7 +309,8 @@ function buildSupportSurfaces(
           Math.round((surface.center[1] + surface.size[1] / 2 - marginY) * 1000)
         ]
       },
-      allowedAttachments: resolveAllowedAttachments(surface.anchorTypes)
+      ...(surface.thicknessMm ? { thicknessMm: surface.thicknessMm } : {}),
+      allowedAttachments: surface.allowedAttachments ?? resolveAllowedAttachments(surface.anchorTypes)
     };
   });
 }
@@ -247,7 +340,7 @@ function buildMaterialVariants(entry: ManifestEntry): MaterialVariant[] {
 }
 
 function buildAttachmentPoints(asset: CuratedDeskteriorAsset, errors: string[]): AttachmentPoint[] {
-  const points: AttachmentPoint[] = [];
+  const points = asset.attachmentAuthoring.points ?? [];
   if (asset.attachmentAuthoring.mode === "manual_required" && points.length === 0) {
     errors.push(`attachment authoring is required for ${asset.manifestId} but no attachment points were authored`);
   }
@@ -410,7 +503,14 @@ async function ensureThumbnailFile(
     </svg>
   `;
 
-  await sharp(Buffer.from(svg)).webp({ quality: 82 }).toFile(thumbnailPath);
+  try {
+    const sharp = (await import("sharp")).default;
+    await sharp(Buffer.from(svg)).webp({ quality: 82 }).toFile(thumbnailPath);
+  } catch {
+    const onePixelWebp =
+      "UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA";
+    await writeFile(thumbnailPath, Buffer.from(onePixelWebp, "base64"));
+  }
   return fileExists(thumbnailPath);
 }
 

@@ -1,3 +1,4 @@
+import type { SupportSurface } from "@deskterioronline/scene-schema";
 import { normalizeSceneAnchorType, type SceneAnchorType } from "./anchor-types";
 
 export type SupportAnchorType = Extract<
@@ -12,6 +13,10 @@ export type AssetSupportSurface = {
   size: [number, number];
   top: number;
   margin?: [number, number];
+  surfaceType?: SupportSurface["type"];
+  allowedAttachments?: SupportSurface["allowedAttachments"];
+  thicknessMm?: number;
+  localFrame?: SupportSurface["localFrame"];
 };
 
 export type AssetSupportProfile = {
@@ -305,6 +310,89 @@ export function normalizeAssetSupportProfile(value: unknown): AssetSupportProfil
       }
       const centerValue = Array.isArray(surface.center) ? surface.center : [surface.centerX, surface.centerZ];
       const marginValue = Array.isArray(surface.margin) ? surface.margin : [surface.marginX, surface.marginZ];
+      const surfaceType =
+        surface.surfaceType === "floor" ||
+        surface.surfaceType === "wall" ||
+        surface.surfaceType === "desktop_top" ||
+        surface.surfaceType === "shelf_top" ||
+        surface.surfaceType === "desk_edge" ||
+        surface.surfaceType === "desk_underside" ||
+        surface.surfaceType === "monitor_back" ||
+        surface.surfaceType === "pegboard"
+          ? surface.surfaceType
+          : undefined;
+      const allowedAttachments =
+        Array.isArray(surface.allowedAttachments) &&
+        surface.allowedAttachments.every((entry) => typeof entry === "string")
+          ? surface.allowedAttachments.filter(
+              (
+                entry
+              ): entry is
+                | "place_on_surface"
+                | "edge_clamp"
+                | "underside_screw"
+                | "vesa_mount"
+                | "grommet_hole"
+                | "wall_screw"
+                | "adhesive_patch"
+                | "magnetic_attach"
+                | "cable_route"
+                | "peg_slot"
+                | "wall_attach" =>
+                entry === "place_on_surface" ||
+                entry === "edge_clamp" ||
+                entry === "underside_screw" ||
+                entry === "vesa_mount" ||
+                entry === "grommet_hole" ||
+                entry === "wall_screw" ||
+                entry === "adhesive_patch" ||
+                entry === "magnetic_attach" ||
+                entry === "cable_route" ||
+                entry === "peg_slot" ||
+                entry === "wall_attach"
+            )
+          : undefined;
+      const thicknessMm =
+        typeof surface.thicknessMm === "number" && Number.isFinite(surface.thicknessMm) && surface.thicknessMm > 0
+          ? surface.thicknessMm
+          : undefined;
+      const localFrame =
+        isRecord(surface.localFrame) &&
+        Array.isArray(surface.localFrame.originMm) &&
+        Array.isArray(surface.localFrame.tangentU) &&
+        Array.isArray(surface.localFrame.tangentV) &&
+        Array.isArray(surface.localFrame.normal) &&
+        surface.localFrame.originMm.length === 3 &&
+        surface.localFrame.tangentU.length === 3 &&
+        surface.localFrame.tangentV.length === 3 &&
+        surface.localFrame.normal.length === 3 &&
+        surface.localFrame.originMm.every((entry) => typeof entry === "number") &&
+        surface.localFrame.tangentU.every((entry) => typeof entry === "number") &&
+        surface.localFrame.tangentV.every((entry) => typeof entry === "number") &&
+        surface.localFrame.normal.every((entry) => typeof entry === "number")
+          ? {
+              originMm: [
+                toNumber(surface.localFrame.originMm[0], 0),
+                toNumber(surface.localFrame.originMm[1], 0),
+                toNumber(surface.localFrame.originMm[2], 0)
+              ] as [number, number, number],
+              tangentU: [
+                toNumber(surface.localFrame.tangentU[0], 0),
+                toNumber(surface.localFrame.tangentU[1], 0),
+                toNumber(surface.localFrame.tangentU[2], 0)
+              ] as [number, number, number],
+              tangentV: [
+                toNumber(surface.localFrame.tangentV[0], 0),
+                toNumber(surface.localFrame.tangentV[1], 0),
+                toNumber(surface.localFrame.tangentV[2], 0)
+              ] as [number, number, number],
+              normal: [
+                toNumber(surface.localFrame.normal[0], 0),
+                toNumber(surface.localFrame.normal[1], 0),
+                toNumber(surface.localFrame.normal[2], 0)
+              ] as [number, number, number]
+            }
+          : undefined;
       return {
         id: typeof surface.id === "string" && surface.id.length > 0 ? surface.id : `surface-${index + 1}`,
         anchorTypes,
@@ -317,7 +405,11 @@ export function normalizeAssetSupportProfile(value: unknown): AssetSupportProfil
         margin:
           Array.isArray(marginValue) && marginValue.length >= 2
             ? [Math.max(0, toNumber(marginValue[0], 0)), Math.max(0, toNumber(marginValue[1], 0))]
-            : undefined
+            : undefined,
+        ...(surfaceType ? { surfaceType } : {}),
+        ...(allowedAttachments ? { allowedAttachments } : {}),
+        ...(thicknessMm ? { thicknessMm } : {}),
+        ...(localFrame ? { localFrame } : {})
       };
     })
     .filter((surface): surface is AssetSupportSurface => Boolean(surface));

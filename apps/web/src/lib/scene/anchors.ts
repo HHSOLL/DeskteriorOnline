@@ -408,7 +408,7 @@ function resolveSurfacePlacementForCandidate(
   const hoverOffset = anchorType === "shelf_surface" ? 0.05 : 0.03;
 
   return profile.surfaces
-    .filter((surface) => surface.anchorTypes.includes(anchorType))
+    .filter((surface) => surface.anchorTypes.some((entry) => entry === anchorType))
     .reduce<{
       position: Position;
       distanceSq: number;

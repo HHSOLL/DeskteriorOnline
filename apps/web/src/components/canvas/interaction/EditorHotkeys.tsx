@@ -20,11 +20,44 @@ export default function EditorHotkeys() {
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const assets = useAssetSelector((slice) => slice.assets);
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
+  const undo = usePublishSelector((slice) => slice.undo);
+  const redo = usePublishSelector((slice) => slice.redo);
   const topViewPolicy = resolveTopViewInteractionPolicy(topMode);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (viewMode !== "top" || readOnly || !topViewPolicy.allowTransformHotkeys) return;
+      if (readOnly) return;
+
+      const target = event.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+
+      const key = event.key.toLowerCase();
+      const isModifierPressed = event.metaKey || event.ctrlKey;
+      if (isModifierPressed && key === "z") {
+        event.preventDefault();
+        if (event.shiftKey) {
+          redo();
+        } else {
+          undo();
+        }
+        return;
+      }
+
+      if (isModifierPressed && key === "y") {
+        event.preventDefault();
+        redo();
+        return;
+      }
+
+      if (viewMode !== "top" || !topViewPolicy.allowTransformHotkeys) return;
       if (event.key.toLowerCase() === "g") {
         setTransformMode("translate");
         return;
@@ -60,6 +93,8 @@ export default function EditorHotkeys() {
     setTransformMode,
     setTransformSpace,
     transformSpace,
+    undo,
+    redo,
     viewMode,
     topViewPolicy
   ]);

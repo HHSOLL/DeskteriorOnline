@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-23T21:41:00.301Z",
+  "key": "p2s_wireless_mouse",
+  "manifestId": "p2s_wireless_mouse",
+  "label": "P2S 무선 마우스",
+  "assetId": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+  "sourcePath": "assets/blender/deskterior/p2s_wireless_mouse.blend",
+  "runtimePath": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+  "dimensionsMm": {
+    "width": 70,
+    "depth": 115,
+    "height": 38
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_wireless_mouse.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 8,
+      "maxTriangleCount": 4000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "surface placeable mouse; no mounted attachment points required for publish"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+    "productId": "p2s_wireless_mouse",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 70,
+      "depth": 115,
+      "height": 38
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "DeskteriorOnline Studio",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+          "triangleCount": 4000,
+          "drawCallBudget": 8
+        }
+      ],
+      "proxy": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 4000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 70,
+          "depth": 115,
+          "height": 38
+        },
+        "centerMm": [
+          0,
+          19,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 무선 마우스",
+        "finishColor": "Graphite black",
+        "finishMaterial": "Soft-touch plastic with rubber scroll wheel",
+        "detailNotes": "Compact wireless mouse authored as a shipping runtime package for golden-flow desk-top placement."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 70,
+        "depth": 115,
+        "height": 38
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/blender/deskterior/p2s_wireless_mouse.blend",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "default",
+    "label": "P2S 로우 프로파일 키보드",
+    "finishColor": "Warm charcoal",
+    "finishMaterial": "Matte plastic chassis with low-profile keycaps",
+    "detailNotes": "Low-profile keyboard authored as a shipping runtime package for golden-flow desk-top placement."
+  }
+]
