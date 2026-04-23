@@ -19,6 +19,7 @@
     "assets:sync:deskterior": "node --import tsx scripts/sync-deskterior-catalog.ts",
     "assets:sync:ktx2-transcoder": "node --import tsx scripts/sync-ktx2-transcoder.ts",
     "assets:setup:gltfpack": "node ../../scripts/setup-gltfpack.mjs",
+    "asset:ingest": "node --import tsx scripts/asset-compiler.ts ingest",
     "asset:compile": "node --import tsx scripts/asset-compiler.ts compile",
     "asset:validate": "node --import tsx scripts/asset-compiler.ts validate",
     "asset:optimize": "node --import tsx scripts/asset-compiler.ts optimize",

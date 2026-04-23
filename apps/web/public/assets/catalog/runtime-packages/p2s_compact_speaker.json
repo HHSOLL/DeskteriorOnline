@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "asset-package-alpha-v1",
-  "generatedAt": "2026-04-22T17:15:59.294Z",
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-23T06:38:36.724Z",
   "key": "p2s_compact_speaker",
   "manifestId": "p2s_compact_speaker",
   "label": "P2S 컴팩트 스피커",
@@ -47,6 +47,137 @@
     }
   },
   "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "surface placeable speaker; no mounted attachment points required for publish"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb",
+    "productId": "p2s_compact_speaker",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 90,
+      "depth": 141,
+      "height": 220
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "DeskteriorOnline Studio",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb",
+          "triangleCount": 2000,
+          "drawCallBudget": 8
+        }
+      ],
+      "proxy": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 2000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 90,
+          "depth": 141,
+          "height": 220
+        },
+        "centerMm": [
+          0,
+          110,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 컴팩트 스피커",
+        "finishColor": "Graphite black",
+        "finishMaterial": "Powder-coated metal with woven grille",
+        "detailNotes": "Single compact desktop speaker with two front drivers and rounded cabinet edges for modern desk setups."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 90,
+        "depth": 141,
+        "height": 220
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/blender/deskterior/p2s_compact_speaker.blend",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_compact_speaker.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_compact_speaker.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_compact_speaker.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_compact_speaker.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_compact_speaker.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_compact_speaker.webp",
+      "required": true,
+      "exists": true
+    }
+  },
   "runtime": {
     "lods": [
       {
@@ -54,11 +185,13 @@
         "path": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb"
       }
     ],
-    "proxyPath": null,
-    "collidersPath": null,
-    "supportSurfacesEmbedded": false,
-    "attachmentPointsPath": null,
-    "qaReportEmbedded": true
+    "proxyPath": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_compact_speaker.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_compact_speaker.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_compact_speaker.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_compact_speaker.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_compact_speaker.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_compact_speaker.webp"
   },
   "qa": {
     "status": "passed",

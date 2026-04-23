@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "asset-package-alpha-v1",
-  "generatedAt": "2026-04-22T17:15:59.294Z",
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-23T06:38:36.724Z",
   "key": "p2s_ceramic_mug",
   "manifestId": "p2s_ceramic_mug_sand",
   "label": "P2S 샌드 세라믹 머그",
@@ -47,6 +47,137 @@
     }
   },
   "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "decor asset; no mounted attachment points required for publish"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+    "productId": "p2s_ceramic_mug_sand",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 120,
+      "depth": 84,
+      "height": 92
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "DeskteriorOnline Studio",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+          "triangleCount": 4000,
+          "drawCallBudget": 4
+        }
+      ],
+      "proxy": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 4000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 120,
+          "depth": 84,
+          "height": 92
+        },
+        "centerMm": [
+          0,
+          46,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 샌드 세라믹 머그",
+        "finishColor": "Sand beige",
+        "finishMaterial": "Glazed ceramic",
+        "detailNotes": "Single handled mug with thick ceramic wall and soft satin glaze. Dimensions reflect Blender-measured envelope for shelf and desk placement."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 120,
+        "depth": 84,
+        "height": 92
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/blender/deskterior/p2s_ceramic_mug.blend",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
+      "required": true,
+      "exists": true
+    }
+  },
   "runtime": {
     "lods": [
       {
@@ -54,11 +185,13 @@
         "path": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb"
       }
     ],
-    "proxyPath": null,
-    "collidersPath": null,
-    "supportSurfacesEmbedded": false,
-    "attachmentPointsPath": null,
-    "qaReportEmbedded": true
+    "proxyPath": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp"
   },
   "qa": {
     "status": "passed",

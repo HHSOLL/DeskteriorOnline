@@ -58,6 +58,7 @@ Baseline artifacts:
 - `benchmark-scenes/dense-desk.json`
 - `benchmark-scenes/heavy-assets.json`
 - `benchmark-runner/collect-baseline.ts`
+- curated runtime asset benchmark는 `asset:publish`가 생성한 runtime package descriptor + sidecar(`colliders`, `support-surfaces`, `qa-report`)가 최신 상태라는 전제를 둔다.
 
 ```bash
 npm --workspace apps/web run benchmarks:collect:baseline
@@ -310,6 +311,16 @@ Updated:
 
 Removed/Deprecated:
 - runtime package artifact가 없어도 asset pipeline 회귀를 충분히 추적할 수 있다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Published Artifact Guardrail)
+Added:
+- curated asset publish 결과는 descriptor/sidecar뿐 아니라 `proxy.glb`, thumbnail, file manifest parity, support surface bound를 모두 충족해야 한다.
+
+Updated:
+- asset compiler guardrail 범위를 `runtime package publish`에서 `runtime package publish + published artifact verification`까지 확장한다.
+
+Removed/Deprecated:
+- proxy/thumbnail/file manifest mismatch가 성능/전달 guardrail 밖의 문제라는 가정.
 
 ## 2026-04-23 변경 동기화 (Visibility Lifecycle Budget)
 Added:

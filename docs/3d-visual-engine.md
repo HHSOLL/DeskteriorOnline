@@ -102,7 +102,8 @@ Removed/Deprecated:
 - 저장 경계에서는 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, renderer/store는 meter float 파생값만 소비한다.
 - 제품 물리 메타데이터(`dimensionsMm`, `finishColor`, `finishMaterial`, `detailNotes`, `scaleLocked`)를 누락 없이 전달한다.
 - curated deskterior 자산은 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 product metadata와 함께 save/load/public payload roundtrip에서 유지한다.
-- curated runtime asset publish는 `packages/asset-compiler`가 생성한 alpha `runtime-packages.json`와 per-asset package descriptor를 기준으로 다음 compiler 단계로 승격한다.
+- curated runtime asset publish는 `packages/asset-compiler`가 생성한 alpha `runtime-packages.json`, per-asset descriptor, `colliders/support-surfaces/attachment-points/material-variants/qa-report` sidecar를 기준으로 다음 compiler 단계로 승격한다.
+- alpha runtime package descriptor는 embedded `runtimeAsset` 계약을 포함해야 하며, scene-schema `RuntimeAsset`과 publish artifact가 drift 없이 대응되어야 한다.
 - `verify:scene-document`는 save payload -> sceneDocument -> parse/load roundtrip에서 placement/support metadata/product metadata가 유지되는지 점검한다.
 - `verify:public-scene`는 shared_projects + pinned version + preview meta에서 shared viewer payload가 같은 placement/support/product metadata를 재현하는지 점검한다.
 - `verify:showcase-scene`는 gallery/community 카드 projection이 shared viewer public payload와 같은 version/preview asset summary를 유지하는지 점검한다.
@@ -648,3 +649,14 @@ Updated:
 
 Removed/Deprecated:
 - runtime package artifact 없이 manifest만 있으면 compiler phase를 닫을 수 있다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha Runtime Delivery)
+Added:
+- alpha runtime package는 descriptor/sidecar만이 아니라 실제 `proxy.glb`와 catalog thumbnail을 함께 생성해 proxy-first delivery와 catalog visibility를 동시에 보장해야 한다.
+- published package 검증은 support surface가 asset envelope 밖으로 나가지 않는지, sidecar가 embedded `runtimeAsset`와 동일한지, file manifest가 실제 파일 존재와 일치하는지 확인해야 한다.
+
+Updated:
+- runtime delivery 품질 기준을 “descriptor publish 가능”에서 “descriptor + sidecar + proxy + thumbnail + published artifact verification” 구조로 강화한다.
+
+Removed/Deprecated:
+- proxy/thumbnail이 나중 단계까지 placeholder여도 compiler phase를 닫을 수 있다는 가정.
