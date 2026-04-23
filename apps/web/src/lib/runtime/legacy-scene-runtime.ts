@@ -89,21 +89,24 @@ function mapRuntimeAssets(assets: SceneAsset[]): RuntimeAsset[] {
         supportSurfaces:
           asset.supportProfile?.surfaces?.map((surface) => ({
             id: surface.id,
-            type: surface.anchorTypes?.includes("desk_surface")
-              ? "desktop_top"
-              : surface.anchorTypes?.includes("shelf_surface")
-                ? "shelf_top"
-                : "desktop_top",
-            localFrame: {
-              originMm: [
-                Math.round(surface.center[0] * 1000),
-                Math.round(surface.top * 1000),
-                Math.round(surface.center[1] * 1000)
-              ],
-              tangentU: [1, 0, 0],
-              tangentV: [0, 0, 1],
-              normal: [0, 1, 0]
-            },
+            type:
+              surface.surfaceType ??
+              (surface.anchorTypes?.includes("desk_surface")
+                ? "desktop_top"
+                : surface.anchorTypes?.includes("shelf_surface")
+                  ? "shelf_top"
+                  : "desktop_top"),
+            localFrame:
+              surface.localFrame ?? {
+                originMm: [
+                  Math.round(surface.center[0] * 1000),
+                  Math.round(surface.top * 1000),
+                  Math.round(surface.center[1] * 1000)
+                ],
+                tangentU: [1, 0, 0],
+                tangentV: [0, 0, 1],
+                normal: [0, 1, 0]
+              },
             boundsMm: {
               min: [
                 Math.round((surface.center[0] - surface.size[0] / 2 + surface.margin[0]) * 1000),
@@ -114,7 +117,8 @@ function mapRuntimeAssets(assets: SceneAsset[]): RuntimeAsset[] {
                 Math.round((surface.center[1] + surface.size[1] / 2 - surface.margin[1]) * 1000)
               ]
             },
-            allowedAttachments: ["place_on_surface", "edge_clamp"]
+            ...(typeof surface.thicknessMm === "number" ? { thicknessMm: surface.thicknessMm } : {}),
+            allowedAttachments: surface.allowedAttachments ?? ["place_on_surface", "edge_clamp"]
           })) ?? [],
         attachmentPoints: [],
         materialVariants: [

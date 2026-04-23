@@ -55,6 +55,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - 실측 고정 제품(`scaleLocked=true`)은 에디터에서 임의 스케일 변경을 허용하지 않는다.
 - 데스크/선반 표면 배치는 실측 규격이 있으면 해당 값 기반으로 support surface를 계산한다.
 - 기본 desk runtime package는 `desktop_top`만이 아니라 실제 mounted validation용 `desk_edge`, `desk_underside` support surface를 함께 노출해야 한다.
+- catalog -> scene store -> runtime bridge 경로는 authored `supportProfile`의 `surfaceType`, `allowedAttachments`, `thicknessMm`, `localFrame`를 손실 없이 유지해야 한다.
 - floor/surface 배치는 active asset footprint 기반 wall clearance + 자산 간 분리(relaxation)를 적용한다.
 - Blender 슬롯(`DeskWood`, `DeskMetal`, `StandWood`, `StandPad`, `LampBody`, `LampAccent`, `LampBulb`)은 slot-aware finish 매핑을 우선 적용한다.
 - project thumbnail storage가 일시적으로 준비되지 않았더라도 version save와 editor 진입은 계속되어야 한다.
