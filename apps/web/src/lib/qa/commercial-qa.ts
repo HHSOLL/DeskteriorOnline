@@ -2,6 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import type { SceneDocument } from "../domain/scene-document";
 import { inspectSceneDocumentIntegrity } from "../domain/scene-integrity";
+import {
+  compatibilityVerificationLedger,
+  placementRegressionEvidenceLedger,
+  type QaVerificationStatus
+} from "./verification-ledger";
 
 type RuntimePackageIndexEntry = {
   key: string;
@@ -36,6 +41,7 @@ type RuntimePackageDescriptor = {
 };
 
 type CommercialQaStatus = "pass" | "warning" | "fail";
+type CompatibilityProfileStatus = "target" | "verify" | "fallback";
 
 type BenchmarkBaselineEntry = {
   scenario: string;
@@ -110,6 +116,8 @@ export type CommercialQaSnapshot = {
   }>;
   placementRegression: {
     registeredScripts: string[];
+    verifiedSuites: number;
+    requiredSuites: number;
     suites: Array<{
       id: string;
       label: string;
@@ -118,13 +126,27 @@ export type CommercialQaSnapshot = {
       target: string;
       coverage: string[];
       detail: string;
+      lastVerifiedAt: string | null;
+      verificationMethod: string;
+      evidence: string[];
     }>;
+  };
+  compatibilitySummary: {
+    requiredProfiles: number;
+    verifiedProfiles: number;
+    pendingProfiles: number;
+    fallbackProfiles: number;
   };
   compatibilityMatrix: Array<{
     profile: string;
     browser: string;
     deviceClass: string;
-    status: "target" | "verify" | "fallback";
+    status: CompatibilityProfileStatus;
+    verificationStatus: QaVerificationStatus;
+    requiredForRelease: boolean;
+    lastVerifiedAt: string | null;
+    verificationMethod: string;
+    evidence: string[];
     notes: string;
   }>;
   sceneIntegrity: {
@@ -298,14 +320,25 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     }
   ].map((suite) => {
     const isRegistered = verifyScripts.includes(suite.script);
+    const evidenceRecord =
+      placementRegressionEvidenceLedger.find((record) => record.id === suite.id || record.script === suite.script) ?? null;
+    const isVerified = Boolean(isRegistered && evidenceRecord && evidenceRecord.status === "verified");
     return {
       ...suite,
-      status: (isRegistered ? "pass" : "fail") as CommercialQaStatus,
-      detail: isRegistered
-        ? `${suite.script} is registered and part of the commercial QA regression surface.`
-        : `${suite.script} is missing from apps/web/package.json.`
+      status: (isVerified ? "pass" : isRegistered ? "warning" : "fail") as CommercialQaStatus,
+      detail: !isRegistered
+        ? `${suite.script} is missing from apps/web/package.json.`
+        : evidenceRecord
+          ? `${suite.script} is registered and has a verification ledger entry.`
+          : `${suite.script} is registered but missing verification evidence.`,
+      lastVerifiedAt: evidenceRecord?.lastVerifiedAt ?? null,
+      verificationMethod: evidenceRecord?.verificationMethod ?? "untracked",
+      evidence: evidenceRecord?.evidence ?? []
     };
   });
+  const requiredCompatibilityProfiles = compatibilityVerificationLedger.filter((entry) => entry.requiredForRelease);
+  const verifiedCompatibilityProfiles = requiredCompatibilityProfiles.filter((entry) => entry.status === "verified");
+  const pendingCompatibilityProfiles = requiredCompatibilityProfiles.filter((entry) => entry.status !== "verified");
 
   const releaseGates: CommercialReleaseGate[] = [
     {
@@ -333,8 +366,8 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     {
       id: "compatibility-matrix",
       label: "Browser/device compatibility matrix",
-      status: "pass",
-      detail: "Desktop and fallback profiles are documented for manual regression."
+      status: pendingCompatibilityProfiles.length === 0 ? "pass" : "warning",
+      detail: `${verifiedCompatibilityProfiles.length}/${requiredCompatibilityProfiles.length} required browser/device profiles have verification records.`
     },
     {
       id: "placement-regression",
@@ -391,44 +424,31 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     ],
     placementRegression: {
       registeredScripts: verifyScripts,
+      verifiedSuites: placementRegressionSuites.filter((suite) => suite.status === "pass").length,
+      requiredSuites: placementRegressionSuites.length,
       suites: placementRegressionSuites
     },
+    compatibilitySummary: {
+      requiredProfiles: requiredCompatibilityProfiles.length,
+      verifiedProfiles: verifiedCompatibilityProfiles.length,
+      pendingProfiles: pendingCompatibilityProfiles.length,
+      fallbackProfiles: compatibilityVerificationLedger.filter((entry) => entry.status === "fallback").length
+    },
     compatibilityMatrix: [
-      {
-        profile: "Desktop Balanced",
-        browser: "Chrome latest",
-        deviceClass: "desktop dGPU / modern iGPU",
-        status: "target",
-        notes: "60fps editor target, full focus placement and performance HUD verification."
-      },
-      {
-        profile: "Desktop Balanced",
-        browser: "Edge latest",
-        deviceClass: "desktop / laptop",
-        status: "target",
-        notes: "Release-blocking browser for enterprise Windows path."
-      },
-      {
-        profile: "Desktop Fallback",
-        browser: "Safari latest",
-        deviceClass: "MacBook class",
-        status: "verify",
-        notes: "WebGL fallback, memory telemetry may be partial."
-      },
-      {
-        profile: "Low-spec Laptop",
-        browser: "Chrome latest",
-        deviceClass: "integrated GPU",
-        status: "verify",
-        notes: "Balanced tier should degrade to 30fps fallback without breaking focus placement."
-      },
-      {
-        profile: "Mobile Viewer Fallback",
-        browser: "Safari iOS / Chrome Android",
-        deviceClass: "mobile",
-        status: "fallback",
-        notes: "Viewer/read-only posture only; no commercial editor commitment."
-      }
+      ...compatibilityVerificationLedger.map((entry) => ({
+        profile: entry.profile,
+        browser: entry.browser,
+        deviceClass: entry.deviceClass,
+        status: (
+          entry.status === "fallback" ? "fallback" : entry.requiredForRelease ? "target" : "verify"
+        ) as CompatibilityProfileStatus,
+        verificationStatus: entry.status,
+        requiredForRelease: entry.requiredForRelease,
+        lastVerifiedAt: entry.lastVerifiedAt,
+        verificationMethod: entry.verificationMethod,
+        evidence: entry.evidence,
+        notes: entry.notes
+      }))
     ],
     sceneIntegrity: {
       sampleStatus: corruptSceneReport.status,

@@ -993,3 +993,15 @@ Updated:
 
 Removed/Deprecated:
 - placement regression coverage는 CLI verify만 보면 되고 hidden QA surface에서 재확인하지 않아도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 3)
+Added:
+- `/labs/qa`의 compatibility matrix가 release-required profile별 verification timestamp, method, evidence를 함께 보여주는지 확인한다.
+- `/labs/qa`의 placement regression suite 카드가 verification timestamp, method, evidence를 함께 보여주는지 확인한다.
+- `npm --workspace apps/web run verify:commercial-qa`가 required compatibility profile verification ledger와 release-required placement suite ledger를 함께 검증하는지 확인한다.
+
+Updated:
+- commercial QA 확인 절차를 `release gate / placement regression / asset inventory / baseline / compatibility / integrity detail`에서 `release gate / evidence-backed regression + compatibility / asset inventory / baseline / integrity detail`까지 확장한다.
+
+Removed/Deprecated:
+- compatibility verification은 notes만 있으면 되고 별도 evidence를 남기지 않아도 된다는 가정.

@@ -81,6 +81,12 @@ export default function CommercialQaPage() {
                   <dt>Missing required files</dt>
                   <dd>{snapshot.assetStatus.missingRequiredFiles}</dd>
                 </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt>Verified compatibility</dt>
+                  <dd>
+                    {snapshot.compatibilitySummary.verifiedProfiles}/{snapshot.compatibilitySummary.requiredProfiles}
+                  </dd>
+                </div>
               </dl>
             </div>
 
@@ -186,6 +192,11 @@ export default function CommercialQaPage() {
                     <p className="mt-2 text-sm leading-6 text-[#5a5148]">{suite.detail}</p>
                     <p className="mt-2 text-sm text-[#5a5148]">target: {suite.target}</p>
                     <p className="mt-2 text-sm text-[#5a5148]">coverage: {suite.coverage.join(" / ")}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">
+                      verified: {suite.lastVerifiedAt ? new Date(suite.lastVerifiedAt).toLocaleString("ko-KR") : "untracked"}
+                    </p>
+                    <p className="mt-2 text-sm text-[#5a5148]">method: {suite.verificationMethod}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">evidence: {suite.evidence.join(" / ") || "none"}</p>
                   </div>
                 ))}
               </div>
@@ -202,12 +213,18 @@ export default function CommercialQaPage() {
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <h2 className="text-sm font-semibold text-[#171411]">{row.profile}</h2>
                       <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${gateClasses(row.status === "fallback" ? "warning" : "pass")}`}>
-                        {row.status}
+                        {row.status} / {row.verificationStatus}
                       </span>
                     </div>
                     <p className="mt-2 text-sm text-[#5a5148]">
                       {row.browser} / {row.deviceClass}
                     </p>
+                    <p className="mt-2 text-sm text-[#5a5148]">
+                      {row.requiredForRelease ? "release required" : "fallback profile"} /{" "}
+                      {row.lastVerifiedAt ? new Date(row.lastVerifiedAt).toLocaleString("ko-KR") : "untracked"}
+                    </p>
+                    <p className="mt-2 text-sm text-[#5a5148]">method: {row.verificationMethod}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">evidence: {row.evidence.join(" / ")}</p>
                     <p className="mt-2 text-sm leading-6 text-[#5a5148]">{row.notes}</p>
                   </div>
                 ))}

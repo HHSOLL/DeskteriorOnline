@@ -1201,3 +1201,16 @@ Updated:
 
 Removed/Deprecated:
 - commercial QA가 release gate와 baseline만 보여주고 placement regression coverage는 별도 문맥에서 따로 추적해도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 3)
+Added:
+- compatibility matrix에 `requiredForRelease`, `lastVerifiedAt`, `verificationMethod`, `evidence`를 포함한 운영형 verification ledger를 추가한다.
+- placement regression suite도 `lastVerifiedAt`, `verificationMethod`, `evidence`를 가진 운영형 ledger를 commercial QA snapshot에 포함한다.
+- hidden QA surface는 compatibility verification evidence와 placement regression evidence를 같이 보여줘 release readiness 판단을 한 화면에서 내릴 수 있어야 한다.
+
+Updated:
+- `Phase 9 Commercial QA` 상태를 “slice 2: placement regression aggregation + recovery snapshot 확장 완료”에서 “slice 3: compatibility verification ledger + regression evidence ledger 완료”로 올린다.
+- current phase의 남은 범위를 `scene corruption detector 추가 규칙`, `asset status dashboard polish`, `commercial QA release dashboard finish`로 다시 축소한다.
+
+Removed/Deprecated:
+- compatibility matrix가 profile 목록과 notes만 있으면 운영 검증 기록 없이도 충분하다는 가정.

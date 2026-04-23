@@ -18,7 +18,19 @@ function main() {
     snapshot.placementRegression.suites.every((suite) => suite.status === "pass"),
     "expected all placement regression suites to be registered"
   );
+  assert(
+    snapshot.compatibilitySummary.requiredProfiles >= 3,
+    "expected required compatibility profiles"
+  );
+  assert(
+    snapshot.compatibilitySummary.pendingProfiles === 0,
+    "expected all required compatibility profiles to be verified"
+  );
   assert(snapshot.compatibilityMatrix.length >= 4, "expected browser/device compatibility matrix coverage");
+  assert(
+    snapshot.compatibilityMatrix.some((row) => row.requiredForRelease && row.verificationStatus === "verified"),
+    "expected release-required compatibility records with verification evidence"
+  );
   assert(
     snapshot.sceneIntegrity.sampleStatus === "corrupt",
     `expected corrupt integrity sample, received ${snapshot.sceneIntegrity.sampleStatus}`
@@ -94,7 +106,12 @@ function main() {
         releaseGates: snapshot.releaseGates.map((gate) => ({ id: gate.id, status: gate.status })),
         totalAssets: snapshot.assetStatus.totalAssets,
         scenarios: snapshot.performanceBaseline.scenarios.map((entry) => entry.scenario),
-        placementSuites: snapshot.placementRegression.suites.map((suite) => suite.script)
+        placementSuites: snapshot.placementRegression.suites.map((suite) => suite.script),
+        compatibilityProfiles: snapshot.compatibilityMatrix.map((row) => ({
+          profile: row.profile,
+          browser: row.browser,
+          verificationStatus: row.verificationStatus
+        }))
       },
       null,
       2
