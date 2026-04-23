@@ -1,12 +1,16 @@
 import { create } from "zustand";
 import type { CollisionReport, ConstraintReport } from "@deskterioronline/placement-kernel";
 import type { DimensionsMm, SurfaceLocalPose, SupportSurface } from "@deskterioronline/scene-schema";
+import type {
+  FocusPlacementAttachmentType,
+  FocusPlacementSurfaceCandidate
+} from "../runtime/focus-placement-session";
 
 export type FocusPlacementRequest = {
   objectId: string;
   supportObjectId: string;
   surfaceId: string;
-  attachmentType: "place_on_surface";
+  attachmentType: FocusPlacementAttachmentType;
   objectLabel: string;
   supportLabel: string;
   surfaceLabel: string;
@@ -15,9 +19,12 @@ export type FocusPlacementRequest = {
   noPlaceZones: NonNullable<SupportSurface["noPlaceZones"]>;
   preferredZones: NonNullable<SupportSurface["preferredZones"]>;
   objectDimensionsMm: DimensionsMm | null;
+  surfaceCandidates: FocusPlacementSurfaceCandidate[];
+  preferredCandidateIndex: number;
 };
 
 export type FocusPlacementSession = FocusPlacementRequest & {
+  activeCandidateIndex: number;
   localPose: SurfaceLocalPose;
   constraintReport: ConstraintReport | null;
   collisionReport: CollisionReport | null;

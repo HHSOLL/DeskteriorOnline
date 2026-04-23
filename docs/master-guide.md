@@ -946,3 +946,16 @@ Updated:
 
 Removed/Deprecated:
 - focus placement HUD/session이 raw keyboard target을 그대로 표시해도 preview/commit 정확도에는 문제가 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 6 Full Focus Placement Mode Complete)
+Added:
+- walk-mode focus placement는 단일 `desktop_top` 표면이 아니라 `supportSurfaces + attachmentPoints` 기반 multi-candidate session으로 동작해야 하며, session은 `surfaceCandidates`, `preferredCandidateIndex`, `activeCandidateIndex`를 canonical 상태로 가진다.
+- selected asset이 mounted attachment metadata를 광고하면 `place_on_surface`보다 `edge_clamp` 같은 mounted candidate를 우선 노출해야 한다.
+- active focus placement session 중 candidate가 둘 이상이면 crosshair/HUD는 `Tab` cycle과 `F` refocus affordance를 기본 제공해야 한다.
+
+Updated:
+- focus placement compatibility 규칙을 “selected asset 유무 + dimensionsMm”에서 “selected asset dimensionsMm + runtime attachment metadata + surface thickness/compatibility”까지 확장한다.
+- walkthrough 정밀 배치 품질 기준을 “desktop_top 실사용 prototype”에서 “top/edge/underside/wall candidate를 같은 interaction mode 안에서 전환 가능한 full mode”로 갱신한다.
+
+Removed/Deprecated:
+- mounted candidate 우선순위를 제품 경로 밖 helper 수준에서만 다뤄도 된다는 가정.

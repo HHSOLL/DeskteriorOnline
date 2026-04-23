@@ -4,7 +4,6 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
-import type { SupportSurface } from "@deskterioronline/scene-schema";
 import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
@@ -17,7 +16,10 @@ import {
 } from "../../../lib/scene/asset-lod";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
-import { resolveFocusPlacementAvailability } from "../../../lib/runtime/focus-placement-session";
+import {
+  resolveFocusPlacementEntry,
+  resolveFocusSurfaceLabel
+} from "../../../lib/runtime/focus-placement-session";
 import { useRuntimeRendererAdapter } from "../../../lib/runtime/runtime-renderer-context";
 import {
   applyRuntimeTransformToObject,
@@ -110,21 +112,6 @@ function findHighlightMesh(root: THREE.Object3D | null) {
     }
   });
   return highlightMesh;
-}
-
-function resolveFocusSurfaceLabel(surface: SupportSurface) {
-  switch (surface.type) {
-    case "desktop_top":
-      return "Desk Top";
-    case "desk_edge":
-      return "Desk Edge";
-    case "desk_underside":
-      return "Under Desk";
-    case "wall":
-      return "Wall";
-    default:
-      return surface.id;
-  }
 }
 
 function isLightingAsset(asset: SceneAsset) {
@@ -916,28 +903,34 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     () => sceneAssets.find((candidate) => candidate.id === selectedAssetId)?.supportAssetId ?? null,
     [sceneAssets, selectedAssetId]
   );
-  const focusSurface = useMemo(() => {
+  const supportRuntimeAsset = useMemo(() => {
     const runtimeAssetId = asset.catalogItemId ?? asset.assetId;
-    const runtimeAsset = runtimeEngine?.runtimeScene.runtimeAssets.get(runtimeAssetId);
-    return (
-      runtimeAsset?.supportSurfaces.find(
-        (surface) =>
-          surface.type === "desktop_top" &&
-          surface.allowedAttachments.includes("place_on_surface")
-      ) ?? null
-    );
+    return runtimeEngine?.runtimeScene.runtimeAssets.get(runtimeAssetId) ?? null;
   }, [asset.assetId, asset.catalogItemId, runtimeEngine]);
-  const focusPlacementAvailability = useMemo(
+  const selectedRuntimeAsset = useMemo(() => {
+    if (!selectedAsset) {
+      return null;
+    }
+
+    const runtimeAssetId = selectedAsset.catalogItemId ?? selectedAsset.assetId;
+    return runtimeEngine?.runtimeScene.runtimeAssets.get(runtimeAssetId) ?? null;
+  }, [runtimeEngine, selectedAsset]);
+  const focusPlacementEntry = useMemo(
     () =>
-      resolveFocusPlacementAvailability({
+      resolveFocusPlacementEntry({
         selectedAsset,
+        selectedRuntimeAsset,
         supportAsset: asset,
-        focusSurface
+        supportSurfaces: supportRuntimeAsset?.supportSurfaces ?? []
       }),
-    [asset, focusSurface, selectedAsset]
+    [asset, selectedAsset, selectedRuntimeAsset, supportRuntimeAsset]
   );
-  const canRegisterFocusPlacement = !readOnly && viewMode === "walk" && Boolean(focusSurface);
-  const canOfferFocusPlacement = canRegisterFocusPlacement && focusPlacementAvailability.enabled;
+  const focusSurfaceCandidate =
+    focusPlacementEntry.candidates[focusPlacementEntry.preferredCandidateIndex] ?? null;
+  const canRegisterFocusPlacement =
+    !readOnly && viewMode === "walk" && focusPlacementEntry.candidates.length > 0;
+  const canOfferFocusPlacement =
+    canRegisterFocusPlacement && focusPlacementEntry.availability.enabled;
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
@@ -1091,17 +1084,17 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
   useEffect(() => {
     const group = groupRef.current;
-    if (!group || !canRegisterFocusPlacement || !focusSurface) {
+    if (!group || !canRegisterFocusPlacement || !focusSurfaceCandidate) {
       return;
     }
 
     const highlightMesh = findHighlightMesh(group);
     group.userData.interactive = true;
-    group.userData.interactionLabel = focusPlacementAvailability.hint;
+    group.userData.interactionLabel = focusPlacementEntry.availability.hint;
     group.userData.interactionHint = {
-      label: focusPlacementAvailability.hint,
-      actionable: focusPlacementAvailability.enabled,
-      tone: focusPlacementAvailability.tone
+      label: focusPlacementEntry.availability.hint,
+      actionable: focusPlacementEntry.availability.enabled,
+      tone: focusPlacementEntry.availability.tone
     };
     group.userData.onInteract =
       canOfferFocusPlacement && selectedAsset
@@ -1109,16 +1102,18 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
             requestFocusPlacement({
               objectId: selectedAsset.id,
               supportObjectId: asset.id,
-              surfaceId: focusSurface.id,
-              attachmentType: "place_on_surface",
+              surfaceId: focusSurfaceCandidate.surfaceId,
+              attachmentType: focusSurfaceCandidate.attachmentType,
               objectLabel: selectedAsset.product?.name ?? selectedAsset.assetId,
               supportLabel: asset.product?.name ?? asset.assetId,
-              surfaceLabel: resolveFocusSurfaceLabel(focusSurface),
-              surfaceType: focusSurface.type,
-              surfaceBoundsMm: focusSurface.boundsMm,
-              noPlaceZones: focusSurface.noPlaceZones ?? [],
-              preferredZones: focusSurface.preferredZones ?? [],
-              objectDimensionsMm: selectedAsset.product?.dimensionsMm ?? null
+              surfaceLabel: focusSurfaceCandidate.surfaceLabel,
+              surfaceType: focusSurfaceCandidate.surfaceType,
+              surfaceBoundsMm: focusSurfaceCandidate.surfaceBoundsMm,
+              noPlaceZones: focusSurfaceCandidate.noPlaceZones,
+              preferredZones: focusSurfaceCandidate.preferredZones,
+              objectDimensionsMm: selectedAsset.product?.dimensionsMm ?? null,
+              surfaceCandidates: focusPlacementEntry.candidates,
+              preferredCandidateIndex: focusPlacementEntry.preferredCandidateIndex
             })
         : undefined;
     if (highlightMesh) {
@@ -1140,10 +1135,12 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     asset.product?.name,
     canRegisterFocusPlacement,
     canOfferFocusPlacement,
-    focusSurface,
-    focusPlacementAvailability.enabled,
-    focusPlacementAvailability.hint,
-    focusPlacementAvailability.tone,
+    focusPlacementEntry.availability.enabled,
+    focusPlacementEntry.availability.hint,
+    focusPlacementEntry.availability.tone,
+    focusPlacementEntry.candidates,
+    focusPlacementEntry.preferredCandidateIndex,
+    focusSurfaceCandidate,
     interactionRegistry,
     requestFocusPlacement,
     selectedAsset

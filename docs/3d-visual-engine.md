@@ -140,6 +140,18 @@ Updated:
 Removed/Deprecated:
 - focus placement local context는 숫자 오프셋만으로 충분히 전달된다는 가정.
 
+## 2026-04-23 변경 동기화 (Phase 6 Focus Placement Visual Complete)
+Added:
+- focus placement HUD는 multi-candidate session일 때 현재 후보 index를 읽을 수 있는 mode badge를 포함해야 한다.
+- crosshair는 active session에 후보가 여러 개 있으면 `Tab` cycle / `F` refocus affordance를 우선 보여줘야 한다.
+- mounted candidate(`edge_clamp`, `underside_screw`, `wall_attach`)도 top-surface flow와 같은 snapped HUD/minimap 경로를 사용해야 한다.
+
+Updated:
+- focus placement visual quality 기준을 `desktop_top` local context 표현에서 `multi-surface candidate state + mounted compatibility feedback`까지 확장한다.
+
+Removed/Deprecated:
+- mounted focus placement가 별도 HUD 언어를 가져도 된다는 가정.
+
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.
 - 실측 고정 제품(`scaleLocked=true`)은 변환 컨트롤/인스펙터 입력에서 스케일 변경을 저장하지 않는다.

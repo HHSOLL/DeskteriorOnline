@@ -1071,3 +1071,17 @@ Updated:
 
 Removed/Deprecated:
 - `snap candidate/grid quantization`, `ray picker real input`, `surface resolver compatibility enrichment`, `attachment point 기반 mounted flow`, `constraint report 확장`이 여전히 Phase 5 잔여 범위라는 상태 설명.
+
+## 2026-04-23 변경 동기화 (Phase 6 Full Focus Placement Mode Complete)
+Added:
+- focus placement request/session은 `surfaceCandidates`, `preferredCandidateIndex`, `activeCandidateIndex`를 포함해 하나의 walkthrough 세션 안에서 top/edge/underside/wall 후보를 순환할 수 있게 됐다.
+- `Furniture`는 support asset의 runtime `supportSurfaces`와 선택 자산의 runtime `attachmentPoints`를 함께 읽어 focus placement 후보를 만들고, mounted candidate가 있으면 `edge_clamp` 같은 설치 흐름을 우선 노출한다.
+- `FocusPlacementController`는 `Tab` 후보 순환, `F` 기본 후보 복귀, candidate별 step budget 재설정을 같은 runtime preview transaction 경로에서 처리한다.
+- `verify:focus-placement`는 mounted edge 우선순위, candidate cycling helper, underside/wall candidate surfacing까지 함께 검증한다.
+
+Updated:
+- `Phase 6 Full Focus Placement Mode(edge/underside/wall/compatibility expansion)` 상태를 “다음 우선순위”에서 “multi-surface candidate + mounted compatibility + candidate cycle complete”로 갱신한다.
+- 다음 phase의 우선순위를 `Phase 7 Advanced Attachments`로 올린다.
+
+Removed/Deprecated:
+- full focus placement mode가 여전히 `desktop_top` 한 경로만 제품에서 다룬다는 상태 설명.

@@ -11,7 +11,9 @@ export default function Crosshair() {
   if (viewMode !== "walk") return null;
 
   const badgeText = activeSession
-    ? "Enter — Confirm · Esc — Cancel"
+    ? activeSession.surfaceCandidates.length > 1
+      ? "Tab — Cycle · F — Refocus · Enter — Confirm · Esc — Cancel"
+      : "Enter — Confirm · Esc — Cancel"
     : hint
       ? hint.actionable
         ? `E — ${hint.label}`

@@ -918,3 +918,16 @@ Updated:
 
 Removed/Deprecated:
 - published package 검증을 `asset:publish` 이후 별도 수동 점검으로만 남겨도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 6 Focus Placement QA)
+Added:
+- focus placement 대상 support asset이 여러 후보 surface를 제공하면 crosshair/HUD가 mode count를 표시하고 `Tab`으로 후보가 순환되는지 확인한다.
+- `F`를 누르면 preferred candidate로 복귀하고, 이 전환이 commit 전 document patch를 만들지 않는지 확인한다.
+- mounted attachment metadata를 가진 선택 자산은 `edge_clamp` candidate가 `place_on_surface`보다 먼저 노출되는지 확인한다.
+- `verify:focus-placement`는 edge candidate priority, candidate cycling helper, underside/wall candidate surfacing을 함께 통과해야 한다.
+
+Updated:
+- focus placement QA 범위를 `desktop_top hint + snapped HUD + blocked feedback`에서 `multi-surface candidate cycle + mounted compatibility priority`까지 확장한다.
+
+Removed/Deprecated:
+- Phase 6 회귀를 수동 `desktop_top` 한 경로 확인만으로 충분하다고 보는 가정.

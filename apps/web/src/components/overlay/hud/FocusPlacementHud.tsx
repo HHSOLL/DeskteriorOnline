@@ -25,6 +25,7 @@ export default function FocusPlacementHud() {
   const collisionCount = session.collisionReport?.collisions.length ?? 0;
   const warningCount = session.constraintReport?.warnings.length ?? 0;
   const attachmentLabel = resolveFocusPlacementAttachmentLabel(session.attachmentType);
+  const candidateCount = session.surfaceCandidates.length;
 
   return (
     <div className="pointer-events-none absolute right-4 top-4 z-40 w-[min(360px,calc(100%-2rem))] rounded-[24px] border border-white/14 bg-black/55 px-4 py-4 text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
@@ -52,6 +53,11 @@ export default function FocusPlacementHud() {
         <span className="rounded-full border border-white/12 bg-white/7 px-2.5 py-1 text-white/70">
           {attachmentLabel}
         </span>
+        {candidateCount > 1 ? (
+          <span className="rounded-full border border-white/12 bg-white/7 px-2.5 py-1 text-white/70">
+            Mode {session.activeCandidateIndex + 1}/{candidateCount}
+          </span>
+        ) : null}
         <span className="rounded-full border border-white/12 bg-white/7 px-2.5 py-1 text-white/70">
           Preferred {session.preferredZones.length}
         </span>
@@ -120,6 +126,7 @@ export default function FocusPlacementHud() {
         <div>Arrow: 표면 위 이동</div>
         <div>Alt + Arrow: 1mm 미세 이동</div>
         <div>Q / E: 회전</div>
+        <div>Tab: 설치 방식 전환, F: 기본 표면으로 복귀</div>
         <div>Enter: 확정, Esc: 취소</div>
       </div>
     </div>
