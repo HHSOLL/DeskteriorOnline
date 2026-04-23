@@ -81,6 +81,8 @@
 - 가구 drag는 local preview 후 pointer-up 시점에 store commit을 우선 적용해 전역 scene 재직렬화를 매 pointer move마다 유발하지 않는다.
 - loaded GLB 자산의 hover/select raycast는 `three-mesh-bvh` bounds tree를 우선 사용해 작은 desk asset 다수 배치 시 raycast 비용을 낮춘다.
 - loaded GLB 자산의 large non-interleaved geometry는 BVH 생성 자체를 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync 경로를 유지한다.
+- telemetry가 활성일 때 `SceneViewport`는 live performance budget HUD를 같이 띄워 FPS floor, draw call 초과, interaction latency, BVH sync fallback을 즉시 드러내야 한다.
+- live HUD 경고와 CLI regression verify는 같은 budget helper를 공유해 threshold drift를 허용하지 않는다.
 - KTX2 encoder(`toktx`)가 없는 환경에서도 runtime decode path와 public transcoder sync는 유지해야 한다.
 - `verify:asset-instancing`는 read-only top/walk + builder preview + editor `desk precision` + editor `room mode` idle instancing eligibility와 cluster grouping 정책을 회귀 검증해야 한다.
 - native gltfpack output을 사용할 때는 `-kn -km -ke` 보존 플래그 기준을 유지해 slot-aware finish와 named node/material 기반 런타임 가정이 깨지지 않게 해야 한다.
@@ -182,6 +184,17 @@ Updated:
 
 Removed/Deprecated:
 - mounted constraint 숫자는 inspector나 runtime 로그에서만 확인해도 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Live Performance HUD)
+Added:
+- `SceneViewport` overlay에 `ScenePerformanceBudgetHud`를 추가해 telemetry 활성 중 FPS / draw call / triangle 상태와 budget issue를 즉시 읽을 수 있게 했다.
+- BVH large-geometry sync fallback도 live HUD 경고로 노출해 worker offload 회귀를 장면 안에서 바로 볼 수 있게 했다.
+
+Updated:
+- 성능 가드레일을 “이벤트/CLI로 나중에 확인”에서 “장면 안 live HUD + CLI verify” 구조로 확장한다.
+
+Removed/Deprecated:
+- live 성능 budget drift를 콘솔 로그만으로 추적해도 충분하다는 가정.
 
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.

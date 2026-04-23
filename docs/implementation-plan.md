@@ -1125,3 +1125,16 @@ Updated:
 
 Removed/Deprecated:
 - advanced attachment authored metadata는 runtime validation에만 쓰고 사용자에게는 노출하지 않아도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Performance Hardening Slice 1)
+Added:
+- `performance-budgets.ts` 공통 helper를 추가해 live renderer sample, interaction latency sample, BVH build sample, regression report entry가 같은 예산 함수를 사용하도록 정리했다.
+- `SceneViewport` overlay에 `ScenePerformanceBudgetHud`를 추가해 telemetry 활성 중 draw call / FPS floor / interaction latency / BVH offload 경고를 바로 읽을 수 있게 했다.
+- `verify:performance-budget` 스모크를 추가해 live budget signal 경로와 regression entry budget 경로를 같이 검증한다.
+
+Updated:
+- `Phase 8 Performance Hardening` 상태를 “미착수”에서 “slice 1: live budget HUD + shared budget helper + signal smoke 완료”로 갱신한다.
+- current phase의 남은 범위를 `dense-scene instancing hardening`, `memory leak detection`, `streaming/LOD tuning`, `benchmark CI tighten`으로 정리한다.
+
+Removed/Deprecated:
+- performance hardening이 regression JSON 수집만으로 충분하고, 편집 중 live 예산 피드백은 나중에 붙여도 된다는 가정.

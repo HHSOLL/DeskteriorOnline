@@ -116,6 +116,7 @@ E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 - `renderer-stats`는 약 1초 간격으로 FPS / draw calls / triangles / textures / geometries를 보낸다.
 - `interaction-latency`는 hover / select / drag-start / gizmo-drag-start의 next-paint 기준 지연을 보낸다.
 - `bvh-build`는 geometry UUID / triangle count / duration / worker|sync mode를 기록해 large geometry BVH offload 동작 여부를 확인한다.
+- telemetry가 켜져 있으면 `SceneViewport` overlay의 live performance budget HUD가 draw call / FPS floor / interaction latency / BVH sync fallback 이슈를 바로 띄운다.
 - `runtime-document-patch`는 top-view transform commit 시 runtime patch 개수와 대상 object를 기록해 preview/commit 분리 여부를 확인할 수 있다.
 - selected asset transform preview는 renderer object mutation 경로로 반영되어, commit 전에도 React re-render 없이 visual update가 가능한 상태를 유지해야 한다.
 - instanced cluster는 dirty object 기준 matrix/version sync만 수행하고, 동일 batch 전체를 매번 재생성하지 않는 방향을 유지해야 한다.
@@ -163,6 +164,7 @@ window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__.stop({
 ```bash
 npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json
 npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json --baseline=/absolute/path/to/perf-baseline.json
+npm --workspace apps/web run verify:performance-budget
 ```
 
 `--baseline`를 같이 주면 동일한 `route + scenario + build + interactionProfile` 키 기준으로 delta를 출력한다.
@@ -405,3 +407,15 @@ Updated:
 
 Removed/Deprecated:
 - mounted requirement HUD 계산을 별도 document/store mutation으로 처리해도 괜찮다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Live Performance Guardrail)
+Added:
+- `apps/web/src/lib/performance/performance-budgets.ts`를 공통 예산 helper로 추가해 live HUD와 regression report verify가 같은 threshold를 사용한다.
+- telemetry 활성 시 `ScenePerformanceBudgetHud`가 `renderer-stats`, `interaction-latency`, `bvh-build` 최신 스냅샷을 읽어 budget issue를 즉시 노출한다.
+- `verify:performance-budget` 스모크로 renderer / interaction / BVH / regression budget signal 경로를 로컬에서 빠르게 확인할 수 있다.
+
+Updated:
+- Telemetry Hooks를 단순 이벤트 발행에서 “이벤트 + live HUD” 구조로 확장한다.
+
+Removed/Deprecated:
+- 성능 예산 threshold가 live HUD와 CLI verify 사이에서 따로 관리돼도 된다는 가정.
