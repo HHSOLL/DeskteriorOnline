@@ -54,6 +54,13 @@ export class CollisionValidator {
     );
     const collisions: CollisionReport["collisions"] = [];
 
+    if (candidate.attachmentType !== "place_on_surface") {
+      return {
+        collided: false,
+        collisions
+      };
+    }
+
     for (const sibling of this.resolveSiblingObjects(snapshot, candidate)) {
       const siblingRuntimeAsset = this.resolveRuntimeAsset(sibling);
       if (!siblingRuntimeAsset || !isSurfacePlacementRecord(sibling.placement)) {

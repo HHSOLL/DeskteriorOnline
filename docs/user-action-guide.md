@@ -248,10 +248,17 @@ Updated:
 
 Removed/Deprecated:
 - placement kernel smoke가 happy-path 한 케이스만 통과해도 충분하다는 가정.
-- runtime editor bridge preview가 store를 건드리지 않고, commit 시 runtime patch와 store update를 함께 만드는지
-- runtime render sync helper가 selected asset preview transform을 renderer object mutation으로 그대로 반영하는지
-- runtime renderer adapter가 dirty runtime object를 object handle matrix와 instance batch로 동기화하는지
-- placement kernel alpha가 surface-local placement patch를 생성하는지
+
+## 2026-04-23 변경 동기화 (Placement Kernel Alpha QA Complete)
+Added:
+- `verify:placement-kernel` 실행 시 snap quantization, hit-driven mounted surface auto-resolve, attachment point compatibility, invalid candidate commit 차단까지 통과하는지 확인한다.
+- `verify:focus-placement` 실행 시 Enter 전 `runtime-document-patch`가 0건인지, snapped HUD/session pose가 commit 결과와 같은지, Esc/cancel이 preview를 정리하는지 확인한다.
+
+Updated:
+- placement/focus QA 범위를 “prototype commit happy path”에서 “invalid guard + snap consistency + mounted auto-resolve”까지 확장한다.
+
+Removed/Deprecated:
+- focus placement preview는 commit 전 patch가 발생해도 허용된다는 가정.
 
 ## 3-1) DB 레거시 정리 적용 체크리스트
 

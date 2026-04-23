@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { PlacementKernel, type PlacementTransaction } from "@deskterioronline/placement-kernel";
 import type { SurfaceLocalPose } from "@deskterioronline/scene-schema";
 import { isSurfacePlacementRecord } from "@deskterioronline/scene-schema";
+import { resolveFocusPlacementSessionUpdate } from "../../../lib/runtime/focus-placement-session";
 import { commitRuntimePlacementToStore } from "../../../lib/runtime/runtime-asset-bridge";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
 import { useAssetSelector, usePublishSelector, useSelectionSelector } from "../../../lib/stores/scene-slices";
@@ -109,11 +110,10 @@ export default function FocusPlacementController() {
         pendingRequest.surfaceId
       );
       const nextState = transaction.update(initialLocalPose);
+      const sessionState = resolveFocusPlacementSessionUpdate(initialLocalPose, nextState);
       startSession({
         ...pendingRequest,
-        localPose: initialLocalPose,
-        constraintReport: nextState.constraintReport,
-        collisionReport: nextState.collisionReport,
+        ...sessionState,
         moveStepMm: 5,
         rotateStepMilliDeg: 1000
       });
@@ -239,11 +239,7 @@ export default function FocusPlacementController() {
 
       event.preventDefault();
       const nextState = transactionRef.current.update(nextLocalPose);
-      updateSession({
-        localPose: nextLocalPose,
-        constraintReport: nextState.constraintReport,
-        collisionReport: nextState.collisionReport
-      });
+      updateSession(resolveFocusPlacementSessionUpdate(nextLocalPose, nextState));
     };
 
     window.addEventListener("keydown", handleKeyDown);
