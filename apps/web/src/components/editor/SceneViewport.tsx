@@ -27,6 +27,7 @@ import Crosshair from "../overlay/hud/Crosshair";
 import FocusPlacementHud from "../overlay/hud/FocusPlacementHud";
 import MobileControls from "../overlay/hud/MobileControls";
 import MobileTouchHint from "../overlay/hud/MobileTouchHint";
+import ScenePerformanceBudgetHud from "../overlay/hud/ScenePerformanceBudgetHud";
 import { configureRuntimeAssetLoaders } from "../../lib/loaders/AssetLoader";
 import { resolveSceneRenderQuality, type SceneInteractionMode } from "../../lib/scene/render-quality";
 import { useEditorStore } from "../../lib/stores/useEditorStore";
@@ -179,6 +180,7 @@ export function SceneViewport({
         <>
           {hudProfile === "full" ? <Crosshair /> : null}
           {resolvedInteractionMode === "editor" ? <FocusPlacementHud /> : null}
+          <ScenePerformanceBudgetHud />
           <MobileTouchHint />
           <MobileControls />
         </>

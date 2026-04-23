@@ -52,6 +52,16 @@ type TelemetryCaptureApi = {
   clear: () => void;
 };
 
+function readSnapshot<T>(snapshotKey: string) {
+  const win = getTelemetryWindow();
+  if (!win) {
+    return null;
+  }
+
+  const snapshot = win[snapshotKey];
+  return snapshot && typeof snapshot === "object" ? (snapshot as T) : null;
+}
+
 function getTelemetryWindow(): TelemetryWindow | null {
   if (typeof window === "undefined") {
     return null;
@@ -231,4 +241,18 @@ export function emitBvhBuild(detail: BvhBuildDetail) {
     WINDOW_BVH_BUILD_SNAPSHOT_KEY,
     detail
   );
+}
+
+export function getLatestRendererStatsSnapshot() {
+  return readSnapshot<RendererStatsDetail>(WINDOW_RENDERER_SNAPSHOT_KEY);
+}
+
+export function getLatestInteractionLatencySnapshot() {
+  return readSnapshot<InteractionLatencyDetail>(
+    WINDOW_INTERACTION_SNAPSHOT_KEY
+  );
+}
+
+export function getLatestBvhBuildSnapshot() {
+  return readSnapshot<BvhBuildDetail>(WINDOW_BVH_BUILD_SNAPSHOT_KEY);
 }

@@ -1,3 +1,7 @@
+import {
+  evaluateRegressionEntryBudgets
+} from "./performance-budgets";
+
 export const PERFORMANCE_SCENARIOS = [
   "empty-room",
   "furnished-room",
@@ -148,53 +152,6 @@ function average(values: number[]) {
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
-}
-
-function resolveFcpBudget(route: string) {
-  if (route.includes("/studio/builder")) {
-    return 2800;
-  }
-  if (route.includes("/project/")) {
-    return 3200;
-  }
-  if (
-    route.includes("/shared/") ||
-    route.includes("/gallery") ||
-    route.includes("/community")
-  ) {
-    return 2500;
-  }
-  return null;
-}
-
-function resolveDrawCallBudget(profile: PerformanceInteractionProfile) {
-  if (profile === "desk-precision") {
-    return 700;
-  }
-
-  return 500;
-}
-
-function resolveFpsFloor(profile: PerformanceInteractionProfile) {
-  if (profile === "room-mode") {
-    return 55;
-  }
-  if (profile === "desk-precision") {
-    return 45;
-  }
-  return 45;
-}
-
-function resolvePlacementToleranceBudget(
-  profile: PerformanceInteractionProfile
-) {
-  if (profile === "room-mode") {
-    return 10;
-  }
-  if (profile === "desk-precision") {
-    return 5;
-  }
-  return null;
 }
 
 export function createTelemetryCaptureSession(
@@ -402,61 +359,7 @@ export function validatePerformanceRegressionReport(
       );
     }
 
-    const fcpBudget = resolveFcpBudget(entry.route);
-    if (fcpBudget !== null && entry.fcpP95Ms > fcpBudget) {
-      issues.push(
-        `${entry.route} ${entry.scenario} ${entry.build}: FCP p95 ${entry.fcpP95Ms}ms exceeds budget ${fcpBudget}ms.`
-      );
-    }
-
-    if (entry.heapGrowthPercentPoints > 0.8) {
-      issues.push(
-        `${entry.route} ${entry.scenario} ${entry.build}: heap growth ${entry.heapGrowthPercentPoints}%p exceeds budget 0.8%p.`
-      );
-    }
-
-    const fpsFloor = resolveFpsFloor(entry.interactionProfile);
-    if (entry.fpsAvg < fpsFloor) {
-      issues.push(
-        `${entry.route} ${entry.scenario} ${entry.build}: fpsAvg ${entry.fpsAvg} is below floor ${fpsFloor}.`
-      );
-    }
-
-    const drawCallBudget = resolveDrawCallBudget(entry.interactionProfile);
-    if (entry.drawCalls > drawCallBudget) {
-      issues.push(
-        `${entry.route} ${entry.scenario} ${entry.build}: drawCalls ${entry.drawCalls} exceeds budget ${drawCallBudget}.`
-      );
-    }
-
-    if (entry.pickingLatencyP95Ms > 50) {
-      issues.push(
-        `${entry.route} ${entry.scenario} ${entry.build}: pickingLatencyP95Ms ${entry.pickingLatencyP95Ms}ms exceeds budget 50ms.`
-      );
-    }
-
-    const toleranceBudget = resolvePlacementToleranceBudget(
-      entry.interactionProfile
-    );
-    if (
-      toleranceBudget !== null &&
-      isFiniteNumber(entry.placementToleranceMm) &&
-      entry.placementToleranceMm > toleranceBudget
-    ) {
-      issues.push(
-        `${entry.route} ${entry.scenario} ${entry.build}: placementToleranceMm ${entry.placementToleranceMm} exceeds budget ${toleranceBudget}mm.`
-      );
-    }
-
-    if (
-      toleranceBudget !== null &&
-      (entry.placementToleranceMm === null ||
-        entry.placementToleranceMm === undefined)
-    ) {
-      issues.push(
-        `${entry.route} ${entry.scenario} ${entry.build}: placementToleranceMm is required for ${entry.interactionProfile}.`
-      );
-    }
+    issues.push(...evaluateRegressionEntryBudgets(entry));
   }
 
   return issues;
