@@ -39,7 +39,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `desk precision mode`에서는 support surface 기준 `front(X/H)` / `side(Z/H)` orthographic helper view를 inspector와 overlay 양쪽에서 제공한다.
 - `desk precision mode`에서는 surface anchor 제품의 footprint, projected footprint, edge clearance를 inspector와 overlay 양쪽에서 같은 값으로 제공한다.
 - `SceneViewport` 기반 경로는 성능 측정 시 `deskterioronline:renderer-stats`와 `deskterioronline:interaction-latency` 브라우저 이벤트를 공용 telemetry 계약으로 사용한다.
-- `SceneViewport` 기반 경로는 telemetry가 켜져 있을 때 live performance budget HUD로 draw call / FPS floor / interaction latency / BVH offload 경고를 즉시 노출해야 한다.
+- `SceneViewport` 기반 경로는 telemetry가 켜져 있을 때 live performance budget HUD로 draw call / FPS floor / heap growth / interaction latency / BVH offload 경고를 즉시 노출해야 한다.
 - 성능 회귀 보고는 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__`로 캡처한 JSON entry와 `perf:report:verify` CLI 검증을 기본 절차로 사용한다.
 - runtime HUD 경고와 regression report 검증은 같은 성능 budget helper를 기준으로 drift 없이 유지한다.
 - loaded GLB 자산의 picking은 `three-mesh-bvh` 기반 bounds tree raycast를 기본값으로 사용한다.
@@ -374,6 +374,17 @@ Updated:
 
 Removed/Deprecated:
 - dense-scene에서 repeated asset transform 변화가 cluster rebuild를 자주 유발해도 허용된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Memory Leak Detection Slice 3)
+Added:
+- `ScenePerformanceTelemetry`는 지원 브라우저에서 heap sample을 renderer stat에 같이 싣고, `ScenePerformanceBudgetHud`는 heap usage와 growth를 stats card / issue feed에 같이 노출한다.
+- `verify:performance-budget`는 live heap growth budget issue를 smoke에 포함한다.
+
+Updated:
+- live performance guardrail 기준을 “draw call / FPS floor / interaction latency / BVH offload”에서 “draw call / FPS floor / heap growth / interaction latency / BVH offload”까지 확장한다.
+
+Removed/Deprecated:
+- heap drift는 regression report나 DevTools에서만 보면 되고 live HUD에는 올리지 않아도 된다는 가정.
 
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop)
 Added:

@@ -194,6 +194,41 @@ export function evaluateRendererStatsBudget(detail: RendererStatsDetail) {
     );
   }
 
+  if (
+    typeof detail.heapGrowthPercentPoints === "number" &&
+    Number.isFinite(detail.heapGrowthPercentPoints) &&
+    detail.heapGrowthPercentPoints > HEAP_GROWTH_BUDGET_PERCENT_POINTS
+  ) {
+    const heapDetail =
+      typeof detail.heapUsedMb === "number" && Number.isFinite(detail.heapUsedMb)
+        ? ` Heap is ${toFixedNumber(detail.heapUsedMb, 1)}MB${
+            typeof detail.heapLimitMb === "number" &&
+            Number.isFinite(detail.heapLimitMb)
+              ? ` of ${toFixedNumber(detail.heapLimitMb, 1)}MB limit.`
+              : "."
+          }`
+        : "";
+
+    issues.push(
+      createIssue({
+        id: "heap-growth",
+        severity:
+          detail.heapGrowthPercentPoints >
+          HEAP_GROWTH_BUDGET_PERCENT_POINTS * 1.5
+            ? "critical"
+            : "warning",
+        label: "Heap Growth",
+        metric: "heapGrowthPercentPoints",
+        profile,
+        route: detail.path,
+        value: toFixedNumber(detail.heapGrowthPercentPoints),
+        budget: HEAP_GROWTH_BUDGET_PERCENT_POINTS,
+        unit: "%p",
+        message: `${profile} heap growth reached ${toFixedNumber(detail.heapGrowthPercentPoints)}%p. Budget is ${HEAP_GROWTH_BUDGET_PERCENT_POINTS}%p.${heapDetail}`
+      })
+    );
+  }
+
   return issues;
 }
 

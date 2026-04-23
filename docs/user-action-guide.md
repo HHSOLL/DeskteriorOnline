@@ -145,7 +145,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 성능 계측 팁:
 - dev에서는 브라우저 콘솔에서 바로 `deskterioronline:renderer-stats`, `deskterioronline:interaction-latency` 이벤트를 구독하면 된다.
 - production build 측정 시에는 URL에 `?telemetry=1`을 붙이거나 콘솔에서 `window.__DESKTERIORONLINE_TELEMETRY__ = true`를 설정한 뒤 새로고침한다.
-- telemetry를 켜면 `SceneViewport` 우하단에 live performance budget HUD가 떠 draw call / FPS floor / interaction latency / BVH sync fallback 경고를 바로 확인할 수 있어야 한다.
+- telemetry를 켜면 `SceneViewport` 우하단에 live performance budget HUD가 떠 draw call / FPS floor / heap growth / interaction latency / BVH sync fallback 경고를 바로 확인할 수 있어야 한다.
 - 최신 샘플은 `window.__DESKTERIORONLINE_LAST_RENDERER_STATS__`, `window.__DESKTERIORONLINE_LAST_INTERACTION_LATENCY__`에서도 확인할 수 있다.
 - regression report는 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__.start(...)`로 측정을 시작하고 `stop(...)`으로 JSON entry를 얻는다.
 - 측정이 끝나면 `npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json`으로 예산과 coverage를 검증한다.

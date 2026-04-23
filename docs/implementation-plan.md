@@ -1129,7 +1129,7 @@ Removed/Deprecated:
 ## 2026-04-23 변경 동기화 (Phase 8 Performance Hardening Slice 1)
 Added:
 - `performance-budgets.ts` 공통 helper를 추가해 live renderer sample, interaction latency sample, BVH build sample, regression report entry가 같은 예산 함수를 사용하도록 정리했다.
-- `SceneViewport` overlay에 `ScenePerformanceBudgetHud`를 추가해 telemetry 활성 중 draw call / FPS floor / interaction latency / BVH offload 경고를 바로 읽을 수 있게 했다.
+- `SceneViewport` overlay에 `ScenePerformanceBudgetHud`를 추가해 telemetry 활성 중 draw call / FPS floor / heap growth / interaction latency / BVH offload 경고를 바로 읽을 수 있게 했다.
 - `verify:performance-budget` 스모크를 추가해 live budget signal 경로와 regression entry budget 경로를 같이 검증한다.
 
 Updated:
@@ -1150,3 +1150,15 @@ Updated:
 
 Removed/Deprecated:
 - dense-scene instancing churn 최적화가 아직 미착수라는 상태 설명.
+
+## 2026-04-23 변경 동기화 (Phase 8 Performance Hardening Slice 3)
+Added:
+- `ScenePerformanceTelemetry` live renderer sample에 optional heap metrics(`heapUsedMb`, `heapLimitMb`, `heapGrowthPercentPoints`)를 추가한다.
+- `verify:performance-budget`는 heap growth live issue까지 함께 검증한다.
+
+Updated:
+- `Phase 8 Performance Hardening` 상태를 “slice 2: dense-scene instancing hardening(cluster rebuild avoidance) 완료”에서 “slice 3: memory leak detection(live heap telemetry + HUD warning) 완료”까지 확장한다.
+- current phase의 남은 범위를 `streaming/LOD tuning`, `benchmark CI tighten`으로 축소한다.
+
+Removed/Deprecated:
+- memory leak detection이 아직 미착수라는 상태 설명.

@@ -20,16 +20,64 @@ type RendererAggregate = {
   maxTriangles: number;
   maxTextures: number;
   maxGeometries: number;
+  heapBaselineMb: number | null;
+  latestHeapUsedMb: number | null;
+  heapLimitMb: number | null;
 };
 
-function createAggregate(startedAt: number): RendererAggregate {
+type HeapSnapshot = {
+  usedMb: number;
+  limitMb: number;
+};
+
+type PerformanceWithMemory = Performance & {
+  memory?: {
+    usedJSHeapSize?: number;
+    jsHeapSizeLimit?: number;
+  };
+};
+
+function readHeapSnapshot(): HeapSnapshot | null {
+  const performanceWithMemory = performance as PerformanceWithMemory;
+  const memory = performanceWithMemory.memory;
+  if (!memory) {
+    return null;
+  }
+
+  const usedJSHeapSize = memory.usedJSHeapSize;
+  const jsHeapSizeLimit = memory.jsHeapSizeLimit;
+  if (
+    typeof usedJSHeapSize !== "number" ||
+    !Number.isFinite(usedJSHeapSize) ||
+    typeof jsHeapSizeLimit !== "number" ||
+    !Number.isFinite(jsHeapSizeLimit) ||
+    jsHeapSizeLimit <= 0
+  ) {
+    return null;
+  }
+
+  return {
+    usedMb: Number((usedJSHeapSize / (1024 * 1024)).toFixed(1)),
+    limitMb: Number((jsHeapSizeLimit / (1024 * 1024)).toFixed(1))
+  };
+}
+
+function createAggregate(
+  startedAt: number,
+  heapSnapshot: HeapSnapshot | null = null,
+  preservedHeapBaselineMb: number | null = null
+): RendererAggregate {
+  const heapBaselineMb = preservedHeapBaselineMb ?? heapSnapshot?.usedMb ?? null;
   return {
     startedAt,
     frames: 0,
     maxDrawCalls: 0,
     maxTriangles: 0,
     maxTextures: 0,
-    maxGeometries: 0
+    maxGeometries: 0,
+    heapBaselineMb,
+    latestHeapUsedMb: heapSnapshot?.usedMb ?? null,
+    heapLimitMb: heapSnapshot?.limitMb ?? null
   };
 }
 
@@ -41,7 +89,7 @@ export default function ScenePerformanceTelemetry({
   const aggregateRef = useRef<RendererAggregate>(createAggregate(0));
 
   useEffect(() => {
-    aggregateRef.current = createAggregate(performance.now());
+    aggregateRef.current = createAggregate(performance.now(), readHeapSnapshot());
   }, [interactionMode, topMode, viewMode]);
 
   useFrame(({ gl }) => {
@@ -50,8 +98,9 @@ export default function ScenePerformanceTelemetry({
     }
 
     const now = performance.now();
+    const heapSnapshot = readHeapSnapshot();
     if (aggregateRef.current.startedAt === 0) {
-      aggregateRef.current = createAggregate(now);
+      aggregateRef.current = createAggregate(now, heapSnapshot);
     }
 
     const aggregate = aggregateRef.current;
@@ -72,11 +121,33 @@ export default function ScenePerformanceTelemetry({
       aggregate.maxGeometries,
       gl.info.memory.geometries
     );
+    if (heapSnapshot) {
+      aggregate.latestHeapUsedMb = heapSnapshot.usedMb;
+      aggregate.heapLimitMb = heapSnapshot.limitMb;
+      if (aggregate.heapBaselineMb === null) {
+        aggregate.heapBaselineMb = heapSnapshot.usedMb;
+      }
+    }
 
     const elapsedMs = now - aggregate.startedAt;
     if (elapsedMs < 1000) {
       return;
     }
+
+    const heapGrowthPercentPoints =
+      aggregate.heapBaselineMb !== null &&
+      aggregate.latestHeapUsedMb !== null &&
+      aggregate.heapLimitMb !== null &&
+      aggregate.heapLimitMb > 0
+        ? Number(
+            Math.max(
+              ((aggregate.latestHeapUsedMb - aggregate.heapBaselineMb) /
+                aggregate.heapLimitMb) *
+                100,
+              0
+            ).toFixed(2)
+          )
+        : undefined;
 
     emitRendererStats({
       timestamp: new Date().toISOString(),
@@ -90,10 +161,17 @@ export default function ScenePerformanceTelemetry({
       drawCalls: aggregate.maxDrawCalls,
       triangles: aggregate.maxTriangles,
       textures: aggregate.maxTextures,
-      geometries: aggregate.maxGeometries
+      geometries: aggregate.maxGeometries,
+      heapUsedMb: aggregate.latestHeapUsedMb ?? undefined,
+      heapLimitMb: aggregate.heapLimitMb ?? undefined,
+      heapGrowthPercentPoints
     });
 
-    aggregateRef.current = createAggregate(now);
+    aggregateRef.current = createAggregate(
+      now,
+      heapSnapshot,
+      aggregate.heapBaselineMb
+    );
   });
 
   return null;
