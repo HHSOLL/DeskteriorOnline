@@ -81,6 +81,22 @@ export default function CommercialQaPage() {
                   <dt>Missing required files</dt>
                   <dd>{snapshot.assetStatus.missingRequiredFiles}</dd>
                 </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt>Verified compatibility</dt>
+                  <dd>
+                    {snapshot.compatibilitySummary.verifiedProfiles}/{snapshot.compatibilitySummary.requiredProfiles}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt>Release-ready assets</dt>
+                  <dd>
+                    {snapshot.assetStatus.releaseReadyAssets}/{snapshot.assetStatus.totalAssets}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt>At-risk assets</dt>
+                  <dd>{snapshot.assetStatus.atRiskAssets}</dd>
+                </div>
               </dl>
             </div>
 
@@ -117,15 +133,55 @@ export default function CommercialQaPage() {
                     {snapshot.sceneIntegrity.sampleRecoverySnapshot.selfSupportReferenceCount}
                   </dd>
                 </div>
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Invalid scales</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.sampleRecoverySnapshot.invalidScaleCount}
+                  </dd>
+                </div>
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Support mismatches</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.sampleRecoverySnapshot.mismatchedSupportReferenceCount}
+                  </dd>
+                </div>
               </div>
               <ul className="mt-4 space-y-2 text-sm leading-6 text-[#52483f]">
                 {snapshot.sceneIntegrity.ruleSummary.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+              <div className="mt-4 grid grid-cols-3 gap-3 text-sm text-[#52483f]">
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Errors</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.severitySummary.error}
+                  </dd>
+                </div>
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Warnings</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.severitySummary.warning}
+                  </dd>
+                </div>
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Infos</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.severitySummary.info}
+                  </dd>
+                </div>
+              </div>
               <div className="mt-4 rounded-[18px] border border-black/8 bg-[#faf7f1] p-4 text-sm leading-6 text-[#52483f]">
                 <p className="font-semibold text-[#171411]">Suggested recovery actions</p>
                 <p className="mt-2">{snapshot.sceneIntegrity.sampleSuggestedActions.join(" / ")}</p>
+                <ul className="mt-3 space-y-2">
+                  {snapshot.sceneIntegrity.prioritizedActions.map((action) => (
+                    <li key={action.action}>
+                      <span className="font-medium text-[#171411]">{action.action}</span>
+                      {` / ${action.reason}`}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
@@ -186,6 +242,11 @@ export default function CommercialQaPage() {
                     <p className="mt-2 text-sm leading-6 text-[#5a5148]">{suite.detail}</p>
                     <p className="mt-2 text-sm text-[#5a5148]">target: {suite.target}</p>
                     <p className="mt-2 text-sm text-[#5a5148]">coverage: {suite.coverage.join(" / ")}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">
+                      verified: {suite.lastVerifiedAt ? new Date(suite.lastVerifiedAt).toLocaleString("ko-KR") : "untracked"}
+                    </p>
+                    <p className="mt-2 text-sm text-[#5a5148]">method: {suite.verificationMethod}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">evidence: {suite.evidence.join(" / ") || "none"}</p>
                   </div>
                 ))}
               </div>
@@ -202,12 +263,18 @@ export default function CommercialQaPage() {
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <h2 className="text-sm font-semibold text-[#171411]">{row.profile}</h2>
                       <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${gateClasses(row.status === "fallback" ? "warning" : "pass")}`}>
-                        {row.status}
+                        {row.status} / {row.verificationStatus}
                       </span>
                     </div>
                     <p className="mt-2 text-sm text-[#5a5148]">
                       {row.browser} / {row.deviceClass}
                     </p>
+                    <p className="mt-2 text-sm text-[#5a5148]">
+                      {row.requiredForRelease ? "release required" : "fallback profile"} /{" "}
+                      {row.lastVerifiedAt ? new Date(row.lastVerifiedAt).toLocaleString("ko-KR") : "untracked"}
+                    </p>
+                    <p className="mt-2 text-sm text-[#5a5148]">method: {row.verificationMethod}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">evidence: {row.evidence.join(" / ")}</p>
                     <p className="mt-2 text-sm leading-6 text-[#5a5148]">{row.notes}</p>
                   </div>
                 ))}
@@ -221,6 +288,24 @@ export default function CommercialQaPage() {
             <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
               <TableProperties className="h-4 w-4" />
               <span>Asset Package Inventory</span>
+            </div>
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <div className="rounded-[18px] border border-black/8 bg-[#faf7f1] p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8a8177]">QA coverage</p>
+                <p className="mt-2 text-2xl font-semibold text-[#171411]">{snapshot.assetStatus.qaCoveragePercent}%</p>
+              </div>
+              <div className="rounded-[18px] border border-black/8 bg-[#faf7f1] p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8a8177]">Surface coverage</p>
+                <p className="mt-2 text-2xl font-semibold text-[#171411]">
+                  {snapshot.assetStatus.supportCoveragePercent}%
+                </p>
+              </div>
+              <div className="rounded-[18px] border border-black/8 bg-[#faf7f1] p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#8a8177]">Attachment coverage</p>
+                <p className="mt-2 text-2xl font-semibold text-[#171411]">
+                  {snapshot.assetStatus.attachmentCoveragePercent}%
+                </p>
+              </div>
             </div>
             <div className="mt-5 overflow-hidden rounded-[18px] border border-black/8">
               <table className="min-w-full border-collapse text-left text-sm">
@@ -273,6 +358,22 @@ export default function CommercialQaPage() {
                   <p className="mt-2 text-sm leading-6 text-[#5a5148]">target: {task.target}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-5 rounded-[18px] border border-black/8 bg-[#faf7f1] p-4 text-sm leading-6 text-[#5a5148]">
+              <p className="font-semibold text-[#171411]">Top asset risks</p>
+              <ul className="mt-3 space-y-2">
+                {snapshot.assetStatus.topRiskRows.length > 0 ? (
+                  snapshot.assetStatus.topRiskRows.map((row) => (
+                    <li key={row.key}>
+                      <span className="font-medium text-[#171411]">{row.label}</span>
+                      {` / ${row.severity} / ${row.reasons.join(" / ")}`}
+                    </li>
+                  ))
+                ) : (
+                  <li>no release-blocking asset risks are currently registered</li>
+                )}
+              </ul>
             </div>
 
             <div className="mt-5 rounded-[18px] border border-black/8 bg-[#faf7f1] p-4 text-sm leading-6 text-[#5a5148]">

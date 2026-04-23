@@ -18,7 +18,21 @@ function main() {
     snapshot.placementRegression.suites.every((suite) => suite.status === "pass"),
     "expected all placement regression suites to be registered"
   );
+  assert(
+    snapshot.compatibilitySummary.requiredProfiles >= 3,
+    "expected required compatibility profiles"
+  );
+  assert(
+    snapshot.compatibilitySummary.pendingProfiles === 0,
+    "expected all required compatibility profiles to be verified"
+  );
   assert(snapshot.compatibilityMatrix.length >= 4, "expected browser/device compatibility matrix coverage");
+  assert(
+    snapshot.compatibilityMatrix.some((row) => row.requiredForRelease && row.verificationStatus === "verified"),
+    "expected release-required compatibility records with verification evidence"
+  );
+  assert(snapshot.assetStatus.releaseReadyAssets >= 1, "expected at least one release-ready asset");
+  assert(snapshot.assetStatus.qaCoveragePercent > 0, "expected QA coverage percent to be populated");
   assert(
     snapshot.sceneIntegrity.sampleStatus === "corrupt",
     `expected corrupt integrity sample, received ${snapshot.sceneIntegrity.sampleStatus}`
@@ -28,9 +42,27 @@ function main() {
     "expected integrity sample to report missing support asset"
   );
   assert(
+    snapshot.sceneIntegrity.sampleIssueCodes.includes("INVALID_NODE_SCALE"),
+    "expected integrity sample to report invalid node scale"
+  );
+  assert(
+    snapshot.sceneIntegrity.sampleIssueCodes.includes("SUPPORT_REFERENCE_MISMATCH"),
+    "expected integrity sample to report support reference mismatch"
+  );
+  assert(
     snapshot.sceneIntegrity.sampleRecoverySnapshot.invalidSurfacePlacementCount > 0,
     "expected integrity sample to include invalid surface placement count"
   );
+  assert(
+    snapshot.sceneIntegrity.sampleRecoverySnapshot.invalidScaleCount > 0,
+    "expected integrity sample to include invalid scale count"
+  );
+  assert(
+    snapshot.sceneIntegrity.sampleRecoverySnapshot.mismatchedSupportReferenceCount > 0,
+    "expected integrity sample to include support mismatch count"
+  );
+  assert(snapshot.sceneIntegrity.severitySummary.error > 0, "expected integrity error summary");
+  assert(snapshot.sceneIntegrity.prioritizedActions.length > 0, "expected prioritized integrity actions");
   assert(
     snapshot.sceneIntegrity.sampleSuggestedActions.includes("rebuild_support_relations"),
     "expected integrity sample suggested actions to include support relation rebuild"
@@ -93,8 +125,18 @@ function main() {
       {
         releaseGates: snapshot.releaseGates.map((gate) => ({ id: gate.id, status: gate.status })),
         totalAssets: snapshot.assetStatus.totalAssets,
+        releaseReadyAssets: snapshot.assetStatus.releaseReadyAssets,
+        topRiskAssets: snapshot.assetStatus.topRiskRows.map((row) => ({
+          key: row.key,
+          severity: row.severity
+        })),
         scenarios: snapshot.performanceBaseline.scenarios.map((entry) => entry.scenario),
-        placementSuites: snapshot.placementRegression.suites.map((suite) => suite.script)
+        placementSuites: snapshot.placementRegression.suites.map((suite) => suite.script),
+        compatibilityProfiles: snapshot.compatibilityMatrix.map((row) => ({
+          profile: row.profile,
+          browser: row.browser,
+          verificationStatus: row.verificationStatus
+        }))
       },
       null,
       2

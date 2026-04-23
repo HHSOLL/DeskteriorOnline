@@ -424,6 +424,30 @@ Updated:
 Removed/Deprecated:
 - placement regression coverage는 verify script 이름만 알면 충분하고 product-facing QA surface에는 드러나지 않아도 된다는 가정.
 
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 3)
+Added:
+- compatibility matrix는 각 profile마다 `requiredForRelease`, `lastVerifiedAt`, `verificationMethod`, `evidence`를 가진 verification ledger를 유지해야 한다.
+- placement regression suite도 단순 script registry가 아니라 verification ledger를 유지해야 하며, commercial QA snapshot에서 release-required suite의 최근 검증 흔적을 읽을 수 있어야 한다.
+- hidden QA surface `/labs/qa`는 release-required compatibility profile과 placement regression suite의 verification evidence를 함께 보여주는 canonical release dashboard 역할을 해야 한다.
+
+Updated:
+- commercial QA canonical snapshot 범위를 `asset inventory + placement regression + baseline + compatibility + integrity`에서 `asset inventory + placement regression evidence + compatibility verification evidence + integrity`까지 확장한다.
+
+Removed/Deprecated:
+- release readiness 판단을 위해 CLI 실행 기억이나 수동 메모에 의존해도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 4 / Complete)
+Added:
+- commercial QA canonical snapshot은 asset risk summary와 release-ready coverage percentage를 포함해야 한다.
+- scene corruption detector는 invalid scale과 support reference drift까지 잡아내고, recovery snapshot에서 이 수치를 직접 노출해야 한다.
+- hidden QA surface `/labs/qa`는 integrity severity summary와 prioritized recovery action을 포함한 canonical release dashboard로 취급한다.
+
+Updated:
+- commercial QA canonical snapshot 범위를 `asset inventory + placement regression evidence + compatibility verification evidence + integrity`에서 `asset inventory + risk summary + evidence ledger + integrity severity/recovery plan`까지 확장한다.
+
+Removed/Deprecated:
+- integrity detector가 missing support / missing asset 같은 기본 규칙만 잡아도 상용 release gate로 충분하다는 가정.
+
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop)
 Added:
 - `KTX2Loader`와 local basis transcoder sync 경로를 runtime asset decode 기준에 추가했다.

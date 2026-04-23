@@ -2,6 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import type { SceneDocument } from "../domain/scene-document";
 import { inspectSceneDocumentIntegrity } from "../domain/scene-integrity";
+import {
+  compatibilityVerificationLedger,
+  placementRegressionEvidenceLedger,
+  type QaVerificationStatus
+} from "./verification-ledger";
 
 type RuntimePackageIndexEntry = {
   key: string;
@@ -36,6 +41,7 @@ type RuntimePackageDescriptor = {
 };
 
 type CommercialQaStatus = "pass" | "warning" | "fail";
+type CompatibilityProfileStatus = "target" | "verify" | "fallback";
 
 type BenchmarkBaselineEntry = {
   scenario: string;
@@ -86,6 +92,17 @@ export type CommercialQaSnapshot = {
     missingRequiredFiles: number;
     assetsWithSupportSurfaces: number;
     assetsWithAttachmentPoints: number;
+    releaseReadyAssets: number;
+    atRiskAssets: number;
+    qaCoveragePercent: number;
+    supportCoveragePercent: number;
+    attachmentCoveragePercent: number;
+    topRiskRows: Array<{
+      key: string;
+      label: string;
+      severity: CommercialQaStatus;
+      reasons: string[];
+    }>;
     rows: Array<{
       key: string;
       label: string;
@@ -110,6 +127,8 @@ export type CommercialQaSnapshot = {
   }>;
   placementRegression: {
     registeredScripts: string[];
+    verifiedSuites: number;
+    requiredSuites: number;
     suites: Array<{
       id: string;
       label: string;
@@ -118,18 +137,37 @@ export type CommercialQaSnapshot = {
       target: string;
       coverage: string[];
       detail: string;
+      lastVerifiedAt: string | null;
+      verificationMethod: string;
+      evidence: string[];
     }>;
+  };
+  compatibilitySummary: {
+    requiredProfiles: number;
+    verifiedProfiles: number;
+    pendingProfiles: number;
+    fallbackProfiles: number;
   };
   compatibilityMatrix: Array<{
     profile: string;
     browser: string;
     deviceClass: string;
-    status: "target" | "verify" | "fallback";
+    status: CompatibilityProfileStatus;
+    verificationStatus: QaVerificationStatus;
+    requiredForRelease: boolean;
+    lastVerifiedAt: string | null;
+    verificationMethod: string;
+    evidence: string[];
     notes: string;
   }>;
   sceneIntegrity: {
     sampleStatus: ReturnType<typeof inspectSceneDocumentIntegrity>["status"];
     sampleIssueCodes: string[];
+    severitySummary: {
+      info: number;
+      warning: number;
+      error: number;
+    };
     sampleIssues: Array<{
       code: string;
       severity: string;
@@ -137,6 +175,10 @@ export type CommercialQaSnapshot = {
     }>;
     sampleSuggestedActions: string[];
     sampleRecoverySnapshot: ReturnType<typeof inspectSceneDocumentIntegrity>["recoverySnapshot"];
+    prioritizedActions: Array<{
+      action: string;
+      reason: string;
+    }>;
     ruleSummary: string[];
   };
 };
@@ -218,6 +260,28 @@ function buildSampleCorruptScene(): SceneDocument {
         },
         position: [0, 0, 0],
         rotation: [0, 0, 0],
+        scale: [0, 1, 1],
+        materialId: null
+      },
+      {
+        id: "tray-1",
+        assetId: "p2s_underdesk_tray",
+        supportAssetId: "desk-1",
+        placement: {
+          mode: "surface_local",
+          attachmentType: "underside_screw",
+          supportObjectId: "desk-2",
+          surfaceId: "desk_underside",
+          localPose: {
+            uMm: 120,
+            vMm: 80,
+            normalOffsetMm: 0,
+            rotationMilliDeg: 0
+          },
+          scalePermille: [1000, 1000, 1000]
+        },
+        position: [0, 0, 0],
+        rotation: [0, 0, 0],
         scale: [1, 1, 1],
         materialId: null
       }
@@ -270,6 +334,43 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       missingRequiredFileNames: missingRequiredFileEntries.map(([key]) => key)
     };
   });
+  const packageRiskRows = packageRows
+    .map((row) => {
+      const reasons: string[] = [];
+      let severity: CommercialQaStatus = "pass";
+
+      if (row.qaStatus === "failed") {
+        severity = "fail";
+        reasons.push("asset QA failed");
+      } else if (row.qaStatus === "warning") {
+        severity = "warning";
+        reasons.push("asset QA warnings remain");
+      }
+
+      if (row.missingRequiredFiles > 0) {
+        severity = "fail";
+        reasons.push(`missing files: ${row.missingRequiredFileNames.join(", ")}`);
+      }
+
+      if (row.warningCount > 0 && !reasons.includes("asset QA warnings remain")) {
+        if (severity !== "fail") {
+          severity = "warning";
+        }
+        reasons.push(`${row.warningCount} package warnings`);
+      }
+
+      return {
+        key: row.key,
+        label: row.label,
+        severity,
+        reasons
+      };
+    })
+    .filter((row) => row.reasons.length > 0)
+    .sort((left, right) => {
+      const severityScore = { fail: 0, warning: 1, pass: 2 };
+      return severityScore[left.severity] - severityScore[right.severity];
+    });
 
   const corruptSceneReport = inspectSceneDocumentIntegrity(buildSampleCorruptScene());
   const expectedBenchmarkScenarios = ["empty-room", "standard-room", "dense-desk", "heavy-assets"];
@@ -298,14 +399,25 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     }
   ].map((suite) => {
     const isRegistered = verifyScripts.includes(suite.script);
+    const evidenceRecord =
+      placementRegressionEvidenceLedger.find((record) => record.id === suite.id || record.script === suite.script) ?? null;
+    const isVerified = Boolean(isRegistered && evidenceRecord && evidenceRecord.status === "verified");
     return {
       ...suite,
-      status: (isRegistered ? "pass" : "fail") as CommercialQaStatus,
-      detail: isRegistered
-        ? `${suite.script} is registered and part of the commercial QA regression surface.`
-        : `${suite.script} is missing from apps/web/package.json.`
+      status: (isVerified ? "pass" : isRegistered ? "warning" : "fail") as CommercialQaStatus,
+      detail: !isRegistered
+        ? `${suite.script} is missing from apps/web/package.json.`
+        : evidenceRecord
+          ? `${suite.script} is registered and has a verification ledger entry.`
+          : `${suite.script} is registered but missing verification evidence.`,
+      lastVerifiedAt: evidenceRecord?.lastVerifiedAt ?? null,
+      verificationMethod: evidenceRecord?.verificationMethod ?? "untracked",
+      evidence: evidenceRecord?.evidence ?? []
     };
   });
+  const requiredCompatibilityProfiles = compatibilityVerificationLedger.filter((entry) => entry.requiredForRelease);
+  const verifiedCompatibilityProfiles = requiredCompatibilityProfiles.filter((entry) => entry.status === "verified");
+  const pendingCompatibilityProfiles = requiredCompatibilityProfiles.filter((entry) => entry.status !== "verified");
 
   const releaseGates: CommercialReleaseGate[] = [
     {
@@ -333,8 +445,8 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     {
       id: "compatibility-matrix",
       label: "Browser/device compatibility matrix",
-      status: "pass",
-      detail: "Desktop and fallback profiles are documented for manual regression."
+      status: pendingCompatibilityProfiles.length === 0 ? "pass" : "warning",
+      detail: `${verifiedCompatibilityProfiles.length}/${requiredCompatibilityProfiles.length} required browser/device profiles have verification records.`
     },
     {
       id: "placement-regression",
@@ -346,9 +458,40 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       id: "scene-integrity",
       label: "Scene corruption detector",
       status: corruptSceneReport.status === "corrupt" ? "pass" : "fail",
-      detail: `Sample corrupt scene resolves to ${corruptSceneReport.status} with ${corruptSceneReport.issues.length} detected issues.`
+      detail: `Sample corrupt scene resolves to ${corruptSceneReport.status} with ${corruptSceneReport.issues.length} detected issues and ${corruptSceneReport.recoverySnapshot.mismatchedSupportReferenceCount} support mismatches.`
     }
   ];
+  const integritySeveritySummary = corruptSceneReport.issues.reduce(
+    (summary, issue) => {
+      summary[issue.severity] += 1;
+      return summary;
+    },
+    { info: 0, warning: 0, error: 0 } as Record<"info" | "warning" | "error", number>
+  );
+  const prioritizedIntegrityActions = corruptSceneReport.suggestedActions.map((action) => {
+    switch (action) {
+      case "repair_scene_nodes":
+        return {
+          action,
+          reason: "duplicate ids or invalid scale vectors must be repaired before reliable runtime restore."
+        };
+      case "rebuild_support_relations":
+        return {
+          action,
+          reason: "support references or surface-local attachments are inconsistent and can break mounted placement."
+        };
+      case "restore_asset_links":
+        return {
+          action,
+          reason: "missing asset ids prevent runtime package resolution and block editor launch fidelity."
+        };
+      default:
+        return {
+          action,
+          reason: "room shell fallback should be reviewed before release."
+        };
+    }
+  });
 
   return {
     generatedAt: new Date().toISOString(),
@@ -361,6 +504,12 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       missingRequiredFiles: packageRows.reduce((sum, row) => sum + row.missingRequiredFiles, 0),
       assetsWithSupportSurfaces: packageRows.filter((row) => row.supportSurfaceCount > 0).length,
       assetsWithAttachmentPoints: packageRows.filter((row) => row.attachmentPointCount > 0).length,
+      releaseReadyAssets: packageRows.filter((row) => row.qaStatus === "passed" && row.missingRequiredFiles === 0).length,
+      atRiskAssets: packageRiskRows.length,
+      qaCoveragePercent: packageRows.length > 0 ? Math.round((packageRows.filter((row) => row.qaStatus === "passed").length / packageRows.length) * 100) : 0,
+      supportCoveragePercent: packageRows.length > 0 ? Math.round((packageRows.filter((row) => row.supportSurfaceCount > 0).length / packageRows.length) * 100) : 0,
+      attachmentCoveragePercent: packageRows.length > 0 ? Math.round((packageRows.filter((row) => row.attachmentPointCount > 0).length / packageRows.length) * 100) : 0,
+      topRiskRows: packageRiskRows.slice(0, 5),
       rows: packageRows
     },
     performanceBaseline: {
@@ -391,48 +540,40 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     ],
     placementRegression: {
       registeredScripts: verifyScripts,
+      verifiedSuites: placementRegressionSuites.filter((suite) => suite.status === "pass").length,
+      requiredSuites: placementRegressionSuites.length,
       suites: placementRegressionSuites
     },
+    compatibilitySummary: {
+      requiredProfiles: requiredCompatibilityProfiles.length,
+      verifiedProfiles: verifiedCompatibilityProfiles.length,
+      pendingProfiles: pendingCompatibilityProfiles.length,
+      fallbackProfiles: compatibilityVerificationLedger.filter((entry) => entry.status === "fallback").length
+    },
     compatibilityMatrix: [
-      {
-        profile: "Desktop Balanced",
-        browser: "Chrome latest",
-        deviceClass: "desktop dGPU / modern iGPU",
-        status: "target",
-        notes: "60fps editor target, full focus placement and performance HUD verification."
-      },
-      {
-        profile: "Desktop Balanced",
-        browser: "Edge latest",
-        deviceClass: "desktop / laptop",
-        status: "target",
-        notes: "Release-blocking browser for enterprise Windows path."
-      },
-      {
-        profile: "Desktop Fallback",
-        browser: "Safari latest",
-        deviceClass: "MacBook class",
-        status: "verify",
-        notes: "WebGL fallback, memory telemetry may be partial."
-      },
-      {
-        profile: "Low-spec Laptop",
-        browser: "Chrome latest",
-        deviceClass: "integrated GPU",
-        status: "verify",
-        notes: "Balanced tier should degrade to 30fps fallback without breaking focus placement."
-      },
-      {
-        profile: "Mobile Viewer Fallback",
-        browser: "Safari iOS / Chrome Android",
-        deviceClass: "mobile",
-        status: "fallback",
-        notes: "Viewer/read-only posture only; no commercial editor commitment."
-      }
+      ...compatibilityVerificationLedger.map((entry) => ({
+        profile: entry.profile,
+        browser: entry.browser,
+        deviceClass: entry.deviceClass,
+        status: (
+          entry.status === "fallback" ? "fallback" : entry.requiredForRelease ? "target" : "verify"
+        ) as CompatibilityProfileStatus,
+        verificationStatus: entry.status,
+        requiredForRelease: entry.requiredForRelease,
+        lastVerifiedAt: entry.lastVerifiedAt,
+        verificationMethod: entry.verificationMethod,
+        evidence: entry.evidence,
+        notes: entry.notes
+      }))
     ],
     sceneIntegrity: {
       sampleStatus: corruptSceneReport.status,
       sampleIssueCodes: corruptSceneReport.issues.map((issue) => issue.code),
+      severitySummary: {
+        info: integritySeveritySummary.info,
+        warning: integritySeveritySummary.warning,
+        error: integritySeveritySummary.error
+      },
       sampleIssues: corruptSceneReport.issues.map((issue) => ({
         code: issue.code,
         severity: issue.severity,
@@ -440,11 +581,14 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       })),
       sampleSuggestedActions: corruptSceneReport.suggestedActions,
       sampleRecoverySnapshot: corruptSceneReport.recoverySnapshot,
+      prioritizedActions: prioritizedIntegrityActions,
       ruleSummary: [
         "scene node ids must be present and unique",
         "assetId must exist for every persisted node",
+        "scene node scale vectors must stay finite and positive",
         "surface-local placements require supportObjectId + surfaceId",
-        "support asset references must resolve to an existing scene node"
+        "support asset references must resolve to an existing scene node",
+        "supportAssetId and placement.supportObjectId must not drift apart"
       ]
     }
   };

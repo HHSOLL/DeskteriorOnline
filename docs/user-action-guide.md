@@ -993,3 +993,27 @@ Updated:
 
 Removed/Deprecated:
 - placement regression coverage는 CLI verify만 보면 되고 hidden QA surface에서 재확인하지 않아도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 3)
+Added:
+- `/labs/qa`의 compatibility matrix가 release-required profile별 verification timestamp, method, evidence를 함께 보여주는지 확인한다.
+- `/labs/qa`의 placement regression suite 카드가 verification timestamp, method, evidence를 함께 보여주는지 확인한다.
+- `npm --workspace apps/web run verify:commercial-qa`가 required compatibility profile verification ledger와 release-required placement suite ledger를 함께 검증하는지 확인한다.
+
+Updated:
+- commercial QA 확인 절차를 `release gate / placement regression / asset inventory / baseline / compatibility / integrity detail`에서 `release gate / evidence-backed regression + compatibility / asset inventory / baseline / integrity detail`까지 확장한다.
+
+Removed/Deprecated:
+- compatibility verification은 notes만 있으면 되고 별도 evidence를 남기지 않아도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 4 / Complete)
+Added:
+- `/labs/qa`에서 asset coverage summary와 top risk asset list가 보이는지 확인한다.
+- `/labs/qa`에서 integrity detector가 invalid scale, support mismatch, severity summary, prioritized recovery action을 함께 보여주는지 확인한다.
+- `npm --workspace apps/web run verify:scene-document`가 invalid scale과 support reference mismatch integrity rule까지 검증하는지 확인한다.
+
+Updated:
+- commercial QA 확인 절차를 `evidence-backed regression + compatibility / asset inventory / baseline / integrity detail`에서 `evidence-backed release dashboard / asset risk summary / integrity recovery plan`까지 확장한다.
+
+Removed/Deprecated:
+- integrity detector는 corrupt sample issue list만 확인하면 충분하다는 가정.

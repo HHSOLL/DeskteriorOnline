@@ -804,3 +804,25 @@ Updated:
 
 Removed/Deprecated:
 - hidden QA surface가 asset status를 summary 숫자만으로 보여줘도 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Visual Slice 3)
+Added:
+- hidden QA surface의 compatibility matrix card는 verification status, last verified timestamp, method, evidence를 함께 보여줘야 한다.
+- placement regression suite card도 last verified timestamp, method, evidence를 노출해 운영형 release dashboard로 읽힐 수 있어야 한다.
+
+Updated:
+- commercial QA visual 기준을 `summary card + regression suite + inventory table + recovery snapshot detail`에서 `summary card + evidence-backed regression/compatibility dashboard + inventory table + recovery snapshot detail`까지 확장한다.
+
+Removed/Deprecated:
+- verification evidence는 숨겨두고 status pill만 보여줘도 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Visual Slice 4 / Complete)
+Added:
+- hidden QA surface는 asset package inventory 위에 QA/support/attachment coverage summary card를 함께 보여줘야 한다.
+- integrity detector card는 invalid scale, support mismatch, severity summary, prioritized recovery action까지 함께 보여줘야 한다.
+
+Updated:
+- commercial QA visual 기준을 `evidence-backed regression/compatibility dashboard + inventory table + recovery snapshot detail`에서 `evidence-backed release dashboard + coverage summary + prioritized recovery detail`까지 확장한다.
+
+Removed/Deprecated:
+- integrity는 issue list와 단순 count만 보이면 충분하다는 가정.

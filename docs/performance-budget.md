@@ -476,3 +476,23 @@ Updated:
 
 Removed/Deprecated:
 - hidden QA page가 placement regression 상태를 보여주기 위해 request 시마다 verify 스크립트를 실제 실행해도 괜찮다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Budget Slice 3)
+Added:
+- compatibility verification ledger와 placement regression evidence ledger는 checked-in static data만 읽어야 하며 hidden QA page render 중 네트워크 fetch를 추가하지 않는다.
+
+Updated:
+- commercial QA budget surface를 `registry snapshot + inventory detail + recovery snapshot detail`에서 `registry snapshot + evidence ledger + inventory detail + recovery snapshot detail`까지 확장한다.
+
+Removed/Deprecated:
+- release evidence를 표시하기 위해 hidden QA page가 동적 외부 상태를 읽어도 괜찮다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Budget Slice 4 / Complete)
+Added:
+- asset risk summary, coverage percentage, integrity severity summary는 모두 checked-in snapshot 계산만으로 구성하고 hidden QA page render 중 추가 runtime probe를 만들지 않는다.
+
+Updated:
+- commercial QA budget surface를 `registry snapshot + evidence ledger + inventory detail + recovery snapshot detail`에서 `registry snapshot + evidence ledger + risk summary + recovery plan detail`까지 확장한다.
+
+Removed/Deprecated:
+- commercial QA release dashboard를 완성하기 위해 hidden QA page가 별도 live diagnostics pass를 수행해야 한다는 가정.
