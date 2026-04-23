@@ -3,17 +3,20 @@ import type { EditorTopMode, EditorViewMode } from "../stores/useEditorStore";
 import type { SceneAsset } from "../stores/useSceneStore";
 
 export type AssetLodComplexity = "low" | "medium" | "high";
+export type AssetLodStreamingPriority = "deferred" | "visible" | "focus";
 
 export type AssetLodPlan = {
   complexity: AssetLodComplexity;
   useProxyBox: boolean;
   lowDetailDistance: number | null;
+  streamingPriority: AssetLodStreamingPriority;
 };
 
 type AssetLodPlanInput = {
   asset: Pick<SceneAsset, "product">;
   viewMode: EditorViewMode;
   topMode: EditorTopMode;
+  priority?: "default" | "focus";
 };
 
 function clampDistance(value: number) {
@@ -86,20 +89,48 @@ function resolveBaseDistance(
   }
 }
 
+function resolveStreamingPriority(
+  viewMode: EditorViewMode,
+  topMode: EditorTopMode,
+  priority: "default" | "focus"
+): AssetLodStreamingPriority {
+  if (priority === "focus") {
+    return "focus";
+  }
+
+  if (viewMode === "walk" || viewMode === "builder-preview") {
+    return "visible";
+  }
+
+  return topMode === "desk-precision" ? "visible" : "deferred";
+}
+
 export function resolveAssetLodPlan({
   asset,
   viewMode,
-  topMode
+  topMode,
+  priority = "default"
 }: AssetLodPlanInput): AssetLodPlan {
   const profile = asset.product?.lodProfile ?? null;
   const complexity = resolveAssetLodComplexity(profile);
   const baseDistance = resolveBaseDistance(complexity, viewMode, topMode);
+  const streamingPriority = resolveStreamingPriority(viewMode, topMode, priority);
+
+  if (priority === "focus") {
+    return {
+      complexity,
+      useProxyBox: false,
+      lowDetailDistance: null,
+      streamingPriority
+    };
+  }
 
   if (baseDistance === null) {
     return {
       complexity,
       useProxyBox: false,
-      lowDetailDistance: null
+      lowDetailDistance: null,
+      streamingPriority
     };
   }
 
@@ -109,6 +140,7 @@ export function resolveAssetLodPlan({
   return {
     complexity,
     useProxyBox: true,
-    lowDetailDistance: clampDistance(baseDistance + distanceBonus)
+    lowDetailDistance: clampDistance(baseDistance + distanceBonus),
+    streamingPriority
   };
 }

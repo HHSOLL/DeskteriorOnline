@@ -117,6 +117,7 @@ E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 - `interaction-latency`는 hover / select / drag-start / gizmo-drag-start의 next-paint 기준 지연을 보낸다.
 - `bvh-build`는 geometry UUID / triangle count / duration / worker|sync mode를 기록해 large geometry BVH offload 동작 여부를 확인한다.
 - telemetry가 켜져 있으면 `SceneViewport` overlay의 live performance budget HUD가 draw call / FPS floor / heap growth / interaction latency / BVH sync fallback 이슈를 바로 띄운다.
+- `qa:primary:perf`는 `verify:performance-budget`, `verify:asset-instancing`, `verify:asset-lod`, `verify:benchmark-baseline`까지 묶어 perf CI gate로 사용한다.
 - `runtime-document-patch`는 top-view transform commit 시 runtime patch 개수와 대상 object를 기록해 preview/commit 분리 여부를 확인할 수 있다.
 - selected asset transform preview는 renderer object mutation 경로로 반영되어, commit 전에도 React re-render 없이 visual update가 가능한 상태를 유지해야 한다.
 - instanced cluster는 dirty object 기준 matrix/version sync만 수행하고, 동일 batch 전체를 매번 재생성하지 않는 방향을 유지해야 한다.
@@ -441,3 +442,15 @@ Updated:
 
 Removed/Deprecated:
 - live heap drift는 수동 DevTools 관찰이나 regression report에서만 확인하면 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Streaming/LOD + Benchmark CI Tighten Slice 4)
+Added:
+- checked-in baseline template는 telemetry `heapGrowthPercentPoints` 필드까지 포함한 shape를 유지하고, `verify:benchmark-baseline`로 benchmark scene inventory drift를 막는다.
+- focused asset/support asset은 editing/focus placement 중 proxy fallback보다 full-detail LOD를 우선 유지한다.
+
+Updated:
+- perf CI gate를 “build 후 개별 verify 수동 실행”에서 “`qa:primary:perf` self-contained gate”로 확장한다.
+- `Phase 8 Performance Hardening` 상태를 완료로 갱신한다.
+
+Removed/Deprecated:
+- benchmark baseline template가 scene inventory와 느슨하게 어긋나도 괜찮다는 가정.

@@ -41,6 +41,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `SceneViewport` 기반 경로는 성능 측정 시 `deskterioronline:renderer-stats`와 `deskterioronline:interaction-latency` 브라우저 이벤트를 공용 telemetry 계약으로 사용한다.
 - `SceneViewport` 기반 경로는 telemetry가 켜져 있을 때 live performance budget HUD로 draw call / FPS floor / heap growth / interaction latency / BVH offload 경고를 즉시 노출해야 한다.
 - 성능 회귀 보고는 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__`로 캡처한 JSON entry와 `perf:report:verify` CLI 검증을 기본 절차로 사용한다.
+- `qa:primary:perf`는 `type-check + lint + build + verify:performance-budget + verify:asset-instancing + verify:asset-lod + verify:benchmark-baseline`를 한 번에 묶는 self-contained performance gate로 유지한다.
 - runtime HUD 경고와 regression report 검증은 같은 성능 budget helper를 기준으로 drift 없이 유지한다.
 - loaded GLB 자산의 picking은 `three-mesh-bvh` 기반 bounds tree raycast를 기본값으로 사용한다.
 - loaded GLB 자산의 bounds tree 생성은 large non-interleaved geometry에 한해 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync fallback을 사용한다.
@@ -385,6 +386,18 @@ Updated:
 
 Removed/Deprecated:
 - heap drift는 regression report나 DevTools에서만 보면 되고 live HUD에는 올리지 않아도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Streaming/LOD + Benchmark CI Tighten Slice 4)
+Added:
+- focused asset/support asset은 top desk precision뿐 아니라 walk focus placement 경로에서도 full-detail LOD를 유지하도록 `resolveAssetLodPlan` priority를 확장했다.
+- `verify:benchmark-baseline`를 추가해 checked-in `benchmark-scenes/baseline.template.json`이 benchmark scene inventory와 telemetry shape를 계속 따라가는지 검증한다.
+
+Updated:
+- Phase 8 performance gate를 “qa:primary + 개별 smoke 수동 실행”에서 “`qa:primary:perf` self-contained performance gate”까지 확장한다.
+- `Phase 8 Performance Hardening`의 남은 범위를 `0%`로 닫고 다음 활성 타깃을 `Phase 9 Commercial QA`로 넘긴다.
+
+Removed/Deprecated:
+- focused interaction asset도 기본 room/view LOD 거리 정책만 따르면 된다는 가정.
 
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop)
 Added:

@@ -920,6 +920,8 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   const setIsTransforming = useEditorStore((state) => state.setIsTransforming);
   const readOnly = useEditorStore((state) => state.readOnly);
   const requestFocusPlacement = useFocusPlacementStore((state) => state.requestFocusPlacement);
+  const pendingFocusPlacementRequest = useFocusPlacementStore((state) => state.pendingRequest);
+  const activeFocusPlacementSession = useFocusPlacementStore((state) => state.activeSession);
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const setSelectedAssetId = useSelectionSelector((slice) => slice.setSelectedAssetId);
   const walls = useShellSelector((slice) => slice.walls);
@@ -978,26 +980,32 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   );
   const lodPlan = useMemo(
     () => {
-      const preserveFullDetail =
-        viewMode === "top" &&
-        topMode === "desk-precision" &&
-        (selectedAssetId === asset.id || selectedSupportAssetId === asset.id);
-
-      if (preserveFullDetail) {
-        return {
-          complexity: resolveAssetLodComplexity(asset.product?.lodProfile ?? null),
-          useProxyBox: false,
-          lowDetailDistance: null
-        } satisfies AssetLodPlan;
-      }
+      const hasFocusPriority =
+        selectedAssetId === asset.id ||
+        selectedSupportAssetId === asset.id ||
+        pendingFocusPlacementRequest?.objectId === asset.id ||
+        pendingFocusPlacementRequest?.supportObjectId === asset.id ||
+        activeFocusPlacementSession?.objectId === asset.id ||
+        activeFocusPlacementSession?.supportObjectId === asset.id ||
+        (isDragging && selectedAssetId === asset.id);
 
       return resolveAssetLodPlan({
         asset,
         viewMode,
-        topMode
+        topMode,
+        priority: hasFocusPriority ? "focus" : "default"
       });
     },
-    [asset, selectedAssetId, selectedSupportAssetId, topMode, viewMode]
+    [
+      activeFocusPlacementSession,
+      asset,
+      isDragging,
+      pendingFocusPlacementRequest,
+      selectedAssetId,
+      selectedSupportAssetId,
+      topMode,
+      viewMode
+    ]
   );
   const lightProfile = useMemo(
     () => (enableDynamicLight ? resolveAssetLightProfile(asset) : null),

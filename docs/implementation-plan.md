@@ -1162,3 +1162,15 @@ Updated:
 
 Removed/Deprecated:
 - memory leak detection이 아직 미착수라는 상태 설명.
+
+## 2026-04-23 변경 동기화 (Phase 8 Performance Hardening Slice 4)
+Added:
+- `resolveAssetLodPlan`에 focus priority를 추가해 selected/support/focus-placement asset이 top desk precision과 walk focus placement에서 full-detail LOD를 유지하도록 했다.
+- `verify:benchmark-baseline`를 추가하고 `qa:primary:perf`를 self-contained performance gate로 고쳐 baseline template / live budget / instancing / LOD smoke를 한 번에 검증하도록 했다.
+
+Updated:
+- `Phase 8 Performance Hardening` 상태를 “slice 3: memory leak detection(live heap telemetry + HUD warning) 완료”에서 “완료”로 갱신한다.
+- current phase의 남은 범위를 `0%`로 닫고 다음 phase 우선순위를 `Phase 9 Commercial QA`로 올린다.
+
+Removed/Deprecated:
+- `qa:primary:perf`가 외부 report 경로 인자 없이도 깨질 수 있는 느슨한 상태 설명.

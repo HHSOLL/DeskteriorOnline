@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-22T10:06:37.672Z",
+  "generatedAt": "2026-04-23T11:41:47.712Z",
   "entries": [
     {
       "scenario": "dense-desk",
@@ -21,6 +21,7 @@
         "scenario": "dense-desk",
         "fpsAvg": null,
         "frameTimeP95Ms": null,
+        "heapGrowthPercentPoints": null,
         "reactRenderCount": null,
         "raycastLatencyP95Ms": null,
         "assetLoadMs": null,
@@ -51,6 +52,7 @@
         "scenario": "empty-room",
         "fpsAvg": null,
         "frameTimeP95Ms": null,
+        "heapGrowthPercentPoints": null,
         "reactRenderCount": null,
         "raycastLatencyP95Ms": null,
         "assetLoadMs": null,
@@ -81,6 +83,7 @@
         "scenario": "heavy-assets",
         "fpsAvg": null,
         "frameTimeP95Ms": null,
+        "heapGrowthPercentPoints": null,
         "reactRenderCount": null,
         "raycastLatencyP95Ms": null,
         "assetLoadMs": null,
@@ -111,6 +114,7 @@
         "scenario": "standard-room",
         "fpsAvg": null,
         "frameTimeP95Ms": null,
+        "heapGrowthPercentPoints": null,
         "reactRenderCount": null,
         "raycastLatencyP95Ms": null,
         "assetLoadMs": null,
