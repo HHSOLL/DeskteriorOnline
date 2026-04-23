@@ -1,8 +1,9 @@
 import { createEngine } from "@deskterioronline/engine-core";
-import { PlacementKernel } from "@deskterioronline/placement-kernel";
+import { AttachmentGraph, PlacementKernel } from "@deskterioronline/placement-kernel";
 import {
   migrateLegacySceneStoreStateToV2,
   type LegacySceneStoreStateLike,
+  type PlacementRecord,
   type RuntimeAsset
 } from "@deskterioronline/scene-schema";
 
@@ -87,6 +88,25 @@ const state: LegacySceneStoreStateLike = {
       position: [0, 0, 0],
       rotation: [0, 0, 0],
       scale: [1, 1, 1]
+    },
+    {
+      id: "mouse-2",
+      assetId: "p2s_mouse_wireless",
+      catalogItemId: "p2s_mouse_wireless",
+      product: {
+        id: "p2s_mouse_wireless",
+        name: "Mouse 2",
+        category: "desk_accessory",
+        dimensionsMm: { width: 84, depth: 126, height: 52 },
+        pivot: { x: "center", y: "floor", z: "center" },
+        collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
+        lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 3, maxTriangleCount: 3000 },
+        textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
+        scaleLocked: true
+      },
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
     }
   ],
   wallMaterialIndex: 0,
@@ -129,12 +149,14 @@ try {
           type: "desktop_top" as const,
           localFrame: {
             originMm: [0, 740, 0] as [number, number, number],
-            tangentU: [1, 0, 0] as [number, number, number],
-            tangentV: [0, 0, 1] as [number, number, number],
-            normal: [0, 1, 0] as [number, number, number]
+            tangentU: [1000, 0, 0] as [number, number, number],
+            tangentV: [0, 0, 1000] as [number, number, number],
+            normal: [0, 1000, 0] as [number, number, number]
           },
           boundsMm: { min: [-600, -300] as [number, number], max: [600, 300] as [number, number] },
-          allowedAttachments: ["place_on_surface"]
+          allowedAttachments: ["place_on_surface"],
+          noPlaceZones: [{ min: [-80, -80], max: [80, 80] }],
+          preferredZones: [{ min: [120, -120], max: [420, 220] }]
         }
       ],
       attachmentPoints: [],
@@ -145,10 +167,59 @@ try {
         dimensionErrorMm: { width: 0, depth: 0, height: 0 },
         validatorVersion: "alpha"
       }
+    },
+    {
+      assetId: "p2s_mouse_wireless",
+      units: "mm" as const,
+      dimensionsMm: { width: 84, depth: 126, height: 52 },
+      scaleLocked: true as const,
+      pivot: { x: "center" as const, y: "floor" as const, z: "center" as const },
+      sourceProvenance: { method: "manual" as const, license: "internal", attributionRequired: false },
+      runtime: {
+        lods: [{ id: "lod0", level: 0, model: "mouse.glb", triangleCount: 3000, drawCallBudget: 3 }],
+        proxy: "mouse.proxy.glb",
+        defaultLod: 0,
+        triangleBudget: 3000,
+        textureBudgetMb: 8
+      },
+      colliders: [],
+      supportSurfaces: [],
+      attachmentPoints: [],
+      materialVariants: [{ id: "default", label: "Default" }],
+      qaStatus: {
+        status: "passed" as const,
+        measuredBoundsMm: { width: 84, depth: 126, height: 52 },
+        dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+        validatorVersion: "alpha"
+      }
     }
   ];
 
+  const documentMouse2 = document.objects.find((objectDocument) => objectDocument.id === "mouse-2");
+  assert(documentMouse2, "mouse-2 object should exist in migrated document");
+  const seededPlacement: PlacementRecord = {
+    mode: "surface_local",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "place_on_surface",
+    localPose: {
+      uMm: 380,
+      vMm: 120,
+      normalOffsetMm: 0,
+      rotationMilliDeg: 0
+    },
+    scalePermille: [1000, 1000, 1000]
+  };
+  documentMouse2.placement = seededPlacement;
+
   const engine = createEngine(document, runtimeAssets);
+  const attachmentGraph = new AttachmentGraph();
+  const initialGraph = attachmentGraph.build(engine.runtimeScene);
+  assert(
+    attachmentGraph.getChildren(initialGraph, "desk-1").includes("mouse-2"),
+    "attachment graph should include seeded surface-local child"
+  );
+
   const kernel = new PlacementKernel(engine);
   const transaction = kernel.begin({
     objectId: "mouse-1",
@@ -167,6 +238,7 @@ try {
   });
   const previewPlacement = transaction.previewWorldTransform();
   assert(previewPlacement?.mode === "world", "preview should expose world placement while dragging");
+  assert((previewPlacement?.world.positionMm[0] ?? 0) > 1000, "preview should resolve to desk-relative world coordinates");
   const committed = transaction.commit();
   assert(committed.mode === "surface_local", "placement commit should persist a surface-local placement");
 
@@ -174,8 +246,69 @@ try {
   assert(patches.length === 1, `expected one placement patch, received ${patches.length}`);
   assert(patches[0]?.nextPlacement.mode === "surface_local", "patch should keep surface-local placement");
 
+  const collisionTransaction = kernel.begin({
+    objectId: "mouse-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "place_on_surface"
+  });
+  const collisionState = collisionTransaction.update({
+    uMm: 380,
+    vMm: 120,
+    normalOffsetMm: 0,
+    rotationMilliDeg: 0
+  });
+  assert(collisionState.collisionReport?.collided === true, "overlapping sibling placement should collide");
+  collisionTransaction.cancel();
+
+  const noPlaceZoneTransaction = kernel.begin({
+    objectId: "mouse-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "place_on_surface"
+  });
+  const noPlaceZoneState = noPlaceZoneTransaction.update({
+    uMm: 0,
+    vMm: 0,
+    normalOffsetMm: 0,
+    rotationMilliDeg: 0
+  });
+  assert(
+    noPlaceZoneState.constraintReport?.errors.some((issue) => issue.code === "NO_PLACE_ZONE_OVERLAP"),
+    "restricted zone overlap should be reported"
+  );
+  noPlaceZoneTransaction.cancel();
+
+  const edgeClampTransaction = kernel.begin({
+    objectId: "mouse-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "edge_clamp"
+  });
+  const edgeClampState = edgeClampTransaction.update({
+    uMm: 260,
+    vMm: 120,
+    normalOffsetMm: 0,
+    rotationMilliDeg: 0
+  });
+  assert(
+    edgeClampState.constraintReport?.errors.some((issue) => issue.code === "ATTACHMENT_NOT_ALLOWED"),
+    "unsupported attachment type should be rejected"
+  );
+  edgeClampTransaction.cancel();
+
   console.log("placement kernel foundation ok");
-  console.log(JSON.stringify({ patchCount: patches.length, nextPlacement: patches[0]?.nextPlacement }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        patchCount: patches.length,
+        nextPlacement: patches[0]?.nextPlacement,
+        attachmentChildren: attachmentGraph.getChildren(initialGraph, "desk-1")
+      },
+      null,
+      2
+    )
+  );
 } catch (error) {
   console.error("[verify-placement-kernel-foundation] failed");
   console.error(error);

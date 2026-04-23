@@ -238,6 +238,16 @@ npm --workspace apps/web run verify:placement-kernel
 - same-room object add/remove/material 변경이 full runtime scene replace 없이 incremental sync로 반영되는지
 - same-object asset 교체가 renderer batch/handle에 반영되고, removed object selection/hover가 정리되는지
 - hidden object가 sceneDocument roundtrip, runtime sync, renderer visibility handle, furniture render path에서 일관되게 제외되는지
+
+## 2026-04-23 변경 동기화 (Placement Kernel Alpha QA Slice)
+Added:
+- `verify:placement-kernel`에서 same-surface sibling overlap, no-place zone overlap, unsupported attachment type이 각각 collision/constraint error로 막히는지 확인하는 기준을 추가했다.
+
+Updated:
+- placement kernel smoke의 기대치를 “surface_local patch 생성”에서 “invalid placement guard + patch 생성”까지 확장한다.
+
+Removed/Deprecated:
+- placement kernel smoke가 happy-path 한 케이스만 통과해도 충분하다는 가정.
 - runtime editor bridge preview가 store를 건드리지 않고, commit 시 runtime patch와 store update를 함께 만드는지
 - runtime render sync helper가 selected asset preview transform을 renderer object mutation으로 그대로 반영하는지
 - runtime renderer adapter가 dirty runtime object를 object handle matrix와 instance batch로 동기화하는지

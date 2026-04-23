@@ -1030,3 +1030,15 @@ Updated:
 
 Removed/Deprecated:
 - app-local asset compiler script가 여전히 compiler business logic의 canonical 위치라는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 5 Placement Kernel Alpha Slice 1)
+Added:
+- `packages/placement-kernel`에 footprint helper, richer constraint validation, same-surface sibling collision validation, attachment graph query를 추가했다.
+- `verify:placement-kernel`은 happy-path patch 생성뿐 아니라 `NO_PLACE_ZONE_OVERLAP`, `ATTACHMENT_NOT_ALLOWED`, sibling overlap collision을 함께 점검한다.
+
+Updated:
+- `Phase 5 Placement Kernel Alpha` 상태를 “foundation only”에서 “surface-local footprint bounds + restricted zone + attachment compatibility + same-surface collision alpha 완료”로 갱신한다.
+- current phase의 남은 범위를 `snap candidate/grid quantization`, `ray picker real input`, `surface resolver compatibility enrichment`, `attachment point 기반 mounted flow`, `constraint report 확장`으로 재정렬한다.
+
+Removed/Deprecated:
+- placement kernel이 commit 전에도 사실상 happy-path만 통과시키고 invalid placement를 거의 걸러내지 못하는 상태 설명.
