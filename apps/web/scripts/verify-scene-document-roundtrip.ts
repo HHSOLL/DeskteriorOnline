@@ -1,7 +1,9 @@
 import {
   mapProjectVersionToSceneDocument,
+  type SceneDocument,
   toSceneStorePatch
 } from "../src/lib/domain/scene-document";
+import { inspectSceneDocumentIntegrity } from "../src/lib/domain/scene-integrity";
 import { serializeScenePlacement } from "../src/lib/domain/scene-placement";
 import { buildSceneDocumentBootstrapFromSavePayload } from "../src/lib/server/project-versions";
 
@@ -258,6 +260,45 @@ try {
   assert(
     JSON.stringify(savedLampPlacement) === JSON.stringify(loadedLampPlacement),
     `lamp placement roundtrip mismatch: ${JSON.stringify({ savedLampPlacement, loadedLampPlacement })}`
+  );
+
+  const corruptDocument = {
+    ...bootstrap.document,
+    schemaVersion: 2,
+    nodes: (bootstrap.document.nodes as unknown as SceneDocument["nodes"]).map((node) =>
+      node.id === "lamp-1"
+        ? {
+            ...node,
+            supportAssetId: "desk-1",
+            placement: {
+              mode: "surface_local",
+              attachmentType: "place_on_surface",
+              supportObjectId: "desk-2",
+              surfaceId: "desk-top",
+              localPose: {
+                uMm: 160,
+                vMm: 120,
+                normalOffsetMm: 0,
+                rotationMilliDeg: 0
+              },
+              scalePermille: [1000, 1000, 1000]
+            },
+            scale: [0, 1, 1]
+          }
+        : node
+    )
+  } as unknown as SceneDocument;
+
+  const corruptReport = inspectSceneDocumentIntegrity(corruptDocument);
+
+  assert(corruptReport.status === "corrupt", "expected corrupt integrity report for invalid scene variant");
+  assert(
+    corruptReport.issues.some((issue) => issue.code === "INVALID_NODE_SCALE"),
+    "expected invalid node scale issue"
+  );
+  assert(
+    corruptReport.issues.some((issue) => issue.code === "SUPPORT_REFERENCE_MISMATCH"),
+    "expected support reference mismatch issue"
   );
 
   console.log("sceneDocument roundtrip ok");

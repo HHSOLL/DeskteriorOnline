@@ -486,3 +486,13 @@ Updated:
 
 Removed/Deprecated:
 - release evidence를 표시하기 위해 hidden QA page가 동적 외부 상태를 읽어도 괜찮다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Budget Slice 4 / Complete)
+Added:
+- asset risk summary, coverage percentage, integrity severity summary는 모두 checked-in snapshot 계산만으로 구성하고 hidden QA page render 중 추가 runtime probe를 만들지 않는다.
+
+Updated:
+- commercial QA budget surface를 `registry snapshot + evidence ledger + inventory detail + recovery snapshot detail`에서 `registry snapshot + evidence ledger + risk summary + recovery plan detail`까지 확장한다.
+
+Removed/Deprecated:
+- commercial QA release dashboard를 완성하기 위해 hidden QA page가 별도 live diagnostics pass를 수행해야 한다는 가정.

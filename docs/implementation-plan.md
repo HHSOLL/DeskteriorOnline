@@ -1214,3 +1214,16 @@ Updated:
 
 Removed/Deprecated:
 - compatibility matrix가 profile 목록과 notes만 있으면 운영 검증 기록 없이도 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 4 / Complete)
+Added:
+- commercial QA snapshot의 asset status에 `releaseReadyAssets`, `atRiskAssets`, `qaCoveragePercent`, `supportCoveragePercent`, `attachmentCoveragePercent`, `topRiskRows`를 추가한다.
+- scene corruption detector에 `INVALID_NODE_SCALE`, `SUPPORT_REFERENCE_MISMATCH` 규칙과 `invalidScaleCount`, `mismatchedSupportReferenceCount` recovery snapshot 필드를 추가한다.
+- hidden QA surface는 integrity severity summary와 prioritized recovery action까지 보여주는 release dashboard여야 한다.
+
+Updated:
+- `Phase 9 Commercial QA` 상태를 “slice 3: compatibility verification ledger + regression evidence ledger 완료”에서 “slice 4: asset risk summary + integrity detector expansion + release dashboard finish 완료”로 올리고 close 한다.
+- current phase의 남은 범위를 `없음`으로 정리하고 다음 활성 타깃을 post-phase 운영 또는 신규 roadmap phase로 넘긴다.
+
+Removed/Deprecated:
+- asset inventory table과 기본 integrity count만 있으면 commercial QA release dashboard가 충분하다는 가정.

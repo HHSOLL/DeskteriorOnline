@@ -92,6 +92,17 @@ export type CommercialQaSnapshot = {
     missingRequiredFiles: number;
     assetsWithSupportSurfaces: number;
     assetsWithAttachmentPoints: number;
+    releaseReadyAssets: number;
+    atRiskAssets: number;
+    qaCoveragePercent: number;
+    supportCoveragePercent: number;
+    attachmentCoveragePercent: number;
+    topRiskRows: Array<{
+      key: string;
+      label: string;
+      severity: CommercialQaStatus;
+      reasons: string[];
+    }>;
     rows: Array<{
       key: string;
       label: string;
@@ -152,6 +163,11 @@ export type CommercialQaSnapshot = {
   sceneIntegrity: {
     sampleStatus: ReturnType<typeof inspectSceneDocumentIntegrity>["status"];
     sampleIssueCodes: string[];
+    severitySummary: {
+      info: number;
+      warning: number;
+      error: number;
+    };
     sampleIssues: Array<{
       code: string;
       severity: string;
@@ -159,6 +175,10 @@ export type CommercialQaSnapshot = {
     }>;
     sampleSuggestedActions: string[];
     sampleRecoverySnapshot: ReturnType<typeof inspectSceneDocumentIntegrity>["recoverySnapshot"];
+    prioritizedActions: Array<{
+      action: string;
+      reason: string;
+    }>;
     ruleSummary: string[];
   };
 };
@@ -240,6 +260,28 @@ function buildSampleCorruptScene(): SceneDocument {
         },
         position: [0, 0, 0],
         rotation: [0, 0, 0],
+        scale: [0, 1, 1],
+        materialId: null
+      },
+      {
+        id: "tray-1",
+        assetId: "p2s_underdesk_tray",
+        supportAssetId: "desk-1",
+        placement: {
+          mode: "surface_local",
+          attachmentType: "underside_screw",
+          supportObjectId: "desk-2",
+          surfaceId: "desk_underside",
+          localPose: {
+            uMm: 120,
+            vMm: 80,
+            normalOffsetMm: 0,
+            rotationMilliDeg: 0
+          },
+          scalePermille: [1000, 1000, 1000]
+        },
+        position: [0, 0, 0],
+        rotation: [0, 0, 0],
         scale: [1, 1, 1],
         materialId: null
       }
@@ -292,6 +334,43 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       missingRequiredFileNames: missingRequiredFileEntries.map(([key]) => key)
     };
   });
+  const packageRiskRows = packageRows
+    .map((row) => {
+      const reasons: string[] = [];
+      let severity: CommercialQaStatus = "pass";
+
+      if (row.qaStatus === "failed") {
+        severity = "fail";
+        reasons.push("asset QA failed");
+      } else if (row.qaStatus === "warning") {
+        severity = "warning";
+        reasons.push("asset QA warnings remain");
+      }
+
+      if (row.missingRequiredFiles > 0) {
+        severity = "fail";
+        reasons.push(`missing files: ${row.missingRequiredFileNames.join(", ")}`);
+      }
+
+      if (row.warningCount > 0 && !reasons.includes("asset QA warnings remain")) {
+        if (severity !== "fail") {
+          severity = "warning";
+        }
+        reasons.push(`${row.warningCount} package warnings`);
+      }
+
+      return {
+        key: row.key,
+        label: row.label,
+        severity,
+        reasons
+      };
+    })
+    .filter((row) => row.reasons.length > 0)
+    .sort((left, right) => {
+      const severityScore = { fail: 0, warning: 1, pass: 2 };
+      return severityScore[left.severity] - severityScore[right.severity];
+    });
 
   const corruptSceneReport = inspectSceneDocumentIntegrity(buildSampleCorruptScene());
   const expectedBenchmarkScenarios = ["empty-room", "standard-room", "dense-desk", "heavy-assets"];
@@ -379,9 +458,40 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       id: "scene-integrity",
       label: "Scene corruption detector",
       status: corruptSceneReport.status === "corrupt" ? "pass" : "fail",
-      detail: `Sample corrupt scene resolves to ${corruptSceneReport.status} with ${corruptSceneReport.issues.length} detected issues.`
+      detail: `Sample corrupt scene resolves to ${corruptSceneReport.status} with ${corruptSceneReport.issues.length} detected issues and ${corruptSceneReport.recoverySnapshot.mismatchedSupportReferenceCount} support mismatches.`
     }
   ];
+  const integritySeveritySummary = corruptSceneReport.issues.reduce(
+    (summary, issue) => {
+      summary[issue.severity] += 1;
+      return summary;
+    },
+    { info: 0, warning: 0, error: 0 } as Record<"info" | "warning" | "error", number>
+  );
+  const prioritizedIntegrityActions = corruptSceneReport.suggestedActions.map((action) => {
+    switch (action) {
+      case "repair_scene_nodes":
+        return {
+          action,
+          reason: "duplicate ids or invalid scale vectors must be repaired before reliable runtime restore."
+        };
+      case "rebuild_support_relations":
+        return {
+          action,
+          reason: "support references or surface-local attachments are inconsistent and can break mounted placement."
+        };
+      case "restore_asset_links":
+        return {
+          action,
+          reason: "missing asset ids prevent runtime package resolution and block editor launch fidelity."
+        };
+      default:
+        return {
+          action,
+          reason: "room shell fallback should be reviewed before release."
+        };
+    }
+  });
 
   return {
     generatedAt: new Date().toISOString(),
@@ -394,6 +504,12 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       missingRequiredFiles: packageRows.reduce((sum, row) => sum + row.missingRequiredFiles, 0),
       assetsWithSupportSurfaces: packageRows.filter((row) => row.supportSurfaceCount > 0).length,
       assetsWithAttachmentPoints: packageRows.filter((row) => row.attachmentPointCount > 0).length,
+      releaseReadyAssets: packageRows.filter((row) => row.qaStatus === "passed" && row.missingRequiredFiles === 0).length,
+      atRiskAssets: packageRiskRows.length,
+      qaCoveragePercent: packageRows.length > 0 ? Math.round((packageRows.filter((row) => row.qaStatus === "passed").length / packageRows.length) * 100) : 0,
+      supportCoveragePercent: packageRows.length > 0 ? Math.round((packageRows.filter((row) => row.supportSurfaceCount > 0).length / packageRows.length) * 100) : 0,
+      attachmentCoveragePercent: packageRows.length > 0 ? Math.round((packageRows.filter((row) => row.attachmentPointCount > 0).length / packageRows.length) * 100) : 0,
+      topRiskRows: packageRiskRows.slice(0, 5),
       rows: packageRows
     },
     performanceBaseline: {
@@ -453,6 +569,11 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     sceneIntegrity: {
       sampleStatus: corruptSceneReport.status,
       sampleIssueCodes: corruptSceneReport.issues.map((issue) => issue.code),
+      severitySummary: {
+        info: integritySeveritySummary.info,
+        warning: integritySeveritySummary.warning,
+        error: integritySeveritySummary.error
+      },
       sampleIssues: corruptSceneReport.issues.map((issue) => ({
         code: issue.code,
         severity: issue.severity,
@@ -460,11 +581,14 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       })),
       sampleSuggestedActions: corruptSceneReport.suggestedActions,
       sampleRecoverySnapshot: corruptSceneReport.recoverySnapshot,
+      prioritizedActions: prioritizedIntegrityActions,
       ruleSummary: [
         "scene node ids must be present and unique",
         "assetId must exist for every persisted node",
+        "scene node scale vectors must stay finite and positive",
         "surface-local placements require supportObjectId + surfaceId",
-        "support asset references must resolve to an existing scene node"
+        "support asset references must resolve to an existing scene node",
+        "supportAssetId and placement.supportObjectId must not drift apart"
       ]
     }
   };

@@ -14,8 +14,10 @@ export type SceneIntegrityIssue = {
     | "MISSING_NODE_ID"
     | "DUPLICATE_NODE_ID"
     | "MISSING_ASSET_ID"
+    | "INVALID_NODE_SCALE"
     | "SELF_SUPPORT_REFERENCE"
     | "MISSING_SUPPORT_ASSET"
+    | "SUPPORT_REFERENCE_MISMATCH"
     | "INVALID_SURFACE_SUPPORT";
   severity: SceneIntegrityIssueSeverity;
   message: string;
@@ -30,9 +32,11 @@ export type SceneRecoverySnapshot = {
   surfacePlacementCount: number;
   roomShellElementCount: number;
   missingAssetCount: number;
+  invalidScaleCount: number;
   missingSupportReferenceCount: number;
   duplicateNodeIdCount: number;
   selfSupportReferenceCount: number;
+  mismatchedSupportReferenceCount: number;
   invalidSurfacePlacementCount: number;
 };
 
@@ -45,6 +49,22 @@ export type SceneIntegrityReport = {
 
 function hasText(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
+}
+
+function hasValidPositiveScale(value: unknown) {
+  return (
+    Array.isArray(value) &&
+    value.length >= 3 &&
+    typeof value[0] === "number" &&
+    Number.isFinite(value[0]) &&
+    value[0] > 0 &&
+    typeof value[1] === "number" &&
+    Number.isFinite(value[1]) &&
+    value[1] > 0 &&
+    typeof value[2] === "number" &&
+    Number.isFinite(value[2]) &&
+    value[2] > 0
+  );
 }
 
 function isSurfaceLocalPlacement(
@@ -87,12 +107,18 @@ export function summarizeSceneRecoverySnapshot(document: SceneDocument): SceneRe
   const validNodeIds = new Set(document.nodes.map((node) => node.id).filter(hasText));
   const nodeIdCounts = new Map<string, number>();
   let missingSupportReferenceCount = 0;
+  let invalidScaleCount = 0;
   let selfSupportReferenceCount = 0;
+  let mismatchedSupportReferenceCount = 0;
   let invalidSurfacePlacementCount = 0;
 
   for (const node of document.nodes) {
     if (hasText(node.id)) {
       nodeIdCounts.set(node.id, (nodeIdCounts.get(node.id) ?? 0) + 1);
+    }
+
+    if (!hasValidPositiveScale(node.scale)) {
+      invalidScaleCount += 1;
     }
 
     if (hasText(node.supportAssetId)) {
@@ -110,6 +136,14 @@ export function summarizeSceneRecoverySnapshot(document: SceneDocument): SceneRe
     const placement = node.placement;
     if (!hasText(placement.supportObjectId) || !hasText(placement.surfaceId)) {
       invalidSurfacePlacementCount += 1;
+    }
+
+    if (
+      hasText(node.supportAssetId) &&
+      hasText(placement.supportObjectId) &&
+      node.supportAssetId !== placement.supportObjectId
+    ) {
+      mismatchedSupportReferenceCount += 1;
     }
 
     if (hasText(placement.supportObjectId)) {
@@ -134,9 +168,11 @@ export function summarizeSceneRecoverySnapshot(document: SceneDocument): SceneRe
     surfacePlacementCount,
     roomShellElementCount,
     missingAssetCount,
+    invalidScaleCount,
     missingSupportReferenceCount,
     duplicateNodeIdCount,
     selfSupportReferenceCount,
+    mismatchedSupportReferenceCount,
     invalidSurfacePlacementCount
   };
 }
@@ -180,6 +216,15 @@ export function inspectSceneDocumentIntegrity(document: SceneDocument): SceneInt
         code: "MISSING_ASSET_ID",
         severity: "error",
         message: "scene node is missing assetId and cannot be resolved at runtime.",
+        nodeId: hasText(node.id) ? node.id : undefined
+      });
+    }
+
+    if (!hasValidPositiveScale(node.scale)) {
+      pushIssue(issues, seenIssueKeys, {
+        code: "INVALID_NODE_SCALE",
+        severity: "error",
+        message: `scene node ${hasText(node.id) ? node.id : "(missing id)"} has an invalid scale vector.`,
         nodeId: hasText(node.id) ? node.id : undefined
       });
     }
@@ -235,6 +280,20 @@ export function inspectSceneDocumentIntegrity(document: SceneDocument): SceneInt
       });
     }
 
+    if (
+      hasText(node.supportAssetId) &&
+      hasText(placement.supportObjectId) &&
+      node.supportAssetId !== placement.supportObjectId
+    ) {
+      pushIssue(issues, seenIssueKeys, {
+        code: "SUPPORT_REFERENCE_MISMATCH",
+        severity: "warning",
+        message: `surface-local placement support ${placement.supportObjectId} does not match supportAssetId ${node.supportAssetId}.`,
+        nodeId: hasText(node.id) ? node.id : undefined,
+        supportObjectId: placement.supportObjectId
+      });
+    }
+
     if (!hasText(placement.surfaceId)) {
       pushIssue(issues, seenIssueKeys, {
         code: "INVALID_SURFACE_SUPPORT",
@@ -254,6 +313,7 @@ export function inspectSceneDocumentIntegrity(document: SceneDocument): SceneInt
         break;
       case "MISSING_NODE_ID":
       case "DUPLICATE_NODE_ID":
+      case "INVALID_NODE_SCALE":
         suggestedActions.add("repair_scene_nodes");
         break;
       case "MISSING_ASSET_ID":
@@ -261,6 +321,7 @@ export function inspectSceneDocumentIntegrity(document: SceneDocument): SceneInt
         break;
       case "SELF_SUPPORT_REFERENCE":
       case "MISSING_SUPPORT_ASSET":
+      case "SUPPORT_REFERENCE_MISMATCH":
       case "INVALID_SURFACE_SUPPORT":
         suggestedActions.add("rebuild_support_relations");
         break;

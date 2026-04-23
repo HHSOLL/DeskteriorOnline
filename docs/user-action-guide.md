@@ -1005,3 +1005,15 @@ Updated:
 
 Removed/Deprecated:
 - compatibility verification은 notes만 있으면 되고 별도 evidence를 남기지 않아도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 4 / Complete)
+Added:
+- `/labs/qa`에서 asset coverage summary와 top risk asset list가 보이는지 확인한다.
+- `/labs/qa`에서 integrity detector가 invalid scale, support mismatch, severity summary, prioritized recovery action을 함께 보여주는지 확인한다.
+- `npm --workspace apps/web run verify:scene-document`가 invalid scale과 support reference mismatch integrity rule까지 검증하는지 확인한다.
+
+Updated:
+- commercial QA 확인 절차를 `evidence-backed regression + compatibility / asset inventory / baseline / integrity detail`에서 `evidence-backed release dashboard / asset risk summary / integrity recovery plan`까지 확장한다.
+
+Removed/Deprecated:
+- integrity detector는 corrupt sample issue list만 확인하면 충분하다는 가정.
