@@ -342,3 +342,14 @@ Updated:
 
 Removed/Deprecated:
 - walk-mode 정밀 배치가 아직 제품 경로에 없으므로 별도 예산을 둘 필요가 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Placement Kernel Guard Budget)
+Added:
+- placement commit 경로는 evaluated candidate가 없으면 즉시 실패해야 하며, invalid candidate가 preview 상태에서 document patch를 만들지 않는 것을 기본 budget으로 본다.
+- focus placement session/HUD는 snap 이후 `localPose`를 기준으로 표시돼야 하고, preview pose와 표시 수치 drift를 허용하지 않는다.
+
+Updated:
+- interaction budget 범위를 `preview only -> Enter commit` 규칙에서 `preview only + invalid guard + snapped session consistency`까지 확장한다.
+
+Removed/Deprecated:
+- keyboard nudge session이 raw target pose를 유지해도 commit 예산 측정에는 영향이 없다는 가정.

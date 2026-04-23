@@ -1,5 +1,5 @@
 import { createEngine } from "@deskterioronline/engine-core";
-import { AttachmentGraph, PlacementKernel } from "@deskterioronline/placement-kernel";
+import { AttachmentGraph, PlacementKernel, RayPicker, SnapCandidateGenerator, SurfaceResolver } from "@deskterioronline/placement-kernel";
 import {
   migrateLegacySceneStoreStateToV2,
   type LegacySceneStoreStateLike,
@@ -63,6 +63,14 @@ const state: LegacySceneStoreStateLike = {
             size: [1.2, 0.6],
             top: 0.74,
             margin: [0.04, 0.04]
+          },
+          {
+            id: "back_edge",
+            anchorTypes: ["furniture_surface"],
+            center: [0, 0],
+            size: [1.2, 0.04],
+            top: 0.7,
+            margin: [0.02, 0.01]
           }
         ]
       },
@@ -101,6 +109,25 @@ const state: LegacySceneStoreStateLike = {
         pivot: { x: "center", y: "floor", z: "center" },
         collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
         lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 3, maxTriangleCount: 3000 },
+        textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
+        scaleLocked: true
+      },
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
+    },
+    {
+      id: "arm-1",
+      assetId: "p2s_monitor_arm",
+      catalogItemId: "p2s_monitor_arm",
+      product: {
+        id: "p2s_monitor_arm",
+        name: "Monitor Arm",
+        category: "desk_mount",
+        dimensionsMm: { width: 120, depth: 220, height: 420 },
+        pivot: { x: "center", y: "floor", z: "center" },
+        collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
+        lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 8, maxTriangleCount: 12000 },
         textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
         scaleLocked: true
       },
@@ -157,6 +184,19 @@ try {
           allowedAttachments: ["place_on_surface"],
           noPlaceZones: [{ min: [-80, -80], max: [80, 80] }],
           preferredZones: [{ min: [120, -120], max: [420, 220] }]
+        },
+        {
+          id: "back_edge",
+          type: "desk_edge" as const,
+          localFrame: {
+            originMm: [0, 700, -280] as [number, number, number],
+            tangentU: [1000, 0, 0] as [number, number, number],
+            tangentV: [0, 1000, 0] as [number, number, number],
+            normal: [0, 0, -1000] as [number, number, number]
+          },
+          boundsMm: { min: [-600, -20] as [number, number], max: [600, 20] as [number, number] },
+          thicknessMm: 40,
+          allowedAttachments: ["edge_clamp"]
         }
       ],
       attachmentPoints: [],
@@ -192,6 +232,43 @@ try {
         dimensionErrorMm: { width: 0, depth: 0, height: 0 },
         validatorVersion: "alpha"
       }
+    },
+    {
+      assetId: "p2s_monitor_arm",
+      units: "mm" as const,
+      dimensionsMm: { width: 120, depth: 220, height: 420 },
+      scaleLocked: true as const,
+      pivot: { x: "center" as const, y: "floor" as const, z: "center" as const },
+      sourceProvenance: { method: "manual" as const, license: "internal", attributionRequired: false },
+      runtime: {
+        lods: [{ id: "lod0", level: 0, model: "arm.glb", triangleCount: 12000, drawCallBudget: 8 }],
+        proxy: "arm.proxy.glb",
+        defaultLod: 0,
+        triangleBudget: 12000,
+        textureBudgetMb: 24
+      },
+      colliders: [],
+      supportSurfaces: [],
+      attachmentPoints: [
+        {
+          id: "edge-clamp-base",
+          type: "edge_clamp" as const,
+          localPositionMm: [0, 0, 0] as [number, number, number],
+          localNormal: [0, 0, -1000] as [number, number, number],
+          localTangent: [1000, 0, 0] as [number, number, number],
+          compatibleWith: ["desk_edge"],
+          constraints: {
+            requiredThicknessMm: [10, 85]
+          }
+        }
+      ],
+      materialVariants: [{ id: "default", label: "Default" }],
+      qaStatus: {
+        status: "passed" as const,
+        measuredBoundsMm: { width: 120, depth: 220, height: 420 },
+        dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+        validatorVersion: "alpha"
+      }
     }
   ];
 
@@ -214,10 +291,37 @@ try {
 
   const engine = createEngine(document, runtimeAssets);
   const attachmentGraph = new AttachmentGraph();
+  const surfaceResolver = new SurfaceResolver(engine);
+  const rayPicker = new RayPicker(surfaceResolver);
+  const snapCandidateGenerator = new SnapCandidateGenerator();
   const initialGraph = attachmentGraph.build(engine.runtimeScene);
   assert(
     attachmentGraph.getChildren(initialGraph, "desk-1").includes("mouse-2"),
     "attachment graph should include seeded surface-local child"
+  );
+  assert(
+    surfaceResolver.listCompatibleSurfaces("desk-1", "edge_clamp").map((surface) => surface.id).join(",") === "back_edge",
+    "surface resolver should filter compatible mounted surfaces"
+  );
+  assert(
+    rayPicker.pick({
+      supportObjectId: "desk-1",
+      attachmentType: "edge_clamp"
+    })?.surfaceId === "back_edge",
+    "ray picker should choose the compatible support edge"
+  );
+  const snapped = snapCandidateGenerator.snapLocalPose(
+    {
+      uMm: 263,
+      vMm: 118,
+      normalOffsetMm: 3,
+      rotationMilliDeg: 17350
+    },
+    "place_on_surface"
+  );
+  assert(
+    snapped.uMm === 265 && snapped.vMm === 120 && snapped.normalOffsetMm === 5 && snapped.rotationMilliDeg === 17000,
+    "snap generator should quantize place-on-surface local pose"
   );
 
   const kernel = new PlacementKernel(engine);
@@ -245,6 +349,21 @@ try {
   const patches = engine.buildDocumentPatch();
   assert(patches.length === 1, `expected one placement patch, received ${patches.length}`);
   assert(patches[0]?.nextPlacement.mode === "surface_local", "patch should keep surface-local placement");
+
+  const unvalidatedTransaction = kernel.begin({
+    objectId: "mouse-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "place_on_surface"
+  });
+  let unvalidatedCommitFailed = false;
+  try {
+    unvalidatedTransaction.commit();
+  } catch {
+    unvalidatedCommitFailed = true;
+  }
+  assert(unvalidatedCommitFailed, "commit should fail before any candidate validation runs");
+  unvalidatedTransaction.cancel();
 
   const collisionTransaction = kernel.begin({
     objectId: "mouse-1",
@@ -277,25 +396,78 @@ try {
     noPlaceZoneState.constraintReport?.errors.some((issue) => issue.code === "NO_PLACE_ZONE_OVERLAP"),
     "restricted zone overlap should be reported"
   );
+  let noPlaceCommitFailed = false;
+  try {
+    noPlaceZoneTransaction.commit();
+  } catch {
+    noPlaceCommitFailed = true;
+  }
+  assert(noPlaceCommitFailed, "invalid placement should not commit while overlapping a restricted zone");
   noPlaceZoneTransaction.cancel();
 
   const edgeClampTransaction = kernel.begin({
     objectId: "mouse-1",
     supportObjectId: "desk-1",
-    surfaceId: "desktop_top",
     attachmentType: "edge_clamp"
   });
   const edgeClampState = edgeClampTransaction.update({
     uMm: 260,
-    vMm: 120,
-    normalOffsetMm: 0,
-    rotationMilliDeg: 0
+    vMm: 12,
+    normalOffsetMm: 2,
+    rotationMilliDeg: 17350
   });
   assert(
-    edgeClampState.constraintReport?.errors.some((issue) => issue.code === "ATTACHMENT_NOT_ALLOWED"),
-    "unsupported attachment type should be rejected"
+    edgeClampState.constraintReport?.errors.some((issue) => issue.code === "ATTACHMENT_POINT_MISSING"),
+    "mounted flow should require a compatible attachment point on the placed asset"
   );
+  let missingAttachmentCommitFailed = false;
+  try {
+    edgeClampTransaction.commit();
+  } catch {
+    missingAttachmentCommitFailed = true;
+  }
+  assert(missingAttachmentCommitFailed, "mounted placement without attachment metadata should not commit");
   edgeClampTransaction.cancel();
+
+  const mountedTransaction = kernel.begin({
+    objectId: "arm-1",
+    supportObjectId: "desk-1",
+    attachmentType: "edge_clamp",
+    surfaceHits: [
+      {
+        objectId: "desk-1",
+        surfaceId: "desktop_top",
+        surface: runtimeAssets[0]!.supportSurfaces[0]!,
+        distance: 0.25
+      },
+      {
+        objectId: "desk-1",
+        surfaceId: "back_edge",
+        surface: runtimeAssets[0]!.supportSurfaces[1]!,
+        distance: 0.35
+      }
+    ]
+  });
+  assert(
+    mountedTransaction.getState().activeCandidate?.surfaceId === "back_edge",
+    "mounted flow should auto-resolve the compatible edge surface"
+  );
+  const mountedState = mountedTransaction.update({
+    uMm: 263,
+    vMm: 12,
+    normalOffsetMm: 2,
+    rotationMilliDeg: 17350
+  });
+  assert(mountedState.constraintReport?.valid === true, "mounted candidate should pass attachment validation on the desk edge");
+  const mountedCommitted = mountedTransaction.commit();
+  assert(
+    mountedCommitted.surfaceId === "back_edge" &&
+      mountedCommitted.localPose.uMm === 260 &&
+      mountedCommitted.localPose.vMm === 10 &&
+      mountedCommitted.localPose.normalOffsetMm === 0 &&
+      mountedCommitted.localPose.rotationMilliDeg === 15000,
+    "mounted flow should persist snapped surface-local placement on the resolved edge"
+  );
 
   console.log("placement kernel foundation ok");
   console.log(
@@ -303,7 +475,8 @@ try {
       {
         patchCount: patches.length,
         nextPlacement: patches[0]?.nextPlacement,
-        attachmentChildren: attachmentGraph.getChildren(initialGraph, "desk-1")
+        attachmentChildren: attachmentGraph.getChildren(initialGraph, "desk-1"),
+        mountedPlacement: mountedCommitted
       },
       null,
       2

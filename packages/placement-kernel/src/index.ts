@@ -1,6 +1,7 @@
 export * from "./types";
 export * from "./RayPicker";
 export * from "./SurfaceResolver";
+export * from "./SnapCandidateGenerator";
 export * from "./ConstraintSolver";
 export * from "./CollisionValidator";
 export * from "./AttachmentGraph";

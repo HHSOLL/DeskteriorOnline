@@ -118,6 +118,17 @@ Updated:
 Removed/Deprecated:
 - same-surface accessory overlap을 runtime placement kernel 밖의 후속 과제로만 미뤄둘 수 있다는 가정.
 
+## 2026-04-23 변경 동기화 (Placement Kernel Alpha Completion)
+Added:
+- mounted placement preview는 `attachmentPoints[].compatibleWith`와 support surface thickness를 함께 검증하고, compatible surface hit가 있으면 그 후보를 우선 사용해야 한다.
+- focus placement HUD는 raw key input이 아니라 kernel snap 결과를 표시해야 하며, preview와 HUD 수치가 drift 하면 안 된다.
+
+Updated:
+- placement visual quality 기준을 “desktop_top accessory validation”에서 “desktop_top + mounted edge placement validation”까지 확장한다.
+
+Removed/Deprecated:
+- mounted flow는 Phase 6 전까지 attachment metadata를 실제로 소비하지 않아도 된다는 가정.
+
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.
 - 실측 고정 제품(`scaleLocked=true`)은 변환 컨트롤/인스펙터 입력에서 스케일 변경을 저장하지 않는다.

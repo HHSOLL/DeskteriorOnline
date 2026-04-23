@@ -1042,3 +1042,18 @@ Updated:
 
 Removed/Deprecated:
 - placement kernel이 commit 전에도 사실상 happy-path만 통과시키고 invalid placement를 거의 걸러내지 못하는 상태 설명.
+
+## 2026-04-23 변경 동기화 (Phase 5 Placement Kernel Alpha Complete)
+Added:
+- `SnapCandidateGenerator`, hit-candidate aware `RayPicker`, compatibility-enriched `SurfaceResolver`를 통해 surface-local snap quantization과 mounted surface auto-resolve를 kernel 기본 경로에 포함했다.
+- `ConstraintSolver`는 `attachmentPoints[].compatibleWith`, attachment thickness constraint, mounted surface compatibility를 실제 오류 코드(`ATTACHMENT_SURFACE_INCOMPATIBLE`, `SURFACE_THICKNESS_INCOMPATIBLE`)로 검증한다.
+- `PlacementTransaction.commit()`는 `update()`를 통한 candidate evaluation 없이 실행될 수 없도록 guard를 추가했다.
+- `verify:placement-kernel`은 `begin -> commit` 금지, invalid candidate commit 차단, hit-driven mounted auto-resolve, snapped mounted placement persistence까지 검증한다.
+- `verify:focus-placement`는 snapped session pose, Enter 전 `runtime-document-patch` 미발행, invalid candidate commit 차단, Esc/cancel preview cleanup까지 함께 검증한다.
+
+Updated:
+- `Phase 5 Placement Kernel Alpha` 상태를 “slice 1: validation alpha”에서 “snap + compatible surface resolve + mounted attachment validation + commit guard + product-path smoke complete”로 갱신한다.
+- 다음 phase의 우선순위를 `Phase 5.5 Focus Placement Prototype 잔여 polish(local grid/compatibility hint/collision HUD)` 이후 `Phase 6 Full Focus Placement Mode`로 되돌린다.
+
+Removed/Deprecated:
+- `snap candidate/grid quantization`, `ray picker real input`, `surface resolver compatibility enrichment`, `attachment point 기반 mounted flow`, `constraint report 확장`이 여전히 Phase 5 잔여 범위라는 상태 설명.

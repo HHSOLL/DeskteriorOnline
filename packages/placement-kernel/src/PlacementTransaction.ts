@@ -10,6 +10,7 @@ import { AttachmentGraph, type AttachmentGraphSnapshot } from "./AttachmentGraph
 import type { CollisionReport, ConstraintReport, PlacementCandidate, SurfaceHit } from "./types";
 import { CollisionValidator } from "./CollisionValidator";
 import { ConstraintSolver } from "./ConstraintSolver";
+import { SnapCandidateGenerator } from "./SnapCandidateGenerator";
 import { SurfaceResolver } from "./SurfaceResolver";
 
 export type PlacementTransactionState = {
@@ -22,6 +23,7 @@ export class PlacementTransaction {
   private readonly surfaceResolver: SurfaceResolver;
   private readonly attachmentGraph = new AttachmentGraph();
   private readonly constraintSolver = new ConstraintSolver();
+  private readonly snapCandidateGenerator = new SnapCandidateGenerator();
   private readonly collisionValidator: CollisionValidator;
   private surfaceHit: SurfaceHit | null = null;
   private activeCandidate: PlacementCandidate | null = null;
@@ -68,9 +70,15 @@ export class PlacementTransaction {
       throw new Error("Placement transaction has not started.");
     }
 
+    const snappedLocalPose = this.snapCandidateGenerator.snapLocalPose(
+      localPose,
+      this.activeCandidate.attachmentType,
+      this.surfaceHit?.surface ?? null
+    );
+
     this.activeCandidate = {
       ...this.activeCandidate,
-      localPose
+      localPose: snappedLocalPose
     };
 
     const runtimeAsset = this.resolveActiveRuntimeAsset();
@@ -94,6 +102,9 @@ export class PlacementTransaction {
   commit() {
     if (!this.activeCandidate) {
       throw new Error("Placement transaction has not started.");
+    }
+    if (!this.constraintReport || !this.collisionReport) {
+      throw new Error("Placement candidate must be evaluated before commit.");
     }
     if (this.constraintReport && !this.constraintReport.valid) {
       throw new Error("Placement candidate is invalid.");

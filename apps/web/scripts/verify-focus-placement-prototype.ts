@@ -6,6 +6,10 @@ import {
   type RuntimeAsset
 } from "@deskterioronline/scene-schema";
 import { commitRuntimePlacementToStore } from "../src/lib/runtime/runtime-asset-bridge";
+import {
+  PLAN2SPACE_RUNTIME_DOCUMENT_PATCH_EVENT
+} from "../src/lib/runtime/runtime-asset-bridge";
+import { resolveFocusPlacementSessionUpdate } from "../src/lib/runtime/focus-placement-session";
 import { useSceneStore } from "../src/lib/stores/useSceneStore";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -144,10 +148,49 @@ const runtimeAssets: RuntimeAsset[] = [
       dimensionErrorMm: { width: 0, depth: 0, height: 0 },
       validatorVersion: "alpha"
     }
+  },
+  {
+    assetId: "p2s_mouse_wireless",
+    units: "mm",
+    dimensionsMm: { width: 84, depth: 126, height: 52 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "mouse.glb", triangleCount: 3000, drawCallBudget: 3 }],
+      proxy: "mouse.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 3000,
+      textureBudgetMb: 8
+    },
+    colliders: [],
+    supportSurfaces: [],
+    attachmentPoints: [],
+    materialVariants: [{ id: "default", label: "Default" }],
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 84, depth: 126, height: 52 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
   }
 ];
 
+const originalWindow = (globalThis as { window?: unknown }).window;
+
 try {
+  const fakeWindow = Object.assign(new EventTarget(), {
+    __DESKTERIORONLINE_RUNTIME_LAST_PATCHES__: [] as unknown[]
+  });
+  (globalThis as { window?: unknown }).window = fakeWindow;
+  let patchEventCount: number = 0;
+  let lastPatchCount: number = 0;
+  fakeWindow.addEventListener(PLAN2SPACE_RUNTIME_DOCUMENT_PATCH_EVENT, (event) => {
+    patchEventCount += 1;
+    const detail = (event as CustomEvent<{ patchCount?: number }>).detail;
+    lastPatchCount = detail?.patchCount ?? 0;
+  });
+
   const document = migrateLegacySceneStoreStateToV2(legacyState, {
     id: "verify-focus-placement",
     version: 2
@@ -178,21 +221,65 @@ try {
     attachmentType: "place_on_surface"
   });
 
-  const nextState = transaction.update({
-    uMm: 180,
-    vMm: -90,
-    normalOffsetMm: 0,
-    rotationMilliDeg: 5000
-  });
+  let prematureCommitFailed = false;
+  try {
+    transaction.commit();
+  } catch {
+    prematureCommitFailed = true;
+  }
+  assert(prematureCommitFailed, "focus placement should refuse commit before validation runs");
+
+  const requestedPose = {
+    uMm: 183,
+    vMm: -92,
+    normalOffsetMm: 2,
+    rotationMilliDeg: 5375
+  };
+  const nextState = transaction.update(requestedPose);
+  const sessionUpdate = resolveFocusPlacementSessionUpdate(requestedPose, nextState);
+  assert(
+    sessionUpdate.localPose.uMm === 185 &&
+      sessionUpdate.localPose.vMm === -90 &&
+      sessionUpdate.localPose.normalOffsetMm === 0 &&
+      sessionUpdate.localPose.rotationMilliDeg === 5000,
+    "focus placement session should adopt snapped local pose from the kernel"
+  );
   const previewPlacement = transaction.previewWorldTransform();
   assert(previewPlacement?.mode === "world", "preview should expose a world transform snapshot");
   assert(
-    previewPlacement.world.positionMm[0] === 1780 &&
+    previewPlacement.world.positionMm[0] === 1785 &&
       previewPlacement.world.positionMm[1] === 740 &&
       previewPlacement.world.positionMm[2] === 1110,
     "preview world transform should follow the focused support surface"
   );
   assert(nextState.constraintReport?.valid === true, "desk-top prototype update should stay valid");
+  assert(Number(patchEventCount) === 0, "focus placement should not publish document patches before commit");
+
+  const invalidTransaction = kernel.begin({
+    objectId: "mouse-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "place_on_surface"
+  });
+  const invalidState = invalidTransaction.update({
+    uMm: 1000,
+    vMm: 0,
+    normalOffsetMm: 0,
+    rotationMilliDeg: 0
+  });
+  assert(invalidState.constraintReport?.valid === false, "out-of-bounds candidate should become invalid");
+  let invalidCommitFailed = false;
+  try {
+    invalidTransaction.commit();
+  } catch {
+    invalidCommitFailed = true;
+  }
+  assert(invalidCommitFailed, "focus placement should keep invalid candidates from committing");
+  invalidTransaction.cancel();
+  assert(
+    engine.runtimeScene.objectRegistry.get("mouse-1")?.previewTransform === null,
+    "cancel should clear runtime preview state"
+  );
 
   transaction.commit();
   const patches = commitRuntimePlacementToStore({
@@ -206,12 +293,18 @@ try {
   assert(storedMouse?.supportAssetId === "desk-1", "surface-local commit should preserve support asset relation");
   assert(storedMouse?.anchorType === "desk_surface", "surface-local commit should resolve desk-surface anchor");
   assert(patches.length === 1, `expected one placement patch, received ${patches.length}`);
+  assert(
+    Number(patchEventCount) === 1 && Number(lastPatchCount) === 1,
+    "focus placement should publish exactly one patch event on commit"
+  );
 
   console.log("focus placement prototype ok");
   console.log(
     JSON.stringify(
       {
         patchCount: patches.length,
+        runtimePatchEvents: patchEventCount,
+        snappedPose: sessionUpdate.localPose,
         storePlacement: storedMouse?.placement,
         supportAssetId: storedMouse?.supportAssetId,
         anchorType: storedMouse?.anchorType
@@ -224,4 +317,12 @@ try {
   console.error("[verify-focus-placement-prototype] failed");
   console.error(error);
   process.exitCode = 1;
+} finally {
+  if (typeof globalThis !== "undefined") {
+    if (typeof originalWindow === "undefined") {
+      delete (globalThis as { window?: unknown }).window;
+    } else {
+      (globalThis as { window?: unknown }).window = originalWindow;
+    }
+  }
 }

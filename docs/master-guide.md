@@ -922,3 +922,15 @@ Updated:
 
 Removed/Deprecated:
 - placement kernel이 preview/commit 브리지만 있으면 alpha slice로 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Placement Kernel Alpha Complete)
+Added:
+- placement kernel은 snap quantization, compatible surface auto-resolve, mounted attachment point compatibility, thickness validation을 commit 이전 필수 검증 세트로 사용한다.
+- `PlacementTransaction.commit()`는 검증이 한 번도 수행되지 않은 candidate를 절대 저장하지 않는다.
+- walk-mode focus placement session은 kernel이 반환한 snapped `localPose`를 HUD/store에 그대로 반영해야 한다.
+
+Updated:
+- `Phase 5 Placement Kernel Alpha` 기준을 “invalid surface placement를 commit 전에 차단한다”에서 “surface/mounted placement 모두 snap/compatibility/guard를 거친 뒤에만 commit된다” 수준으로 강화한다.
+
+Removed/Deprecated:
+- focus placement HUD/session이 raw keyboard target을 그대로 표시해도 preview/commit 정확도에는 문제가 없다는 가정.
