@@ -954,3 +954,14 @@ Updated:
 
 Removed/Deprecated:
 - monitor-arm UX 회귀를 kernel smoke만으로 대체할 수 있다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments QA Complete)
+Added:
+- mounted focus placement HUD에 authored `Surface Thickness`, `Clearance`, `VESA`, `Arm Reach` requirement 카드가 실제 constraint 값과 함께 보이는지 확인한다.
+- place-on-surface가 아닌 mounted flow에서도 authored requirement 노출이 commit 전 document patch 없이 session update만으로 갱신되는지 확인한다.
+
+Updated:
+- advanced attachment QA 범위를 `kernel validation + monitor-arm target-pose wizard`에서 `kernel validation + monitor-arm target-pose wizard + authored requirement exposure`까지 확장한다.
+
+Removed/Deprecated:
+- requirement/clearance readout 회귀를 수동 시각 확인 없이 생략해도 된다는 가정.

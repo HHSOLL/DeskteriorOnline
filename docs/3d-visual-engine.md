@@ -173,6 +173,16 @@ Updated:
 Removed/Deprecated:
 - monitor-arm flow가 generic mounted HUD만으로도 충분하다는 가정.
 
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachment Visual Complete)
+Added:
+- mounted focus placement HUD는 authored thickness/clearance requirement 카드와 clearance readout을 함께 노출해야 한다.
+
+Updated:
+- mounted visual quality 기준을 `target-pose wizard + solved joint feedback`에서 `target-pose wizard + solved joint feedback + authored requirement/clearance exposure`까지 확장한다.
+
+Removed/Deprecated:
+- mounted constraint 숫자는 inspector나 runtime 로그에서만 확인해도 충분하다는 가정.
+
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.
 - 실측 고정 제품(`scaleLocked=true`)은 변환 컨트롤/인스펙터 입력에서 스케일 변경을 저장하지 않는다.

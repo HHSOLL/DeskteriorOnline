@@ -9,6 +9,14 @@ export type LocalFootprintBounds = {
   halfSpanV: number;
 };
 
+export type SurfaceClearanceMm = {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  min: number;
+};
+
 function resolveSurfacePlaneSpanMm(dimensionsMm: DimensionsMm, surfaceType: SupportSurface["type"]) {
   switch (surfaceType) {
     case "wall":
@@ -92,10 +100,23 @@ export function resolveSurfaceEdgeClearanceMm(
   rect: Pick<LocalFootprintBounds, "minU" | "maxU" | "minV" | "maxV">,
   surface: SupportSurface
 ) {
-  return Math.min(
-    rect.minU - surface.boundsMm.min[0],
-    surface.boundsMm.max[0] - rect.maxU,
-    rect.minV - surface.boundsMm.min[1],
-    surface.boundsMm.max[1] - rect.maxV
-  );
+  return resolveSurfaceClearanceMm(rect, surface).min;
+}
+
+export function resolveSurfaceClearanceMm(
+  rect: Pick<LocalFootprintBounds, "minU" | "maxU" | "minV" | "maxV">,
+  surface: SupportSurface
+): SurfaceClearanceMm {
+  const left = rect.minU - surface.boundsMm.min[0];
+  const right = surface.boundsMm.max[0] - rect.maxU;
+  const bottom = rect.minV - surface.boundsMm.min[1];
+  const top = surface.boundsMm.max[1] - rect.maxV;
+
+  return {
+    left,
+    right,
+    top,
+    bottom,
+    min: Math.min(left, right, top, bottom)
+  };
 }

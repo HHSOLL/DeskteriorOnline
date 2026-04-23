@@ -26,6 +26,20 @@ function resolveStepClassName(state: "done" | "active" | "blocked" | "pending") 
   }
 }
 
+function resolveRequirementClassName(tone: "ready" | "warning" | "blocked" | "info") {
+  switch (tone) {
+    case "ready":
+      return "border-emerald-300/25 bg-emerald-400/10 text-emerald-100";
+    case "warning":
+      return "border-amber-300/25 bg-amber-400/10 text-amber-100";
+    case "blocked":
+      return "border-rose-300/25 bg-rose-500/10 text-rose-100";
+    case "info":
+    default:
+      return "border-white/12 bg-white/7 text-white/75";
+  }
+}
+
 export default function FocusPlacementHud() {
   const viewMode = useEditorStore((state) => state.viewMode);
   const session = useFocusPlacementStore((state) => state.activeSession);
@@ -45,6 +59,8 @@ export default function FocusPlacementHud() {
   const shortcutLines = wizardState?.shortcutLines ?? [];
   const subtitle = wizardState?.subtitle;
   const showWizardPanels = wizardState?.mode === "monitor_arm";
+  const requirements = wizardState?.requirements ?? [];
+  const clearance = wizardState?.clearance;
 
   return (
     <div className="pointer-events-none absolute right-4 top-4 z-40 w-[min(360px,calc(100%-2rem))] rounded-[24px] border border-white/14 bg-black/55 px-4 py-4 text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
@@ -172,9 +188,36 @@ export default function FocusPlacementHud() {
         </>
       ) : null}
 
+      {requirements.length > 0 ? (
+        <div className="mt-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">Requirements</div>
+          <div className="mt-2 grid gap-2">
+            {requirements.map((requirement) => (
+              <div
+                key={requirement.id}
+                className={`rounded-xl border px-3 py-2 ${resolveRequirementClassName(requirement.tone)}`}
+              >
+                <div className="text-[9px] uppercase tracking-[0.22em] text-white/45">{requirement.label}</div>
+                <div className="mt-1 text-sm font-medium">{requirement.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
       <div className="mt-3">
         <FocusPlacementSurfaceGrid session={session} tone={feedback.tone} />
       </div>
+
+      {clearance ? (
+        <div className="mt-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs leading-6 text-white/70">
+          <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">Clearance</div>
+          <div className="mt-1">
+            L {clearance.left} / R {clearance.right} / T {clearance.top} / B {clearance.bottom} mm
+          </div>
+          <div>Min {clearance.min} mm</div>
+        </div>
+      ) : null}
 
       {feedback.tone === "blocked" && detailMessage ? (
         <div className="mt-3 rounded-2xl border border-rose-400/35 bg-rose-500/12 px-3 py-2 text-sm text-rose-100">
