@@ -1,15 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { PlacementKernel, type PlacementTransaction } from "@deskterioronline/placement-kernel";
 import type { SurfaceLocalPose } from "@deskterioronline/scene-schema";
 import { isSurfacePlacementRecord } from "@deskterioronline/scene-schema";
-import { resolveFocusPlacementSessionUpdate } from "../../../lib/runtime/focus-placement-session";
+import {
+  resolveFocusPlacementSessionUpdate,
+  resolveFocusPlacementStepConfig,
+  resolveNextFocusPlacementCandidateIndex
+} from "../../../lib/runtime/focus-placement-session";
 import { commitRuntimePlacementToStore } from "../../../lib/runtime/runtime-asset-bridge";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
 import { useAssetSelector, usePublishSelector, useSelectionSelector } from "../../../lib/stores/scene-slices";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
-import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
+import {
+  useFocusPlacementStore,
+  type FocusPlacementRequest,
+  type FocusPlacementSession
+} from "../../../lib/stores/useFocusPlacementStore";
 
 function shouldIgnoreKeyboardTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -25,7 +33,11 @@ function shouldIgnoreKeyboardTarget(target: EventTarget | null) {
   );
 }
 
-function resolveInitialLocalPose(selectedAssetPlacement: unknown, supportObjectId: string, surfaceId: string): SurfaceLocalPose {
+function resolveInitialLocalPose(
+  selectedAssetPlacement: unknown,
+  supportObjectId: string,
+  surfaceId: string
+): SurfaceLocalPose {
   const placement = selectedAssetPlacement as Parameters<typeof isSurfacePlacementRecord>[0];
 
   if (
@@ -66,6 +78,14 @@ function resolveRotateStep(event: KeyboardEvent, baseStep: number) {
   return baseStep;
 }
 
+function resolveCandidateFromRequest(request: FocusPlacementRequest, candidateIndex: number) {
+  return (
+    request.surfaceCandidates[candidateIndex] ??
+    request.surfaceCandidates[request.preferredCandidateIndex] ??
+    null
+  );
+}
+
 export default function FocusPlacementController() {
   const engine = useRuntimeEngine();
   const viewMode = useEditorStore((state) => state.viewMode);
@@ -82,42 +102,84 @@ export default function FocusPlacementController() {
   const clearSession = useFocusPlacementStore((state) => state.clearSession);
   const transactionRef = useRef<PlacementTransaction | null>(null);
   const kernel = useMemo(() => (engine ? new PlacementKernel(engine) : null), [engine]);
+  const assetsById = useMemo(
+    () => new Map(assets.map((asset) => [asset.id, asset])),
+    [assets]
+  );
+
+  const activateCandidate = useCallback(
+    (input: {
+      request: FocusPlacementRequest | FocusPlacementSession;
+      candidateIndex: number;
+      baseLocalPose?: SurfaceLocalPose | null;
+      mode: "start" | "switch";
+    }) => {
+      if (!kernel) {
+        throw new Error("Focus placement kernel is unavailable.");
+      }
+
+      const selectedAsset = assetsById.get(input.request.objectId);
+      if (!selectedAsset) {
+        throw new Error(`Selected asset ${input.request.objectId} was not found.`);
+      }
+
+      const candidate = resolveCandidateFromRequest(input.request, input.candidateIndex);
+      if (!candidate) {
+        throw new Error("Focus placement candidate was not found.");
+      }
+
+      transactionRef.current?.cancel();
+      const transaction = kernel.begin({
+        objectId: input.request.objectId,
+        supportObjectId: input.request.supportObjectId,
+        surfaceId: candidate.surfaceId,
+        attachmentType: candidate.attachmentType
+      });
+      transactionRef.current = transaction;
+
+      const initialLocalPose =
+        input.baseLocalPose ??
+        resolveInitialLocalPose(
+          selectedAsset.placement,
+          input.request.supportObjectId,
+          candidate.surfaceId
+        );
+      const nextState = transaction.update(initialLocalPose);
+      const sessionState = resolveFocusPlacementSessionUpdate(initialLocalPose, nextState);
+      const stepConfig = resolveFocusPlacementStepConfig(
+        candidate.attachmentType,
+        candidate.surfaceType
+      );
+      const nextSession = {
+        ...input.request,
+        ...candidate,
+        activeCandidateIndex: input.candidateIndex,
+        ...sessionState,
+        ...stepConfig
+      };
+
+      if (input.mode === "start") {
+        startSession(nextSession);
+      } else {
+        updateSession(nextSession);
+      }
+
+      setIsTransforming(true);
+    },
+    [assetsById, kernel, setIsTransforming, startSession, updateSession]
+  );
 
   useEffect(() => {
     if (!pendingRequest || !kernel || !engine || viewMode !== "walk" || readOnly) {
       return;
     }
 
-    const selectedAsset = assets.find((asset) => asset.id === pendingRequest.objectId);
-    if (!selectedAsset) {
-      clearPendingRequest();
-      return;
-    }
-
     try {
-      transactionRef.current?.cancel();
-      const transaction = kernel.begin({
-        objectId: pendingRequest.objectId,
-        supportObjectId: pendingRequest.supportObjectId,
-        surfaceId: pendingRequest.surfaceId,
-        attachmentType: pendingRequest.attachmentType
+      activateCandidate({
+        request: pendingRequest,
+        candidateIndex: pendingRequest.preferredCandidateIndex,
+        mode: "start"
       });
-      transactionRef.current = transaction;
-
-      const initialLocalPose = resolveInitialLocalPose(
-        selectedAsset.placement,
-        pendingRequest.supportObjectId,
-        pendingRequest.surfaceId
-      );
-      const nextState = transaction.update(initialLocalPose);
-      const sessionState = resolveFocusPlacementSessionUpdate(initialLocalPose, nextState);
-      startSession({
-        ...pendingRequest,
-        ...sessionState,
-        moveStepMm: 5,
-        rotateStepMilliDeg: 1000
-      });
-      setIsTransforming(true);
     } catch (error) {
       console.error("[FocusPlacementController] failed to start focus placement", error);
       clearPendingRequest();
@@ -125,7 +187,7 @@ export default function FocusPlacementController() {
       setIsTransforming(false);
     }
   }, [
-    assets,
+    activateCandidate,
     clearPendingRequest,
     clearSession,
     engine,
@@ -133,7 +195,6 @@ export default function FocusPlacementController() {
     pendingRequest,
     readOnly,
     setIsTransforming,
-    startSession,
     viewMode
   ]);
 
@@ -205,6 +266,47 @@ export default function FocusPlacementController() {
             rotationMilliDeg: activeSession.localPose.rotationMilliDeg + rotateStep
           };
           break;
+        case "Tab": {
+          event.preventDefault();
+          const nextCandidateIndex = resolveNextFocusPlacementCandidateIndex(
+            activeSession.surfaceCandidates,
+            activeSession.activeCandidateIndex,
+            event.shiftKey ? -1 : 1
+          );
+          if (nextCandidateIndex === -1 || nextCandidateIndex === activeSession.activeCandidateIndex) {
+            return;
+          }
+
+          try {
+            activateCandidate({
+              request: activeSession,
+              candidateIndex: nextCandidateIndex,
+              baseLocalPose: activeSession.localPose,
+              mode: "switch"
+            });
+          } catch (error) {
+            console.error("[FocusPlacementController] failed to switch focus placement candidate", error);
+          }
+          return;
+        }
+        case "f":
+        case "F": {
+          event.preventDefault();
+          if (activeSession.preferredCandidateIndex === activeSession.activeCandidateIndex) {
+            return;
+          }
+
+          try {
+            activateCandidate({
+              request: activeSession,
+              candidateIndex: activeSession.preferredCandidateIndex,
+              mode: "switch"
+            });
+          } catch (error) {
+            console.error("[FocusPlacementController] failed to refocus placement candidate", error);
+          }
+          return;
+        }
         case "Enter": {
           event.preventDefault();
           try {
@@ -244,7 +346,15 @@ export default function FocusPlacementController() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeSession, clearSession, engine, recordSnapshot, setIsTransforming, updateSession]);
+  }, [
+    activateCandidate,
+    activeSession,
+    clearSession,
+    engine,
+    recordSnapshot,
+    setIsTransforming,
+    updateSession
+  ]);
 
   useEffect(() => {
     return () => {

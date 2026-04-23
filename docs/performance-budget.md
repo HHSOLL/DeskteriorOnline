@@ -364,3 +364,14 @@ Updated:
 
 Removed/Deprecated:
 - keyboard nudge session이 raw target pose를 유지해도 commit 예산 측정에는 영향이 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 6 Focus Placement Budget)
+Added:
+- `Tab` 후보 전환과 `F` refocus는 기존 session을 full scene replace 없이 다시 preview transaction으로 여는 lightweight 경로를 유지해야 한다.
+- multi-candidate session 전환 중에도 `runtime-document-patch`는 0건을 유지하고, commit 시점에만 patch가 발생해야 한다.
+
+Updated:
+- focus placement budget 범위를 `preview only + snapped HUD consistency + compatibility hint`에서 `preview only + snapped HUD consistency + candidate cycle/refocus`까지 확장한다.
+
+Removed/Deprecated:
+- candidate 전환이 새 document compile이나 store commit을 동반해도 허용된다는 가정.

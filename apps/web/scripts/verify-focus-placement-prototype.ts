@@ -3,7 +3,8 @@ import { PlacementKernel } from "@deskterioronline/placement-kernel";
 import {
   migrateLegacySceneStoreStateToV2,
   type LegacySceneStoreStateLike,
-  type RuntimeAsset
+  type RuntimeAsset,
+  type SupportSurface
 } from "@deskterioronline/scene-schema";
 import { commitRuntimePlacementToStore } from "../src/lib/runtime/runtime-asset-bridge";
 import {
@@ -11,8 +12,10 @@ import {
 } from "../src/lib/runtime/runtime-asset-bridge";
 import {
   resolveFocusPlacementAttachmentLabel,
-  resolveFocusPlacementAvailability,
+  resolveFocusPlacementEntry,
   resolveFocusPlacementFeedback,
+  resolveFocusPlacementStepConfig,
+  resolveNextFocusPlacementCandidateIndex,
   resolveFocusPlacementSessionUpdate
 } from "../src/lib/runtime/focus-placement-session";
 import { useSceneStore } from "../src/lib/stores/useSceneStore";
@@ -100,6 +103,26 @@ const legacyState: LegacySceneStoreStateLike = {
         textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
         scaleLocked: true
       }
+    },
+    {
+      id: "clamp-light-1",
+      assetId: "p2s_clamp_light",
+      catalogItemId: "p2s_clamp_light",
+      position: [0.5, 0, 0.3],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1],
+      materialId: null,
+      product: {
+        id: "p2s_clamp_light",
+        name: "Clamp Light",
+        category: "desk_accessory",
+        dimensionsMm: { width: 120, depth: 240, height: 420 },
+        pivot: { x: "center", y: "floor", z: "center" },
+        collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
+        lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 4, maxTriangleCount: 4800 },
+        textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
+        scaleLocked: true
+      }
     }
   ],
   wallMaterialIndex: 0,
@@ -143,6 +166,32 @@ const runtimeAssets: RuntimeAsset[] = [
         },
         boundsMm: { min: [-600, -300], max: [600, 300] },
         allowedAttachments: ["place_on_surface"]
+      },
+      {
+        id: "desk_edge",
+        type: "desk_edge",
+        localFrame: {
+          originMm: [0, 720, -300],
+          tangentU: [1000, 0, 0],
+          tangentV: [0, 1000, 0],
+          normal: [0, 0, -1000]
+        },
+        boundsMm: { min: [-600, -40], max: [600, 40] },
+        thicknessMm: 32,
+        allowedAttachments: ["edge_clamp"]
+      },
+      {
+        id: "desk_underside",
+        type: "desk_underside",
+        localFrame: {
+          originMm: [0, 705, 0],
+          tangentU: [1000, 0, 0],
+          tangentV: [0, 0, 1000],
+          normal: [0, -1000, 0]
+        },
+        boundsMm: { min: [-540, -220], max: [540, 220] },
+        thicknessMm: 32,
+        allowedAttachments: ["underside_screw"]
       }
     ],
     attachmentPoints: [],
@@ -175,6 +224,43 @@ const runtimeAssets: RuntimeAsset[] = [
     qaStatus: {
       status: "passed",
       measuredBoundsMm: { width: 84, depth: 126, height: 52 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
+  },
+  {
+    assetId: "p2s_clamp_light",
+    units: "mm",
+    dimensionsMm: { width: 120, depth: 240, height: 420 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "clamp-light.glb", triangleCount: 4800, drawCallBudget: 4 }],
+      proxy: "clamp-light.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 4800,
+      textureBudgetMb: 12
+    },
+    colliders: [],
+    supportSurfaces: [],
+    attachmentPoints: [
+      {
+        id: "clamp-base",
+        type: "edge_clamp",
+        localPositionMm: [0, 0, 0],
+        localNormal: [0, 0, -1000],
+        localTangent: [1000, 0, 0],
+        compatibleWith: ["desk_edge", "desk_edge"],
+        constraints: {
+          requiredThicknessMm: [20, 40]
+        }
+      }
+    ],
+    materialVariants: [{ id: "default", label: "Default" }],
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 120, depth: 240, height: 420 },
       dimensionErrorMm: { width: 0, depth: 0, height: 0 },
       validatorVersion: "alpha"
     }
@@ -220,31 +306,135 @@ try {
   });
   const deskAsset = useSceneStore.getState().assets.find((asset) => asset.id === "desk-1") ?? null;
   const mouseAsset = useSceneStore.getState().assets.find((asset) => asset.id === "mouse-1") ?? null;
+  const clampAsset = useSceneStore.getState().assets.find((asset) => asset.id === "clamp-light-1") ?? null;
   const deskSurface = runtimeAssets[0]?.supportSurfaces[0] ?? null;
-  assert(deskAsset && mouseAsset && deskSurface, "focus placement smoke requires desk, object, and support surface fixtures");
+  assert(
+    deskAsset && mouseAsset && clampAsset && deskSurface,
+    "focus placement smoke requires desk, object, clamp asset, and support surface fixtures"
+  );
 
-  const blockedAvailability = resolveFocusPlacementAvailability({
+  const blockedEntry = resolveFocusPlacementEntry({
     selectedAsset: null,
+    selectedRuntimeAsset: null,
     supportAsset: deskAsset,
-    focusSurface: deskSurface
+    supportSurfaces: runtimeAssets[0]?.supportSurfaces ?? []
   });
   assert(
-    blockedAvailability.enabled === false && blockedAvailability.hint.includes("제품"),
+    blockedEntry.availability.enabled === false && blockedEntry.availability.hint.includes("제품"),
     "focus placement should expose a blocked hint when no selected asset is available"
   );
 
-  const readyAvailability = resolveFocusPlacementAvailability({
+  const readyEntry = resolveFocusPlacementEntry({
     selectedAsset: mouseAsset,
+    selectedRuntimeAsset: runtimeAssets.find((asset) => asset.assetId === "p2s_mouse_wireless") ?? null,
     supportAsset: deskAsset,
-    focusSurface: deskSurface
+    supportSurfaces: runtimeAssets[0]?.supportSurfaces ?? []
   });
   assert(
-    readyAvailability.enabled === true && readyAvailability.hint === "정밀 배치",
-    "focus placement should expose a ready hint when the selected asset is compatible"
+    readyEntry.availability.enabled === true &&
+      readyEntry.candidates[0]?.attachmentType === "place_on_surface" &&
+      readyEntry.availability.hint.includes("정밀 배치"),
+    "focus placement should expose a ready top-surface entry when the selected asset is compatible"
+  );
+
+  const mountedEntry = resolveFocusPlacementEntry({
+    selectedAsset: clampAsset,
+    selectedRuntimeAsset: runtimeAssets.find((asset) => asset.assetId === "p2s_clamp_light") ?? null,
+    supportAsset: deskAsset,
+    supportSurfaces: runtimeAssets[0]?.supportSurfaces ?? []
+  });
+  assert(
+    mountedEntry.availability.enabled === true &&
+      mountedEntry.candidates[0]?.attachmentType === "edge_clamp" &&
+      mountedEntry.candidates[0]?.surfaceId === "desk_edge",
+    "focus placement should prefer mounted edge candidates when the selected asset advertises edge clamp metadata"
+  );
+  assert(
+    resolveNextFocusPlacementCandidateIndex(mountedEntry.candidates, 0) === 1,
+    "focus placement should cycle between multiple surface candidates"
+  );
+  const mountedStep = resolveFocusPlacementStepConfig(
+    mountedEntry.candidates[0]!.attachmentType,
+    mountedEntry.candidates[0]!.surfaceType
+  );
+  assert(
+    mountedStep.moveStepMm === 10 && mountedStep.rotateStepMilliDeg === 5000,
+      "mounted focus placement should use the mounted snap rule budget"
+  );
+  const wallFixture: SupportSurface = {
+    id: "wall_mount",
+    type: "wall",
+    localFrame: {
+      originMm: [0, 1200, -900],
+      tangentU: [1000, 0, 0],
+      tangentV: [0, 1000, 0],
+      normal: [0, 0, 1000]
+    },
+    boundsMm: { min: [-400, -300], max: [400, 300] },
+    allowedAttachments: ["wall_attach"]
+  };
+  const hybridMountedEntry = resolveFocusPlacementEntry({
+    selectedAsset: clampAsset,
+    selectedRuntimeAsset: {
+      ...runtimeAssets.find((asset) => asset.assetId === "p2s_clamp_light")!,
+      attachmentPoints: [
+        {
+          id: "clamp-base",
+          type: "edge_clamp",
+          localPositionMm: [0, 0, 0],
+          localNormal: [0, 0, -1000],
+          localTangent: [1000, 0, 0],
+          compatibleWith: ["desk_edge"],
+          constraints: { requiredThicknessMm: [20, 40] }
+        },
+        {
+          id: "underdesk-bracket",
+          type: "underside_screw",
+          localPositionMm: [0, 0, 0],
+          localNormal: [0, -1000, 0],
+          localTangent: [1000, 0, 0],
+          compatibleWith: ["desk_underside"],
+          constraints: {}
+        },
+        {
+          id: "wall-plate",
+          type: "wall_attach",
+          localPositionMm: [0, 0, 0],
+          localNormal: [0, 0, 1000],
+          localTangent: [1000, 0, 0],
+          compatibleWith: ["wall", "wall_mount"],
+          constraints: {}
+        }
+      ]
+    },
+    supportAsset: deskAsset,
+    supportSurfaces: [...(runtimeAssets[0]?.supportSurfaces ?? []), wallFixture]
+  });
+  assert(
+    hybridMountedEntry.candidates.some(
+      (candidate) =>
+        candidate.attachmentType === "underside_screw" &&
+        candidate.surfaceType === "desk_underside" &&
+        candidate.enabled
+    ),
+    "focus placement should surface underside candidates when runtime attachment metadata supports them"
+  );
+  assert(
+    hybridMountedEntry.candidates.some(
+      (candidate) =>
+        candidate.attachmentType === "wall_attach" &&
+        candidate.surfaceType === "wall" &&
+        candidate.enabled
+    ),
+    "focus placement should surface wall-mount candidates when runtime attachment metadata supports them"
   );
   assert(
     resolveFocusPlacementAttachmentLabel("place_on_surface") === "Place On Surface",
     "focus placement should expose a stable attachment label for HUD rendering"
+  );
+  assert(
+    resolveFocusPlacementAttachmentLabel("edge_clamp") === "Edge Clamp",
+    "focus placement should expose mounted attachment labels for HUD rendering"
   );
 
   const transaction = kernel.begin({
