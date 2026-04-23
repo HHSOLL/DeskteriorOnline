@@ -16,7 +16,8 @@ import {
   resolveFocusPlacementFeedback,
   resolveFocusPlacementStepConfig,
   resolveNextFocusPlacementCandidateIndex,
-  resolveFocusPlacementSessionUpdate
+  resolveFocusPlacementSessionUpdate,
+  resolveFocusPlacementWizardState
 } from "../src/lib/runtime/focus-placement-session";
 import { useSceneStore } from "../src/lib/stores/useSceneStore";
 
@@ -120,6 +121,46 @@ const legacyState: LegacySceneStoreStateLike = {
         pivot: { x: "center", y: "floor", z: "center" },
         collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
         lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 4, maxTriangleCount: 4800 },
+        textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
+        scaleLocked: true
+      }
+    },
+    {
+      id: "arm-1",
+      assetId: "p2s_monitor_arm",
+      catalogItemId: "p2s_monitor_arm",
+      position: [2.1, 0, 0.92],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1],
+      materialId: null,
+      product: {
+        id: "p2s_monitor_arm",
+        name: "Monitor Arm",
+        category: "desk_accessory",
+        dimensionsMm: { width: 120, depth: 220, height: 420 },
+        pivot: { x: "center", y: "floor", z: "center" },
+        collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
+        lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 6, maxTriangleCount: 9000 },
+        textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
+        scaleLocked: true
+      }
+    },
+    {
+      id: "monitor-1",
+      assetId: "p2s_monitor_27",
+      catalogItemId: "p2s_monitor_27",
+      position: [2.15, 0, 1.04],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1],
+      materialId: null,
+      product: {
+        id: "p2s_monitor_27",
+        name: "Monitor",
+        category: "monitor",
+        dimensionsMm: { width: 612, depth: 190, height: 540 },
+        pivot: { x: "center", y: "floor", z: "center" },
+        collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
+        lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 5, maxTriangleCount: 7000 },
         textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
         scaleLocked: true
       }
@@ -264,6 +305,131 @@ const runtimeAssets: RuntimeAsset[] = [
       dimensionErrorMm: { width: 0, depth: 0, height: 0 },
       validatorVersion: "alpha"
     }
+  },
+  {
+    assetId: "p2s_monitor_arm",
+    units: "mm",
+    dimensionsMm: { width: 120, depth: 220, height: 420 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "arm.glb", triangleCount: 12000, drawCallBudget: 8 }],
+      proxy: "arm.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 12000,
+      textureBudgetMb: 24
+    },
+    colliders: [],
+    supportSurfaces: [
+      {
+        id: "vesa_plate",
+        type: "monitor_back",
+        localFrame: {
+          originMm: [0, 420, 0],
+          tangentU: [1000, 0, 0],
+          tangentV: [0, 1000, 0],
+          normal: [0, 0, -1000]
+        },
+        boundsMm: { min: [-60, -60], max: [60, 60] },
+        allowedAttachments: ["vesa_mount"]
+      }
+    ],
+    attachmentPoints: [
+      {
+        id: "edge-clamp-base",
+        type: "edge_clamp",
+        localPositionMm: [0, 0, 0],
+        localNormal: [0, 0, -1000],
+        localTangent: [1000, 0, 0],
+        compatibleWith: ["desk_edge"],
+        constraints: {
+          requiredThicknessMm: [20, 60]
+        }
+      }
+    ],
+    materialVariants: [{ id: "default", label: "Default" }],
+    articulation: {
+      type: "monitor_arm",
+      joints: [
+        {
+          id: "base_pan",
+          parent: null,
+          type: "revolute",
+          axis: [0, 1000, 0],
+          limitDeg: [-90, 90],
+          defaultValue: 0
+        },
+        {
+          id: "arm_reach",
+          parent: "base_pan",
+          type: "prismatic",
+          axis: [0, 0, 1000],
+          limitMm: [0, 260],
+          defaultValue: 140
+        },
+        {
+          id: "head_tilt",
+          parent: "arm_reach",
+          type: "revolute",
+          axis: [1000, 0, 0],
+          limitDeg: [-25, 35],
+          defaultValue: 0
+        }
+      ],
+      endEffector: {
+        id: "vesa_plate",
+        compatiblePatternsMm: [100, 100]
+      },
+      solver: {
+        type: "analytic",
+        iterations: 1,
+        toleranceMm: 5
+      }
+    },
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 120, depth: 220, height: 420 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
+  },
+  {
+    assetId: "p2s_monitor_27",
+    units: "mm",
+    dimensionsMm: { width: 612, depth: 190, height: 540 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "monitor.glb", triangleCount: 9000, drawCallBudget: 5 }],
+      proxy: "monitor.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 9000,
+      textureBudgetMb: 16
+    },
+    colliders: [],
+    supportSurfaces: [],
+    attachmentPoints: [
+      {
+        id: "vesa_100_plate",
+        type: "vesa_mount",
+        localPositionMm: [0, 270, -20],
+        localNormal: [0, 0, -1000],
+        localTangent: [1000, 0, 0],
+        compatibleWith: ["vesa_plate", "monitor_back"],
+        constraints: {
+          vesaPatternMm: [100, 100]
+        }
+      }
+    ],
+    materialVariants: [{ id: "default", label: "Default" }],
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 612, depth: 190, height: 540 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
   }
 ];
 
@@ -307,10 +473,12 @@ try {
   const deskAsset = useSceneStore.getState().assets.find((asset) => asset.id === "desk-1") ?? null;
   const mouseAsset = useSceneStore.getState().assets.find((asset) => asset.id === "mouse-1") ?? null;
   const clampAsset = useSceneStore.getState().assets.find((asset) => asset.id === "clamp-light-1") ?? null;
+  const armAsset = useSceneStore.getState().assets.find((asset) => asset.id === "arm-1") ?? null;
+  const monitorAsset = useSceneStore.getState().assets.find((asset) => asset.id === "monitor-1") ?? null;
   const deskSurface = runtimeAssets[0]?.supportSurfaces[0] ?? null;
   assert(
-    deskAsset && mouseAsset && clampAsset && deskSurface,
-    "focus placement smoke requires desk, object, clamp asset, and support surface fixtures"
+    deskAsset && mouseAsset && clampAsset && armAsset && monitorAsset && deskSurface,
+    "focus placement smoke requires desk, mouse, clamp, arm, monitor, and support surface fixtures"
   );
 
   const blockedEntry = resolveFocusPlacementEntry({
@@ -435,6 +603,63 @@ try {
   assert(
     resolveFocusPlacementAttachmentLabel("edge_clamp") === "Edge Clamp",
     "focus placement should expose mounted attachment labels for HUD rendering"
+  );
+  assert(
+    resolveFocusPlacementAttachmentLabel("vesa_mount") === "VESA Mount",
+    "focus placement should expose VESA labels for monitor-arm HUD rendering"
+  );
+
+  const vesaEntry = resolveFocusPlacementEntry({
+    selectedAsset: monitorAsset,
+    selectedRuntimeAsset: runtimeAssets.find((asset) => asset.assetId === "p2s_monitor_27") ?? null,
+    supportAsset: armAsset,
+    supportSurfaces: runtimeAssets.find((asset) => asset.assetId === "p2s_monitor_arm")?.supportSurfaces ?? []
+  });
+  assert(
+    vesaEntry.availability.enabled === true &&
+      vesaEntry.availability.hint.includes("모니터암") &&
+      vesaEntry.candidates[0]?.attachmentType === "vesa_mount" &&
+      vesaEntry.candidates[0]?.surfaceType === "monitor_back",
+    "focus placement should surface articulated VESA candidates as a monitor-arm placement entry"
+  );
+  const vesaStep = resolveFocusPlacementStepConfig(
+    vesaEntry.candidates[0]!.attachmentType,
+    vesaEntry.candidates[0]!.surfaceType
+  );
+  assert(
+    vesaStep.moveStepMm === 10 && vesaStep.rotateStepMilliDeg === 1000,
+    "monitor-arm target pose should use the articulated step budget"
+  );
+  const monitorWizardState = resolveFocusPlacementWizardState({
+    attachmentType: "vesa_mount",
+    localPose: {
+      uMm: 80,
+      vMm: 18,
+      normalOffsetMm: 140,
+      rotationMilliDeg: 3000
+    },
+    selectedRuntimeAsset: runtimeAssets.find((asset) => asset.assetId === "p2s_monitor_27") ?? null,
+    supportRuntimeAsset: runtimeAssets.find((asset) => asset.assetId === "p2s_monitor_arm") ?? null,
+    constraintReport: {
+      valid: true,
+      errors: [],
+      warnings: [],
+      score: 1
+    },
+    collisionReport: {
+      collided: false,
+      collisions: []
+    }
+  });
+  assert(
+    monitorWizardState.mode === "monitor_arm" &&
+      monitorWizardState.axisLabels.normal === "Reach" &&
+      monitorWizardState.shortcutLines.some((line) => line.includes("PageUp / PageDown")) &&
+      monitorWizardState.steps.some((step) => step.id === "target" && step.state === "active") &&
+      monitorWizardState.joints.some((joint) => joint.id === "arm_reach" && joint.unit === "mm") &&
+      monitorWizardState.vesaPatternLabel === "100x100" &&
+      monitorWizardState.supportPatternLabel === "100x100",
+    "focus placement should expose a monitor-arm wizard model with target pose and solved joint summaries"
   );
 
   const transaction = kernel.begin({

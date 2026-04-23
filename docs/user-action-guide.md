@@ -942,3 +942,15 @@ Updated:
 
 Removed/Deprecated:
 - advanced attachment 회귀를 placement kernel smoke 하나만으로 충분하다고 보는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments QA Slice 2)
+Added:
+- monitor 선택 후 monitor arm을 바라보고 focus placement 진입 시 `VESA Mount` candidate와 monitor-arm wizard HUD가 뜨는지 확인한다.
+- active wizard에서 `PageUp/PageDown`이 reach를, `Arrow`가 swing/height를, `Q/E`가 roll을 바꾸고 solved joint summary가 함께 갱신되는지 확인한다.
+- HUD에 panel VESA pattern과 target VESA pattern이 함께 보이는지 확인한다.
+
+Updated:
+- advanced attachment QA 범위를 `kernel validation + mounted candidate surfacing`에서 `kernel validation + monitor-arm target-pose wizard`까지 확장한다.
+
+Removed/Deprecated:
+- monitor-arm UX 회귀를 kernel smoke만으로 대체할 수 있다는 가정.

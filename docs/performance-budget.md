@@ -385,3 +385,13 @@ Updated:
 
 Removed/Deprecated:
 - articulation reachability 검증을 post-commit 후처리로 미뤄도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Budget Slice 2)
+Added:
+- monitor-arm wizard의 target pose nudge(`Arrow`, `PageUp/PageDown`, `Q/E`)는 runtime preview/session update만 발생시키고 commit 전 document patch를 만들면 안 된다.
+
+Updated:
+- advanced attachment budget 범위를 `vesa compatibility + articulation solve`에서 `target-pose wizard session update + articulation solve`까지 확장한다.
+
+Removed/Deprecated:
+- keyboard nudge session이 raw target pose와 HUD 표기를 분리해도 성능/정합성에 영향이 없다는 가정.

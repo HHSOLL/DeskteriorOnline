@@ -3,7 +3,8 @@ import type { CollisionReport, ConstraintReport } from "@deskterioronline/placem
 import type { DimensionsMm, SurfaceLocalPose, SupportSurface } from "@deskterioronline/scene-schema";
 import type {
   FocusPlacementAttachmentType,
-  FocusPlacementSurfaceCandidate
+  FocusPlacementSurfaceCandidate,
+  FocusPlacementWizardState
 } from "../runtime/focus-placement-session";
 
 export type FocusPlacementRequest = {
@@ -30,6 +31,7 @@ export type FocusPlacementSession = FocusPlacementRequest & {
   collisionReport: CollisionReport | null;
   moveStepMm: number;
   rotateStepMilliDeg: number;
+  wizardState: FocusPlacementWizardState | null;
 };
 
 type FocusPlacementState = {

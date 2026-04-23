@@ -3,6 +3,7 @@ import type {
   ConstraintReport,
   PlacementTransactionState
 } from "@deskterioronline/placement-kernel";
+import { MonitorArmSolver } from "@deskterioronline/placement-kernel";
 import type {
   RuntimeAsset,
   SurfaceLocalPose,
@@ -14,7 +15,8 @@ export type FocusPlacementAttachmentType =
   | "place_on_surface"
   | "edge_clamp"
   | "underside_screw"
-  | "wall_attach";
+  | "wall_attach"
+  | "vesa_mount";
 
 export type FocusPlacementSurfaceCandidate = {
   surfaceId: string;
@@ -42,6 +44,39 @@ export type FocusPlacementFeedback = {
   blocked: boolean;
 };
 
+export type FocusPlacementAxisLabels = {
+  u: string;
+  v: string;
+  normal: string;
+  rotation: string;
+};
+
+export type FocusPlacementWizardStep = {
+  id: "clamp" | "vesa" | "target" | "commit";
+  label: string;
+  state: "done" | "active" | "blocked" | "pending";
+};
+
+export type FocusPlacementWizardJoint = {
+  id: string;
+  label: string;
+  value: number;
+  unit: "deg" | "mm";
+};
+
+export type FocusPlacementWizardState = {
+  mode: "default" | "monitor_arm";
+  title: string;
+  subtitle: string | null;
+  axisLabels: FocusPlacementAxisLabels;
+  shortcutLines: string[];
+  steps: FocusPlacementWizardStep[];
+  joints: FocusPlacementWizardJoint[];
+  detail: string | null;
+  vesaPatternLabel: string | null;
+  supportPatternLabel: string | null;
+};
+
 export type FocusPlacementEntry = {
   candidates: FocusPlacementSurfaceCandidate[];
   preferredCandidateIndex: number;
@@ -52,8 +87,25 @@ const FOCUS_ATTACHMENT_TYPES: FocusPlacementAttachmentType[] = [
   "place_on_surface",
   "edge_clamp",
   "underside_screw",
-  "wall_attach"
+  "wall_attach",
+  "vesa_mount"
 ];
+
+const DEFAULT_AXIS_LABELS: FocusPlacementAxisLabels = {
+  u: "Offset U",
+  v: "Offset V",
+  normal: "Normal",
+  rotation: "Rotation"
+};
+
+const MONITOR_ARM_AXIS_LABELS: FocusPlacementAxisLabels = {
+  u: "Swing",
+  v: "Height",
+  normal: "Reach",
+  rotation: "Roll"
+};
+
+const monitorArmSolver = new MonitorArmSolver();
 
 const SURFACE_TYPE_PRIORITY: Record<SupportSurface["type"], number> = {
   desktop_top: 0,
@@ -68,6 +120,52 @@ const SURFACE_TYPE_PRIORITY: Record<SupportSurface["type"], number> = {
 
 function isFocusPlacementAttachmentType(value: string): value is FocusPlacementAttachmentType {
   return FOCUS_ATTACHMENT_TYPES.includes(value as FocusPlacementAttachmentType);
+}
+
+function formatPatternLabel(pattern: [75, 75] | [100, 100] | [75, 100] | "both") {
+  if (pattern === "both") {
+    return "75x75 / 100x100";
+  }
+  return `${pattern[0]}x${pattern[1]}`;
+}
+
+function formatJointLabel(jointId: string) {
+  return jointId
+    .split(/[_-]+/g)
+    .filter(Boolean)
+    .map((segment) => segment[0]?.toUpperCase() + segment.slice(1))
+    .join(" ");
+}
+
+function resolveDeclaredVesaPatternLabel(runtimeAsset: RuntimeAsset | null) {
+  const patterns = Array.from(
+    new Set(
+      runtimeAsset?.attachmentPoints
+        .filter((point) => point.type === "vesa_mount")
+        .map((point) => point.constraints.vesaPatternMm)
+        .filter((pattern): pattern is [75, 75] | [100, 100] | [75, 100] => Boolean(pattern))
+        .map((pattern) => formatPatternLabel(pattern)) ?? []
+    )
+  );
+
+  return patterns.length > 0 ? patterns.join(" / ") : "Missing";
+}
+
+function resolveSupportVesaPatternLabel(runtimeAsset: RuntimeAsset | null) {
+  const patterns = new Set<string>();
+  runtimeAsset?.attachmentPoints
+    .filter((point) => point.type === "vesa_mount")
+    .forEach((point) => {
+      if (point.constraints.vesaPatternMm) {
+        patterns.add(formatPatternLabel(point.constraints.vesaPatternMm));
+      }
+    });
+
+  if (runtimeAsset?.articulation?.type === "monitor_arm") {
+    patterns.add(formatPatternLabel(runtimeAsset.articulation.endEffector.compatiblePatternsMm));
+  }
+
+  return patterns.size > 0 ? Array.from(patterns).join(" / ") : "Missing";
 }
 
 function resolveCandidatePriority(
@@ -240,7 +338,12 @@ export function resolveFocusPlacementAvailability(
   if (firstReadyCandidate) {
     return {
       enabled: true,
-      hint: candidates.length > 1 ? "정밀 배치 · Tab으로 설치 방식 전환" : "정밀 배치",
+      hint:
+        candidates.length > 1
+          ? "정밀 배치 · Tab으로 설치 방식 전환"
+          : firstReadyCandidate.attachmentType === "vesa_mount"
+            ? "모니터암 정밀 배치"
+            : "정밀 배치",
       tone: "ready"
     };
   }
@@ -325,6 +428,13 @@ export function resolveFocusPlacementStepConfig(
   attachmentType: FocusPlacementAttachmentType,
   surfaceType: SupportSurface["type"]
 ) {
+  if (attachmentType === "vesa_mount" || surfaceType === "monitor_back") {
+    return {
+      moveStepMm: 10,
+      rotateStepMilliDeg: 1000
+    };
+  }
+
   if (
     attachmentType === "edge_clamp" ||
     surfaceType === "desk_edge" ||
@@ -388,6 +498,8 @@ export function resolveFocusPlacementAttachmentLabel(
   attachmentType: FocusPlacementAttachmentType
 ) {
   switch (attachmentType) {
+    case "vesa_mount":
+      return "VESA Mount";
     case "edge_clamp":
       return "Edge Clamp";
     case "underside_screw":
@@ -398,6 +510,117 @@ export function resolveFocusPlacementAttachmentLabel(
     default:
       return "Place On Surface";
   }
+}
+
+export function resolveFocusPlacementWizardState(input: {
+  attachmentType: FocusPlacementAttachmentType;
+  localPose: SurfaceLocalPose;
+  selectedRuntimeAsset: RuntimeAsset | null;
+  supportRuntimeAsset: RuntimeAsset | null;
+  constraintReport: ConstraintReport | null;
+  collisionReport: CollisionReport | null;
+}): FocusPlacementWizardState {
+  const {
+    attachmentType,
+    localPose,
+    selectedRuntimeAsset,
+    supportRuntimeAsset,
+    constraintReport,
+    collisionReport
+  } = input;
+  const feedback = resolveFocusPlacementFeedback(constraintReport, collisionReport);
+  const defaultWizardState: FocusPlacementWizardState = {
+    mode: "default",
+    title: "Focus Placement",
+    subtitle: null,
+    axisLabels: DEFAULT_AXIS_LABELS,
+    shortcutLines: [
+      "Arrow: 표면 위 이동",
+      "Alt + Arrow: 1mm 미세 이동",
+      "Q / E: 회전",
+      "Tab: 설치 방식 전환, F: 기본 표면으로 복귀",
+      "Enter: 확정, Esc: 취소"
+    ],
+    steps: [],
+    joints: [],
+    detail: feedback.tone === "ready" ? null : feedback.detail,
+    vesaPatternLabel: null,
+    supportPatternLabel: null
+  };
+
+  if (
+    attachmentType !== "vesa_mount" ||
+    supportRuntimeAsset?.articulation?.type !== "monitor_arm"
+  ) {
+    return defaultWizardState;
+  }
+
+  const articulation = supportRuntimeAsset.articulation;
+  const solveResult = monitorArmSolver.solve(articulation, {
+    positionMm: [localPose.uMm, localPose.vMm, localPose.normalOffsetMm],
+    rollDeg: localPose.rotationMilliDeg / 1000
+  });
+  const articulationBlocked = Boolean(
+    constraintReport?.errors.some((issue) => issue.code === "ARTICULATION_TARGET_UNREACHABLE")
+  );
+  const vesaBlocked = Boolean(
+    constraintReport?.errors.some((issue) =>
+      [
+        "VESA_PATTERN_MISSING",
+        "SUPPORT_ATTACHMENT_TARGET_MISSING",
+        "VESA_PATTERN_INCOMPATIBLE"
+      ].includes(issue.code)
+    )
+  );
+  const steps: FocusPlacementWizardStep[] = [
+    {
+      id: "clamp",
+      label: "Clamp Base",
+      state: "done"
+    },
+    {
+      id: "vesa",
+      label: "Match VESA",
+      state: vesaBlocked ? "blocked" : "done"
+    },
+    {
+      id: "target",
+      label: "Target Pose",
+      state: vesaBlocked ? "pending" : articulationBlocked ? "blocked" : "active"
+    },
+    {
+      id: "commit",
+      label: "Commit",
+      state: feedback.blocked ? "blocked" : "active"
+    }
+  ];
+
+  return {
+    mode: "monitor_arm",
+    title: "Monitor Arm Wizard",
+    subtitle: "모니터 target pose를 움직이면 arm joint가 따라옵니다.",
+    axisLabels: MONITOR_ARM_AXIS_LABELS,
+    shortcutLines: [
+      "Arrow: Swing / Height 이동",
+      "Alt + Arrow: 1mm 미세 이동",
+      "PageUp / PageDown: Reach",
+      "Q / E: Roll",
+      "Enter: 확정, Esc: 취소"
+    ],
+    steps,
+    joints: articulation.joints.map((joint) => ({
+      id: joint.id,
+      label: formatJointLabel(joint.id),
+      value: Number((solveResult.joints[joint.id] ?? joint.defaultValue).toFixed(1)),
+      unit: joint.type === "prismatic" ? "mm" : "deg"
+    })),
+    detail:
+      feedback.detail ??
+      solveResult.errors[0]?.message ??
+      "Target pose drives the arm automatically.",
+    vesaPatternLabel: resolveDeclaredVesaPatternLabel(selectedRuntimeAsset),
+    supportPatternLabel: resolveSupportVesaPatternLabel(supportRuntimeAsset)
+  };
 }
 
 export function resolveFocusPlacementSessionUpdate(
