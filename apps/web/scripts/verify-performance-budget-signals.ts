@@ -31,7 +31,10 @@ const baseRendererDetail: RendererStatsDetail = {
 const overBudgetRendererDetail: RendererStatsDetail = {
   ...baseRendererDetail,
   fps: 38,
-  drawCalls: 742
+  drawCalls: 742,
+  heapUsedMb: 132.4,
+  heapLimitMb: 512,
+  heapGrowthPercentPoints: 1.1
 };
 
 const interactionDetail: InteractionLatencyDetail = {
@@ -84,9 +87,10 @@ function main() {
   assert.equal(evaluateRendererStatsBudget(baseRendererDetail).length, 0);
 
   const rendererIssues = evaluateRendererStatsBudget(overBudgetRendererDetail);
-  assert.equal(rendererIssues.length, 2);
+  assert.equal(rendererIssues.length, 3);
   assert(rendererIssues.some((issue) => issue.id === "fps-floor"));
   assert(rendererIssues.some((issue) => issue.id === "draw-calls"));
+  assert(rendererIssues.some((issue) => issue.id === "heap-growth"));
 
   const interactionIssues = evaluateInteractionLatencyBudget(interactionDetail);
   assert.equal(interactionIssues.length, 1);

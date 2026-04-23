@@ -64,6 +64,25 @@ function sortIssues(issues: PerformanceBudgetIssue[]) {
   });
 }
 
+function formatHeapStat(renderer: RendererStatsDetail) {
+  if (
+    typeof renderer.heapUsedMb !== "number" ||
+    !Number.isFinite(renderer.heapUsedMb)
+  ) {
+    return null;
+  }
+
+  const used = `${renderer.heapUsedMb.toFixed(1)}MB`;
+  if (
+    typeof renderer.heapGrowthPercentPoints === "number" &&
+    Number.isFinite(renderer.heapGrowthPercentPoints)
+  ) {
+    return `${used} (+${renderer.heapGrowthPercentPoints.toFixed(2)}%p)`;
+  }
+
+  return used;
+}
+
 export default function ScenePerformanceBudgetHud() {
   const [snapshots, setSnapshots] = useState<PerformanceSnapshotState>({
     renderer: null,
@@ -176,6 +195,12 @@ export default function ScenePerformanceBudgetHud() {
     criticalCount > 0
       ? "border-rose-300/30 bg-rose-500/15 text-rose-100"
       : "border-amber-300/30 bg-amber-500/15 text-amber-100";
+  const heapStat = snapshots.renderer
+    ? formatHeapStat(snapshots.renderer)
+    : null;
+  const statsGridClassName = heapStat
+    ? "mt-3 grid grid-cols-4 gap-2 text-sm text-white/78"
+    : "mt-3 grid grid-cols-3 gap-2 text-sm text-white/78";
 
   return (
     <div className="pointer-events-none absolute bottom-4 right-4 z-40 w-[min(360px,calc(100%-2rem))] rounded-[24px] border border-white/14 bg-black/55 px-4 py-4 text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
@@ -196,7 +221,7 @@ export default function ScenePerformanceBudgetHud() {
       </div>
 
       {snapshots.renderer ? (
-        <div className="mt-3 grid grid-cols-3 gap-2 text-sm text-white/78">
+        <div className={statsGridClassName}>
           <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
             <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">FPS</div>
             <div className="mt-1 font-medium text-white">
@@ -215,6 +240,14 @@ export default function ScenePerformanceBudgetHud() {
               {snapshots.renderer.triangles.toLocaleString()}
             </div>
           </div>
+          {heapStat ? (
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+              <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">
+                Heap
+              </div>
+              <div className="mt-1 font-medium text-white">{heapStat}</div>
+            </div>
+          ) : null}
         </div>
       ) : null}
 

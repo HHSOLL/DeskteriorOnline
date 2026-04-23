@@ -45,6 +45,9 @@ export type RendererStatsDetail = {
   triangles: number;
   textures: number;
   geometries: number;
+  heapUsedMb?: number;
+  heapLimitMb?: number;
+  heapGrowthPercentPoints?: number;
 };
 
 export type InteractionLatencyDetail = {

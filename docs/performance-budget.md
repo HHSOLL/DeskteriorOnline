@@ -116,7 +116,7 @@ E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 - `renderer-stats`는 약 1초 간격으로 FPS / draw calls / triangles / textures / geometries를 보낸다.
 - `interaction-latency`는 hover / select / drag-start / gizmo-drag-start의 next-paint 기준 지연을 보낸다.
 - `bvh-build`는 geometry UUID / triangle count / duration / worker|sync mode를 기록해 large geometry BVH offload 동작 여부를 확인한다.
-- telemetry가 켜져 있으면 `SceneViewport` overlay의 live performance budget HUD가 draw call / FPS floor / interaction latency / BVH sync fallback 이슈를 바로 띄운다.
+- telemetry가 켜져 있으면 `SceneViewport` overlay의 live performance budget HUD가 draw call / FPS floor / heap growth / interaction latency / BVH sync fallback 이슈를 바로 띄운다.
 - `runtime-document-patch`는 top-view transform commit 시 runtime patch 개수와 대상 object를 기록해 preview/commit 분리 여부를 확인할 수 있다.
 - selected asset transform preview는 renderer object mutation 경로로 반영되어, commit 전에도 React re-render 없이 visual update가 가능한 상태를 유지해야 한다.
 - instanced cluster는 dirty object 기준 matrix/version sync만 수행하고, 동일 batch 전체를 매번 재생성하지 않는 방향을 유지해야 한다.
@@ -430,3 +430,14 @@ Updated:
 
 Removed/Deprecated:
 - repeated asset transform churn이 dense scene에서 cluster mesh 재생성 비용을 유발해도 예산 밖 문제라는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Memory Leak Detection Slice 3)
+Added:
+- live renderer sample은 지원 브라우저에서 heap usage와 heap growth를 같이 싣고, `SceneViewport` HUD는 같은 값을 issue feed와 stat card에 같이 노출한다.
+- `verify:performance-budget`는 heap growth가 live budget issue로 승격되는지 검증한다.
+
+Updated:
+- Telemetry Hooks 운영 기준을 “draw call / FPS floor / interaction latency / BVH sync fallback”에서 “draw call / FPS floor / heap growth / interaction latency / BVH sync fallback”으로 확장한다.
+
+Removed/Deprecated:
+- live heap drift는 수동 DevTools 관찰이나 regression report에서만 확인하면 된다는 가정.
