@@ -1,6 +1,7 @@
 import {
   groupAssetsForInstancing,
-  resolveAssetInstancingPlan
+  resolveAssetInstancingPlan,
+  resolveInstancedClusterMembershipKey
 } from "../src/lib/scene/asset-instancing";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -193,6 +194,24 @@ try {
     selectedAssetId: "mug-1",
     emitterAssetIds: new Set<string>()
   });
+  const membershipKey = resolveInstancedClusterMembershipKey([
+    repeatedAssets[0]!,
+    repeatedAssets[1]!,
+    repeatedAssets[2]!
+  ]);
+  const transformOnlyMembershipKey = resolveInstancedClusterMembershipKey([
+    {
+      ...repeatedAssets[0]!,
+      position: [1, 2, 3] as [number, number, number]
+    },
+    repeatedAssets[1]!,
+    repeatedAssets[2]!
+  ]);
+  const reorderedMembershipKey = resolveInstancedClusterMembershipKey([
+    repeatedAssets[1]!,
+    repeatedAssets[0]!,
+    repeatedAssets[2]!
+  ]);
 
   assert(readOnlyTopPlan.eligible, "read-only top room asset should be instancing-eligible");
   assert(walkReadOnlyPlan.eligible, "read-only walk asset should be instancing-eligible");
@@ -240,6 +259,14 @@ try {
       .map((asset) => asset.id)
       .join(",")}`
   );
+  assert(
+    membershipKey === transformOnlyMembershipKey,
+    "transform-only updates should not invalidate instanced cluster membership"
+  );
+  assert(
+    membershipKey !== reorderedMembershipKey,
+    "membership key should change when instance ordering changes"
+  );
 
   console.log("asset instancing policy ok");
   console.log(
@@ -268,7 +295,10 @@ try {
         roomModeDraggingClusters: roomModeDraggingClusters.map((cluster) => ({
           key: cluster.key,
           assetIds: cluster.assets.map((asset) => asset.id)
-        }))
+        })),
+        membershipKey,
+        transformOnlyMembershipKey,
+        reorderedMembershipKey
       },
       null,
       2

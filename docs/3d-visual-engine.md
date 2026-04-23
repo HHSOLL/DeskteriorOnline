@@ -59,6 +59,7 @@
 - editor top-view와 editor walk-view는 회전/진입 시 black-frame flicker가 발생하면 안 되므로, 안정성 우선 프로필에서는 post FX/SSR보다 shell legibility를 우선한다.
 - deskterior 자산은 `lodProfile.maxDrawCalls/maxTriangleCount` 기준으로 complexity를 나누고, room mode는 더 이른 box proxy fallback, desk precision/walk는 더 늦은 fallback을 사용한다.
 - read-only top/walk와 builder preview, 그리고 editor `desk precision` top-view에서는 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶어 draw call을 줄이고, selected/direct-drag 경로는 개별 오브젝트를 유지한다.
+- dense-scene repeated cluster는 membership key가 유지되는 동안 mesh/material를 재생성하지 않고 instance matrix sync만으로 반영해야 한다.
 
 ## 뷰어 규칙
 - `apps/web/src/components/viewer/ReadOnlySceneViewport.tsx`
@@ -195,6 +196,16 @@ Updated:
 
 Removed/Deprecated:
 - live 성능 budget drift를 콘솔 로그만으로 추적해도 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Dense-Scene Instancing Hardening Slice 2)
+Added:
+- `InstancedFurnitureCluster`는 cluster membership key가 같을 때 `InstancedMesh`를 재생성하지 않고 `useLayoutEffect` matrix sync로 최신 transform을 반영한다.
+
+Updated:
+- dense-scene instancing visual/runtime 기준을 “cluster로 묶는다”에서 “cluster로 묶고 transform-only update는 rebuild 없이 반영한다”로 확장한다.
+
+Removed/Deprecated:
+- repeated asset의 transform commit이 자주 일어나도 cluster mesh를 매번 다시 만들어도 된다는 가정.
 
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.

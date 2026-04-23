@@ -29,6 +29,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - curated deskterior 제품 메타데이터는 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 manifest와 sceneDocument roundtrip에서 같이 유지해야 한다.
 - `lodProfile`는 문서용 필드에만 머물지 않고 room mode / desk precision / walk / builder preview 런타임 LOD 전환 거리 정책으로 실제 소비되어야 한다.
 - 반복된 `single_mesh` deskterior 자산은 read-only top/walk와 builder preview, editor `desk precision` top-view에서 instanced cluster로 묶을 수 있어야 하며, 선택 중이거나 `room mode` direct-drag 대상 자산은 개별 오브젝트 경로를 유지해야 한다.
+- dense-scene instanced cluster는 membership/finish가 바뀔 때만 mesh를 재생성하고, transform-only 변경은 instance matrix sync만으로 처리해야 한다.
 - 렌더 품질 사다리는 mode-aware tone mapping을 포함해야 하며, `room mode` / `viewer-shared` / 기본 walk-viewer는 ACES, `desk precision` / `builder preview` / `viewer-showcase`는 Neutral tone mapping을 사용한다.
 - 실사 강화 2차의 SSR은 `editor walk`와 `viewer-showcase`의 non-constrained profile에서만 보수적으로 허용하고, `viewer-shared`와 top-view/builder preview에는 적용하지 않는다.
 - `sceneDocument` 저장 계약은 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, meter float 좌표는 그 스냅샷에서 파생된 호환 필드로만 유지한다.
@@ -362,6 +363,17 @@ Updated:
 
 Removed/Deprecated:
 - live 성능 예산 초과를 콘솔 이벤트나 사후 JSON 검증에서만 확인하던 운영 방식.
+
+## 2026-04-23 변경 동기화 (Phase 8 Dense-Scene Instancing Hardening Slice 2)
+Added:
+- dense-scene instanced cluster는 asset membership key가 유지되는 동안 `InstancedMesh`를 재생성하지 않고 matrix sync만 수행하는 운영 규칙을 추가했다.
+- `verify:asset-instancing`는 transform-only 업데이트가 cluster membership key를 바꾸지 않는다는 smoke를 함께 검증한다.
+
+Updated:
+- instancing 운영 기준을 “cluster eligibility와 grouping이 맞다”에서 “cluster eligibility와 grouping이 맞고, transform-only churn이 mesh rebuild로 이어지지 않는다”까지 확장한다.
+
+Removed/Deprecated:
+- dense-scene에서 repeated asset transform 변화가 cluster rebuild를 자주 유발해도 허용된다는 가정.
 
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop)
 Added:
