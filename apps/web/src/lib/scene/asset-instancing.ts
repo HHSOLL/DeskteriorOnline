@@ -22,6 +22,12 @@ export type AssetInstancingCluster = {
   assets: SceneAsset[];
 };
 
+export function resolveInstancedClusterMembershipKey(
+  assets: Array<Pick<SceneAsset, "id">>
+) {
+  return assets.map((asset) => asset.id).join("::");
+}
+
 function resolveFinishClusterKey(asset: Pick<SceneAsset, "product">) {
   return [
     asset.product?.finishColor ?? "",

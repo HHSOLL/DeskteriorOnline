@@ -93,10 +93,11 @@
 41. `verify:scene-document`, `verify:public-scene` 실행 시 위 product contract metadata가 save/load/share roundtrip에서 유지되는지 확인하기
 42. `verify:asset-lod` 실행 시 complex asset은 room mode에서 더 빨리 proxy fallback 되고, simple asset은 desk precision에서 full detail을 유지하는지 확인하기
 43. `verify:asset-instancing` 실행 시 read-only top/walk와 builder preview, editor `desk precision`, editor `room mode` idle에서 repeated `single_mesh` 자산이 cluster로 묶이고, room mode dragging 중에는 selected asset이 cluster 안에서 live drag 되다가 pointer-up 후 개별 경로로 빠지는지 확인하기
-44. desk precision / builder preview / richer showcase 경로는 Neutral tone mapping으로, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping으로 읽히며 하이라이트 clipping과 white balance가 mode 목적에 맞게 유지되는지 확인하기
-45. editor walk와 richer showcase 경로에서만 SSR이 보수적으로 올라오고, shared viewer / top-view / builder preview에서는 SSR이 꺼져 있는지 확인하기
-46. `verify:showcase-activity` 실행 시 recent/rich scene이 older/sparse scene보다 높은 activity rank를 받고, community featured / conversation link가 showcase presentation 경로를 유지하는지 확인하기
-47. showcase 카드 진입 shared viewer는 일반 shared 링크보다 walk framing이 더 타이트하고, top framing이 살짝 더 조여지며, walk mode에서 rim/fill light가 더 풍부하게 읽히는지 확인하기
+44. dense-scene repeated asset 장면에서 transform만 바꿨을 때 cluster가 다시 만들어지지 않고 기존 instanced mesh가 유지되는지 확인하기
+45. desk precision / builder preview / richer showcase 경로는 Neutral tone mapping으로, room mode / shared viewer / 기본 walk viewer는 ACES tone mapping으로 읽히며 하이라이트 clipping과 white balance가 mode 목적에 맞게 유지되는지 확인하기
+46. editor walk와 richer showcase 경로에서만 SSR이 보수적으로 올라오고, shared viewer / top-view / builder preview에서는 SSR이 꺼져 있는지 확인하기
+47. `verify:showcase-activity` 실행 시 recent/rich scene이 older/sparse scene보다 높은 activity rank를 받고, community featured / conversation link가 showcase presentation 경로를 유지하는지 확인하기
+48. showcase 카드 진입 shared viewer는 일반 shared 링크보다 walk framing이 더 타이트하고, top framing이 살짝 더 조여지며, walk mode에서 rim/fill light가 더 풍부하게 읽히는지 확인하기
 
 ## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing QA)
 Added:

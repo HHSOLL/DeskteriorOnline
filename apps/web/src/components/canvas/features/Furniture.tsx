@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { CuboidCollider, RigidBody } from "@react-three/rapier";
 import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
@@ -8,7 +8,10 @@ import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-po
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
 import { normalizeSceneAnchorType } from "../../../lib/scene/anchor-types";
-import { groupAssetsForInstancing } from "../../../lib/scene/asset-instancing";
+import {
+  groupAssetsForInstancing,
+  resolveInstancedClusterMembershipKey
+} from "../../../lib/scene/asset-instancing";
 import {
   resolveAssetLodComplexity,
   resolveAssetLodPlan,
@@ -84,6 +87,8 @@ type InstancedMeshEntry = {
   sourceMatrix: THREE.Matrix4;
 };
 
+type AssetPlacementSnapshot = Pick<SceneAsset, "position" | "rotation" | "scale">;
+
 type SlotFinishPolicy = {
   tintStrengthScale: number;
   tintStrengthMax: number;
@@ -98,6 +103,48 @@ type SlotFinishPolicy = {
 
 function isPlaceholderAsset(assetId: string) {
   return assetId.startsWith("placeholder:");
+}
+
+function applyPlacementToInstancedMeshes(
+  instancedMeshes: InstancedMeshEntry[],
+  instanceId: number,
+  placement: AssetPlacementSnapshot
+) {
+  const assetMatrix = new THREE.Matrix4();
+  const instanceMatrix = new THREE.Matrix4();
+  const position = new THREE.Vector3();
+  const quaternion = new THREE.Quaternion();
+  const scaleVector = new THREE.Vector3();
+
+  position.fromArray(placement.position);
+  quaternion.setFromEuler(
+    new THREE.Euler(
+      placement.rotation[0],
+      placement.rotation[1],
+      placement.rotation[2]
+    )
+  );
+  scaleVector.fromArray(placement.scale);
+  assetMatrix.compose(position, quaternion, scaleVector);
+
+  instancedMeshes.forEach((entry) => {
+    instanceMatrix.multiplyMatrices(assetMatrix, entry.sourceMatrix);
+    entry.mesh.setMatrixAt(instanceId, instanceMatrix);
+    entry.mesh.instanceMatrix.needsUpdate = true;
+  });
+}
+
+function syncInstancedMeshesFromAssets(
+  instancedMeshes: InstancedMeshEntry[],
+  assets: SceneAsset[]
+) {
+  assets.forEach((asset, index) => {
+    applyPlacementToInstancedMeshes(instancedMeshes, index, {
+      position: asset.position,
+      rotation: asset.rotation,
+      scale: asset.scale
+    });
+  });
 }
 
 function findHighlightMesh(root: THREE.Object3D | null) {
@@ -507,14 +554,23 @@ function InstancedFurnitureCluster({
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
   );
-  const gltf = useGLBAsset(assets[0]!.assetId);
+  const firstAsset = assets[0]!;
+  const clusterMembershipKey = useMemo(
+    () => resolveInstancedClusterMembershipKey(assets),
+    [assets]
+  );
+  const gltf = useGLBAsset(firstAsset.assetId);
   const finishMetadata = useMemo<FinishMetadata>(
     () => ({
-      finishColor: assets[0]?.product?.finishColor,
-      finishMaterial: assets[0]?.product?.finishMaterial,
-      detailNotes: assets[0]?.product?.detailNotes
+      finishColor: firstAsset.product?.finishColor,
+      finishMaterial: firstAsset.product?.finishMaterial,
+      detailNotes: firstAsset.product?.detailNotes
     }),
-    [assets]
+    [
+      firstAsset.product?.detailNotes,
+      firstAsset.product?.finishColor,
+      firstAsset.product?.finishMaterial
+    ]
   );
   const finishAppearance = useMemo(
     () => resolveFinishAppearance(finishMetadata),
@@ -526,31 +582,15 @@ function InstancedFurnitureCluster({
     template.updateWorldMatrix(true, true);
 
     const clusterMeshes: InstancedMeshEntry[] = [];
-    const assetMatrix = new THREE.Matrix4();
-    const instanceMatrix = new THREE.Matrix4();
-    const position = new THREE.Vector3();
-    const quaternion = new THREE.Quaternion();
-    const scale = new THREE.Vector3();
 
     template.traverse((child) => {
       if (!(child instanceof THREE.Mesh)) return;
 
       const mesh = new THREE.InstancedMesh(child.geometry, child.material, assets.length);
-      mesh.name = `instanced:${assets[0]!.assetId}:${child.uuid}`;
+      mesh.name = `instanced:${firstAsset.assetId}:${clusterMembershipKey}:${child.uuid}`;
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       mesh.instanceMatrix.needsUpdate = true;
-
-      assets.forEach((asset, index) => {
-        position.fromArray(asset.position);
-        quaternion.setFromEuler(
-          new THREE.Euler(asset.rotation[0], asset.rotation[1], asset.rotation[2])
-        );
-        scale.fromArray(asset.scale);
-        assetMatrix.compose(position, quaternion, scale);
-        instanceMatrix.multiplyMatrices(assetMatrix, child.matrixWorld);
-        mesh.setMatrixAt(index, instanceMatrix);
-      });
 
       clusterMeshes.push({
         key: child.uuid,
@@ -560,7 +600,17 @@ function InstancedFurnitureCluster({
     });
 
     return clusterMeshes;
-  }, [assets, finishAppearance, gltf.scene]);
+  }, [assets.length, clusterMembershipKey, finishAppearance, firstAsset.assetId, gltf.scene]);
+
+  useLayoutEffect(() => {
+    syncInstancedMeshesFromAssets(instancedMeshes, assets);
+    const activeIds = new Set(assets.map((asset) => asset.id));
+    Object.keys(syncedVersionsRef.current).forEach((objectId) => {
+      if (!activeIds.has(objectId)) {
+        delete syncedVersionsRef.current[objectId];
+      }
+    });
+  }, [assets, instancedMeshes]);
 
   useEffect(() => {
     return () => {
@@ -584,12 +634,6 @@ function InstancedFurnitureCluster({
   const allowPointerInteraction = allowRoomModeDirectDrag || allowInteractiveSelection;
 
   const applyPreviewPlacementToInstance = useMemo(() => {
-    const assetMatrix = new THREE.Matrix4();
-    const instanceMatrix = new THREE.Matrix4();
-    const position = new THREE.Vector3();
-    const quaternion = new THREE.Quaternion();
-    const scaleVector = new THREE.Vector3();
-
     return (
       instanceId: number,
       targetAsset: SceneAsset,
@@ -598,17 +642,10 @@ function InstancedFurnitureCluster({
         rotation: [number, number, number];
       }
     ) => {
-      position.fromArray(placement.position);
-      quaternion.setFromEuler(
-        new THREE.Euler(placement.rotation[0], placement.rotation[1], placement.rotation[2])
-      );
-      scaleVector.fromArray(targetAsset.scale);
-      assetMatrix.compose(position, quaternion, scaleVector);
-
-      instancedMeshes.forEach((entry) => {
-        instanceMatrix.multiplyMatrices(assetMatrix, entry.sourceMatrix);
-        entry.mesh.setMatrixAt(instanceId, instanceMatrix);
-        entry.mesh.instanceMatrix.needsUpdate = true;
+      applyPlacementToInstancedMeshes(instancedMeshes, instanceId, {
+        position: placement.position,
+        rotation: placement.rotation,
+        scale: targetAsset.scale
       });
     };
   }, [instancedMeshes]);
@@ -620,7 +657,6 @@ function InstancedFurnitureCluster({
 
     let updated = false;
     const assetMatrix = new THREE.Matrix4();
-    const instanceMatrix = new THREE.Matrix4();
 
     assets.forEach((asset, index) => {
       const handle = runtimeRenderer.getObjectHandle(asset.id);
@@ -635,10 +671,15 @@ function InstancedFurnitureCluster({
 
       syncedVersionsRef.current[asset.id] = handle.version;
       assetMatrix.fromArray(handle.matrix);
-      instancedMeshes.forEach((entry) => {
-        instanceMatrix.multiplyMatrices(assetMatrix, entry.sourceMatrix);
-        entry.mesh.setMatrixAt(index, instanceMatrix);
-        entry.mesh.instanceMatrix.needsUpdate = true;
+      const position = new THREE.Vector3();
+      const quaternion = new THREE.Quaternion();
+      const scaleVector = new THREE.Vector3();
+      assetMatrix.decompose(position, quaternion, scaleVector);
+      const rotation = new THREE.Euler().setFromQuaternion(quaternion, "XYZ");
+      applyPlacementToInstancedMeshes(instancedMeshes, index, {
+        position: [position.x, position.y, position.z],
+        rotation: [rotation.x, rotation.y, rotation.z],
+        scale: [scaleVector.x, scaleVector.y, scaleVector.z]
       });
       updated = true;
     });

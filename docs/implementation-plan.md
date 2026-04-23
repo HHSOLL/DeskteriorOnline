@@ -1138,3 +1138,15 @@ Updated:
 
 Removed/Deprecated:
 - performance hardening이 regression JSON 수집만으로 충분하고, 편집 중 live 예산 피드백은 나중에 붙여도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Performance Hardening Slice 2)
+Added:
+- `InstancedFurnitureCluster`는 cluster membership key를 기준으로 mesh rebuild와 transform sync를 분리해 dense-scene repeated asset churn 비용을 줄인다.
+- `verify:asset-instancing`는 transform-only update가 cluster membership key를 유지하는지 함께 검증한다.
+
+Updated:
+- `Phase 8 Performance Hardening` 상태를 “slice 1: live budget HUD + shared budget helper + signal smoke 완료”에서 “slice 2: dense-scene instancing hardening(cluster rebuild avoidance) 완료”까지 확장한다.
+- current phase의 남은 범위를 `memory leak detection`, `streaming/LOD tuning`, `benchmark CI tighten`으로 재정리한다.
+
+Removed/Deprecated:
+- dense-scene instancing churn 최적화가 아직 미착수라는 상태 설명.

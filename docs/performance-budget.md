@@ -120,6 +120,7 @@ E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 - `runtime-document-patch`는 top-view transform commit 시 runtime patch 개수와 대상 object를 기록해 preview/commit 분리 여부를 확인할 수 있다.
 - selected asset transform preview는 renderer object mutation 경로로 반영되어, commit 전에도 React re-render 없이 visual update가 가능한 상태를 유지해야 한다.
 - instanced cluster는 dirty object 기준 matrix/version sync만 수행하고, 동일 batch 전체를 매번 재생성하지 않는 방향을 유지해야 한다.
+- dense-scene repeated asset cluster는 membership key가 유지될 때 transform-only update가 mesh rebuild로 이어지지 않아야 한다.
 - runtime scene이 document replace로 재컴파일될 때도 scene generation 기준으로 stale renderer snapshot을 재사용하지 않아야 한다.
 
 ```js
@@ -419,3 +420,13 @@ Updated:
 
 Removed/Deprecated:
 - 성능 예산 threshold가 live HUD와 CLI verify 사이에서 따로 관리돼도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 8 Dense-Scene Instancing Hardening Slice 2)
+Added:
+- `verify:asset-instancing`에 cluster membership key smoke를 추가해 transform-only update가 instanced cluster rebuild 조건으로 오인되지 않는지 확인한다.
+
+Updated:
+- dense-scene instancing budget을 “cluster grouping/eligibility”에서 “cluster grouping/eligibility + membership-stable rebuild avoidance”까지 확장한다.
+
+Removed/Deprecated:
+- repeated asset transform churn이 dense scene에서 cluster mesh 재생성 비용을 유발해도 예산 밖 문제라는 가정.
