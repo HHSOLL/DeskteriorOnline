@@ -877,3 +877,15 @@ Updated:
 
 Removed/Deprecated:
 - alpha 단계에서는 source/runtime file 누락이 있어도 publish artifact 일부를 남겨둘 수 있다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha QA Slice 3)
+Added:
+- `asset:compile` 실행 후에는 published package verification까지 자동으로 통과해야 성공으로 본다.
+- `verify:asset-compiler`는 proxy/thumbnails 존재, descriptor file manifest, runtime package directory의 unexpected JSON 잔존 여부까지 함께 점검한다.
+- `asset:optimize -- --dry-run`을 통해 package-owned optimize adapter가 proxy GLB까지 대상으로 잡히는지 smoke 확인하는 절차를 추가했다.
+
+Updated:
+- Phase 4 asset QA 기본 절차를 `asset:ingest -> asset:compile -> verify:asset-compiler` 순으로 정리한다.
+
+Removed/Deprecated:
+- published package 검증을 `asset:publish` 이후 별도 수동 점검으로만 남겨도 된다는 가정.

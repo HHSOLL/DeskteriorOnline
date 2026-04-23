@@ -898,3 +898,16 @@ Updated:
 
 Removed/Deprecated:
 - alpha 단계에서는 publish가 부분 성공 결과를 남겨도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha Phase 4C)
+Added:
+- `packages/asset-compiler`는 package-owned `export/sync/validate/optimize/verify/verify-packages` 경로를 통해 curated asset compiler를 직접 소유한다.
+- curated runtime package publish는 descriptor/sidecar 외에 실제 `proxy.glb`와 catalog thumbnail까지 생성하고, stale runtime package JSON과 stale `p2s_*.webp`를 publish 시 정리한다.
+- published package QA는 descriptor와 embedded `runtimeAsset`뿐 아니라 sidecar parity, file manifest, support surface bounds, directory hygiene를 함께 확인한다.
+
+Updated:
+- asset compiler 성공 기준을 “publish artifact 생성”에서 “publish artifact 생성 + published package verification 통과”로 강화한다.
+- fresh runtime GLB가 이미 존재하면 export 단계는 Blender 재호출 없이 sync/verify/validate/publish 흐름만 계속 진행하는 것을 기본 동작으로 고정한다.
+
+Removed/Deprecated:
+- `apps/web/scripts` wrapper가 compiler 단계별 비즈니스 로직을 계속 소유해도 된다는 가정.

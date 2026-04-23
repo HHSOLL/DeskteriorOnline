@@ -75,6 +75,10 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 16,
         maxTriangleCount: 2_000
       }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "desk top asset; no mounted attachment points required for publish"
+      },
       supportProfileExpectation: {
         surfaces: [
           {
@@ -105,6 +109,10 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 8,
         maxTriangleCount: 2_000
       }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "surface placeable riser; no mounted attachment points required for publish"
+      },
       supportProfileExpectation: {
         surfaces: [
           {
@@ -112,7 +120,7 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
             anchorTypes: ["desk_surface", "furniture_surface"],
             center: [0, 0],
             size: [0.56, 0.13],
-            top: 0.072,
+            top: 0.071,
             margin: [0.02, 0.02]
           }
         ]
@@ -135,6 +143,10 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 12,
         maxTriangleCount: 6_000
       }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "surface placeable lamp; no mounted attachment points required for publish"
+      },
       optionsHint: "light-emitter"
     },
     {
@@ -153,7 +165,11 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 4,
         maxTriangleCount: 4_000
-      })
+      }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "decor asset; no mounted attachment points required for publish"
+      }
     },
     {
       key: "p2s_book_stack_warm",
@@ -171,7 +187,11 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 6,
         maxTriangleCount: 2_000
-      })
+      }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "decor asset; no mounted attachment points required for publish"
+      }
     },
     {
       key: "p2s_desk_tray_oak",
@@ -190,6 +210,10 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 8,
         maxTriangleCount: 2_000
       }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "surface placeable tray; no mounted attachment points required for publish"
+      },
       supportProfileExpectation: {
         surfaces: [
           {
@@ -219,7 +243,11 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 8,
         maxTriangleCount: 2_000
-      })
+      }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "surface placeable speaker; no mounted attachment points required for publish"
+      }
     },
     {
       key: "p2s_desk_planter_pilea",
@@ -237,7 +265,11 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxFileSizeBytes: 2_000_000,
         maxDrawCalls: 10,
         maxTriangleCount: 6_000
-      })
+      }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "decor planter; no mounted attachment points required for publish"
+      }
     }
   ];
 }

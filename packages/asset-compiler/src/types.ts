@@ -63,6 +63,11 @@ export type CuratedSupportProfileExpectation = {
   }>;
 };
 
+export type CuratedAttachmentAuthoring = {
+  mode: "none" | "manual_required";
+  reason: string;
+};
+
 export type CuratedDeskteriorAsset = {
   key: string;
   manifestId: string;
@@ -76,6 +81,7 @@ export type CuratedDeskteriorAsset = {
     maxTriangleCount: number;
   };
   supportProfileExpectation?: CuratedSupportProfileExpectation;
+  attachmentAuthoring: CuratedAttachmentAuthoring;
   contractMetadata: {
     source: AssetSourceMetadata;
     license: AssetLicenseMetadata;
@@ -96,6 +102,7 @@ export type AssetCompilerPaths = {
   ingestDraftDir: string;
   runtimePackageDir: string;
   runtimePackageIndexPath: string;
+  thumbnailDir: string;
 };
 
 export type RuntimePackageIndexEntry = {
@@ -130,6 +137,9 @@ export type RuntimePackageDescriptor = {
   scaleLocked: boolean;
   contractMetadata: CuratedDeskteriorAsset["contractMetadata"];
   supportProfile: CuratedSupportProfileExpectation | null;
+  authoring: {
+    attachmentPoints: CuratedAttachmentAuthoring;
+  };
   runtimeAsset: RuntimeAsset;
   files: {
     sourceBlend: RuntimePackageFileRef;

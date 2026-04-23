@@ -1,25 +1,14 @@
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-import path from "node:path";
-import { createAssetCompilerPaths } from "./paths";
+import { runExportCuratedRuntime, parseExportArgs, printExportSummary } from "./export";
 import { writeAssetIngestDraft } from "./ingest";
+import { runOptimizeCuratedRuntimeCli } from "./optimize";
 import { publishCuratedRuntimePackages } from "./publish";
-
-const execFileAsync = promisify(execFile);
-
-async function runNodeProcess(args: string[], cwd: string) {
-  const result = await execFileAsync(process.execPath, args, {
-    cwd,
-    maxBuffer: 1024 * 1024 * 32
-  });
-
-  if (result.stdout) {
-    process.stdout.write(result.stdout);
-  }
-  if (result.stderr) {
-    process.stderr.write(result.stderr);
-  }
-}
+import { runSyncCuratedCatalogCli } from "./sync";
+import { buildCuratedValidationSummary, parseValidateArgs, printValidationSummary } from "./validate";
+import { buildCuratedPipelineSummary, printCuratedPipelineSummary } from "./verify";
+import {
+  buildPublishedRuntimePackageSummary,
+  printPublishedRuntimePackageSummary
+} from "./verify-packages";
 
 function parseAssetCompilerArgs(argv: string[]) {
   const [command, ...rest] = argv;
@@ -51,11 +40,11 @@ function printHelp() {
       "",
       "Commands:",
       "  ingest      scaffold an asset source draft from a source path",
-      "  compile     export + sync + publish alpha runtime packages",
-      "  validate    run existing GLTF validation stage",
-      "  optimize    run existing optimize stage",
-      "  verify      run existing curated pipeline verification stage",
-      "  publish     emit alpha runtime package descriptors and catalog index",
+      "  compile     export + sync + verify + validate + publish runtime packages",
+      "  validate    run curated GLTF validation stage",
+      "  optimize    run curated optimize stage",
+      "  verify      run curated pipeline verification stage",
+      "  publish     emit runtime package descriptors and catalog index",
       "  help        show this help"
     ].join("\n")
   );
@@ -63,9 +52,6 @@ function printHelp() {
 
 export async function runAssetCompilerCli(argv: string[]) {
   const { command, rest } = parseAssetCompilerArgs(argv);
-  const paths = createAssetCompilerPaths();
-  const repoRoot = paths.repoRoot;
-  const script = (name: string) => path.join(paths.webScriptDir, name);
 
   switch (command) {
     case "ingest": {
@@ -89,30 +75,97 @@ export async function runAssetCompilerCli(argv: string[]) {
       );
       return;
     }
-    case "compile":
-      await runNodeProcess(["--import", "tsx", script("export-deskterior-runtime.ts"), ...rest], repoRoot);
-      await runNodeProcess(["--import", "tsx", script("sync-deskterior-catalog.ts"), ...rest], repoRoot);
-      await runNodeProcess(["--import", "tsx", script("verify-deskterior-pipeline.ts"), ...rest], repoRoot);
-      {
-        const summary = await publishCuratedRuntimePackages();
-        if (!summary.ok) {
-          summary.errors.forEach((error) => console.error(`asset:publish error: ${error}`));
-          process.exit(1);
-        }
-        console.log(
-          `Asset compiler publish: PASS (${summary.packageCount} package descriptors at ${summary.catalogPath})`
-        );
+    case "compile": {
+      const exportArgs = parseExportArgs(rest);
+      const exportSummary = await runExportCuratedRuntime(exportArgs);
+      if (exportArgs.json) {
+        console.log(JSON.stringify(exportSummary, null, 2));
+      } else {
+        printExportSummary(exportSummary);
       }
+      if (!exportSummary.ok) {
+        process.exit(1);
+      }
+
+      await runSyncCuratedCatalogCli();
+
+      const verifySummary = await buildCuratedPipelineSummary();
+      printCuratedPipelineSummary(verifySummary);
+      if (!verifySummary.ok) {
+        process.exit(1);
+      }
+
+      const validateArgs = parseValidateArgs(rest);
+      const validateSummary = await buildCuratedValidationSummary(
+        validateArgs.strictWarnings,
+        validateArgs.requireKtx2
+      );
+      if (validateArgs.json) {
+        console.log(JSON.stringify(validateSummary, null, 2));
+      } else {
+        printValidationSummary(validateSummary);
+      }
+      if (!validateSummary.ok) {
+        process.exit(1);
+      }
+
+      const summary = await publishCuratedRuntimePackages();
+      if (!summary.ok) {
+        summary.errors.forEach((error) => console.error(`asset:publish error: ${error}`));
+        process.exit(1);
+      }
+      const packageSummary = await buildPublishedRuntimePackageSummary();
+      printPublishedRuntimePackageSummary(packageSummary);
+      if (!packageSummary.ok) {
+        process.exit(1);
+      }
+      console.log(
+        `Asset compiler publish: PASS (${summary.packageCount} package descriptors at ${summary.catalogPath})`
+      );
       return;
-    case "validate":
-      await runNodeProcess(["--import", "tsx", script("validate-deskterior-gltf.ts"), ...rest], repoRoot);
+    }
+    case "validate": {
+      const { json, strictWarnings, requireKtx2, help, unknownArgs } = parseValidateArgs(rest);
+      if (help) {
+        console.log(
+          [
+            "Usage: node --import tsx apps/web/scripts/validate-deskterior-gltf.ts [options]",
+            "",
+            "Options:",
+            "  --json             Print machine-readable summary JSON",
+            "  --strict-warnings  Treat warnings as failures",
+            "  --require-ktx2     Fail when runtime assets do not use KHR_texture_basisu",
+            "  --help             Show help"
+          ].join("\n")
+        );
+        process.exit(0);
+      }
+      if (unknownArgs.length > 0) {
+        console.error(`Unknown arguments: ${unknownArgs.join(", ")}`);
+        process.exit(1);
+      }
+      const summary = await buildCuratedValidationSummary(strictWarnings, requireKtx2);
+      if (json) {
+        console.log(JSON.stringify(summary, null, 2));
+      } else {
+        printValidationSummary(summary);
+      }
+      process.exit(summary.ok ? 0 : 1);
       return;
+    }
     case "optimize":
-      await runNodeProcess(["--import", "tsx", script("optimize-deskterior-runtime.ts"), ...rest], repoRoot);
+      await runOptimizeCuratedRuntimeCli(rest);
       return;
-    case "verify":
-      await runNodeProcess(["--import", "tsx", script("verify-deskterior-pipeline.ts"), ...rest], repoRoot);
+    case "verify": {
+      const summary = await buildCuratedPipelineSummary();
+      if (rest.includes("--json")) {
+        console.log(JSON.stringify(summary, null, 2));
+      } else {
+        printCuratedPipelineSummary(summary);
+      }
+      process.exit(summary.ok ? 0 : 1);
       return;
+    }
     case "publish": {
       const summary = await publishCuratedRuntimePackages();
       if (!summary.ok) {

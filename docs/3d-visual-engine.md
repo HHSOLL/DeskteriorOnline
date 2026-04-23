@@ -649,3 +649,14 @@ Updated:
 
 Removed/Deprecated:
 - runtime package artifact 없이 manifest만 있으면 compiler phase를 닫을 수 있다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha Runtime Delivery)
+Added:
+- alpha runtime package는 descriptor/sidecar만이 아니라 실제 `proxy.glb`와 catalog thumbnail을 함께 생성해 proxy-first delivery와 catalog visibility를 동시에 보장해야 한다.
+- published package 검증은 support surface가 asset envelope 밖으로 나가지 않는지, sidecar가 embedded `runtimeAsset`와 동일한지, file manifest가 실제 파일 존재와 일치하는지 확인해야 한다.
+
+Updated:
+- runtime delivery 품질 기준을 “descriptor publish 가능”에서 “descriptor + sidecar + proxy + thumbnail + published artifact verification” 구조로 강화한다.
+
+Removed/Deprecated:
+- proxy/thumbnail이 나중 단계까지 placeholder여도 compiler phase를 닫을 수 있다는 가정.

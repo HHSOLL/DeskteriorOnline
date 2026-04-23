@@ -5,22 +5,22 @@
     "localFrame": {
       "originMm": [
         0,
-        72,
+        71,
         0
       ],
       "tangentU": [
-        1,
+        1000,
         0,
         0
       ],
       "tangentV": [
         0,
         0,
-        1
+        1000
       ],
       "normal": [
         0,
-        1,
+        1000,
         0
       ]
     },

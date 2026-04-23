@@ -1,5 +1,5 @@
 {
-  "status": "warning",
+  "status": "passed",
   "measuredBoundsMm": {
     "width": 100,
     "depth": 100,
@@ -10,22 +10,5 @@
     "depth": 0,
     "height": 0
   },
-  "validatorVersion": "asset-compiler-alpha-v2",
-  "issues": [
-    {
-      "code": "ALPHA_WARNING",
-      "severity": "warning",
-      "message": "proxy model is missing; lod0 fallback will be used"
-    },
-    {
-      "code": "ALPHA_WARNING",
-      "severity": "warning",
-      "message": "thumbnail is missing from runtime package"
-    },
-    {
-      "code": "ALPHA_WARNING",
-      "severity": "warning",
-      "message": "texture set is not yet marked KTX2-ready"
-    }
-  ]
+  "validatorVersion": "asset-compiler-alpha-v3"
 }

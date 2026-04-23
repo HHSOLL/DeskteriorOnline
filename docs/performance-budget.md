@@ -312,6 +312,16 @@ Updated:
 Removed/Deprecated:
 - runtime package artifact가 없어도 asset pipeline 회귀를 충분히 추적할 수 있다는 가정.
 
+## 2026-04-23 변경 동기화 (Asset Compiler Published Artifact Guardrail)
+Added:
+- curated asset publish 결과는 descriptor/sidecar뿐 아니라 `proxy.glb`, thumbnail, file manifest parity, support surface bound를 모두 충족해야 한다.
+
+Updated:
+- asset compiler guardrail 범위를 `runtime package publish`에서 `runtime package publish + published artifact verification`까지 확장한다.
+
+Removed/Deprecated:
+- proxy/thumbnail/file manifest mismatch가 성능/전달 guardrail 밖의 문제라는 가정.
+
 ## 2026-04-23 변경 동기화 (Visibility Lifecycle Budget)
 Added:
 - hidden object는 same-room sync에서 full replace 없이 빠르게 제외되고, instancing/single-object render path에서 draw 후보 자체를 줄이는 방향을 기본 예산으로 본다.

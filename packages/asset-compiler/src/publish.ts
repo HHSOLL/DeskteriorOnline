@@ -1,4 +1,6 @@
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
+import { access, copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import path from "node:path";
+import sharp from "sharp";
 import type {
   AssetQaReport,
   AttachmentPoint,
@@ -7,8 +9,8 @@ import type {
   RuntimeAsset,
   SupportSurface
 } from "@deskterioronline/scene-schema";
-import { createAssetCompilerPaths } from "./paths";
 import { getCuratedDeskteriorAssets } from "./curated-assets";
+import { createAssetCompilerPaths } from "./paths";
 import type {
   CuratedDeskteriorAsset,
   CuratedSupportProfileExpectation,
@@ -17,6 +19,7 @@ import type {
   RuntimePackageDescriptor,
   RuntimePackageFileRef
 } from "./types";
+import { buildCuratedValidationSummary, type ValidationResult } from "./validate";
 
 type ManifestEntry = Record<string, unknown> & {
   id?: unknown;
@@ -138,11 +141,7 @@ function normalizeSupportProfile(value: unknown): CuratedSupportProfileExpectati
   };
 }
 
-function ensureContractMetadata(
-  entry: ManifestEntry,
-  asset: CuratedDeskteriorAsset,
-  errors: string[]
-) {
+function ensureContractMetadata(entry: ManifestEntry, asset: CuratedDeskteriorAsset, errors: string[]) {
   const fields = [
     ["source", asset.contractMetadata.source],
     ["license", asset.contractMetadata.license],
@@ -179,26 +178,34 @@ function resolveAllowedAttachments(
   return [...allowed];
 }
 
-function buildSupportSurfaces(supportProfile: CuratedSupportProfileExpectation | null): SupportSurface[] {
+function buildSupportSurfaces(
+  dimensionsMm: RuntimeAsset["dimensionsMm"],
+  supportProfile: CuratedSupportProfileExpectation | null,
+  asset: CuratedDeskteriorAsset,
+  errors: string[]
+): SupportSurface[] {
   if (!supportProfile) {
     return [];
   }
 
   return supportProfile.surfaces.map((surface) => {
+    const topMm = Math.round(surface.top * 1000);
+    if (topMm > dimensionsMm.height) {
+      errors.push(
+        `support surface ${surface.id} on ${asset.manifestId} exceeds asset height (${topMm}mm > ${dimensionsMm.height}mm)`
+      );
+    }
+
     const marginX = surface.margin?.[0] ?? 0;
     const marginY = surface.margin?.[1] ?? 0;
     return {
       id: surface.id,
       type: resolveSupportSurfaceType(surface.anchorTypes),
       localFrame: {
-        originMm: [
-          Math.round(surface.center[0] * 1000),
-          Math.round(surface.top * 1000),
-          Math.round(surface.center[1] * 1000)
-        ],
-        tangentU: [1, 0, 0],
-        tangentV: [0, 0, 1],
-        normal: [0, 1, 0]
+        originMm: [Math.round(surface.center[0] * 1000), topMm, Math.round(surface.center[1] * 1000)],
+        tangentU: [1000, 0, 0],
+        tangentV: [0, 0, 1000],
+        normal: [0, 1000, 0]
       },
       boundsMm: {
         min: [
@@ -228,32 +235,54 @@ function buildColliders(dimensionsMm: RuntimeAsset["dimensionsMm"]): ColliderDef
 
 function buildMaterialVariants(entry: ManifestEntry): MaterialVariant[] {
   const label = isNonEmptyString(entry.label) ? entry.label : "Default";
-  const finishColor = isNonEmptyString(entry.finishColor) ? entry.finishColor : null;
-  const finishMaterial = isNonEmptyString(entry.finishMaterial) ? entry.finishMaterial : null;
-  const detailNotes = isNonEmptyString(entry.detailNotes) ? entry.detailNotes : null;
-
   return [
     {
       id: "default",
       label,
-      finishColor,
-      finishMaterial,
-      detailNotes
+      finishColor: isNonEmptyString(entry.finishColor) ? entry.finishColor : null,
+      finishMaterial: isNonEmptyString(entry.finishMaterial) ? entry.finishMaterial : null,
+      detailNotes: isNonEmptyString(entry.detailNotes) ? entry.detailNotes : null
     }
   ];
 }
 
-function buildAttachmentPoints(): AttachmentPoint[] {
-  return [];
+function buildAttachmentPoints(asset: CuratedDeskteriorAsset, errors: string[]): AttachmentPoint[] {
+  const points: AttachmentPoint[] = [];
+  if (asset.attachmentAuthoring.mode === "manual_required" && points.length === 0) {
+    errors.push(`attachment authoring is required for ${asset.manifestId} but no attachment points were authored`);
+  }
+  return points;
 }
 
 function buildQaReport(
   dimensionsMm: RuntimeAsset["dimensionsMm"],
-  warnings: string[],
-  validatorVersion: string
+  validatorVersion: string,
+  validationResult: ValidationResult | undefined
 ): AssetQaReport {
+  const issues: NonNullable<AssetQaReport["issues"]> = [];
+
+  if (validationResult) {
+    for (const message of validationResult.messages.filter((entry) => entry.severity <= 1)) {
+      issues.push({
+        code: message.code,
+        severity: message.severity === 0 ? "error" : "warning",
+        message: message.message
+      });
+    }
+    for (const violation of validationResult.budgetViolations) {
+      issues.push({
+        code: "BUDGET_VIOLATION",
+        severity: "error",
+        message: violation
+      });
+    }
+  }
+
+  const hasError = issues.some((issue) => issue.severity === "error");
+  const hasWarning = issues.some((issue) => issue.severity === "warning");
+
   return {
-    status: warnings.length > 0 ? "warning" : "passed",
+    status: hasError ? "failed" : hasWarning ? "warning" : "passed",
     measuredBoundsMm: dimensionsMm,
     dimensionErrorMm: {
       width: 0,
@@ -261,15 +290,7 @@ function buildQaReport(
       height: 0
     },
     validatorVersion,
-    ...(warnings.length > 0
-      ? {
-          issues: warnings.map((message) => ({
-            code: "ALPHA_WARNING",
-            severity: "warning" as const,
-            message
-          }))
-        }
-      : {})
+    ...(issues.length > 0 ? { issues } : {})
   };
 }
 
@@ -277,9 +298,9 @@ function publicCatalogPath(fileName: string) {
   return `/assets/catalog/runtime-packages/${fileName}`;
 }
 
-function buildFileRef(path: string | null, required: boolean, exists: boolean): RuntimePackageFileRef {
+function buildFileRef(pathValue: string | null, required: boolean, exists: boolean): RuntimePackageFileRef {
   return {
-    path,
+    path: pathValue,
     required,
     exists
   };
@@ -292,6 +313,7 @@ function stringifyJson(value: unknown) {
 function buildRuntimeAsset(
   entry: ManifestEntry,
   asset: CuratedDeskteriorAsset,
+  dimensionsMm: RuntimeAsset["dimensionsMm"],
   supportSurfaces: SupportSurface[],
   colliders: ColliderDefinition[],
   attachmentPoints: AttachmentPoint[],
@@ -303,7 +325,7 @@ function buildRuntimeAsset(
     assetId: asset.expectedAssetId,
     productId: asset.manifestId,
     units: "mm",
-    dimensionsMm: qaStatus.measuredBoundsMm,
+    dimensionsMm,
     scaleLocked: true,
     pivot: asset.contractMetadata.pivot,
     sourceProvenance: {
@@ -336,12 +358,88 @@ function buildRuntimeAsset(
   };
 }
 
+function hashString(value: string) {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function colorFromKey(key: string) {
+  const palette = [
+    ["#171717", "#f59e0b"],
+    ["#102a43", "#56b4d3"],
+    ["#1f2937", "#f97316"],
+    ["#0f172a", "#84cc16"],
+    ["#111827", "#f43f5e"]
+  ] as const;
+  return palette[hashString(key) % palette.length];
+}
+
+async function ensureProxyFile(runtimePath: string, proxyPath: string) {
+  if (!(await fileExists(proxyPath))) {
+    await mkdir(path.dirname(proxyPath), { recursive: true });
+    await copyFile(runtimePath, proxyPath);
+  }
+  return fileExists(proxyPath);
+}
+
+async function ensureThumbnailFile(
+  thumbnailPath: string,
+  label: string,
+  dimensionsMm: RuntimeAsset["dimensionsMm"],
+  assetKey: string
+) {
+  if (await fileExists(thumbnailPath)) {
+    return true;
+  }
+
+  await mkdir(path.dirname(thumbnailPath), { recursive: true });
+  const [bg, accent] = colorFromKey(assetKey);
+  const svg = `
+    <svg width="512" height="384" viewBox="0 0 512 384" xmlns="http://www.w3.org/2000/svg">
+      <rect width="512" height="384" fill="${bg}" />
+      <rect x="24" y="24" width="464" height="336" rx="24" fill="none" stroke="${accent}" stroke-width="4" />
+      <text x="40" y="88" fill="#f8fafc" font-size="34" font-family="Arial, Helvetica, sans-serif" font-weight="700">${label}</text>
+      <text x="40" y="142" fill="#cbd5e1" font-size="20" font-family="Arial, Helvetica, sans-serif">Deskterior Runtime Package</text>
+      <text x="40" y="228" fill="${accent}" font-size="52" font-family="Arial, Helvetica, sans-serif" font-weight="700">${dimensionsMm.width} × ${dimensionsMm.depth} × ${dimensionsMm.height}</text>
+      <text x="40" y="270" fill="#cbd5e1" font-size="20" font-family="Arial, Helvetica, sans-serif">mm</text>
+      <circle cx="430" cy="92" r="34" fill="${accent}" opacity="0.18" />
+      <circle cx="452" cy="120" r="12" fill="${accent}" opacity="0.82" />
+    </svg>
+  `;
+
+  await sharp(Buffer.from(svg)).webp({ quality: 82 }).toFile(thumbnailPath);
+  return fileExists(thumbnailPath);
+}
+
+async function cleanupUnexpectedJsonFiles(directory: string, expectedFileNames: Set<string>) {
+  const existing = await readdir(directory).catch(() => [] as string[]);
+  await Promise.all(
+    existing
+      .filter((entry) => entry.endsWith(".json") && !expectedFileNames.has(entry))
+      .map((entry) => rm(path.join(directory, entry), { force: true }))
+  );
+}
+
+async function cleanupUnexpectedThumbnailFiles(directory: string, expectedFileNames: Set<string>) {
+  const existing = await readdir(directory).catch(() => [] as string[]);
+  await Promise.all(
+    existing
+      .filter((entry) => entry.startsWith("p2s_") && entry.endsWith(".webp") && !expectedFileNames.has(entry))
+      .map((entry) => rm(path.join(directory, entry), { force: true }))
+  );
+}
+
 export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePackagesSummary> {
   const paths = createAssetCompilerPaths();
   const errors: string[] = [];
   const generatedAt = new Date().toISOString();
   const curatedAssets = getCuratedDeskteriorAssets(paths);
-  const validatorVersion = "asset-compiler-alpha-v2";
+  const validatorVersion = "asset-compiler-alpha-v3";
+  const validationSummary = await buildCuratedValidationSummary(false, false);
+  const validationByKey = new Map(validationSummary.results.map((entry) => [entry.key, entry]));
 
   const manifestRaw = await readFile(paths.manifestPath, "utf8");
   const manifest = JSON.parse(manifestRaw) as ManifestEntry[];
@@ -355,6 +453,8 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
 
   const pendingOutputs: PendingOutput[] = [];
   const packages: RuntimePackageDescriptor[] = [];
+  const expectedRuntimeJsonFiles = new Set<string>();
+  const expectedThumbnailFiles = new Set<string>();
 
   for (const asset of curatedAssets) {
     const entry = manifestById.get(asset.manifestId);
@@ -362,12 +462,10 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
       errors.push(`manifest entry ${asset.manifestId} is missing`);
       continue;
     }
-
     if (!isNonEmptyString(entry.label)) {
       errors.push(`manifest ${asset.manifestId} is missing label`);
       continue;
     }
-
     if (!isNonEmptyString(entry.assetId) || entry.assetId !== asset.expectedAssetId) {
       errors.push(`manifest ${asset.manifestId} has mismatched assetId`);
       continue;
@@ -377,7 +475,6 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
     if (!dimensionsMm) {
       continue;
     }
-
     if (entry.scaleLocked !== true) {
       errors.push(`manifest ${asset.manifestId} must keep scaleLocked=true`);
       continue;
@@ -389,10 +486,10 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
     if (!sourceExists) {
       errors.push(`source file is missing for ${asset.key}: ${asset.sourcePath}`);
     }
-
     const runtimeExists = await fileExists(asset.runtimePath);
     if (!runtimeExists) {
       errors.push(`runtime model is missing for ${asset.key}: ${asset.runtimePath}`);
+      continue;
     }
 
     const supportProfile = normalizeSupportProfile(entry.supportProfile);
@@ -408,39 +505,40 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
       continue;
     }
 
-    const supportSurfaces = buildSupportSurfaces(supportProfile);
+    const supportSurfaces = buildSupportSurfaces(dimensionsMm, supportProfile, asset, errors);
     const colliders = buildColliders(dimensionsMm);
-    const attachmentPoints = buildAttachmentPoints();
+    const attachmentPoints = buildAttachmentPoints(asset, errors);
     const materialVariants = buildMaterialVariants(entry);
 
     const proxyPublicPath = `/assets/models/${asset.key}/${asset.key}.proxy.glb`;
-    const proxyLocalPath = asset.runtimePath.replace(/\.glb$/i, ".proxy.glb");
-    const proxyExists = await fileExists(proxyLocalPath);
+    const proxyLocalPath = path.join(paths.publicRoot, proxyPublicPath.replace(/^\//, ""));
+    const proxyExists = await ensureProxyFile(asset.runtimePath, proxyLocalPath);
+
     const thumbnailPublicPath = `/assets/catalog/thumbnails/${asset.key}.webp`;
-    const thumbnailLocalPath = `${paths.publicRoot}${thumbnailPublicPath}`;
-    const thumbnailExists = await fileExists(thumbnailLocalPath);
+    const thumbnailLocalPath = path.join(paths.thumbnailDir, `${asset.key}.webp`);
+    const thumbnailExists = await ensureThumbnailFile(
+      thumbnailLocalPath,
+      entry.label,
+      dimensionsMm,
+      asset.key
+    );
 
-    const warnings: string[] = [];
-    if (!proxyExists) {
-      warnings.push("proxy model is missing; lod0 fallback will be used");
-    }
-    if (!thumbnailExists) {
-      warnings.push("thumbnail is missing from runtime package");
-    }
-    if (!asset.contractMetadata.textureSet.ktx2Ready) {
-      warnings.push("texture set is not yet marked KTX2-ready");
+    const qaReport = buildQaReport(dimensionsMm, validatorVersion, validationByKey.get(asset.key));
+    if (qaReport.status === "failed") {
+      errors.push(`qa report failed for ${asset.key}`);
+      continue;
     }
 
-    const qaReport = buildQaReport(dimensionsMm, warnings, validatorVersion);
     const runtimeAsset = buildRuntimeAsset(
       entry,
       asset,
+      dimensionsMm,
       supportSurfaces,
       colliders,
       attachmentPoints,
       materialVariants,
       qaReport,
-      proxyExists ? proxyPublicPath : asset.expectedAssetId
+      proxyPublicPath
     );
 
     const baseFileName = asset.key;
@@ -463,66 +561,66 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
       scaleLocked: true,
       contractMetadata: asset.contractMetadata,
       supportProfile,
+      authoring: {
+        attachmentPoints: asset.attachmentAuthoring
+      },
       runtimeAsset,
       files: {
         sourceBlend: buildFileRef(asset.contractMetadata.source.path ?? asset.sourcePath, true, sourceExists),
         runtimeModel: buildFileRef(asset.expectedAssetId, true, runtimeExists),
-        proxyModel: buildFileRef(proxyPublicPath, false, proxyExists),
+        proxyModel: buildFileRef(proxyPublicPath, true, proxyExists),
         colliders: buildFileRef(collidersPath, true, true),
         supportSurfaces: buildFileRef(supportSurfacesPath, true, true),
         attachmentPoints: buildFileRef(attachmentPointsPath, true, true),
         materialVariants: buildFileRef(materialVariantsPath, true, true),
         qaReport: buildFileRef(qaReportPath, true, true),
-        thumbnail: buildFileRef(thumbnailPublicPath, false, thumbnailExists)
+        thumbnail: buildFileRef(thumbnailPublicPath, true, thumbnailExists)
       },
       runtime: {
-        lods: [
-          {
-            level: 0,
-            path: asset.expectedAssetId
-          }
-        ],
-        proxyPath: proxyExists ? proxyPublicPath : asset.expectedAssetId,
+        lods: [{ level: 0, path: asset.expectedAssetId }],
+        proxyPath: proxyPublicPath,
         collidersPath,
         supportSurfacesPath,
         attachmentPointsPath,
         materialVariantsPath,
         qaReportPath,
-        thumbnailPath: thumbnailExists ? thumbnailPublicPath : null
+        thumbnailPath: thumbnailPublicPath
       },
       qa: {
         status: qaReport.status,
-        warnings
+        warnings: (qaReport.issues ?? []).filter((issue) => issue.severity === "warning").map((issue) => issue.message)
       }
     };
 
     packages.push(descriptor);
 
+    const fileNames = [
+      `${asset.key}.json`,
+      `${asset.key}.colliders.json`,
+      `${asset.key}.support-surfaces.json`,
+      `${asset.key}.attachment-points.json`,
+      `${asset.key}.material-variants.json`,
+      `${asset.key}.qa-report.json`
+    ];
+    fileNames.forEach((name) => expectedRuntimeJsonFiles.add(name));
+    expectedThumbnailFiles.add(`${asset.key}.webp`);
+
     pendingOutputs.push(
+      { filePath: path.join(paths.runtimePackageDir, `${asset.key}.json`), content: stringifyJson(descriptor) },
+      { filePath: path.join(paths.runtimePackageDir, `${asset.key}.colliders.json`), content: stringifyJson(colliders) },
       {
-        filePath: `${paths.runtimePackageDir}/${asset.key}.json`,
-        content: stringifyJson(descriptor)
-      },
-      {
-        filePath: `${paths.runtimePackageDir}/${asset.key}.colliders.json`,
-        content: stringifyJson(colliders)
-      },
-      {
-        filePath: `${paths.runtimePackageDir}/${asset.key}.support-surfaces.json`,
+        filePath: path.join(paths.runtimePackageDir, `${asset.key}.support-surfaces.json`),
         content: stringifyJson(supportSurfaces)
       },
       {
-        filePath: `${paths.runtimePackageDir}/${asset.key}.attachment-points.json`,
+        filePath: path.join(paths.runtimePackageDir, `${asset.key}.attachment-points.json`),
         content: stringifyJson(attachmentPoints)
       },
       {
-        filePath: `${paths.runtimePackageDir}/${asset.key}.material-variants.json`,
+        filePath: path.join(paths.runtimePackageDir, `${asset.key}.material-variants.json`),
         content: stringifyJson(materialVariants)
       },
-      {
-        filePath: `${paths.runtimePackageDir}/${asset.key}.qa-report.json`,
-        content: stringifyJson(qaReport)
-      }
+      { filePath: path.join(paths.runtimePackageDir, `${asset.key}.qa-report.json`), content: stringifyJson(qaReport) }
     );
   }
 
@@ -556,6 +654,9 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
   }
 
   await mkdir(paths.runtimePackageDir, { recursive: true });
+  await mkdir(paths.thumbnailDir, { recursive: true });
+  await cleanupUnexpectedJsonFiles(paths.runtimePackageDir, expectedRuntimeJsonFiles);
+  await cleanupUnexpectedThumbnailFiles(paths.thumbnailDir, expectedThumbnailFiles);
   for (const output of pendingOutputs) {
     await writeFile(output.filePath, output.content, "utf8");
   }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-23T06:08:48.703Z",
+  "generatedAt": "2026-04-23T06:38:36.724Z",
   "key": "p2s_desk_planter_pilea",
   "manifestId": "p2s_desk_planter_pilea",
   "label": "P2S 필레아 데스크 플랜터",
@@ -47,6 +47,12 @@
     }
   },
   "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "decor planter; no mounted attachment points required for publish"
+    }
+  },
   "runtimeAsset": {
     "assetId": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
     "productId": "p2s_desk_planter_pilea",
@@ -78,7 +84,7 @@
           "drawCallBudget": 10
         }
       ],
-      "proxy": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+      "proxy": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.proxy.glb",
       "defaultLod": 0,
       "triangleBudget": 6000,
       "textureBudgetMb": 48
@@ -111,7 +117,7 @@
       }
     ],
     "qaStatus": {
-      "status": "warning",
+      "status": "passed",
       "measuredBoundsMm": {
         "width": 100,
         "depth": 100,
@@ -122,24 +128,7 @@
         "depth": 0,
         "height": 0
       },
-      "validatorVersion": "asset-compiler-alpha-v2",
-      "issues": [
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "proxy model is missing; lod0 fallback will be used"
-        },
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "thumbnail is missing from runtime package"
-        },
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "texture set is not yet marked KTX2-ready"
-        }
-      ]
+      "validatorVersion": "asset-compiler-alpha-v3"
     }
   },
   "files": {
@@ -155,8 +144,8 @@
     },
     "proxyModel": {
       "path": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.proxy.glb",
-      "required": false,
-      "exists": false
+      "required": true,
+      "exists": true
     },
     "colliders": {
       "path": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.colliders.json",
@@ -185,8 +174,8 @@
     },
     "thumbnail": {
       "path": "/assets/catalog/thumbnails/p2s_desk_planter_pilea.webp",
-      "required": false,
-      "exists": false
+      "required": true,
+      "exists": true
     }
   },
   "runtime": {
@@ -196,20 +185,16 @@
         "path": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb"
       }
     ],
-    "proxyPath": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+    "proxyPath": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.proxy.glb",
     "collidersPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.colliders.json",
     "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.support-surfaces.json",
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.qa-report.json",
-    "thumbnailPath": null
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_planter_pilea.webp"
   },
   "qa": {
-    "status": "warning",
-    "warnings": [
-      "proxy model is missing; lod0 fallback will be used",
-      "thumbnail is missing from runtime package",
-      "texture set is not yet marked KTX2-ready"
-    ]
+    "status": "passed",
+    "warnings": []
   }
 }

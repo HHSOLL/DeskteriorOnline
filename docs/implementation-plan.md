@@ -1016,3 +1016,17 @@ Updated:
 
 Removed/Deprecated:
 - descriptor JSON 하나만 있으면 alpha runtime package contract를 충분히 대표할 수 있다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 4 Asset Compiler Alpha Complete)
+Added:
+- `packages/asset-compiler`가 `export/sync/validate/optimize/verify/verify-packages` 구현을 직접 소유하고, `apps/web/scripts/*deskterior*` 계열 스크립트는 thin adapter로만 남긴다.
+- `asset:publish`는 curated asset별 실제 `*.proxy.glb`와 `thumbnails/*.webp`를 생성하고, runtime package directory/thumbnails directory의 stale artifact를 정리한다.
+- `verify:asset-compiler`는 published descriptor, sidecar parity, file manifest, support surface bound, thumbnail/proxy 존재, runtime package directory hygiene까지 검증한다.
+
+Updated:
+- `asset:compile`는 `export -> sync -> verify -> validate -> publish -> published-package verify` 순서로 끝까지 통과해야 성공으로 본다.
+- `Phase 4 Asset Compiler Alpha` 상태를 “slice 2 완료”에서 “package-owned compiler stages + actual proxy/thumbnail outputs + published package QA complete”로 갱신한다.
+- 다음 phase의 우선순위를 `Phase 5 Placement Kernel Alpha 잔여 범위(surface resolver/snap/collision/attachment graph)`로 되돌린다.
+
+Removed/Deprecated:
+- app-local asset compiler script가 여전히 compiler business logic의 canonical 위치라는 가정.

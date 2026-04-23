@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-23T06:08:48.703Z",
+  "generatedAt": "2026-04-23T06:38:36.724Z",
   "key": "p2s_desk_lamp_glow",
   "manifestId": "p2s_desk_lamp_glow",
   "label": "P2S 글로우 데스크 램프",
@@ -47,6 +47,12 @@
     }
   },
   "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "surface placeable lamp; no mounted attachment points required for publish"
+    }
+  },
   "runtimeAsset": {
     "assetId": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb",
     "productId": "p2s_desk_lamp_glow",
@@ -78,7 +84,7 @@
           "drawCallBudget": 12
         }
       ],
-      "proxy": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb",
+      "proxy": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.proxy.glb",
       "defaultLod": 0,
       "triangleBudget": 6000,
       "textureBudgetMb": 48
@@ -111,7 +117,7 @@
       }
     ],
     "qaStatus": {
-      "status": "warning",
+      "status": "passed",
       "measuredBoundsMm": {
         "width": 445,
         "depth": 227,
@@ -122,24 +128,7 @@
         "depth": 0,
         "height": 0
       },
-      "validatorVersion": "asset-compiler-alpha-v2",
-      "issues": [
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "proxy model is missing; lod0 fallback will be used"
-        },
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "thumbnail is missing from runtime package"
-        },
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "texture set is not yet marked KTX2-ready"
-        }
-      ]
+      "validatorVersion": "asset-compiler-alpha-v3"
     }
   },
   "files": {
@@ -155,8 +144,8 @@
     },
     "proxyModel": {
       "path": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.proxy.glb",
-      "required": false,
-      "exists": false
+      "required": true,
+      "exists": true
     },
     "colliders": {
       "path": "/assets/catalog/runtime-packages/p2s_desk_lamp_glow.colliders.json",
@@ -185,8 +174,8 @@
     },
     "thumbnail": {
       "path": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
-      "required": false,
-      "exists": false
+      "required": true,
+      "exists": true
     }
   },
   "runtime": {
@@ -196,20 +185,16 @@
         "path": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb"
       }
     ],
-    "proxyPath": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb",
+    "proxyPath": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.proxy.glb",
     "collidersPath": "/assets/catalog/runtime-packages/p2s_desk_lamp_glow.colliders.json",
     "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_desk_lamp_glow.support-surfaces.json",
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_desk_lamp_glow.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_desk_lamp_glow.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_desk_lamp_glow.qa-report.json",
-    "thumbnailPath": null
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp"
   },
   "qa": {
-    "status": "warning",
-    "warnings": [
-      "proxy model is missing; lod0 fallback will be used",
-      "thumbnail is missing from runtime package",
-      "texture set is not yet marked KTX2-ready"
-    ]
+    "status": "passed",
+    "warnings": []
   }
 }

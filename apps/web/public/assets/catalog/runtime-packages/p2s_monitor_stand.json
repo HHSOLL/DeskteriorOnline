@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-23T06:08:48.703Z",
+  "generatedAt": "2026-04-23T06:38:36.724Z",
   "key": "p2s_monitor_stand",
   "manifestId": "p2s_monitor_stand_wood",
   "label": "P2S 우드 모니터 스탠드",
@@ -62,13 +62,19 @@
           0.56,
           0.13
         ],
-        "top": 0.072,
+        "top": 0.071,
         "margin": [
           0.02,
           0.02
         ]
       }
     ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "surface placeable riser; no mounted attachment points required for publish"
+    }
   },
   "runtimeAsset": {
     "assetId": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.glb",
@@ -101,7 +107,7 @@
           "drawCallBudget": 8
         }
       ],
-      "proxy": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.glb",
+      "proxy": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.proxy.glb",
       "defaultLod": 0,
       "triangleBudget": 2000,
       "textureBudgetMb": 48
@@ -129,22 +135,22 @@
         "localFrame": {
           "originMm": [
             0,
-            72,
+            71,
             0
           ],
           "tangentU": [
-            1,
+            1000,
             0,
             0
           ],
           "tangentV": [
             0,
             0,
-            1
+            1000
           ],
           "normal": [
             0,
-            1,
+            1000,
             0
           ]
         },
@@ -175,7 +181,7 @@
       }
     ],
     "qaStatus": {
-      "status": "warning",
+      "status": "passed",
       "measuredBoundsMm": {
         "width": 560,
         "depth": 130,
@@ -186,24 +192,7 @@
         "depth": 0,
         "height": 0
       },
-      "validatorVersion": "asset-compiler-alpha-v2",
-      "issues": [
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "proxy model is missing; lod0 fallback will be used"
-        },
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "thumbnail is missing from runtime package"
-        },
-        {
-          "code": "ALPHA_WARNING",
-          "severity": "warning",
-          "message": "texture set is not yet marked KTX2-ready"
-        }
-      ]
+      "validatorVersion": "asset-compiler-alpha-v3"
     }
   },
   "files": {
@@ -219,8 +208,8 @@
     },
     "proxyModel": {
       "path": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.proxy.glb",
-      "required": false,
-      "exists": false
+      "required": true,
+      "exists": true
     },
     "colliders": {
       "path": "/assets/catalog/runtime-packages/p2s_monitor_stand.colliders.json",
@@ -249,8 +238,8 @@
     },
     "thumbnail": {
       "path": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
-      "required": false,
-      "exists": false
+      "required": true,
+      "exists": true
     }
   },
   "runtime": {
@@ -260,20 +249,16 @@
         "path": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.glb"
       }
     ],
-    "proxyPath": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.glb",
+    "proxyPath": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.proxy.glb",
     "collidersPath": "/assets/catalog/runtime-packages/p2s_monitor_stand.colliders.json",
     "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_monitor_stand.support-surfaces.json",
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_monitor_stand.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_monitor_stand.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_monitor_stand.qa-report.json",
-    "thumbnailPath": null
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_monitor_stand.webp"
   },
   "qa": {
-    "status": "warning",
-    "warnings": [
-      "proxy model is missing; lod0 fallback will be used",
-      "thumbnail is missing from runtime package",
-      "texture set is not yet marked KTX2-ready"
-    ]
+    "status": "passed",
+    "warnings": []
   }
 }

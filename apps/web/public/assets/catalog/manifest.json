@@ -2524,7 +2524,7 @@
     "description": "DeskteriorOnline에서 Blender로 직접 제작한 기본 데스크 자산입니다.",
     "brand": "DeskteriorOnline Studio",
     "price": "₩189,000",
-    "options": "1330x581x575 mm (Blender measured envelope)",
+    "options": "1330x581x755 mm (Blender measured envelope)",
     "externalUrl": "https://www.ikea.com/kr/ko/search/?q=%EC%B1%85%EC%83%81",
     "supportProfile": {
       "surfaces": [
@@ -2553,7 +2553,7 @@
     "dimensionsMm": {
       "width": 1330,
       "depth": 581,
-      "height": 575
+      "height": 755
     },
     "finishColor": "Natural oak",
     "finishMaterial": "Oak veneer over engineered wood",
@@ -2622,7 +2622,7 @@
             0.56,
             0.13
           ],
-          "top": 0.072,
+          "top": 0.071,
           "margin": [
             0.02,
             0.02

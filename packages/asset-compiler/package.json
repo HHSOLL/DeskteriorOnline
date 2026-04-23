@@ -7,6 +7,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@deskterioronline/scene-schema": "0.0.0"
+    "@deskterioronline/scene-schema": "0.0.0",
+    "gltf-validator": "^2.0.0-dev.3.10",
+    "sharp": "^0.33.3"
   }
 }
