@@ -82,10 +82,14 @@ export class PlacementTransaction {
     };
 
     const runtimeAsset = this.resolveActiveRuntimeAsset();
+    const supportRuntimeAsset = this.resolveSupportRuntimeAsset(
+      this.activeCandidate.supportObjectId
+    );
     this.constraintReport = this.constraintSolver.evaluate(
       this.activeCandidate,
       this.surfaceHit?.surface ?? null,
-      runtimeAsset
+      runtimeAsset,
+      supportRuntimeAsset
     );
     this.collisionReport = this.collisionValidator.validate(
       this.activeCandidate,
@@ -201,5 +205,15 @@ export class PlacementTransaction {
       this.engine.runtimeScene.objectRegistry,
       this.engine.runtimeScene.runtimeAssets
     );
+  }
+
+  private resolveSupportRuntimeAsset(supportObjectId: string): RuntimeAsset | null {
+    const runtimeObject = this.engine.runtimeScene.objectRegistry.get(supportObjectId);
+    if (!runtimeObject) {
+      return null;
+    }
+
+    const runtimeAssetId = runtimeObject.runtimeAssetId ?? runtimeObject.assetId;
+    return this.engine.runtimeScene.runtimeAssets.get(runtimeAssetId) ?? null;
   }
 }

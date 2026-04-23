@@ -1,6 +1,7 @@
-import type { SupportSurface } from "@deskterioronline/scene-schema";
 import type { RuntimeAsset } from "@deskterioronline/scene-schema";
+import type { SupportSurface } from "@deskterioronline/scene-schema";
 import type { PlacementCandidate, ConstraintReport } from "./types";
+import { MonitorArmSolver } from "./MonitorArmSolver";
 import {
   rectContainedBySurface,
   rectOverlapsSurfaceZone,
@@ -9,10 +10,13 @@ import {
 } from "./footprint";
 
 export class ConstraintSolver {
+  private readonly monitorArmSolver = new MonitorArmSolver();
+
   evaluate(
     candidate: PlacementCandidate,
     surface?: SupportSurface | null,
-    runtimeAsset?: RuntimeAsset | null
+    runtimeAsset?: RuntimeAsset | null,
+    supportRuntimeAsset?: RuntimeAsset | null
   ): ConstraintReport {
     if (
       !Number.isFinite(candidate.localPose.uMm) ||
@@ -86,6 +90,77 @@ export class ConstraintSolver {
             message: "Placed asset attachment points are not compatible with the focused support surface.",
             severity: "error"
           });
+        }
+
+        if (candidate.attachmentType === "vesa_mount") {
+          const declaredPatterns = compatiblePoints
+            .map((point) => point.constraints.vesaPatternMm)
+            .filter((pattern): pattern is [75, 75] | [100, 100] | [75, 100] => Boolean(pattern));
+          if (declaredPatterns.length === 0) {
+            errors.push({
+              code: "VESA_PATTERN_MISSING",
+              message: "Placed asset must declare a VESA pattern before it can mount to an articulated arm.",
+              severity: "error"
+            });
+          }
+
+          const supportPatterns = supportRuntimeAsset?.attachmentPoints
+            .filter((point) => point.type === "vesa_mount")
+            .map((point) => point.constraints.vesaPatternMm)
+            .filter((pattern): pattern is [75, 75] | [100, 100] | [75, 100] => Boolean(pattern)) ?? [];
+          const articulationPatterns =
+            supportRuntimeAsset?.articulation?.type === "monitor_arm"
+              ? [supportRuntimeAsset.articulation.endEffector.compatiblePatternsMm]
+              : [];
+
+          const matchesSupportPattern = declaredPatterns.some((declaredPattern) =>
+            supportPatterns.some(
+              (supportPattern) =>
+                supportPattern[0] === declaredPattern[0] &&
+                supportPattern[1] === declaredPattern[1]
+            ) ||
+            articulationPatterns.some((pattern) => {
+              if (pattern === "both") {
+                return (
+                  (declaredPattern[0] === 75 && declaredPattern[1] === 75) ||
+                  (declaredPattern[0] === 100 && declaredPattern[1] === 100)
+                );
+              }
+
+              return pattern[0] === declaredPattern[0] && pattern[1] === declaredPattern[1];
+            })
+          );
+
+          if (!supportRuntimeAsset || (supportPatterns.length === 0 && articulationPatterns.length === 0)) {
+            errors.push({
+              code: "SUPPORT_ATTACHMENT_TARGET_MISSING",
+              message: "Support object does not advertise a VESA-compatible attachment target.",
+              severity: "error"
+            });
+          } else if (!matchesSupportPattern) {
+            errors.push({
+              code: "VESA_PATTERN_INCOMPATIBLE",
+              message: "Placed asset VESA pattern is not compatible with the focused support target.",
+              severity: "error"
+            });
+          }
+
+          if (supportRuntimeAsset?.articulation?.type === "monitor_arm") {
+            const articulationSolveResult = this.monitorArmSolver.solve(
+              supportRuntimeAsset.articulation,
+              {
+                positionMm: [
+                  candidate.localPose.uMm,
+                  candidate.localPose.vMm,
+                  candidate.localPose.normalOffsetMm
+                ]
+              }
+            );
+
+            if (!articulationSolveResult.reachable) {
+              errors.push(...articulationSolveResult.errors);
+            }
+          }
         }
 
         const constrainedThicknessPoints = compatiblePoints.filter(

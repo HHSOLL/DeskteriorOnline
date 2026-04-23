@@ -959,3 +959,14 @@ Updated:
 
 Removed/Deprecated:
 - mounted candidate 우선순위를 제품 경로 밖 helper 수준에서만 다뤄도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Slice 1)
+Added:
+- `vesa_mount` 검증은 placed asset의 attachment point만이 아니라 support object의 attachment target 또는 articulation end-effector metadata까지 함께 확인해야 한다.
+- `monitor_arm` articulation은 runtime kernel에서 lightweight analytic solve가 가능해야 하며, target pose가 joint limit을 넘기면 commit 전에 `ARTICULATION_TARGET_UNREACHABLE`로 차단해야 한다.
+
+Updated:
+- mounted attachment validation 범위를 `edge_clamp / underside / wall`에서 `edge_clamp + vesa_mount + articulation reachability`까지 확장한다.
+
+Removed/Deprecated:
+- support object 측 attachment metadata는 Phase 7 이후까지 미뤄도 된다는 가정.

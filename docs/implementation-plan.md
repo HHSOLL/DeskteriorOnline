@@ -1085,3 +1085,17 @@ Updated:
 
 Removed/Deprecated:
 - full focus placement mode가 여전히 `desktop_top` 한 경로만 제품에서 다룬다는 상태 설명.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Slice 1)
+Added:
+- `packages/placement-kernel`에 `MonitorArmSolver`를 추가해 `monitor_arm` articulation의 revolute/prismatic joint 값을 target pose 기준으로 해석하는 첫 analytic solver를 도입했다.
+- `ConstraintSolver`는 `vesa_mount` candidate에 대해 placed asset의 VESA pattern, support object의 VESA target 또는 articulation end-effector compatibility를 함께 검증한다.
+- `PlacementTransaction`은 constraint evaluation 시 support object의 runtime asset metadata까지 함께 공급해 support-side attachment validation을 수행한다.
+- `verify:advanced-attachments` smoke를 추가해 edge clamp 성공, VESA mount 성공, VESA pattern mismatch 차단, articulation unreachable detection을 함께 검증한다.
+
+Updated:
+- `Phase 7 Advanced Attachments` 상태를 “미착수”에서 “slice 1: vesa/articulation/kernel validation foundation 완료”로 갱신한다.
+- current phase의 남은 범위를 `wizard UX`, `monitor target pose product-path 연결`, `clearance visualization`, `advanced attachment authoring enrichment`로 정리한다.
+
+Removed/Deprecated:
+- advanced attachment phase가 제품 경로 UI 이전에는 `edge_clamp` 외 mounted 타입을 전혀 검증하지 않아도 된다는 가정.

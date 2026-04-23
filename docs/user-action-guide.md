@@ -931,3 +931,14 @@ Updated:
 
 Removed/Deprecated:
 - Phase 6 회귀를 수동 `desktop_top` 한 경로 확인만으로 충분하다고 보는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments QA Slice 1)
+Added:
+- `npm --workspace apps/web run verify:advanced-attachments`가 edge clamp success, VESA mount success, VESA pattern mismatch failure, articulation unreachable failure를 모두 통과하는지 확인한다.
+- monitor-arm support object가 `vesa_mount` target을 제공할 때 support-side attachment metadata 또는 articulation end-effector metadata 둘 중 하나로 validation이 통과하는지 확인한다.
+
+Updated:
+- attachment QA 범위를 `edge_clamp`와 focus placement candidate 정도에서 `vesa_mount + articulation reachability`까지 확장한다.
+
+Removed/Deprecated:
+- advanced attachment 회귀를 placement kernel smoke 하나만으로 충분하다고 보는 가정.
