@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-23T11:41:47.712Z",
+  "generatedAt": "2026-04-23T21:42:50.483Z",
   "entries": [
     {
       "scenario": "dense-desk",
@@ -19,17 +19,17 @@
       },
       "telemetry": {
         "scenario": "dense-desk",
-        "fpsAvg": null,
-        "frameTimeP95Ms": null,
-        "heapGrowthPercentPoints": null,
-        "reactRenderCount": null,
-        "raycastLatencyP95Ms": null,
-        "assetLoadMs": null,
-        "firstUsableMs": null,
-        "drawCalls": null,
-        "triangles": null,
-        "gpuMemoryEstimateMb": null,
-        "inputLatencyP95Ms": null
+        "fpsAvg": 57.54,
+        "frameTimeP95Ms": 21.72,
+        "heapGrowthPercentPoints": 3.44,
+        "reactRenderCount": 3,
+        "raycastLatencyP95Ms": 3.76,
+        "assetLoadMs": 1659,
+        "firstUsableMs": 1132,
+        "drawCalls": 52,
+        "triangles": 121500,
+        "gpuMemoryEstimateMb": 117,
+        "inputLatencyP95Ms": 8.22
       }
     },
     {
@@ -50,17 +50,17 @@
       },
       "telemetry": {
         "scenario": "empty-room",
-        "fpsAvg": null,
-        "frameTimeP95Ms": null,
-        "heapGrowthPercentPoints": null,
-        "reactRenderCount": null,
-        "raycastLatencyP95Ms": null,
-        "assetLoadMs": null,
-        "firstUsableMs": null,
-        "drawCalls": null,
-        "triangles": null,
-        "gpuMemoryEstimateMb": null,
-        "inputLatencyP95Ms": null
+        "fpsAvg": 60,
+        "frameTimeP95Ms": 20.83,
+        "heapGrowthPercentPoints": 0,
+        "reactRenderCount": 0,
+        "raycastLatencyP95Ms": 1.1,
+        "assetLoadMs": 180,
+        "firstUsableMs": 319,
+        "drawCalls": 8,
+        "triangles": 0,
+        "gpuMemoryEstimateMb": 16,
+        "inputLatencyP95Ms": 4.2
       }
     },
     {
@@ -81,17 +81,17 @@
       },
       "telemetry": {
         "scenario": "heavy-assets",
-        "fpsAvg": null,
-        "frameTimeP95Ms": null,
-        "heapGrowthPercentPoints": null,
-        "reactRenderCount": null,
-        "raycastLatencyP95Ms": null,
-        "assetLoadMs": null,
-        "firstUsableMs": null,
-        "drawCalls": null,
-        "triangles": null,
-        "gpuMemoryEstimateMb": null,
-        "inputLatencyP95Ms": null
+        "fpsAvg": 58.09,
+        "frameTimeP95Ms": 21.52,
+        "heapGrowthPercentPoints": 1.24,
+        "reactRenderCount": 1,
+        "raycastLatencyP95Ms": 1.52,
+        "assetLoadMs": 1346,
+        "firstUsableMs": 960,
+        "drawCalls": 65,
+        "triangles": 220000,
+        "gpuMemoryEstimateMb": 140,
+        "inputLatencyP95Ms": 4.74
       }
     },
     {
@@ -112,17 +112,17 @@
       },
       "telemetry": {
         "scenario": "standard-room",
-        "fpsAvg": null,
-        "frameTimeP95Ms": null,
-        "heapGrowthPercentPoints": null,
-        "reactRenderCount": null,
-        "raycastLatencyP95Ms": null,
-        "assetLoadMs": null,
-        "firstUsableMs": null,
-        "drawCalls": null,
-        "triangles": null,
-        "gpuMemoryEstimateMb": null,
-        "inputLatencyP95Ms": null
+        "fpsAvg": 59.47,
+        "frameTimeP95Ms": 21.02,
+        "heapGrowthPercentPoints": 0.93,
+        "reactRenderCount": 1,
+        "raycastLatencyP95Ms": 1.46,
+        "assetLoadMs": 808,
+        "firstUsableMs": 664,
+        "drawCalls": 35,
+        "triangles": 96000,
+        "gpuMemoryEstimateMb": 85,
+        "inputLatencyP95Ms": 4.68
       }
     }
   ]

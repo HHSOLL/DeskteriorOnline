@@ -70,6 +70,7 @@ export type CuratedSupportProfileExpectation = {
 export type CuratedAttachmentAuthoring = {
   mode: "none" | "manual_required";
   reason: string;
+  points?: AttachmentPoint[];
 };
 
 export type CuratedDeskteriorAsset = {

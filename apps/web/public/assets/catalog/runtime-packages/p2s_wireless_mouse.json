@@ -1,23 +1,23 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
   "generatedAt": "2026-04-23T21:41:00.301Z",
-  "key": "p2s_ceramic_mug",
-  "manifestId": "p2s_ceramic_mug_sand",
-  "label": "P2S 샌드 세라믹 머그",
-  "assetId": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
-  "sourcePath": "assets/blender/deskterior/p2s_ceramic_mug.blend",
-  "runtimePath": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+  "key": "p2s_wireless_mouse",
+  "manifestId": "p2s_wireless_mouse",
+  "label": "P2S 무선 마우스",
+  "assetId": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+  "sourcePath": "assets/blender/deskterior/p2s_wireless_mouse.blend",
+  "runtimePath": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
   "dimensionsMm": {
-    "width": 120,
-    "depth": 84,
-    "height": 92
+    "width": 70,
+    "depth": 115,
+    "height": 38
   },
   "scaleLocked": true,
   "contractMetadata": {
     "source": {
       "kind": "deskterioronline_blender",
       "name": "DeskteriorOnline Blender Deskterior",
-      "path": "assets/blender/deskterior/p2s_ceramic_mug.blend",
+      "path": "assets/blender/deskterior/p2s_wireless_mouse.blend",
       "url": null
     },
     "license": {
@@ -42,7 +42,7 @@
     "lodProfile": {
       "strategy": "single_mesh",
       "levelCount": 1,
-      "maxDrawCalls": 4,
+      "maxDrawCalls": 8,
       "maxTriangleCount": 4000
     }
   },
@@ -50,17 +50,17 @@
   "authoring": {
     "attachmentPoints": {
       "mode": "none",
-      "reason": "decor asset; no mounted attachment points required for publish"
+      "reason": "surface placeable mouse; no mounted attachment points required for publish"
     }
   },
   "runtimeAsset": {
-    "assetId": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
-    "productId": "p2s_ceramic_mug_sand",
+    "assetId": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+    "productId": "p2s_wireless_mouse",
     "units": "mm",
     "dimensionsMm": {
-      "width": 120,
-      "depth": 84,
-      "height": 92
+      "width": 70,
+      "depth": 115,
+      "height": 38
     },
     "scaleLocked": true,
     "pivot": {
@@ -79,12 +79,12 @@
         {
           "id": "lod0",
           "level": 0,
-          "model": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+          "model": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
           "triangleCount": 4000,
-          "drawCallBudget": 4
+          "drawCallBudget": 8
         }
       ],
-      "proxy": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.proxy.glb",
+      "proxy": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.proxy.glb",
       "defaultLod": 0,
       "triangleBudget": 4000,
       "textureBudgetMb": 48
@@ -94,13 +94,13 @@
         "id": "bounds-box",
         "kind": "box",
         "sizeMm": {
-          "width": 120,
-          "depth": 84,
-          "height": 92
+          "width": 70,
+          "depth": 115,
+          "height": 38
         },
         "centerMm": [
           0,
-          46,
+          19,
           0
         ]
       }
@@ -110,18 +110,18 @@
     "materialVariants": [
       {
         "id": "default",
-        "label": "P2S 샌드 세라믹 머그",
-        "finishColor": "Sand beige",
-        "finishMaterial": "Glazed ceramic",
-        "detailNotes": "Single handled mug with thick ceramic wall and soft satin glaze. Dimensions reflect Blender-measured envelope for shelf and desk placement."
+        "label": "P2S 무선 마우스",
+        "finishColor": "Graphite black",
+        "finishMaterial": "Soft-touch plastic with rubber scroll wheel",
+        "detailNotes": "Compact wireless mouse authored as a shipping runtime package for golden-flow desk-top placement."
       }
     ],
     "qaStatus": {
       "status": "passed",
       "measuredBoundsMm": {
-        "width": 120,
-        "depth": 84,
-        "height": 92
+        "width": 70,
+        "depth": 115,
+        "height": 38
       },
       "dimensionErrorMm": {
         "width": 0,
@@ -133,47 +133,47 @@
   },
   "files": {
     "sourceBlend": {
-      "path": "assets/blender/deskterior/p2s_ceramic_mug.blend",
+      "path": "assets/blender/deskterior/p2s_wireless_mouse.blend",
       "required": true,
       "exists": true
     },
     "runtimeModel": {
-      "path": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+      "path": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
       "required": true,
       "exists": true
     },
     "proxyModel": {
-      "path": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.proxy.glb",
+      "path": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.proxy.glb",
       "required": true,
       "exists": true
     },
     "colliders": {
-      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.colliders.json",
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.colliders.json",
       "required": true,
       "exists": true
     },
     "supportSurfaces": {
-      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.support-surfaces.json",
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.support-surfaces.json",
       "required": true,
       "exists": true
     },
     "attachmentPoints": {
-      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.attachment-points.json",
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.attachment-points.json",
       "required": true,
       "exists": true
     },
     "materialVariants": {
-      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.material-variants.json",
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.material-variants.json",
       "required": true,
       "exists": true
     },
     "qaReport": {
-      "path": "/assets/catalog/runtime-packages/p2s_ceramic_mug.qa-report.json",
+      "path": "/assets/catalog/runtime-packages/p2s_wireless_mouse.qa-report.json",
       "required": true,
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
+      "path": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
       "required": true,
       "exists": true
     }
@@ -182,16 +182,16 @@
     "lods": [
       {
         "level": 0,
-        "path": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb"
+        "path": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb"
       }
     ],
-    "proxyPath": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.proxy.glb",
-    "collidersPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.colliders.json",
-    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.support-surfaces.json",
-    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.attachment-points.json",
-    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.material-variants.json",
-    "qaReportPath": "/assets/catalog/runtime-packages/p2s_ceramic_mug.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp"
+    "proxyPath": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp"
   },
   "qa": {
     "status": "passed",

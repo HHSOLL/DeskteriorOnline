@@ -1,0 +1,265 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-23T21:41:00.301Z",
+  "key": "p2s_under_desk_tray_mount",
+  "manifestId": "p2s_under_desk_tray_mount",
+  "label": "P2S 언더데스크 케이블 트레이",
+  "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  "sourcePath": "assets/blender/deskterior/p2s_under_desk_tray_mount.blend",
+  "runtimePath": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  "dimensionsMm": {
+    "width": 520,
+    "depth": 220,
+    "height": 90
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Blender Deskterior",
+      "path": "assets/blender/deskterior/p2s_under_desk_tray_mount.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 24,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "manual_required",
+      "reason": "under-desk tray must publish an underside_screw attachment point for mounted focus placement",
+      "points": [
+        {
+          "id": "underside-screw-rail",
+          "type": "underside_screw",
+          "localPositionMm": [
+            0,
+            90,
+            0
+          ],
+          "localNormal": [
+            0,
+            1000,
+            0
+          ],
+          "localTangent": [
+            1000,
+            0,
+            0
+          ],
+          "compatibleWith": [
+            "desk-underside",
+            "desk_underside"
+          ],
+          "constraints": {
+            "minClearanceMm": 80,
+            "requiredThicknessMm": [
+              18,
+              55
+            ],
+            "maxLoadKg": 8
+          }
+        }
+      ]
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+    "productId": "p2s_under_desk_tray_mount",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 520,
+      "depth": 220,
+      "height": 90
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "DeskteriorOnline Studio",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+          "triangleCount": 8000,
+          "drawCallBudget": 24
+        }
+      ],
+      "proxy": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 520,
+          "depth": 220,
+          "height": 90
+        },
+        "centerMm": [
+          0,
+          45,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [
+      {
+        "id": "underside-screw-rail",
+        "type": "underside_screw",
+        "localPositionMm": [
+          0,
+          90,
+          0
+        ],
+        "localNormal": [
+          0,
+          1000,
+          0
+        ],
+        "localTangent": [
+          1000,
+          0,
+          0
+        ],
+        "compatibleWith": [
+          "desk-underside",
+          "desk_underside"
+        ],
+        "constraints": {
+          "minClearanceMm": 80,
+          "requiredThicknessMm": [
+            18,
+            55
+          ],
+          "maxLoadKg": 8
+        }
+      }
+    ],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 언더데스크 케이블 트레이",
+        "finishColor": "Powder coated black",
+        "finishMaterial": "Steel basket with screw rails",
+        "detailNotes": "Under-desk cable tray with authored underside_screw attachment point compatible with desk_underside support surfaces."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 520,
+        "depth": 220,
+        "height": 90
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/blender/deskterior/p2s_under_desk_tray_mount.blend",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

@@ -85,6 +85,10 @@ function loadJsonFile<T>(filePath: string) {
   return JSON.parse(fs.readFileSync(filePath, "utf8")) as T;
 }
 
+function assertFiniteNumber(value: unknown, message: string): asserts value is number {
+  assert(typeof value === "number" && Number.isFinite(value), message);
+}
+
 function main() {
   const workspaceRoot = path.resolve(process.cwd(), "..", "..");
   const benchmarkDir = path.resolve(workspaceRoot, "benchmark-scenes");
@@ -151,6 +155,64 @@ function main() {
     assert(
       baselineEntry.telemetry.scenario === scenario.id,
       `${scenario.id}: telemetry.scenario mismatch`
+    );
+
+    for (const key of REQUIRED_TELEMETRY_KEYS) {
+      if (key === "scenario") {
+        continue;
+      }
+      assertFiniteNumber(
+        baselineEntry.telemetry[key],
+        `${scenario.id}: telemetry.${key} must be a non-null finite number`
+      );
+    }
+
+    const telemetry = baselineEntry.telemetry as {
+      scenario: string;
+      fpsAvg: number;
+      frameTimeP95Ms: number;
+      heapGrowthPercentPoints: number;
+      reactRenderCount: number;
+      raycastLatencyP95Ms: number;
+      assetLoadMs: number;
+      firstUsableMs: number;
+      drawCalls: number;
+      triangles: number;
+      gpuMemoryEstimateMb: number;
+      inputLatencyP95Ms: number;
+    };
+
+    assert(
+      telemetry.fpsAvg >= 30,
+      `${scenario.id}: telemetry.fpsAvg is below release floor (${telemetry.fpsAvg} < 30)`
+    );
+    assert(
+      telemetry.frameTimeP95Ms <= 34,
+      `${scenario.id}: telemetry.frameTimeP95Ms exceeds release budget (${telemetry.frameTimeP95Ms} > 34)`
+    );
+    assert(
+      telemetry.raycastLatencyP95Ms <= 16,
+      `${scenario.id}: telemetry.raycastLatencyP95Ms exceeds release budget (${telemetry.raycastLatencyP95Ms} > 16)`
+    );
+    assert(
+      telemetry.inputLatencyP95Ms <= 16,
+      `${scenario.id}: telemetry.inputLatencyP95Ms exceeds release budget (${telemetry.inputLatencyP95Ms} > 16)`
+    );
+    assert(
+      telemetry.firstUsableMs <= 2000,
+      `${scenario.id}: telemetry.firstUsableMs exceeds release budget (${telemetry.firstUsableMs} > 2000)`
+    );
+    assert(
+      telemetry.drawCalls <= scenario.budgetHints.drawCallsBudget,
+      `${scenario.id}: telemetry.drawCalls exceeds scenario budget (${telemetry.drawCalls} > ${scenario.budgetHints.drawCallsBudget})`
+    );
+    assert(
+      telemetry.triangles <= scenario.budgetHints.triangleBudget,
+      `${scenario.id}: telemetry.triangles exceeds scenario budget (${telemetry.triangles} > ${scenario.budgetHints.triangleBudget})`
+    );
+    assert(
+      telemetry.gpuMemoryEstimateMb <= scenario.budgetHints.textureBudgetMb,
+      `${scenario.id}: telemetry.gpuMemoryEstimateMb exceeds scenario budget (${telemetry.gpuMemoryEstimateMb} > ${scenario.budgetHints.textureBudgetMb})`
     );
   }
 

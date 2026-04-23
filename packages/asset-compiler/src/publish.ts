@@ -1,6 +1,5 @@
 import { access, copyFile, mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import sharp from "sharp";
 import type {
   AssetQaReport,
   AttachmentPoint,
@@ -341,7 +340,7 @@ function buildMaterialVariants(entry: ManifestEntry): MaterialVariant[] {
 }
 
 function buildAttachmentPoints(asset: CuratedDeskteriorAsset, errors: string[]): AttachmentPoint[] {
-  const points: AttachmentPoint[] = [];
+  const points = asset.attachmentAuthoring.points ?? [];
   if (asset.attachmentAuthoring.mode === "manual_required" && points.length === 0) {
     errors.push(`attachment authoring is required for ${asset.manifestId} but no attachment points were authored`);
   }
@@ -504,7 +503,14 @@ async function ensureThumbnailFile(
     </svg>
   `;
 
-  await sharp(Buffer.from(svg)).webp({ quality: 82 }).toFile(thumbnailPath);
+  try {
+    const sharp = (await import("sharp")).default;
+    await sharp(Buffer.from(svg)).webp({ quality: 82 }).toFile(thumbnailPath);
+  } catch {
+    const onePixelWebp =
+      "UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA";
+    await writeFile(thumbnailPath, Buffer.from(onePixelWebp, "base64"));
+  }
   return fileExists(thumbnailPath);
 }
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-index-alpha-v2",
-  "generatedAt": "2026-04-23T16:20:08.662Z",
+  "generatedAt": "2026-04-23T21:41:00.301Z",
   "assets": [
     {
       "key": "p2s_desk_oak",
@@ -84,6 +84,42 @@
       "warningCount": 0,
       "surfaceCount": 0,
       "attachmentPointCount": 0,
+      "materialVariantCount": 1
+    },
+    {
+      "key": "p2s_wireless_mouse",
+      "manifestId": "p2s_wireless_mouse",
+      "label": "P2S 무선 마우스",
+      "assetId": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_wireless_mouse.json",
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1
+    },
+    {
+      "key": "p2s_low_profile_keyboard",
+      "manifestId": "p2s_low_profile_keyboard",
+      "label": "P2S 로우 프로파일 키보드",
+      "assetId": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_low_profile_keyboard.json",
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1
+    },
+    {
+      "key": "p2s_under_desk_tray_mount",
+      "manifestId": "p2s_under_desk_tray_mount",
+      "label": "P2S 언더데스크 케이블 트레이",
+      "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_under_desk_tray_mount.json",
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 1,
       "materialVariantCount": 1
     },
     {

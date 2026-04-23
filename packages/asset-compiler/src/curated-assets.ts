@@ -282,6 +282,87 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
       }
     },
     {
+      key: "p2s_wireless_mouse",
+      manifestId: "p2s_wireless_mouse",
+      sourcePath: sourceBlendPath(paths.repoRoot, "p2s_wireless_mouse"),
+      runtimePath: runtimeAssetPath(paths.publicRoot, "p2s_wireless_mouse"),
+      expectedAssetId: runtimeAssetId("p2s_wireless_mouse"),
+      requiredMetadata: ["brand", "externalUrl", "description", "category", "options"],
+      budget: {
+        maxFileSizeBytes: 1_000_000,
+        maxDrawCalls: 8,
+        maxTriangleCount: 4_000
+      },
+      contractMetadata: createCuratedContractMetadata("p2s_wireless_mouse", {
+        maxFileSizeBytes: 1_000_000,
+        maxDrawCalls: 8,
+        maxTriangleCount: 4_000
+      }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "surface placeable mouse; no mounted attachment points required for publish"
+      }
+    },
+    {
+      key: "p2s_low_profile_keyboard",
+      manifestId: "p2s_low_profile_keyboard",
+      sourcePath: sourceBlendPath(paths.repoRoot, "p2s_low_profile_keyboard"),
+      runtimePath: runtimeAssetPath(paths.publicRoot, "p2s_low_profile_keyboard"),
+      expectedAssetId: runtimeAssetId("p2s_low_profile_keyboard"),
+      requiredMetadata: ["brand", "externalUrl", "description", "category", "options"],
+      budget: {
+        maxFileSizeBytes: 2_000_000,
+        maxDrawCalls: 80,
+        maxTriangleCount: 20_000
+      },
+      contractMetadata: createCuratedContractMetadata("p2s_low_profile_keyboard", {
+        maxFileSizeBytes: 2_000_000,
+        maxDrawCalls: 80,
+        maxTriangleCount: 20_000
+      }),
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "surface placeable keyboard; no mounted attachment points required for publish"
+      }
+    },
+    {
+      key: "p2s_under_desk_tray_mount",
+      manifestId: "p2s_under_desk_tray_mount",
+      sourcePath: sourceBlendPath(paths.repoRoot, "p2s_under_desk_tray_mount"),
+      runtimePath: runtimeAssetPath(paths.publicRoot, "p2s_under_desk_tray_mount"),
+      expectedAssetId: runtimeAssetId("p2s_under_desk_tray_mount"),
+      requiredMetadata: ["brand", "externalUrl", "description", "category", "options"],
+      budget: {
+        maxFileSizeBytes: 1_000_000,
+        maxDrawCalls: 24,
+        maxTriangleCount: 8_000
+      },
+      contractMetadata: createCuratedContractMetadata("p2s_under_desk_tray_mount", {
+        maxFileSizeBytes: 1_000_000,
+        maxDrawCalls: 24,
+        maxTriangleCount: 8_000
+      }),
+      attachmentAuthoring: {
+        mode: "manual_required",
+        reason: "under-desk tray must publish an underside_screw attachment point for mounted focus placement",
+        points: [
+          {
+            id: "underside-screw-rail",
+            type: "underside_screw",
+            localPositionMm: [0, 90, 0],
+            localNormal: [0, 1000, 0],
+            localTangent: [1000, 0, 0],
+            compatibleWith: ["desk-underside", "desk_underside"],
+            constraints: {
+              minClearanceMm: 80,
+              requiredThicknessMm: [18, 55],
+              maxLoadKg: 8
+            }
+          }
+        ]
+      }
+    },
+    {
       key: "p2s_desk_planter_pilea",
       manifestId: "p2s_desk_planter_pilea",
       sourcePath: sourceBlendPath(paths.repoRoot, "p2s_desk_planter_pilea"),
