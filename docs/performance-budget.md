@@ -454,3 +454,14 @@ Updated:
 
 Removed/Deprecated:
 - benchmark baseline template가 scene inventory와 느슨하게 어긋나도 괜찮다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Budget Surface)
+Added:
+- commercial QA snapshot은 checked-in `benchmark-scenes/baseline.template.json`과 published runtime package index를 재사용해야 하며, 별도 runtime crawl이나 editor-side heavy sampling을 요구하지 않는다.
+- bootstrap integrity toast는 `sceneDocument` parse 이후 lightweight diagnostics만 읽고 추가 document/runtime mutation을 만들지 않는 것을 기본 예산으로 본다.
+
+Updated:
+- QA budget surface를 “performance HUD + verify scripts”에서 “performance HUD + verify scripts + hidden commercial QA snapshot”까지 확장한다.
+
+Removed/Deprecated:
+- commercial QA dashboard가 benchmark baseline과 별도 데이터 수집 경로를 가져도 괜찮다는 가정.

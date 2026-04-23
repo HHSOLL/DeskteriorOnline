@@ -199,7 +199,12 @@ try {
 
   const mapped = mapProjectVersionToSceneDocument(versionLike);
   assert(mapped, "sceneDocument parse failed");
+  assert(mapped.diagnostics?.source === "customization.sceneDocument", "expected diagnostics source on mapped bootstrap");
+  assert(mapped.diagnostics?.integrity.status === "ok", "expected mapped bootstrap integrity to be ok");
   const patch = toSceneStorePatch(mapped);
+
+  assert(bootstrap.diagnostics?.source === "save-payload", "expected save-payload diagnostics source");
+  assert(bootstrap.diagnostics?.integrity.status === "ok", "expected bootstrap integrity to be ok");
 
   assert(patch.assets.length === 2, `expected 2 assets, received ${patch.assets.length}`);
   assert(patch.entranceId === null, "expected null entranceId for blank shell");

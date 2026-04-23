@@ -1174,3 +1174,17 @@ Updated:
 
 Removed/Deprecated:
 - `qa:primary:perf`가 외부 report 경로 인자 없이도 깨질 수 있는 느슨한 상태 설명.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 1)
+Added:
+- hidden route `apps/web/src/app/labs/qa/page.tsx`를 추가해 release gates, runtime asset publish 상태, benchmark baseline, compatibility matrix, scene integrity detector를 한 화면에서 읽는 commercial QA surface를 만든다.
+- `apps/web/src/lib/qa/commercial-qa.ts`를 추가해 checked-in runtime package index와 benchmark baseline을 읽어 `verify:commercial-qa`와 lab route가 같은 snapshot을 공유하도록 한다.
+- `apps/web/src/lib/domain/scene-integrity.ts`를 추가해 scene node id/assetId/support relation/surface-local placement 무결성을 검사하고 recovery snapshot을 산출한다.
+
+Updated:
+- `Phase 9 Commercial QA` 상태를 “다음 활성 타깃”에서 “slice 1: hidden QA dashboard + scene integrity detector 완료”로 올린다.
+- project bootstrap diagnostics 기준을 단순 `source` 문자열에서 `source + integrity report + recovery snapshot` 구조로 확장한다.
+- current phase의 남은 범위를 `asset status dashboard polish`, `placement regression suite aggregation`, `compatibility matrix 운영 검증`, `recovery snapshot / corruption detector 확장`으로 명시한다.
+
+Removed/Deprecated:
+- commercial QA 시작 단계에서는 별도 dashboard 없이 scattered verify script만으로 충분하다는 가정.

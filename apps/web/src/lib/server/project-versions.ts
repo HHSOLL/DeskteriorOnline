@@ -1,6 +1,11 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "../../../../../types/database";
+import {
+  inspectSceneDocumentIntegrity,
+  summarizeSceneRecoverySnapshot
+} from "../domain/scene-integrity";
+import type { SceneDocument } from "../domain/scene-document";
 import type {
   ProductCollisionProxyMetadata,
   ProductDimensionsMm,
@@ -708,12 +713,16 @@ function buildProjectVersionCustomization(
 export function buildSceneDocumentBootstrapFromSavePayload(rawPayload: unknown) {
   const payload = SaveVersionSchema.parse(rawPayload);
   const resolvedRoomShell = buildRoomShell(payload.roomShell);
+  const document = buildSceneDocument(payload.roomShell, payload.assets, payload.materials, payload.lighting);
+  const sceneDocument = document as unknown as SceneDocument;
 
   return {
-    document: buildSceneDocument(payload.roomShell, payload.assets, payload.materials, payload.lighting),
+    document,
     entranceId: resolvedRoomShell.entranceId,
     diagnostics: {
-      source: "save-payload"
+      source: "save-payload",
+      integrity: inspectSceneDocumentIntegrity(sceneDocument),
+      recoverySnapshot: summarizeSceneRecoverySnapshot(sceneDocument)
     }
   };
 }
