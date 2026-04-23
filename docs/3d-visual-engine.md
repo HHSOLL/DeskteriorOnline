@@ -781,3 +781,14 @@ Updated:
 
 Removed/Deprecated:
 - proxy/thumbnail이 나중 단계까지 placeholder여도 compiler phase를 닫을 수 있다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Visual Surface)
+Added:
+- hidden QA surface에서도 runtime package publish 상태, benchmark budget summary, compatibility matrix, scene integrity sample이 한 화면에서 읽혀야 한다.
+- editor bootstrap visual feedback 기준에 scene corruption/warning toast를 추가해, 깨진 `sceneDocument`가 조용히 로드되는 상태를 허용하지 않는다.
+
+Updated:
+- visual QA 기준을 “focus placement / mounted HUD”에서 “hidden commercial QA readout + bootstrap integrity feedback”까지 확장한다.
+
+Removed/Deprecated:
+- commercial QA는 CLI output만 있으면 되고 visual readout은 필요 없다는 가정.

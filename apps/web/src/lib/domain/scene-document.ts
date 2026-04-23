@@ -1,5 +1,11 @@
 import { normalizeAssetSupportProfile } from "../scene/support-profiles";
 import {
+  inspectSceneDocumentIntegrity,
+  summarizeSceneRecoverySnapshot,
+  type SceneIntegrityReport,
+  type SceneRecoverySnapshot
+} from "./scene-integrity";
+import {
   resolveScenePlacementVectors,
   type ScenePlacementSnapshot
 } from "./scene-placement";
@@ -110,7 +116,13 @@ export type ProductHotspot = ViewerHotspot & {
 export type SceneDocumentBootstrap = {
   document: SceneDocument;
   entranceId: string | null;
-  diagnostics?: Record<string, unknown>;
+  diagnostics?: SceneDocumentDiagnostics;
+};
+
+export type SceneDocumentDiagnostics = {
+  source: string;
+  integrity: SceneIntegrityReport;
+  recoverySnapshot: SceneRecoverySnapshot;
 };
 
 export type SceneStorePatch = {
@@ -455,7 +467,9 @@ function parseSceneDocumentFromVersion(version: Record<string, unknown>): SceneD
     document: mappedDocument,
     entranceId,
     diagnostics: {
-      source: "customization.sceneDocument"
+      source: "customization.sceneDocument",
+      integrity: inspectSceneDocumentIntegrity(mappedDocument),
+      recoverySnapshot: summarizeSceneRecoverySnapshot(mappedDocument)
     }
   };
 }

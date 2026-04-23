@@ -399,6 +399,19 @@ Updated:
 Removed/Deprecated:
 - focused interaction asset도 기본 room/view LOD 거리 정책만 따르면 된다는 가정.
 
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 1)
+Added:
+- hidden commercial QA surface `/labs/qa`를 추가하고, 여기서 runtime package publish 상태 / benchmark baseline / compatibility matrix / scene integrity detector를 함께 읽는 기준을 둔다.
+- `sceneDocument` bootstrap diagnostics는 `integrity.status`, issue list, recovery snapshot을 포함해야 하며 editor 진입 시 corruption/warning을 toast로 노출한다.
+- `verify:commercial-qa`를 추가해 commercial QA snapshot이 최소 release gate 수, benchmark scenario coverage, compatibility matrix coverage, scene corruption detector sample을 모두 만족하는지 확인한다.
+
+Updated:
+- `Phase 9 Commercial QA`의 시작 기준을 “나중에 dashboard를 붙인다”에서 “hidden QA surface + bootstrap integrity diagnostics를 먼저 canonical source로 둔다”로 구체화한다.
+- recovery snapshot의 의미를 단순 수동 복구 메모가 아니라 `nodeCount / surfacePlacementCount / missingSupportReferenceCount`를 포함한 structured runtime diagnostic으로 강화한다.
+
+Removed/Deprecated:
+- bootstrap 단계에서는 sceneDocument parse success만 확인하면 되고, integrity warnings는 별도 검증이 없어도 된다는 가정.
+
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop)
 Added:
 - `KTX2Loader`와 local basis transcoder sync 경로를 runtime asset decode 기준에 추가했다.

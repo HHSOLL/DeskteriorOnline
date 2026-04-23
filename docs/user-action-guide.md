@@ -969,3 +969,15 @@ Updated:
 
 Removed/Deprecated:
 - requirement/clearance readout 회귀를 수동 시각 확인 없이 생략해도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 1)
+Added:
+- `npm --workspace apps/web run verify:commercial-qa` 실행 시 release gates, runtime asset count, benchmark scenario coverage, compatibility matrix coverage, scene integrity detector sample이 모두 통과하는지 확인한다.
+- hidden QA surface 확인이 필요하면 `/labs/qa`에서 asset status / benchmark baseline / compatibility matrix / integrity detector sample이 동시에 보이는지 확인한다.
+- editor bootstrap 시 corruption 또는 warning diagnostics가 있으면 toast가 뜨는지, launch metric에 무결성 상태가 표시되는지 확인한다.
+
+Updated:
+- QA 운영 가이드를 `verify:*` 개별 스모크 위주에서 “개별 smoke + commercial QA snapshot 확인”까지 확장한다.
+
+Removed/Deprecated:
+- commercial QA 시작 단계에서는 별도 snapshot surface 없이 script output만 보면 된다는 가정.

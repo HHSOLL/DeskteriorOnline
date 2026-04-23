@@ -44,7 +44,8 @@ import {
 import { builderFloorFinishes, builderWallFinishes } from "../../../../lib/builder/templates";
 import {
   toSceneStorePatch,
-  type SceneDocumentBootstrap
+  type SceneDocumentBootstrap,
+  type SceneDocumentDiagnostics
 } from "../../../../lib/domain/scene-document";
 import { resolveTopViewInteractionPolicy } from "../../../../lib/editor/top-view-policy";
 import { constrainPlacementToAnchor, inferAnchorTypeForCatalogItem } from "../../../../lib/scene/anchors";
@@ -127,6 +128,7 @@ export default function ProjectEditorPage() {
 
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
+  const [bootstrapDiagnostics, setBootstrapDiagnostics] = useState<SceneDocumentDiagnostics | null>(null);
   const [isShareOpen, setIsShareOpen] = useState(false);
   const [isWebGPUReady, setIsWebGPUReady] = useState(false);
   const [projectNameDraft, setProjectNameDraft] = useState("");
@@ -219,9 +221,11 @@ export default function ProjectEditorPage() {
   const bootstrapProjectScene = useCallback(async (): Promise<"version" | "empty"> => {
       const bootstrapResponse = await fetchProjectSceneBootstrap(projectId);
       if (!bootstrapResponse.bootstrap) {
+        setBootstrapDiagnostics(null);
         return "empty";
       }
 
+      setBootstrapDiagnostics(bootstrapResponse.bootstrap.diagnostics ?? null);
       applyMappedScene(bootstrapResponse.bootstrap);
       setViewMode("top");
       return "version";
@@ -230,9 +234,33 @@ export default function ProjectEditorPage() {
   );
 
   useEffect(() => {
+    if (!bootstrapDiagnostics || bootstrapDiagnostics.integrity.status === "ok") {
+      return;
+    }
+
+    const firstIssue = bootstrapDiagnostics.integrity.issues[0];
+    const issueSummary = firstIssue?.message ?? "sceneDocument integrity requires review.";
+    const issueCount = bootstrapDiagnostics.integrity.issues.length;
+    const description =
+      issueCount > 1 ? `${issueSummary} 외 ${issueCount - 1}건` : issueSummary;
+
+    if (bootstrapDiagnostics.integrity.status === "corrupt") {
+      toast.error("저장된 장면 무결성 오류를 감지했습니다.", {
+        description
+      });
+      return;
+    }
+
+    toast.warning("저장된 장면 무결성 경고가 있습니다.", {
+      description
+    });
+  }, [bootstrapDiagnostics]);
+
+  useEffect(() => {
     const init = async () => {
       resetScene();
       setBootstrapError(null);
+      setBootstrapDiagnostics(null);
 
       try {
         const project = await loadProject(projectId);
@@ -569,8 +597,17 @@ export default function ProjectEditorPage() {
   const launchMetrics = [
     { label: "진입", value: "빌더" },
     { label: "제품 목록", value: `${libraryCatalog.length}개` },
-    { label: "마감 프리셋", value: `${builderWallFinishes.length + builderFloorFinishes.length}개` }
-  ];
+    { label: "마감 프리셋", value: `${builderWallFinishes.length + builderFloorFinishes.length}개` },
+    bootstrapDiagnostics
+      ? {
+          label: "무결성",
+          value:
+            bootstrapDiagnostics.integrity.status === "ok"
+              ? "정상"
+              : `${bootstrapDiagnostics.integrity.status} ${bootstrapDiagnostics.integrity.issues.length}건`
+        }
+      : null
+  ].filter((entry): entry is { label: string; value: string } => Boolean(entry));
   const launchPreviewItems = featuredLibraryCatalog.slice(0, 3);
   const normalizedProjectName = projectNameDraft.trim();
   const activePanel = panels.assets ? "assets" : panels.properties ? "properties" : null;
