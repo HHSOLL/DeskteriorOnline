@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-index-alpha-v2",
-  "generatedAt": "2026-04-23T06:38:36.724Z",
+  "generatedAt": "2026-04-23T16:20:08.662Z",
   "assets": [
     {
       "key": "p2s_desk_oak",
@@ -10,7 +10,7 @@
       "packagePath": "/assets/catalog/runtime-packages/p2s_desk_oak.json",
       "qaStatus": "passed",
       "warningCount": 0,
-      "surfaceCount": 1,
+      "surfaceCount": 3,
       "attachmentPointCount": 0,
       "materialVariantCount": 1
     },

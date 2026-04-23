@@ -88,6 +88,38 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
             size: [1.33, 0.58],
             top: 0.755,
             margin: [0.08, 0.08]
+          },
+          {
+            id: "desk-edge",
+            anchorTypes: ["desk_surface", "furniture_surface"],
+            center: [0, 0],
+            size: [1.33, 0.032],
+            top: 0.739,
+            surfaceType: "desk_edge",
+            allowedAttachments: ["edge_clamp"],
+            thicknessMm: 32,
+            localFrame: {
+              originMm: [0, 739, -291],
+              tangentU: [1000, 0, 0],
+              tangentV: [0, 1000, 0],
+              normal: [0, 0, -1000]
+            }
+          },
+          {
+            id: "desk-underside",
+            anchorTypes: ["desk_surface", "furniture_surface"],
+            center: [0, 0],
+            size: [1.01, 0.4],
+            top: 0.723,
+            surfaceType: "desk_underside",
+            allowedAttachments: ["underside_screw"],
+            thicknessMm: 32,
+            localFrame: {
+              originMm: [0, 723, 0],
+              tangentU: [1000, 0, 0],
+              tangentV: [0, 0, 1000],
+              normal: [0, -1000, 0]
+            }
           }
         ]
       }

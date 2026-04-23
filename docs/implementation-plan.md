@@ -1227,3 +1227,15 @@ Updated:
 
 Removed/Deprecated:
 - asset inventory table과 기본 integrity count만 있으면 commercial QA release dashboard가 충분하다는 가정.
+
+## 2026-04-24 변경 동기화 (P0 Audit Fix Slice)
+Added:
+- `primary:e2e:room-flow:strict`가 외부 base URL 없이도 로컬 production build/server를 자체 부트스트랩해 route shell contract를 검증하는 경로를 추가한다.
+- editor undo/redo를 snapshot history 기반 `Cmd/Ctrl+Z`, `Shift+Cmd/Ctrl+Z`, `Ctrl+Y` 단축키로 노출하고, focus placement commit의 undo/redo smoke를 `verify:editor-undo-redo`로 고정한다.
+- published `p2s_desk_oak` runtime package가 `desktop_top` 외에 `desk_edge`, `desk_underside` support surface를 함께 발행하도록 support profile authoring을 확장한다.
+
+Updated:
+- post-phase P0 release blocker 중 `strict E2E self-contained`와 `desk package support surface semantics`를 코드 수정 대상으로 우선 처리한다.
+
+Removed/Deprecated:
+- strict room-flow 검증이 외부에서 이미 떠 있는 base URL에만 의존해도 충분하다는 가정.

@@ -151,6 +151,8 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - 측정이 끝나면 `npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json`으로 예산과 coverage를 검증한다.
 - threshold drift smoke는 `npm --workspace apps/web run verify:performance-budget`로 빠르게 확인한다.
 - repo 기본 perf CI gate는 `npm --workspace apps/web run qa:primary:perf`이고, 여기에는 budget/instancing/LOD/baseline smoke가 같이 들어간다.
+- `npm --workspace apps/web run primary:e2e:room-flow:strict`는 `E2E_ROOM_FLOW_BASE_URL`이 없고 기본 로컬 주소(`http://127.0.0.1:3100`)가 비어 있으면 stale `.next`를 정리한 뒤 production build/server를 자체 부트스트랩해서 route shell contract를 점검한다.
+- editor undo/redo 기본 단축키는 `Cmd/Ctrl+Z`, `Shift+Cmd/Ctrl+Z`, `Ctrl+Y`다.
 - baseline 비교가 필요하면 `--baseline=/absolute/path/to/previous-report.json`을 같이 준다.
 
 ## 3) 배포 전 체크리스트

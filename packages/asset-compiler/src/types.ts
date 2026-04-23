@@ -60,6 +60,10 @@ export type CuratedSupportProfileExpectation = {
     size: [number, number];
     top: number;
     margin?: [number, number];
+    surfaceType?: SupportSurface["type"];
+    allowedAttachments?: SupportSurface["allowedAttachments"];
+    thicknessMm?: number;
+    localFrame?: SupportSurface["localFrame"];
   }>;
 };
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-23T06:38:36.724Z",
+  "generatedAt": "2026-04-23T16:20:08.662Z",
   "key": "p2s_desk_oak",
   "manifestId": "p2s_desk_oak_140",
   "label": "P2S 오크 데스크 1400",
@@ -67,6 +67,92 @@
           0.08,
           0.08
         ]
+      },
+      {
+        "id": "desk-edge",
+        "anchorTypes": [
+          "desk_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          1.33,
+          0.032
+        ],
+        "top": 0.739,
+        "surfaceType": "desk_edge",
+        "allowedAttachments": [
+          "edge_clamp"
+        ],
+        "thicknessMm": 32,
+        "localFrame": {
+          "originMm": [
+            0,
+            739,
+            -291
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            1000,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            -1000
+          ]
+        }
+      },
+      {
+        "id": "desk-underside",
+        "anchorTypes": [
+          "desk_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          1.01,
+          0.4
+        ],
+        "top": 0.723,
+        "surfaceType": "desk_underside",
+        "allowedAttachments": [
+          "underside_screw"
+        ],
+        "thicknessMm": 32,
+        "localFrame": {
+          "originMm": [
+            0,
+            723,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            -1000,
+            0
+          ]
+        }
       }
     ]
   },
@@ -167,6 +253,86 @@
         "allowedAttachments": [
           "place_on_surface",
           "edge_clamp"
+        ]
+      },
+      {
+        "id": "desk-edge",
+        "type": "desk_edge",
+        "localFrame": {
+          "originMm": [
+            0,
+            739,
+            -291
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            1000,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            -1000
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -665,
+            -16
+          ],
+          "max": [
+            665,
+            16
+          ]
+        },
+        "thicknessMm": 32,
+        "allowedAttachments": [
+          "edge_clamp"
+        ]
+      },
+      {
+        "id": "desk-underside",
+        "type": "desk_underside",
+        "localFrame": {
+          "originMm": [
+            0,
+            723,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            -1000,
+            0
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -505,
+            -200
+          ],
+          "max": [
+            505,
+            200
+          ]
+        },
+        "thicknessMm": 32,
+        "allowedAttachments": [
+          "underside_screw"
         ]
       }
     ],
