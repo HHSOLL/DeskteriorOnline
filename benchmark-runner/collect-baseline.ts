@@ -21,6 +21,7 @@ type TelemetryEntry = {
   build?: string;
   fpsAvg?: number;
   frameTimeP95Ms?: number;
+  heapGrowthPercentPoints?: number;
   reactRenderCount?: number;
   raycastLatencyP95Ms?: number;
   assetLoadMs?: number;
@@ -106,6 +107,7 @@ async function main() {
         scenario: scenario.id,
         fpsAvg: null,
         frameTimeP95Ms: null,
+        heapGrowthPercentPoints: null,
         reactRenderCount: null,
         raycastLatencyP95Ms: null,
         assetLoadMs: null,

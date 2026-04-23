@@ -84,6 +84,7 @@
 - loaded GLB 자산의 large non-interleaved geometry는 BVH 생성 자체를 Web Worker queue로 오프로딩하고, small/interleaved geometry만 sync 경로를 유지한다.
 - telemetry가 활성일 때 `SceneViewport`는 live performance budget HUD를 같이 띄워 FPS floor, draw call 초과, heap growth, interaction latency, BVH sync fallback을 즉시 드러내야 한다.
 - live HUD 경고와 CLI regression verify는 같은 budget helper를 공유해 threshold drift를 허용하지 않는다.
+- focused asset/support asset은 walk focus placement와 desk precision 편집 중 proxy fallback보다 full-detail LOD를 우선 유지해야 한다.
 - KTX2 encoder(`toktx`)가 없는 환경에서도 runtime decode path와 public transcoder sync는 유지해야 한다.
 - `verify:asset-instancing`는 read-only top/walk + builder preview + editor `desk precision` + editor `room mode` idle instancing eligibility와 cluster grouping 정책을 회귀 검증해야 한다.
 - native gltfpack output을 사용할 때는 `-kn -km -ke` 보존 플래그 기준을 유지해 slot-aware finish와 named node/material 기반 런타임 가정이 깨지지 않게 해야 한다.
@@ -216,6 +217,17 @@ Updated:
 
 Removed/Deprecated:
 - live HUD가 heap drift를 전혀 다루지 않는 상태 설명.
+
+## 2026-04-23 변경 동기화 (Phase 8 Streaming/LOD + Benchmark CI Tighten Slice 4)
+Added:
+- focused asset/support asset은 `streamingPriority="focus"`로 승격해 walk focus placement와 desk precision 편집 중 full-detail LOD를 유지한다.
+- `benchmark-scenes/baseline.template.json`는 telemetry heap 필드까지 포함한 shape로 고정하고, `verify:benchmark-baseline`로 drift를 막는다.
+
+Updated:
+- LOD 운영 기준을 “mode별 거리 차등”에서 “mode별 거리 차등 + focused interaction asset full-detail lock”까지 확장한다.
+
+Removed/Deprecated:
+- focus placement 중에도 selected/support asset이 기본 proxy distance만 따르는 상태 설명.
 
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.

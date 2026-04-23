@@ -89,10 +89,22 @@ try {
     viewMode: "top",
     topMode: "desk-precision"
   });
+  const precisionTopFocused = resolveAssetLodPlan({
+    asset: complexAsset,
+    viewMode: "top",
+    topMode: "desk-precision",
+    priority: "focus"
+  });
   const walk = resolveAssetLodPlan({
     asset: complexAsset,
     viewMode: "walk",
     topMode: "room"
+  });
+  const walkFocused = resolveAssetLodPlan({
+    asset: complexAsset,
+    viewMode: "walk",
+    topMode: "room",
+    priority: "focus"
   });
   const simplePrecision = resolveAssetLodPlan({
     asset: simpleAsset,
@@ -106,6 +118,7 @@ try {
   });
 
   assert(roomTop.useProxyBox, "complex room top asset should use proxy fallback");
+  assert(roomTop.streamingPriority === "deferred", "room top should stay deferred priority by default");
   assert(
     roomTop.lowDetailDistance !== null &&
       precisionTop.lowDetailDistance !== null &&
@@ -117,6 +130,22 @@ try {
       walk.lowDetailDistance !== null &&
       precisionTop.lowDetailDistance < walk.lowDetailDistance,
     "walk mode should preserve detail farther than desk precision for complex assets"
+  );
+  assert(
+    precisionTop.streamingPriority === "visible" && walk.streamingPriority === "visible",
+    "active editor/viewer paths should stay visible priority by default"
+  );
+  assert(
+    precisionTopFocused.useProxyBox === false &&
+      precisionTopFocused.lowDetailDistance === null &&
+      precisionTopFocused.streamingPriority === "focus",
+    "focused desk precision asset should stay full detail"
+  );
+  assert(
+    walkFocused.useProxyBox === false &&
+      walkFocused.lowDetailDistance === null &&
+      walkFocused.streamingPriority === "focus",
+    "focused walk asset should stay full detail"
   );
   assert(
     simplePrecision.useProxyBox === false && simplePrecision.lowDetailDistance === null,
@@ -133,7 +162,9 @@ try {
       {
         roomTop,
         precisionTop,
+        precisionTopFocused,
         walk,
+        walkFocused,
         simplePrecision,
         manualWalk
       },

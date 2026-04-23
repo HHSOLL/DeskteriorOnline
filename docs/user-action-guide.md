@@ -150,6 +150,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - regression report는 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__.start(...)`로 측정을 시작하고 `stop(...)`으로 JSON entry를 얻는다.
 - 측정이 끝나면 `npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json`으로 예산과 coverage를 검증한다.
 - threshold drift smoke는 `npm --workspace apps/web run verify:performance-budget`로 빠르게 확인한다.
+- repo 기본 perf CI gate는 `npm --workspace apps/web run qa:primary:perf`이고, 여기에는 budget/instancing/LOD/baseline smoke가 같이 들어간다.
 - baseline 비교가 필요하면 `--baseline=/absolute/path/to/previous-report.json`을 같이 준다.
 
 ## 3) 배포 전 체크리스트
