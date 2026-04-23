@@ -39,7 +39,12 @@ export class PlacementKernel {
     surfaceId?: string;
     preferredSurfaceId?: string;
     surfaceHits?: SurfaceHit[];
-    attachmentType: "place_on_surface" | "wall_attach" | "edge_clamp" | "underside_screw";
+    attachmentType:
+      | "place_on_surface"
+      | "wall_attach"
+      | "edge_clamp"
+      | "underside_screw"
+      | "vesa_mount";
   }) {
     const compatibleWith = this.resolveCompatibleWith(input.objectId, input.attachmentType);
     const surfaceHit = input.surfaceId

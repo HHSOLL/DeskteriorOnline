@@ -375,3 +375,13 @@ Updated:
 
 Removed/Deprecated:
 - candidate 전환이 새 document compile이나 store commit을 동반해도 허용된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Budget Slice 1)
+Added:
+- VESA compatibility와 monitor-arm articulation solve는 commit 전 synchronous validation budget 안에서 처리돼야 하며, unreachable target 차단이 별도 document patch를 만들면 안 된다.
+
+Updated:
+- mounted attachment budget 범위를 `edge_clamp` 중심에서 `edge_clamp + vesa_mount + articulation solve`까지 확장한다.
+
+Removed/Deprecated:
+- articulation reachability 검증을 post-commit 후처리로 미뤄도 된다는 가정.
