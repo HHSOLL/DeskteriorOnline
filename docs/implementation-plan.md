@@ -1002,3 +1002,17 @@ Updated:
 
 Removed/Deprecated:
 - Phase 4가 시작되기 전까지 curated asset 정의와 compiler entrypoint가 app-local script에만 남아 있어도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 4 Asset Compiler Alpha Slice 2)
+Added:
+- `asset:ingest` command를 추가해 source path 기준 ingest draft를 `assets/ingest-staging`에 생성할 수 있게 했다.
+- `asset:publish`는 per-asset descriptor 외에 `*.colliders.json`, `*.support-surfaces.json`, `*.attachment-points.json`, `*.material-variants.json`, `*.qa-report.json`을 함께 생성한다.
+- descriptor에는 embedded `runtimeAsset`, generated file manifest, catalog-level `qaStatus/warningCount/surfaceCount/materialVariantCount`가 포함된다.
+
+Updated:
+- `asset:compile`는 `export -> sync -> verify -> publish` 순서로 alpha compiler gate를 통과한 뒤에만 package publish를 진행한다.
+- `Phase 4 Asset Compiler Alpha` 상태를 “slice 1: scaffold + publish surface”에서 “slice 2: runtime package contract + sidecars + stronger publish gate + ingest scaffold 완료”로 갱신한다.
+- current phase의 남은 범위를 `export/sync/validate/optimize package 내부 이전`, `attachment authoring enrichment`, `proxy/thumbnail 실제 산출`, `QA rule 고도화`로 재정렬한다.
+
+Removed/Deprecated:
+- descriptor JSON 하나만 있으면 alpha runtime package contract를 충분히 대표할 수 있다는 가정.

@@ -58,6 +58,7 @@ Baseline artifacts:
 - `benchmark-scenes/dense-desk.json`
 - `benchmark-scenes/heavy-assets.json`
 - `benchmark-runner/collect-baseline.ts`
+- curated runtime asset benchmark는 `asset:publish`가 생성한 runtime package descriptor + sidecar(`colliders`, `support-surfaces`, `qa-report`)가 최신 상태라는 전제를 둔다.
 
 ```bash
 npm --workspace apps/web run benchmarks:collect:baseline

@@ -1,3 +1,13 @@
+import type {
+  AssetQaReport,
+  AttachmentPoint,
+  ColliderDefinition,
+  DimensionsMm,
+  MaterialVariant,
+  RuntimeAsset,
+  SupportSurface
+} from "@deskterioronline/scene-schema";
+
 export type CuratedManifestMetadataField =
   | "brand"
   | "externalUrl"
@@ -83,6 +93,7 @@ export type AssetCompilerPaths = {
   publicRoot: string;
   manifestPath: string;
   webScriptDir: string;
+  ingestDraftDir: string;
   runtimePackageDir: string;
   runtimePackageIndexPath: string;
 };
@@ -93,10 +104,21 @@ export type RuntimePackageIndexEntry = {
   label: string;
   assetId: string;
   packagePath: string;
+  qaStatus: AssetQaReport["status"];
+  warningCount: number;
+  surfaceCount: number;
+  attachmentPointCount: number;
+  materialVariantCount: number;
+};
+
+export type RuntimePackageFileRef = {
+  path: string | null;
+  required: boolean;
+  exists: boolean;
 };
 
 export type RuntimePackageDescriptor = {
-  schemaVersion: "asset-package-alpha-v1";
+  schemaVersion: "asset-package-alpha-v2";
   generatedAt: string;
   key: string;
   manifestId: string;
@@ -104,33 +126,43 @@ export type RuntimePackageDescriptor = {
   assetId: string;
   sourcePath: string;
   runtimePath: string;
-  dimensionsMm: {
-    width: number;
-    depth: number;
-    height: number;
-  };
+  dimensionsMm: DimensionsMm;
   scaleLocked: boolean;
   contractMetadata: CuratedDeskteriorAsset["contractMetadata"];
   supportProfile: CuratedSupportProfileExpectation | null;
+  runtimeAsset: RuntimeAsset;
+  files: {
+    sourceBlend: RuntimePackageFileRef;
+    runtimeModel: RuntimePackageFileRef;
+    proxyModel: RuntimePackageFileRef;
+    colliders: RuntimePackageFileRef;
+    supportSurfaces: RuntimePackageFileRef;
+    attachmentPoints: RuntimePackageFileRef;
+    materialVariants: RuntimePackageFileRef;
+    qaReport: RuntimePackageFileRef;
+    thumbnail: RuntimePackageFileRef;
+  };
   runtime: {
     lods: Array<{
       level: number;
       path: string;
     }>;
-    proxyPath: string | null;
-    collidersPath: string | null;
-    supportSurfacesEmbedded: boolean;
-    attachmentPointsPath: string | null;
-    qaReportEmbedded: boolean;
+    proxyPath: string;
+    collidersPath: string;
+    supportSurfacesPath: string;
+    attachmentPointsPath: string;
+    materialVariantsPath: string;
+    qaReportPath: string;
+    thumbnailPath: string | null;
   };
   qa: {
-    status: "passed" | "warning";
+    status: AssetQaReport["status"];
     warnings: string[];
   };
 };
 
 export type RuntimePackageCatalog = {
-  schemaVersion: "asset-package-index-alpha-v1";
+  schemaVersion: "asset-package-index-alpha-v2";
   generatedAt: string;
   assets: RuntimePackageIndexEntry[];
 };
@@ -143,4 +175,34 @@ export type PublishRuntimePackagesSummary = {
   packageCount: number;
   packages: RuntimePackageIndexEntry[];
   errors: string[];
+};
+
+export type AssetIngestDraft = {
+  schemaVersion: "asset-ingest-alpha-v1";
+  createdAt: string;
+  assetKey: string;
+  source: {
+    inputPath: string;
+    detectedKind: "blender" | "cad" | "gltf" | "mesh" | "unknown";
+  };
+  compile: {
+    manifestId: string | null;
+    assetId: string | null;
+    label: string | null;
+    category: string | null;
+    dimensionsMm: DimensionsMm | null;
+    scaleLocked: true;
+  };
+  authoring: {
+    supportSurfaces: "required-if-placeable" | "unknown";
+    attachmentPoints: "required-if-mounted" | "unknown";
+    materialVariants: "optional";
+  };
+  notes: string[];
+};
+
+export type AssetIngestSummary = {
+  ok: boolean;
+  outputPath: string;
+  assetKey: string;
 };

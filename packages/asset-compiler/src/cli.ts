@@ -2,6 +2,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import path from "node:path";
 import { createAssetCompilerPaths } from "./paths";
+import { writeAssetIngestDraft } from "./ingest";
 import { publishCuratedRuntimePackages } from "./publish";
 
 const execFileAsync = promisify(execFile);
@@ -28,12 +29,28 @@ function parseAssetCompilerArgs(argv: string[]) {
   };
 }
 
+function readOption(args: string[], name: string) {
+  const prefix = `--${name}=`;
+  const inline = args.find((entry) => entry.startsWith(prefix));
+  if (inline) {
+    return inline.slice(prefix.length);
+  }
+
+  const optionIndex = args.findIndex((entry) => entry === `--${name}`);
+  if (optionIndex >= 0) {
+    return args[optionIndex + 1] ?? null;
+  }
+
+  return null;
+}
+
 function printHelp() {
   console.log(
     [
       "Usage: node --import tsx apps/web/scripts/asset-compiler.ts <command> [options]",
       "",
       "Commands:",
+      "  ingest      scaffold an asset source draft from a source path",
       "  compile     export + sync + publish alpha runtime packages",
       "  validate    run existing GLTF validation stage",
       "  optimize    run existing optimize stage",
@@ -51,9 +68,31 @@ export async function runAssetCompilerCli(argv: string[]) {
   const script = (name: string) => path.join(paths.webScriptDir, name);
 
   switch (command) {
+    case "ingest": {
+      const sourcePath = readOption(rest, "source");
+      if (!sourcePath) {
+        console.error("asset:ingest requires --source <path>");
+        process.exit(1);
+      }
+
+      const summary = await writeAssetIngestDraft(sourcePath);
+      console.log(
+        JSON.stringify(
+          {
+            ok: summary.ok,
+            assetKey: summary.assetKey,
+            outputPath: summary.outputPath
+          },
+          null,
+          2
+        )
+      );
+      return;
+    }
     case "compile":
       await runNodeProcess(["--import", "tsx", script("export-deskterior-runtime.ts"), ...rest], repoRoot);
       await runNodeProcess(["--import", "tsx", script("sync-deskterior-catalog.ts"), ...rest], repoRoot);
+      await runNodeProcess(["--import", "tsx", script("verify-deskterior-pipeline.ts"), ...rest], repoRoot);
       {
         const summary = await publishCuratedRuntimePackages();
         if (!summary.ok) {

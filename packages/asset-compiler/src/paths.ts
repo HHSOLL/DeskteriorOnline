@@ -16,6 +16,7 @@ export function createAssetCompilerPaths(): AssetCompilerPaths {
     publicRoot,
     manifestPath: path.join(publicRoot, "assets", "catalog", "manifest.json"),
     webScriptDir: path.join(appRoot, "scripts"),
+    ingestDraftDir: path.join(repoRoot, "assets", "ingest-staging"),
     runtimePackageDir: path.join(publicRoot, "assets", "catalog", "runtime-packages"),
     runtimePackageIndexPath: path.join(publicRoot, "assets", "catalog", "runtime-packages.json")
   };

@@ -102,7 +102,8 @@ Removed/Deprecated:
 - 저장 경계에서는 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, renderer/store는 meter float 파생값만 소비한다.
 - 제품 물리 메타데이터(`dimensionsMm`, `finishColor`, `finishMaterial`, `detailNotes`, `scaleLocked`)를 누락 없이 전달한다.
 - curated deskterior 자산은 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 product metadata와 함께 save/load/public payload roundtrip에서 유지한다.
-- curated runtime asset publish는 `packages/asset-compiler`가 생성한 alpha `runtime-packages.json`와 per-asset package descriptor를 기준으로 다음 compiler 단계로 승격한다.
+- curated runtime asset publish는 `packages/asset-compiler`가 생성한 alpha `runtime-packages.json`, per-asset descriptor, `colliders/support-surfaces/attachment-points/material-variants/qa-report` sidecar를 기준으로 다음 compiler 단계로 승격한다.
+- alpha runtime package descriptor는 embedded `runtimeAsset` 계약을 포함해야 하며, scene-schema `RuntimeAsset`과 publish artifact가 drift 없이 대응되어야 한다.
 - `verify:scene-document`는 save payload -> sceneDocument -> parse/load roundtrip에서 placement/support metadata/product metadata가 유지되는지 점검한다.
 - `verify:public-scene`는 shared_projects + pinned version + preview meta에서 shared viewer payload가 같은 placement/support/product metadata를 재현하는지 점검한다.
 - `verify:showcase-scene`는 gallery/community 카드 projection이 shared viewer public payload와 같은 version/preview asset summary를 유지하는지 점검한다.

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "desk-top",
+    "type": "desktop_top",
+    "localFrame": {
+      "originMm": [
+        0,
+        755,
+        0
+      ],
+      "tangentU": [
+        1,
+        0,
+        0
+      ],
+      "tangentV": [
+        0,
+        0,
+        1
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    "boundsMm": {
+      "min": [
+        -585,
+        -210
+      ],
+      "max": [
+        585,
+        210
+      ]
+    },
+    "allowedAttachments": [
+      "place_on_surface",
+      "edge_clamp"
+    ]
+  }
+]

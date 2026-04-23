@@ -180,8 +180,9 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - `npm --workspace apps/web run verify:scene-document`가 placement/support/product metadata roundtrip 검증을 통과하는지 확인
 - `npm --workspace apps/web run verify:public-scene`가 shared viewer payload에서 placement/support/product metadata roundtrip 검증을 통과하는지 확인
 - `npm --workspace apps/web run verify:showcase-scene`가 gallery/community 카드 projection과 shared viewer public payload의 version/preview asset summary 정합성 검증을 통과하는지 확인
-- `npm --workspace apps/web run asset:publish`가 `runtime-packages.json`와 `runtime-packages/*.json`을 생성하는지 확인
-- `npm --workspace apps/web run verify:asset-compiler`가 alpha runtime package index와 descriptor 정합성을 통과하는지 확인
+- `npm --workspace apps/web run asset:publish`가 `runtime-packages.json`, `runtime-packages/*.json`, `*.colliders.json`, `*.support-surfaces.json`, `*.attachment-points.json`, `*.material-variants.json`, `*.qa-report.json`을 생성하는지 확인
+- `npm --workspace apps/web run verify:asset-compiler`가 alpha runtime package index, descriptor, sidecar 정합성을 통과하는지 확인
+- `npm --workspace apps/web run asset:ingest -- --source <source-path>`가 `assets/ingest-staging/<assetKey>/source.asset.json` draft를 생성하는지 확인
 - shared viewer가 generic showcase viewer와 다른 경량 preset으로 동작해도 제품 hotspot / drawer 읽기 흐름은 유지되는지 확인
 - shared viewer walk HUD는 터치 조작용 요소만 남고 crosshair는 보이지 않는지 확인
 - shared viewer가 상단 light bar, 우측 zoom rail, 하단 readonly status pill 기준으로 노출되는지 확인
@@ -865,3 +866,14 @@ Updated:
 
 Removed/Deprecated:
 - asset compiler 시작 단계에서는 publish artifact 검증이 필요 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha QA Slice 2)
+Added:
+- `asset:ingest`를 curated asset compiler의 기본 entrypoint smoke 명령으로 추가했다.
+- `verify:asset-compiler`는 descriptor뿐 아니라 generated sidecar와 embedded `runtimeAsset` 계약까지 검증한다.
+
+Updated:
+- curated asset QA 범위를 `descriptor publish`에서 `descriptor + sidecar + publish file manifest` 검증으로 확장한다.
+
+Removed/Deprecated:
+- alpha 단계에서는 source/runtime file 누락이 있어도 publish artifact 일부를 남겨둘 수 있다는 가정.

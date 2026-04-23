@@ -885,3 +885,16 @@ Updated:
 
 Removed/Deprecated:
 - curated asset 정의가 `apps/web/scripts/deskterior-curated-assets.ts` 안에서만 canonical 하다는 가정.
+
+## 2026-04-23 변경 동기화 (Asset Compiler Alpha Phase 4B)
+Added:
+- `asset:ingest --source <path>`가 `assets/ingest-staging/<assetKey>/source.asset.json` draft를 생성해 Phase 4 ingest entrypoint를 연다.
+- `asset:publish`는 descriptor 외에 `colliders`, `support-surfaces`, `attachment-points`, `material-variants`, `qa-report` sidecar JSON을 함께 생성한다.
+- alpha package descriptor는 embedded `runtimeAsset` 계약과 file manifest를 포함해 compile 결과를 scene-schema 기준으로 바로 점검할 수 있다.
+
+Updated:
+- curated runtime package 기준을 “descriptor only”에서 “descriptor + runtime metadata sidecars + publish fail gate” 구조로 강화한다.
+- publish gate는 `source/runtime GLB 누락`, `scaleLocked 위반`, `contract metadata mismatch`, `supportProfile expectation mismatch`를 허용하지 않는다.
+
+Removed/Deprecated:
+- alpha 단계에서는 publish가 부분 성공 결과를 남겨도 된다는 가정.

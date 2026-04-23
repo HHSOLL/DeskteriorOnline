@@ -1,6 +1,6 @@
 {
-  "schemaVersion": "asset-package-alpha-v1",
-  "generatedAt": "2026-04-22T17:15:59.294Z",
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-23T06:08:48.703Z",
   "key": "p2s_desk_planter_pilea",
   "manifestId": "p2s_desk_planter_pilea",
   "label": "P2S 필레아 데스크 플랜터",
@@ -47,6 +47,148 @@
     }
   },
   "supportProfile": null,
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+    "productId": "p2s_desk_planter_pilea",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 100,
+      "depth": 100,
+      "height": 125
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "DeskteriorOnline Studio",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+          "triangleCount": 6000,
+          "drawCallBudget": 10
+        }
+      ],
+      "proxy": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+      "defaultLod": 0,
+      "triangleBudget": 6000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 100,
+          "depth": 100,
+          "height": 125
+        },
+        "centerMm": [
+          0,
+          63,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 필레아 데스크 플랜터",
+        "finishColor": "Clay pot / fresh green",
+        "finishMaterial": "Unglazed ceramic pot with plant foliage",
+        "detailNotes": "Compact pilea planter with terracotta pot, soil insert, and layered leaves sized for desk corners and shelf styling."
+      }
+    ],
+    "qaStatus": {
+      "status": "warning",
+      "measuredBoundsMm": {
+        "width": 100,
+        "depth": 100,
+        "height": 125
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v2",
+      "issues": [
+        {
+          "code": "ALPHA_WARNING",
+          "severity": "warning",
+          "message": "proxy model is missing; lod0 fallback will be used"
+        },
+        {
+          "code": "ALPHA_WARNING",
+          "severity": "warning",
+          "message": "thumbnail is missing from runtime package"
+        },
+        {
+          "code": "ALPHA_WARNING",
+          "severity": "warning",
+          "message": "texture set is not yet marked KTX2-ready"
+        }
+      ]
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/blender/deskterior/p2s_desk_planter_pilea.blend",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.proxy.glb",
+      "required": false,
+      "exists": false
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_desk_planter_pilea.webp",
+      "required": false,
+      "exists": false
+    }
+  },
   "runtime": {
     "lods": [
       {
@@ -54,14 +196,20 @@
         "path": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb"
       }
     ],
-    "proxyPath": null,
-    "collidersPath": null,
-    "supportSurfacesEmbedded": false,
-    "attachmentPointsPath": null,
-    "qaReportEmbedded": true
+    "proxyPath": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_desk_planter_pilea.qa-report.json",
+    "thumbnailPath": null
   },
   "qa": {
-    "status": "passed",
-    "warnings": []
+    "status": "warning",
+    "warnings": [
+      "proxy model is missing; lod0 fallback will be used",
+      "thumbnail is missing from runtime package",
+      "texture set is not yet marked KTX2-ready"
+    ]
   }
 }
