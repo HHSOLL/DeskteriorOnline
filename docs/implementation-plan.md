@@ -1113,3 +1113,15 @@ Updated:
 
 Removed/Deprecated:
 - monitor-arm target pose flow가 kernel validation만 있으면 제품 경로는 나중에 붙여도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Complete)
+Added:
+- focus placement HUD는 authored `requiredThicknessMm`, `minClearanceMm`, `vesaPatternMm`, articulation reach limit을 requirement 카드와 clearance readout으로 노출한다.
+- `verify:focus-placement`는 mounted authored requirement(thickness/clearance)와 monitor-arm authored requirement(VESA/reach) 노출까지 함께 검증한다.
+
+Updated:
+- `Phase 7 Advanced Attachments` 상태를 “slice 2: monitor-arm wizard + target-pose product path 완료”에서 “완료”로 갱신한다.
+- 다음 phase 우선순위를 `Phase 8 Performance Hardening`으로 올린다.
+
+Removed/Deprecated:
+- advanced attachment authored metadata는 runtime validation에만 쓰고 사용자에게는 노출하지 않아도 된다는 가정.

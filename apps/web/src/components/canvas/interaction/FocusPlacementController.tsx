@@ -202,6 +202,7 @@ export default function FocusPlacementController() {
           localPose: sessionState.localPose,
           selectedRuntimeAsset,
           supportRuntimeAsset,
+          surfaceId: candidate.surfaceId,
           constraintReport: sessionState.constraintReport,
           collisionReport: sessionState.collisionReport
         }),
@@ -411,6 +412,7 @@ export default function FocusPlacementController() {
           localPose: sessionState.localPose,
           selectedRuntimeAsset: resolveRuntimeAssetForObject(engine, activeSession.objectId),
           supportRuntimeAsset: resolveRuntimeAssetForObject(engine, activeSession.supportObjectId),
+          surfaceId: activeSession.surfaceId,
           constraintReport: sessionState.constraintReport,
           collisionReport: sessionState.collisionReport
         })

@@ -294,7 +294,8 @@ const runtimeAssets: RuntimeAsset[] = [
         localTangent: [1000, 0, 0],
         compatibleWith: ["desk_edge", "desk_edge"],
         constraints: {
-          requiredThicknessMm: [20, 40]
+          requiredThicknessMm: [20, 40],
+          minClearanceMm: 30
         }
       }
     ],
@@ -529,6 +530,44 @@ try {
     mountedStep.moveStepMm === 10 && mountedStep.rotateStepMilliDeg === 5000,
       "mounted focus placement should use the mounted snap rule budget"
   );
+  const mountedWizardState = resolveFocusPlacementWizardState({
+    attachmentType: "edge_clamp",
+    localPose: {
+      uMm: 140,
+      vMm: 8,
+      normalOffsetMm: 0,
+      rotationMilliDeg: 0
+    },
+    selectedRuntimeAsset: runtimeAssets.find((asset) => asset.assetId === "p2s_clamp_light") ?? null,
+    supportRuntimeAsset: runtimeAssets.find((asset) => asset.assetId === "p2s_desk_oak") ?? null,
+    surfaceId: "desk_edge",
+    constraintReport: {
+      valid: true,
+      errors: [],
+      warnings: [],
+      score: 1
+    },
+    collisionReport: {
+      collided: false,
+      collisions: []
+    }
+  });
+  assert(
+    mountedWizardState.mode === "default" &&
+      mountedWizardState.requirements.some(
+        (requirement) =>
+          requirement.label === "Surface Thickness" &&
+          requirement.value.includes("32 mm / req 20-40 mm") &&
+          requirement.tone === "ready"
+      ) &&
+      mountedWizardState.requirements.some(
+        (requirement) =>
+          requirement.label === "Clearance" &&
+          requirement.value.includes("req 30 mm") &&
+          requirement.tone === "info"
+      ),
+    "mounted focus placement should expose authored thickness and clearance requirements for HUD rendering"
+  );
   const wallFixture: SupportSurface = {
     id: "wall_mount",
     type: "wall",
@@ -657,9 +696,22 @@ try {
       monitorWizardState.shortcutLines.some((line) => line.includes("PageUp / PageDown")) &&
       monitorWizardState.steps.some((step) => step.id === "target" && step.state === "active") &&
       monitorWizardState.joints.some((joint) => joint.id === "arm_reach" && joint.unit === "mm") &&
+      monitorWizardState.requirements.some(
+        (requirement) =>
+          requirement.label === "VESA" &&
+          requirement.value.includes("100x100 -> 100x100") &&
+          requirement.tone === "ready"
+      ) &&
+      monitorWizardState.requirements.some(
+        (requirement) =>
+          requirement.label === "Arm Reach" &&
+          requirement.value.includes("140 mm / 0-260 mm") &&
+          requirement.tone === "ready"
+      ) &&
+      monitorWizardState.clearance === null &&
       monitorWizardState.vesaPatternLabel === "100x100" &&
       monitorWizardState.supportPatternLabel === "100x100",
-    "focus placement should expose a monitor-arm wizard model with target pose and solved joint summaries"
+    "focus placement should expose a monitor-arm wizard model with target pose, authored VESA metadata, and reach requirements"
   );
 
   const transaction = kernel.begin({

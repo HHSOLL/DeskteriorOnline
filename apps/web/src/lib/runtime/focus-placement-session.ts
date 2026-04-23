@@ -3,7 +3,11 @@ import type {
   ConstraintReport,
   PlacementTransactionState
 } from "@deskterioronline/placement-kernel";
-import { MonitorArmSolver } from "@deskterioronline/placement-kernel";
+import {
+  MonitorArmSolver,
+  resolveLocalFootprintBounds,
+  resolveSurfaceClearanceMm
+} from "@deskterioronline/placement-kernel";
 import type {
   RuntimeAsset,
   SurfaceLocalPose,
@@ -64,6 +68,21 @@ export type FocusPlacementWizardJoint = {
   unit: "deg" | "mm";
 };
 
+export type FocusPlacementRequirement = {
+  id: string;
+  label: string;
+  value: string;
+  tone: "ready" | "warning" | "blocked" | "info";
+};
+
+export type FocusPlacementClearanceSummary = {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+  min: number;
+};
+
 export type FocusPlacementWizardState = {
   mode: "default" | "monitor_arm";
   title: string;
@@ -72,6 +91,8 @@ export type FocusPlacementWizardState = {
   shortcutLines: string[];
   steps: FocusPlacementWizardStep[];
   joints: FocusPlacementWizardJoint[];
+  requirements: FocusPlacementRequirement[];
+  clearance: FocusPlacementClearanceSummary | null;
   detail: string | null;
   vesaPatternLabel: string | null;
   supportPatternLabel: string | null;
@@ -135,6 +156,29 @@ function formatJointLabel(jointId: string) {
     .filter(Boolean)
     .map((segment) => segment[0]?.toUpperCase() + segment.slice(1))
     .join(" ");
+}
+
+function formatThicknessRangeLabel(range: [number, number]) {
+  return `${range[0]}-${range[1]} mm`;
+}
+
+function resolveCompatibleAttachmentPoints(
+  runtimeAsset: RuntimeAsset | null,
+  attachmentType: FocusPlacementAttachmentType,
+  surface: SupportSurface | null
+) {
+  if (!runtimeAsset) {
+    return [];
+  }
+
+  return runtimeAsset.attachmentPoints.filter(
+    (point) =>
+      point.type === attachmentType &&
+      (!surface ||
+        point.compatibleWith.length === 0 ||
+        point.compatibleWith.includes(surface.id) ||
+        point.compatibleWith.includes(surface.type))
+  );
 }
 
 function resolveDeclaredVesaPatternLabel(runtimeAsset: RuntimeAsset | null) {
@@ -517,6 +561,7 @@ export function resolveFocusPlacementWizardState(input: {
   localPose: SurfaceLocalPose;
   selectedRuntimeAsset: RuntimeAsset | null;
   supportRuntimeAsset: RuntimeAsset | null;
+  surfaceId?: string | null;
   constraintReport: ConstraintReport | null;
   collisionReport: CollisionReport | null;
 }): FocusPlacementWizardState {
@@ -525,10 +570,77 @@ export function resolveFocusPlacementWizardState(input: {
     localPose,
     selectedRuntimeAsset,
     supportRuntimeAsset,
+    surfaceId,
     constraintReport,
     collisionReport
   } = input;
   const feedback = resolveFocusPlacementFeedback(constraintReport, collisionReport);
+  const surface =
+    (surfaceId
+      ? supportRuntimeAsset?.supportSurfaces.find((candidate) => candidate.id === surfaceId)
+      : null) ?? null;
+  const compatibleAttachmentPoints = resolveCompatibleAttachmentPoints(
+    selectedRuntimeAsset,
+    attachmentType,
+    surface
+  );
+  const requirements: FocusPlacementRequirement[] = [];
+  const supportsFootprintClearance =
+    attachmentType === "place_on_surface" ||
+    attachmentType === "underside_screw" ||
+    attachmentType === "wall_attach";
+  const footprint =
+    selectedRuntimeAsset && surface && supportsFootprintClearance
+      ? resolveLocalFootprintBounds(localPose, selectedRuntimeAsset.dimensionsMm, surface.type)
+      : null;
+  const clearance =
+    footprint && surface ? resolveSurfaceClearanceMm(footprint, surface) : null;
+
+  const thicknessRanges = compatibleAttachmentPoints
+    .map((point) => point.constraints.requiredThicknessMm)
+    .filter((range): range is [number, number] => Boolean(range));
+  if (thicknessRanges.length > 0) {
+    const range = thicknessRanges[0]!;
+    const actualThickness = surface?.thicknessMm;
+    const thicknessMatches =
+      typeof actualThickness === "number" && actualThickness >= range[0] && actualThickness <= range[1];
+    requirements.push({
+      id: "surface-thickness",
+      label: "Surface Thickness",
+      value:
+        typeof actualThickness === "number"
+          ? `${actualThickness} mm / req ${formatThicknessRangeLabel(range)}`
+          : `req ${formatThicknessRangeLabel(range)}`,
+      tone: typeof actualThickness === "number" ? (thicknessMatches ? "ready" : "blocked") : "info"
+    });
+  }
+
+  const minClearanceValues = compatibleAttachmentPoints
+    .map((point) => point.constraints.minClearanceMm)
+    .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+  if (minClearanceValues.length > 0) {
+    const requiredClearance = Math.max(...minClearanceValues);
+    const actualClearance = clearance?.min ?? null;
+    const clearanceSatisfied =
+      typeof actualClearance === "number" ? actualClearance >= requiredClearance : false;
+    requirements.push({
+      id: "edge-clearance",
+      label: "Clearance",
+      value:
+        typeof actualClearance === "number"
+          ? `${Math.round(actualClearance)} mm / req ${requiredClearance} mm`
+          : `req ${requiredClearance} mm`,
+      tone: typeof actualClearance === "number" ? (clearanceSatisfied ? "ready" : "blocked") : "info"
+    });
+  } else if (clearance) {
+    requirements.push({
+      id: "edge-clearance",
+      label: "Clearance",
+      value: `min ${Math.round(clearance.min)} mm`,
+      tone: feedback.blocked ? "blocked" : feedback.tone === "warning" ? "warning" : "ready"
+    });
+  }
+
   const defaultWizardState: FocusPlacementWizardState = {
     mode: "default",
     title: "Focus Placement",
@@ -543,6 +655,16 @@ export function resolveFocusPlacementWizardState(input: {
     ],
     steps: [],
     joints: [],
+    requirements,
+    clearance: clearance
+      ? {
+          left: Math.round(clearance.left),
+          right: Math.round(clearance.right),
+          top: Math.round(clearance.top),
+          bottom: Math.round(clearance.bottom),
+          min: Math.round(clearance.min)
+        }
+      : null,
     detail: feedback.tone === "ready" ? null : feedback.detail,
     vesaPatternLabel: null,
     supportPatternLabel: null
@@ -595,6 +717,26 @@ export function resolveFocusPlacementWizardState(input: {
     }
   ];
 
+  const reachJoint = articulation.joints.find((joint) => joint.type === "prismatic");
+  if (reachJoint?.limitMm) {
+    const actualReach = Math.round(localPose.normalOffsetMm);
+    const reachMatches =
+      actualReach >= reachJoint.limitMm[0] && actualReach <= reachJoint.limitMm[1];
+    requirements.unshift({
+      id: "arm-reach",
+      label: "Arm Reach",
+      value: `${actualReach} mm / ${reachJoint.limitMm[0]}-${reachJoint.limitMm[1]} mm`,
+      tone: reachMatches ? "ready" : "blocked"
+    });
+  }
+
+  requirements.unshift({
+    id: "vesa-patterns",
+    label: "VESA",
+    value: `${resolveDeclaredVesaPatternLabel(selectedRuntimeAsset)} -> ${resolveSupportVesaPatternLabel(supportRuntimeAsset)}`,
+    tone: vesaBlocked ? "blocked" : "ready"
+  });
+
   return {
     mode: "monitor_arm",
     title: "Monitor Arm Wizard",
@@ -614,6 +756,16 @@ export function resolveFocusPlacementWizardState(input: {
       value: Number((solveResult.joints[joint.id] ?? joint.defaultValue).toFixed(1)),
       unit: joint.type === "prismatic" ? "mm" : "deg"
     })),
+    requirements,
+    clearance: clearance
+      ? {
+          left: Math.round(clearance.left),
+          right: Math.round(clearance.right),
+          top: Math.round(clearance.top),
+          bottom: Math.round(clearance.bottom),
+          min: Math.round(clearance.min)
+        }
+      : null,
     detail:
       feedback.detail ??
       solveResult.errors[0]?.message ??

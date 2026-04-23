@@ -981,3 +981,13 @@ Updated:
 
 Removed/Deprecated:
 - VESA/monitor-arm 흐름이 focus placement HUD 밖의 별도 후속 작업으로 남아 있어도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Complete)
+Added:
+- mounted focus placement HUD는 authored attachment metadata(`requiredThicknessMm`, `minClearanceMm`, `vesaPatternMm`, articulation reach limit`)를 requirement 카드와 clearance readout으로 노출해야 한다.
+
+Updated:
+- advanced attachment 제품 규칙 범위를 `kernel validation + monitor-arm target-pose product path`에서 `kernel validation + authored requirement exposure + target-pose product path`까지 확장한다.
+
+Removed/Deprecated:
+- authored attachment constraint는 runtime 내부 검증만 통과하면 제품 UI에는 드러나지 않아도 된다는 가정.

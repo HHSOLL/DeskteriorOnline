@@ -395,3 +395,13 @@ Updated:
 
 Removed/Deprecated:
 - keyboard nudge session이 raw target pose와 HUD 표기를 분리해도 성능/정합성에 영향이 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Budget Complete)
+Added:
+- authored requirement/clearance HUD 갱신도 target pose nudge와 같은 runtime session update 경로만 사용해야 하며, requirement 카드 노출 때문에 commit budget이 늘어나면 안 된다.
+
+Updated:
+- advanced attachment budget 범위를 `target-pose wizard session update + articulation solve`에서 `target-pose wizard session update + articulation solve + authored requirement HUD update`까지 확장한다.
+
+Removed/Deprecated:
+- mounted requirement HUD 계산을 별도 document/store mutation으로 처리해도 괜찮다는 가정.
