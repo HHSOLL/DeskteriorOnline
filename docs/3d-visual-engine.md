@@ -162,6 +162,17 @@ Updated:
 Removed/Deprecated:
 - articulated support target이 visual/runtime contract 밖의 별도 시스템이라고 보는 가정.
 
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachment Visual Wizard)
+Added:
+- `vesa_mount` focus placement HUD는 VESA panel/target pattern, wizard step badge, solved joint summary를 같은 overlay 안에서 노출해야 한다.
+- active monitor-arm wizard 중 crosshair/hud shortcut language는 `PageUp/PageDown` reach control을 포함해야 한다.
+
+Updated:
+- mounted visual quality 기준을 `vesa target compatibility + articulation reachability feedback`에서 `target-pose wizard + solved joint feedback`까지 확장한다.
+
+Removed/Deprecated:
+- monitor-arm flow가 generic mounted HUD만으로도 충분하다는 가정.
+
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.
 - 실측 고정 제품(`scaleLocked=true`)은 변환 컨트롤/인스펙터 입력에서 스케일 변경을 저장하지 않는다.

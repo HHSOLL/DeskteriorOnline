@@ -1099,3 +1099,17 @@ Updated:
 
 Removed/Deprecated:
 - advanced attachment phase가 제품 경로 UI 이전에는 `edge_clamp` 외 mounted 타입을 전혀 검증하지 않아도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Slice 2)
+Added:
+- walkthrough focus placement product path가 `vesa_mount` candidate를 실제 session 타입으로 올려 monitor-arm support surface에 바로 진입할 수 있게 됐다.
+- `FocusPlacementController`는 `PageUp/PageDown` reach nudge와 monitor-arm default target pose seed를 추가해 target-pose 기반 wizard 조작을 runtime preview 경로에서 처리한다.
+- `FocusPlacementHud`는 VESA panel/target pattern, wizard step badge, solved joint summary를 노출해 arm joint 직접 편집 없이 target pose 중심 흐름을 제공한다.
+- `verify:focus-placement`는 monitor-arm VESA entry, articulated step budget, wizard model/shortcut exposure까지 함께 검증한다.
+
+Updated:
+- `Phase 7 Advanced Attachments` 상태를 “slice 1: vesa/articulation/kernel validation foundation 완료”에서 “slice 2: monitor-arm wizard + target-pose product path 완료”로 갱신한다.
+- current phase의 남은 범위를 `clearance visualization`, `advanced attachment authoring enrichment`, `monitor-arm wizard polish`로 재정리한다.
+
+Removed/Deprecated:
+- monitor-arm target pose flow가 kernel validation만 있으면 제품 경로는 나중에 붙여도 된다는 가정.

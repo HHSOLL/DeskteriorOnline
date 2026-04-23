@@ -970,3 +970,14 @@ Updated:
 
 Removed/Deprecated:
 - support object 측 attachment metadata는 Phase 7 이후까지 미뤄도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 7 Advanced Attachments Slice 2)
+Added:
+- walkthrough focus placement에서 `vesa_mount` 후보가 활성화되면 primary UX는 direct joint edit가 아니라 `monitor-arm target pose wizard`여야 한다.
+- monitor-arm wizard session은 `PageUp/PageDown` reach nudge와 solver-driven joint summary를 같은 runtime preview session 안에서 유지해야 한다.
+
+Updated:
+- advanced attachment 제품 규칙 범위를 `kernel validation`에서 `kernel validation + monitor-arm target-pose product path`까지 확장한다.
+
+Removed/Deprecated:
+- VESA/monitor-arm 흐름이 focus placement HUD 밖의 별도 후속 작업으로 남아 있어도 된다는 가정.

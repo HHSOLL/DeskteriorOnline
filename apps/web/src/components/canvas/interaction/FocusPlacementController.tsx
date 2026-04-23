@@ -1,13 +1,16 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import type { Engine } from "@deskterioronline/engine-core";
 import { PlacementKernel, type PlacementTransaction } from "@deskterioronline/placement-kernel";
-import type { SurfaceLocalPose } from "@deskterioronline/scene-schema";
+import type { RuntimeAsset, SurfaceLocalPose } from "@deskterioronline/scene-schema";
 import { isSurfacePlacementRecord } from "@deskterioronline/scene-schema";
 import {
   resolveFocusPlacementSessionUpdate,
   resolveFocusPlacementStepConfig,
-  resolveNextFocusPlacementCandidateIndex
+  resolveNextFocusPlacementCandidateIndex,
+  resolveFocusPlacementWizardState,
+  type FocusPlacementAttachmentType
 } from "../../../lib/runtime/focus-placement-session";
 import { commitRuntimePlacementToStore } from "../../../lib/runtime/runtime-asset-bridge";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
@@ -36,7 +39,8 @@ function shouldIgnoreKeyboardTarget(target: EventTarget | null) {
 function resolveInitialLocalPose(
   selectedAssetPlacement: unknown,
   supportObjectId: string,
-  surfaceId: string
+  surfaceId: string,
+  fallbackPose?: SurfaceLocalPose | null
 ): SurfaceLocalPose {
   const placement = selectedAssetPlacement as Parameters<typeof isSurfacePlacementRecord>[0];
 
@@ -50,12 +54,14 @@ function resolveInitialLocalPose(
     return placement.localPose;
   }
 
-  return {
-    uMm: 0,
-    vMm: 0,
-    normalOffsetMm: 0,
-    rotationMilliDeg: 0
-  };
+  return (
+    fallbackPose ?? {
+      uMm: 0,
+      vMm: 0,
+      normalOffsetMm: 0,
+      rotationMilliDeg: 0
+    }
+  );
 }
 
 function resolveMoveStep(event: KeyboardEvent, baseStep: number) {
@@ -84,6 +90,35 @@ function resolveCandidateFromRequest(request: FocusPlacementRequest, candidateIn
     request.surfaceCandidates[request.preferredCandidateIndex] ??
     null
   );
+}
+
+function resolveRuntimeAssetForObject(engine: Engine, objectId: string) {
+  const runtimeObject = engine.runtimeScene.objectRegistry.get(objectId);
+  if (!runtimeObject) {
+    return null;
+  }
+
+  const runtimeAssetId = runtimeObject.runtimeAssetId ?? runtimeObject.assetId;
+  return engine.runtimeScene.runtimeAssets.get(runtimeAssetId) ?? null;
+}
+
+function resolveSuggestedLocalPose(
+  attachmentType: FocusPlacementAttachmentType,
+  supportRuntimeAsset: RuntimeAsset | null
+): SurfaceLocalPose | null {
+  if (attachmentType !== "vesa_mount" || supportRuntimeAsset?.articulation?.type !== "monitor_arm") {
+    return null;
+  }
+
+  const defaultReachMm =
+    supportRuntimeAsset.articulation.joints.find((joint) => joint.type === "prismatic")?.defaultValue ?? 140;
+
+  return {
+    uMm: 0,
+    vMm: 0,
+    normalOffsetMm: defaultReachMm,
+    rotationMilliDeg: 0
+  };
 }
 
 export default function FocusPlacementController() {
@@ -122,11 +157,17 @@ export default function FocusPlacementController() {
       if (!selectedAsset) {
         throw new Error(`Selected asset ${input.request.objectId} was not found.`);
       }
+      if (!engine) {
+        throw new Error("Focus placement engine is unavailable.");
+      }
 
       const candidate = resolveCandidateFromRequest(input.request, input.candidateIndex);
       if (!candidate) {
         throw new Error("Focus placement candidate was not found.");
       }
+
+      const selectedRuntimeAsset = resolveRuntimeAssetForObject(engine, input.request.objectId);
+      const supportRuntimeAsset = resolveRuntimeAssetForObject(engine, input.request.supportObjectId);
 
       transactionRef.current?.cancel();
       const transaction = kernel.begin({
@@ -142,7 +183,8 @@ export default function FocusPlacementController() {
         resolveInitialLocalPose(
           selectedAsset.placement,
           input.request.supportObjectId,
-          candidate.surfaceId
+          candidate.surfaceId,
+          resolveSuggestedLocalPose(candidate.attachmentType, supportRuntimeAsset)
         );
       const nextState = transaction.update(initialLocalPose);
       const sessionState = resolveFocusPlacementSessionUpdate(initialLocalPose, nextState);
@@ -155,6 +197,14 @@ export default function FocusPlacementController() {
         ...candidate,
         activeCandidateIndex: input.candidateIndex,
         ...sessionState,
+        wizardState: resolveFocusPlacementWizardState({
+          attachmentType: candidate.attachmentType,
+          localPose: sessionState.localPose,
+          selectedRuntimeAsset,
+          supportRuntimeAsset,
+          constraintReport: sessionState.constraintReport,
+          collisionReport: sessionState.collisionReport
+        }),
         ...stepConfig
       };
 
@@ -166,7 +216,7 @@ export default function FocusPlacementController() {
 
       setIsTransforming(true);
     },
-    [assetsById, kernel, setIsTransforming, startSession, updateSession]
+    [assetsById, engine, kernel, setIsTransforming, startSession, updateSession]
   );
 
   useEffect(() => {
@@ -199,7 +249,7 @@ export default function FocusPlacementController() {
   ]);
 
   useEffect(() => {
-    if (!activeSession) {
+    if (!activeSession || !engine) {
       return;
     }
 
@@ -211,7 +261,7 @@ export default function FocusPlacementController() {
     transactionRef.current = null;
     clearSession();
     setIsTransforming(false);
-  }, [activeSession, clearSession, readOnly, selectedAssetId, setIsTransforming, viewMode]);
+  }, [activeSession, clearSession, engine, readOnly, selectedAssetId, setIsTransforming, viewMode]);
 
   useEffect(() => {
     if (!activeSession) {
@@ -250,6 +300,18 @@ export default function FocusPlacementController() {
           nextLocalPose = {
             ...activeSession.localPose,
             vMm: activeSession.localPose.vMm + moveStep
+          };
+          break;
+        case "PageUp":
+          nextLocalPose = {
+            ...activeSession.localPose,
+            normalOffsetMm: activeSession.localPose.normalOffsetMm + moveStep
+          };
+          break;
+        case "PageDown":
+          nextLocalPose = {
+            ...activeSession.localPose,
+            normalOffsetMm: activeSession.localPose.normalOffsetMm - moveStep
           };
           break;
         case "q":
@@ -341,20 +403,23 @@ export default function FocusPlacementController() {
 
       event.preventDefault();
       const nextState = transactionRef.current.update(nextLocalPose);
-      updateSession(resolveFocusPlacementSessionUpdate(nextLocalPose, nextState));
+      const sessionState = resolveFocusPlacementSessionUpdate(nextLocalPose, nextState);
+      updateSession({
+        ...sessionState,
+        wizardState: resolveFocusPlacementWizardState({
+          attachmentType: activeSession.attachmentType,
+          localPose: sessionState.localPose,
+          selectedRuntimeAsset: resolveRuntimeAssetForObject(engine, activeSession.objectId),
+          supportRuntimeAsset: resolveRuntimeAssetForObject(engine, activeSession.supportObjectId),
+          constraintReport: sessionState.constraintReport,
+          collisionReport: sessionState.collisionReport
+        })
+      });
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    activateCandidate,
-    activeSession,
-    clearSession,
-    engine,
-    recordSnapshot,
-    setIsTransforming,
-    updateSession
-  ]);
+  }, [activateCandidate, activeSession, clearSession, engine, recordSnapshot, setIsTransforming, updateSession]);
 
   useEffect(() => {
     return () => {
