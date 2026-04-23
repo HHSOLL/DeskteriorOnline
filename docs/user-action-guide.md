@@ -981,3 +981,15 @@ Updated:
 
 Removed/Deprecated:
 - commercial QA 시작 단계에서는 별도 snapshot surface 없이 script output만 보면 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 2)
+Added:
+- `/labs/qa`에서 placement regression suite 카드가 `verify:placement-kernel`, `verify:focus-placement`, `verify:advanced-attachments`를 모두 보여주고 status가 `pass`인지 확인한다.
+- `/labs/qa`의 integrity detector가 missing support / invalid surface / duplicate id / self-support 수치를 함께 보여주는지 확인한다.
+- `/labs/qa`의 asset inventory table이 각 runtime package의 QA/support/attachment/variant/missing file 상태를 row 단위로 보여주는지 확인한다.
+
+Updated:
+- commercial QA 확인 절차를 `release gate / baseline / compatibility / integrity summary`에서 `release gate / placement regression / asset inventory / baseline / compatibility / integrity detail`까지 확장한다.
+
+Removed/Deprecated:
+- placement regression coverage는 CLI verify만 보면 되고 hidden QA surface에서 재확인하지 않아도 된다는 가정.

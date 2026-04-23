@@ -31,6 +31,9 @@ export type SceneRecoverySnapshot = {
   roomShellElementCount: number;
   missingAssetCount: number;
   missingSupportReferenceCount: number;
+  duplicateNodeIdCount: number;
+  selfSupportReferenceCount: number;
+  invalidSurfacePlacementCount: number;
 };
 
 export type SceneIntegrityReport = {
@@ -82,13 +85,48 @@ export function summarizeSceneRecoverySnapshot(document: SceneDocument): SceneRe
   const surfacePlacementCount = document.nodes.filter((node) => isSurfaceLocalPlacement(node.placement)).length;
   const missingAssetCount = document.nodes.filter((node) => !hasText(node.assetId)).length;
   const validNodeIds = new Set(document.nodes.map((node) => node.id).filter(hasText));
-  const missingSupportReferenceCount = document.nodes.filter((node) => {
-    const supportId = node.supportAssetId;
-    if (!hasText(supportId)) {
-      return false;
+  const nodeIdCounts = new Map<string, number>();
+  let missingSupportReferenceCount = 0;
+  let selfSupportReferenceCount = 0;
+  let invalidSurfacePlacementCount = 0;
+
+  for (const node of document.nodes) {
+    if (hasText(node.id)) {
+      nodeIdCounts.set(node.id, (nodeIdCounts.get(node.id) ?? 0) + 1);
     }
-    return !validNodeIds.has(supportId);
-  }).length;
+
+    if (hasText(node.supportAssetId)) {
+      if (hasText(node.id) && node.supportAssetId === node.id) {
+        selfSupportReferenceCount += 1;
+      } else if (!validNodeIds.has(node.supportAssetId)) {
+        missingSupportReferenceCount += 1;
+      }
+    }
+
+    if (!isSurfaceLocalPlacement(node.placement)) {
+      continue;
+    }
+
+    const placement = node.placement;
+    if (!hasText(placement.supportObjectId) || !hasText(placement.surfaceId)) {
+      invalidSurfacePlacementCount += 1;
+    }
+
+    if (hasText(placement.supportObjectId)) {
+      if (hasText(node.id) && placement.supportObjectId === node.id) {
+        selfSupportReferenceCount += 1;
+      } else if (!validNodeIds.has(placement.supportObjectId)) {
+        missingSupportReferenceCount += 1;
+      }
+    }
+  }
+
+  let duplicateNodeIdCount = 0;
+  for (const count of nodeIdCounts.values()) {
+    if (count > 1) {
+      duplicateNodeIdCount += count - 1;
+    }
+  }
 
   return {
     nodeCount: document.nodes.length,
@@ -96,7 +134,10 @@ export function summarizeSceneRecoverySnapshot(document: SceneDocument): SceneRe
     surfacePlacementCount,
     roomShellElementCount,
     missingAssetCount,
-    missingSupportReferenceCount
+    missingSupportReferenceCount,
+    duplicateNodeIdCount,
+    selfSupportReferenceCount,
+    invalidSurfacePlacementCount
   };
 }
 

@@ -465,3 +465,14 @@ Updated:
 
 Removed/Deprecated:
 - commercial QA dashboard가 benchmark baseline과 별도 데이터 수집 경로를 가져도 괜찮다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Budget Slice 2)
+Added:
+- placement regression suite aggregation은 verify script registry만 읽는 lightweight snapshot이어야 하며, hidden QA page render 중 실제 regression script 실행을 시도하지 않는다.
+- asset inventory table과 recovery snapshot detail은 checked-in package descriptor / integrity sample에서 파생되어야 하며 추가 runtime sampling을 만들지 않는다.
+
+Updated:
+- commercial QA budget surface를 `release gate snapshot`에서 `release gate + placement regression registry + asset inventory detail + recovery snapshot detail`까지 확장한다.
+
+Removed/Deprecated:
+- hidden QA page가 placement regression 상태를 보여주기 위해 request 시마다 verify 스크립트를 실제 실행해도 괜찮다는 가정.

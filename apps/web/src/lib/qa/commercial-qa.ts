@@ -35,6 +35,8 @@ type RuntimePackageDescriptor = {
   };
 };
 
+type CommercialQaStatus = "pass" | "warning" | "fail";
+
 type BenchmarkBaselineEntry = {
   scenario: string;
   title: string;
@@ -69,7 +71,7 @@ type BenchmarkBaseline = {
 export type CommercialReleaseGate = {
   id: string;
   label: string;
-  status: "pass" | "warning" | "fail";
+  status: CommercialQaStatus;
   detail: string;
 };
 
@@ -87,11 +89,14 @@ export type CommercialQaSnapshot = {
     rows: Array<{
       key: string;
       label: string;
+      scaleLocked: boolean;
       qaStatus: RuntimePackageIndexEntry["qaStatus"];
       warningCount: number;
       supportSurfaceCount: number;
       attachmentPointCount: number;
+      materialVariantCount: number;
       missingRequiredFiles: number;
+      missingRequiredFileNames: string[];
     }>;
   };
   performanceBaseline: {
@@ -103,6 +108,18 @@ export type CommercialQaSnapshot = {
     metric: string;
     target: string;
   }>;
+  placementRegression: {
+    registeredScripts: string[];
+    suites: Array<{
+      id: string;
+      label: string;
+      script: string;
+      status: CommercialQaStatus;
+      target: string;
+      coverage: string[];
+      detail: string;
+    }>;
+  };
   compatibilityMatrix: Array<{
     profile: string;
     browser: string;
@@ -113,6 +130,13 @@ export type CommercialQaSnapshot = {
   sceneIntegrity: {
     sampleStatus: ReturnType<typeof inspectSceneDocumentIntegrity>["status"];
     sampleIssueCodes: string[];
+    sampleIssues: Array<{
+      code: string;
+      severity: string;
+      message: string;
+    }>;
+    sampleSuggestedActions: string[];
+    sampleRecoverySnapshot: ReturnType<typeof inspectSceneDocumentIntegrity>["recoverySnapshot"];
     ruleSummary: string[];
   };
 };
@@ -135,6 +159,14 @@ function resolveWorkspaceRoot() {
 
 function readJsonFile<T>(filePath: string) {
   return JSON.parse(fs.readFileSync(filePath, "utf8")) as T;
+}
+
+function loadVerifyScripts(workspaceRoot: string) {
+  const packageJsonPath = path.join(workspaceRoot, "apps/web/package.json");
+  const packageJson = readJsonFile<{ scripts?: Record<string, string> }>(packageJsonPath);
+  return Object.keys(packageJson.scripts ?? {})
+    .filter((key) => key.startsWith("verify:"))
+    .sort();
 }
 
 function buildSampleCorruptScene(): SceneDocument {
@@ -216,26 +248,64 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
 
   const packageIndex = readJsonFile<RuntimePackageIndex>(packageIndexPath);
   const baseline = readJsonFile<BenchmarkBaseline>(baselinePath);
+  const verifyScripts = loadVerifyScripts(workspaceRoot);
 
   const packageRows = packageIndex.assets.map((asset) => {
     const descriptorPath = path.join(workspaceRoot, "apps/web/public", asset.packagePath.replace(/^\//, ""));
     const descriptor = readJsonFile<RuntimePackageDescriptor>(descriptorPath);
-    const missingRequiredFiles = Object.values(descriptor.files).filter((file) => file.required && !file.exists).length;
+    const missingRequiredFileEntries = Object.entries(descriptor.files).filter(
+      ([, file]) => file.required && !file.exists
+    );
 
     return {
       key: asset.key,
       label: asset.label,
+      scaleLocked: descriptor.scaleLocked,
       qaStatus: descriptor.qa.status,
       warningCount: asset.warningCount,
       supportSurfaceCount: descriptor.runtimeAsset.supportSurfaces.length,
       attachmentPointCount: descriptor.runtimeAsset.attachmentPoints.length,
-      missingRequiredFiles
+      materialVariantCount: asset.materialVariantCount,
+      missingRequiredFiles: missingRequiredFileEntries.length,
+      missingRequiredFileNames: missingRequiredFileEntries.map(([key]) => key)
     };
   });
 
   const corruptSceneReport = inspectSceneDocumentIntegrity(buildSampleCorruptScene());
   const expectedBenchmarkScenarios = ["empty-room", "standard-room", "dense-desk", "heavy-assets"];
   const availableScenarios = new Set(baseline.entries.map((entry) => entry.scenario));
+  const placementRegressionSuites = [
+    {
+      id: "placement-kernel",
+      label: "Placement Kernel Surface Rules",
+      script: "verify:placement-kernel",
+      target: "surface-local placement / no-place-zone / mounted compatibility",
+      coverage: ["desktop_top", "desk_edge", "underside", "wall", "collision guard"]
+    },
+    {
+      id: "focus-placement",
+      label: "Walkthrough Focus Placement",
+      script: "verify:focus-placement",
+      target: "walkthrough session / candidate cycle / snapped HUD",
+      coverage: ["desktop_top", "desk_edge", "desk_underside", "wall", "candidate cycle"]
+    },
+    {
+      id: "advanced-attachments",
+      label: "Advanced Attachment Flow",
+      script: "verify:advanced-attachments",
+      target: "VESA / monitor-arm / articulation reachability",
+      coverage: ["edge_clamp", "vesa_mount", "monitor_arm", "wizard target pose"]
+    }
+  ].map((suite) => {
+    const isRegistered = verifyScripts.includes(suite.script);
+    return {
+      ...suite,
+      status: (isRegistered ? "pass" : "fail") as CommercialQaStatus,
+      detail: isRegistered
+        ? `${suite.script} is registered and part of the commercial QA regression surface.`
+        : `${suite.script} is missing from apps/web/package.json.`
+    };
+  });
 
   const releaseGates: CommercialReleaseGate[] = [
     {
@@ -265,6 +335,12 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       label: "Browser/device compatibility matrix",
       status: "pass",
       detail: "Desktop and fallback profiles are documented for manual regression."
+    },
+    {
+      id: "placement-regression",
+      label: "Placement regression suite",
+      status: placementRegressionSuites.every((suite) => suite.status === "pass") ? "pass" : "fail",
+      detail: `${placementRegressionSuites.filter((suite) => suite.status === "pass").length}/${placementRegressionSuites.length} placement regression scripts are registered.`
     },
     {
       id: "scene-integrity",
@@ -313,6 +389,10 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
         target: "support-linked objects remain attached"
       }
     ],
+    placementRegression: {
+      registeredScripts: verifyScripts,
+      suites: placementRegressionSuites
+    },
     compatibilityMatrix: [
       {
         profile: "Desktop Balanced",
@@ -353,6 +433,13 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     sceneIntegrity: {
       sampleStatus: corruptSceneReport.status,
       sampleIssueCodes: corruptSceneReport.issues.map((issue) => issue.code),
+      sampleIssues: corruptSceneReport.issues.map((issue) => ({
+        code: issue.code,
+        severity: issue.severity,
+        message: issue.message
+      })),
+      sampleSuggestedActions: corruptSceneReport.suggestedActions,
+      sampleRecoverySnapshot: corruptSceneReport.recoverySnapshot,
       ruleSummary: [
         "scene node ids must be present and unique",
         "assetId must exist for every persisted node",

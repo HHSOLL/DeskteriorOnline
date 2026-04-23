@@ -412,6 +412,18 @@ Updated:
 Removed/Deprecated:
 - bootstrap 단계에서는 sceneDocument parse success만 확인하면 되고, integrity warnings는 별도 검증이 없어도 된다는 가정.
 
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 2)
+Added:
+- commercial QA snapshot은 `verify:placement-kernel`, `verify:focus-placement`, `verify:advanced-attachments`를 placement regression suite로 묶어 mounted/surface placement 회귀 범위를 같은 surface에서 읽어야 한다.
+- scene integrity recovery snapshot은 `missingSupportReferenceCount` 외에 `duplicateNodeIdCount`, `selfSupportReferenceCount`, `invalidSurfacePlacementCount`까지 포함해야 한다.
+- hidden QA surface는 asset package inventory를 row 단위로 읽을 수 있어야 하며, scale-locked 여부 / surface count / attachment count / material variant count / missing required files를 함께 보여준다.
+
+Updated:
+- `Phase 9 Commercial QA`의 canonical snapshot 범위를 `release gates + asset status + baseline + compatibility + integrity`에서 `release gates + asset inventory + placement regression + baseline + compatibility + integrity`까지 확장한다.
+
+Removed/Deprecated:
+- placement regression coverage는 verify script 이름만 알면 충분하고 product-facing QA surface에는 드러나지 않아도 된다는 가정.
+
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop)
 Added:
 - `KTX2Loader`와 local basis transcoder sync 경로를 runtime asset decode 기준에 추가했다.

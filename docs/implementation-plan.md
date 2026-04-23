@@ -1188,3 +1188,16 @@ Updated:
 
 Removed/Deprecated:
 - commercial QA 시작 단계에서는 별도 dashboard 없이 scattered verify script만으로 충분하다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Slice 2)
+Added:
+- commercial QA snapshot에 placement regression suite aggregation(`verify:placement-kernel`, `verify:focus-placement`, `verify:advanced-attachments`)을 추가해 mounted/surface placement 회귀 커버리지를 한 곳에서 읽도록 한다.
+- scene integrity sample은 recovery snapshot 세부 수치(`duplicateNodeIdCount`, `selfSupportReferenceCount`, `invalidSurfacePlacementCount`)와 suggested action을 함께 노출한다.
+- hidden QA surface에 runtime asset inventory table과 placement regression suite card를 추가해 asset status dashboard의 첫 운영형 표면을 제공한다.
+
+Updated:
+- `Phase 9 Commercial QA` 상태를 “slice 1: hidden QA dashboard + scene integrity detector 완료”에서 “slice 2: placement regression aggregation + recovery snapshot 확장 완료”로 올린다.
+- current phase의 남은 범위를 `compatibility matrix 운영 검증`, `placement regression 실제 결과 집계`, `scene corruption detector 추가 규칙`, `asset status dashboard polish`로 다시 축소한다.
+
+Removed/Deprecated:
+- commercial QA가 release gate와 baseline만 보여주고 placement regression coverage는 별도 문맥에서 따로 추적해도 된다는 가정.

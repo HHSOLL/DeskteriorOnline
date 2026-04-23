@@ -92,11 +92,41 @@ export default function CommercialQaPage() {
               <p className="mt-4 text-sm leading-6 text-[#52483f]">
                 sample corrupt scene status: <strong>{snapshot.sceneIntegrity.sampleStatus}</strong>
               </p>
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-[#52483f]">
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Missing support refs</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.sampleRecoverySnapshot.missingSupportReferenceCount}
+                  </dd>
+                </div>
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Invalid surface placements</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.sampleRecoverySnapshot.invalidSurfacePlacementCount}
+                  </dd>
+                </div>
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Duplicate ids</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.sampleRecoverySnapshot.duplicateNodeIdCount}
+                  </dd>
+                </div>
+                <div className="rounded-[16px] border border-black/8 bg-[#faf7f1] p-3">
+                  <dt>Self-support refs</dt>
+                  <dd className="mt-1 text-base font-semibold text-[#171411]">
+                    {snapshot.sceneIntegrity.sampleRecoverySnapshot.selfSupportReferenceCount}
+                  </dd>
+                </div>
+              </div>
               <ul className="mt-4 space-y-2 text-sm leading-6 text-[#52483f]">
                 {snapshot.sceneIntegrity.ruleSummary.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
+              <div className="mt-4 rounded-[18px] border border-black/8 bg-[#faf7f1] p-4 text-sm leading-6 text-[#52483f]">
+                <p className="font-semibold text-[#171411]">Suggested recovery actions</p>
+                <p className="mt-2">{snapshot.sceneIntegrity.sampleSuggestedActions.join(" / ")}</p>
+              </div>
             </div>
           </div>
         </section>
@@ -140,6 +170,29 @@ export default function CommercialQaPage() {
           <div className="space-y-5">
             <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
               <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
+                <BadgeCheck className="h-4 w-4" />
+                <span>Placement Regression Suites</span>
+              </div>
+              <div className="mt-5 space-y-3">
+                {snapshot.placementRegression.suites.map((suite) => (
+                  <div key={suite.id} className="rounded-[18px] border border-black/8 bg-[#faf7f1] p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <h2 className="text-sm font-semibold text-[#171411]">{suite.label}</h2>
+                      <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${gateClasses(suite.status)}`}>
+                        {suite.status}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-[#5a5148]">{suite.script}</p>
+                    <p className="mt-2 text-sm leading-6 text-[#5a5148]">{suite.detail}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">target: {suite.target}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">coverage: {suite.coverage.join(" / ")}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
+              <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
                 <TableProperties className="h-4 w-4" />
                 <span>Compatibility Matrix</span>
               </div>
@@ -160,21 +213,78 @@ export default function CommercialQaPage() {
                 ))}
               </div>
             </div>
+          </div>
+        </section>
 
-            <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
-              <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
-                <TriangleAlert className="h-4 w-4" />
-                <span>Focus Placement Benchmarks</span>
-              </div>
-              <div className="mt-5 space-y-3">
-                {snapshot.focusPlacementTasks.map((task) => (
-                  <div key={task.task} className="rounded-[18px] border border-black/8 bg-[#faf7f1] p-4">
-                    <h2 className="text-sm font-semibold text-[#171411]">{task.task}</h2>
-                    <p className="mt-2 text-sm text-[#5a5148]">metric: {task.metric}</p>
-                    <p className="mt-2 text-sm leading-6 text-[#5a5148]">target: {task.target}</p>
-                  </div>
+        <section className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+          <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
+            <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
+              <TableProperties className="h-4 w-4" />
+              <span>Asset Package Inventory</span>
+            </div>
+            <div className="mt-5 overflow-hidden rounded-[18px] border border-black/8">
+              <table className="min-w-full border-collapse text-left text-sm">
+                <thead className="bg-[#f4efe7] text-[#625a51]">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Asset</th>
+                    <th className="px-4 py-3 font-medium">QA</th>
+                    <th className="px-4 py-3 font-medium">Surface / Attach</th>
+                    <th className="px-4 py-3 font-medium">Variants</th>
+                    <th className="px-4 py-3 font-medium">Missing</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-black/6 bg-white">
+                  {snapshot.assetStatus.rows.map((row) => (
+                    <tr key={row.key} className="align-top">
+                      <td className="px-4 py-3 text-[#171411]">
+                        <div className="font-medium">{row.label}</div>
+                        <div className="mt-1 text-xs uppercase tracking-[0.12em] text-[#8a8177]">
+                          {row.key} / {row.scaleLocked ? "scale-locked" : "flex"}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-[#5a5148]">
+                        {row.qaStatus}
+                        {row.warningCount > 0 ? ` (${row.warningCount} warnings)` : ""}
+                      </td>
+                      <td className="px-4 py-3 text-[#5a5148]">
+                        {row.supportSurfaceCount} / {row.attachmentPointCount}
+                      </td>
+                      <td className="px-4 py-3 text-[#5a5148]">{row.materialVariantCount}</td>
+                      <td className="px-4 py-3 text-[#5a5148]">
+                        {row.missingRequiredFiles === 0 ? "0" : row.missingRequiredFileNames.join(", ")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
+            <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
+              <TriangleAlert className="h-4 w-4" />
+              <span>Focus Placement Benchmarks</span>
+            </div>
+            <div className="mt-5 space-y-3">
+              {snapshot.focusPlacementTasks.map((task) => (
+                <div key={task.task} className="rounded-[18px] border border-black/8 bg-[#faf7f1] p-4">
+                  <h2 className="text-sm font-semibold text-[#171411]">{task.task}</h2>
+                  <p className="mt-2 text-sm text-[#5a5148]">metric: {task.metric}</p>
+                  <p className="mt-2 text-sm leading-6 text-[#5a5148]">target: {task.target}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 rounded-[18px] border border-black/8 bg-[#faf7f1] p-4 text-sm leading-6 text-[#5a5148]">
+              <p className="font-semibold text-[#171411]">Sample integrity issues</p>
+              <ul className="mt-3 space-y-2">
+                {snapshot.sceneIntegrity.sampleIssues.map((issue) => (
+                  <li key={issue.code + issue.message}>
+                    <span className="font-medium text-[#171411]">{issue.code}</span>
+                    {` / ${issue.severity} / ${issue.message}`}
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           </div>
         </section>

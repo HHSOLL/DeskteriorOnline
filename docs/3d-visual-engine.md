@@ -792,3 +792,15 @@ Updated:
 
 Removed/Deprecated:
 - commercial QA는 CLI output만 있으면 되고 visual readout은 필요 없다는 가정.
+
+## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Visual Slice 2)
+Added:
+- hidden QA surface는 placement regression suite status와 coverage 문자열을 별도 카드로 노출해 mounted/surface placement 회귀 범위를 시각적으로 확인할 수 있어야 한다.
+- integrity detector visual surface는 sample recovery snapshot 수치와 suggested recovery action을 함께 보여줘야 한다.
+- asset status visual surface는 inventory table로 확장해 per-asset QA / support / attachment / variant / missing file 상태를 한 줄씩 읽을 수 있어야 한다.
+
+Updated:
+- commercial QA visual 기준을 “summary card readout”에서 “summary card + regression suite + inventory table + recovery snapshot detail”까지 확장한다.
+
+Removed/Deprecated:
+- hidden QA surface가 asset status를 summary 숫자만으로 보여줘도 충분하다는 가정.

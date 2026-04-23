@@ -13,6 +13,11 @@ function main() {
   assert(snapshot.releaseGates.length >= 5, "expected at least 5 commercial QA release gates");
   assert(snapshot.assetStatus.totalAssets > 0, "expected published runtime assets");
   assert(snapshot.performanceBaseline.scenarios.length >= 4, "expected benchmark baseline scenarios");
+  assert(snapshot.placementRegression.suites.length >= 3, "expected placement regression suites");
+  assert(
+    snapshot.placementRegression.suites.every((suite) => suite.status === "pass"),
+    "expected all placement regression suites to be registered"
+  );
   assert(snapshot.compatibilityMatrix.length >= 4, "expected browser/device compatibility matrix coverage");
   assert(
     snapshot.sceneIntegrity.sampleStatus === "corrupt",
@@ -21,6 +26,14 @@ function main() {
   assert(
     snapshot.sceneIntegrity.sampleIssueCodes.includes("MISSING_SUPPORT_ASSET"),
     "expected integrity sample to report missing support asset"
+  );
+  assert(
+    snapshot.sceneIntegrity.sampleRecoverySnapshot.invalidSurfacePlacementCount > 0,
+    "expected integrity sample to include invalid surface placement count"
+  );
+  assert(
+    snapshot.sceneIntegrity.sampleSuggestedActions.includes("rebuild_support_relations"),
+    "expected integrity sample suggested actions to include support relation rebuild"
   );
 
   const directReport = inspectSceneDocumentIntegrity({
@@ -80,7 +93,8 @@ function main() {
       {
         releaseGates: snapshot.releaseGates.map((gate) => ({ id: gate.id, status: gate.status })),
         totalAssets: snapshot.assetStatus.totalAssets,
-        scenarios: snapshot.performanceBaseline.scenarios.map((entry) => entry.scenario)
+        scenarios: snapshot.performanceBaseline.scenarios.map((entry) => entry.scenario),
+        placementSuites: snapshot.placementRegression.suites.map((suite) => suite.script)
       },
       null,
       2
