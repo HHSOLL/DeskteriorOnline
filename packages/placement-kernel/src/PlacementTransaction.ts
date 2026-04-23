@@ -1,10 +1,12 @@
 import { SceneCompiler, type Engine } from "@deskterioronline/engine-core";
 import {
   type PlacementRecord,
+  type RuntimeAsset,
   type SurfacePlacementRecord,
   isSurfacePlacementRecord,
   serializeWorldTransform
 } from "@deskterioronline/scene-schema";
+import { AttachmentGraph, type AttachmentGraphSnapshot } from "./AttachmentGraph";
 import type { CollisionReport, ConstraintReport, PlacementCandidate, SurfaceHit } from "./types";
 import { CollisionValidator } from "./CollisionValidator";
 import { ConstraintSolver } from "./ConstraintSolver";
@@ -18,15 +20,18 @@ export type PlacementTransactionState = {
 
 export class PlacementTransaction {
   private readonly surfaceResolver: SurfaceResolver;
+  private readonly attachmentGraph = new AttachmentGraph();
   private readonly constraintSolver = new ConstraintSolver();
-  private readonly collisionValidator = new CollisionValidator();
+  private readonly collisionValidator: CollisionValidator;
   private surfaceHit: SurfaceHit | null = null;
   private activeCandidate: PlacementCandidate | null = null;
   private constraintReport: ConstraintReport | null = null;
   private collisionReport: CollisionReport | null = null;
+  private attachmentSnapshot: AttachmentGraphSnapshot | null = null;
 
   constructor(private readonly engine: Engine, private readonly objectId: string) {
     this.surfaceResolver = new SurfaceResolver(engine);
+    this.collisionValidator = new CollisionValidator(engine);
   }
 
   begin(input: {
@@ -39,6 +44,7 @@ export class PlacementTransaction {
       throw new Error(`Surface ${input.surfaceId} on ${input.supportObjectId} was not found.`);
     }
     this.surfaceHit = surfaceHit;
+    this.attachmentSnapshot = this.attachmentGraph.build(this.engine.runtimeScene);
     this.engine.beginObjectPreview(this.objectId);
 
     this.activeCandidate = {
@@ -67,8 +73,17 @@ export class PlacementTransaction {
       localPose
     };
 
-    this.constraintReport = this.constraintSolver.evaluate(this.activeCandidate, this.surfaceHit?.surface ?? null);
-    this.collisionReport = this.collisionValidator.validate(this.activeCandidate);
+    const runtimeAsset = this.resolveActiveRuntimeAsset();
+    this.constraintReport = this.constraintSolver.evaluate(
+      this.activeCandidate,
+      this.surfaceHit?.surface ?? null,
+      runtimeAsset
+    );
+    this.collisionReport = this.collisionValidator.validate(
+      this.activeCandidate,
+      this.surfaceHit?.surface ?? null,
+      this.attachmentSnapshot ?? undefined
+    );
     const previewTransform = this.resolvePreviewTransform();
     if (previewTransform) {
       this.engine.previewObjectTransform(this.objectId, previewTransform);
@@ -116,6 +131,7 @@ export class PlacementTransaction {
     this.surfaceHit = null;
     this.constraintReport = null;
     this.collisionReport = null;
+    this.attachmentSnapshot = null;
     this.engine.cancelObjectPreview(this.objectId);
   }
 
@@ -134,6 +150,16 @@ export class PlacementTransaction {
       constraintReport: this.constraintReport,
       collisionReport: this.collisionReport
     };
+  }
+
+  private resolveActiveRuntimeAsset(): RuntimeAsset | null {
+    const runtimeObject = this.engine.runtimeScene.objectRegistry.get(this.objectId);
+    if (!runtimeObject) {
+      return null;
+    }
+
+    const runtimeAssetId = runtimeObject.runtimeAssetId ?? runtimeObject.assetId;
+    return this.engine.runtimeScene.runtimeAssets.get(runtimeAssetId) ?? null;
   }
 
   private resolvePreviewTransform() {

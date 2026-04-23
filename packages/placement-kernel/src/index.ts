@@ -6,3 +6,4 @@ export * from "./CollisionValidator";
 export * from "./AttachmentGraph";
 export * from "./PlacementTransaction";
 export * from "./PlacementKernel";
+export * from "./footprint";

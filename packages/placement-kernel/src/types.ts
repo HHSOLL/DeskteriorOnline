@@ -23,6 +23,7 @@ export type ConstraintReport = {
 export type CollisionReport = {
   collided: boolean;
   collisions: Array<{
+    code: string;
     objectId: string;
     reason: string;
   }>;

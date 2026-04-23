@@ -108,6 +108,16 @@ Removed/Deprecated:
 - `verify:public-scene`는 shared_projects + pinned version + preview meta에서 shared viewer payload가 같은 placement/support/product metadata를 재현하는지 점검한다.
 - `verify:showcase-scene`는 gallery/community 카드 projection이 shared viewer public payload와 같은 version/preview asset summary를 유지하는지 점검한다.
 
+## 2026-04-23 변경 동기화 (Placement Kernel Alpha Surface Validation)
+Added:
+- surface-local placement preview는 commit 전 `allowedAttachments`, footprint bounds, restricted zone, same-surface overlap을 최소 검증 세트로 사용해야 한다.
+
+Updated:
+- 물리 배치 품질 기준을 “support surface 배치가 가능하다”에서 “support surface 위 invalid footprint/overlap을 commit 전에 차단한다” 수준으로 강화한다.
+
+Removed/Deprecated:
+- same-surface accessory overlap을 runtime placement kernel 밖의 후속 과제로만 미뤄둘 수 있다는 가정.
+
 ## 물리 정합성 기준
 - Blender 소스(`assets/blender/deskterior`)의 실측 envelope 기준으로 카탈로그 규격을 관리한다.
 - 실측 고정 제품(`scaleLocked=true`)은 변환 컨트롤/인스펙터 입력에서 스케일 변경을 저장하지 않는다.

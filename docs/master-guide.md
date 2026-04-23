@@ -911,3 +911,14 @@ Updated:
 
 Removed/Deprecated:
 - `apps/web/scripts` wrapper가 compiler 단계별 비즈니스 로직을 계속 소유해도 된다는 가정.
+
+## 2026-04-23 변경 동기화 (Placement Kernel Alpha Validation Slice)
+Added:
+- placement kernel은 surface-local commit 전에 최소한 `allowedAttachments`, support surface footprint bounds, restricted zone, same-surface sibling overlap을 검증해야 한다.
+- attachment graph는 support object -> child 관계를 query할 수 있어야 하고, collision validation은 같은 support/surface 위 형제 배치를 최소 단위로 검사해야 한다.
+
+Updated:
+- `Phase 5 Placement Kernel Alpha` 기준을 “surface_local placement patch가 만들어진다”에서 “invalid surface placement를 commit 전에 차단한다” 수준으로 강화한다.
+
+Removed/Deprecated:
+- placement kernel이 preview/commit 브리지만 있으면 alpha slice로 충분하다는 가정.
