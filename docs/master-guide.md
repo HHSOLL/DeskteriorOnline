@@ -875,6 +875,18 @@ Updated:
 Removed/Deprecated:
 - walk mode 정밀 배치가 문서 수준 계획만 있고 제품 경로에는 아직 진입점이 없다는 가정.
 
+## 2026-04-23 변경 동기화 (Focus Placement Prototype Phase 5.5 Complete)
+Added:
+- walk mode crosshair/hover hint는 focus surface와 선택 자산 호환성에 따라 actionable/blocked/info 톤을 구분해야 한다.
+- focus placement HUD는 support surface 로컬 bounds와 preferred/no-place zone을 요약하는 minimap을 기본 포함해야 한다.
+- focus placement HUD/session은 raw keyboard target이 아니라 snapped local pose와 검증 상태를 canonical 값으로 사용한다.
+
+Updated:
+- desktop_top 프로토타입 품질 기준을 “진입 + keyboard nudge + commit 가능”에서 “진입 힌트 + local grid + blocked/collision status까지 읽히는 실사용 prototype”으로 강화한다.
+
+Removed/Deprecated:
+- focus placement 제품 경로가 selected asset만 있으면 별도 compatibility/hint 없이도 충분하다는 가정.
+
 ## 2026-04-23 변경 동기화 (Asset Compiler Alpha Phase 4A)
 Added:
 - `packages/asset-compiler` 패키지를 추가해 curated deskterior asset 정의와 compiler command surface를 `apps/web/scripts` 밖으로 승격했다.

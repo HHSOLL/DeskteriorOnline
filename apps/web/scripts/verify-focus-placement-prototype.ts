@@ -9,7 +9,12 @@ import { commitRuntimePlacementToStore } from "../src/lib/runtime/runtime-asset-
 import {
   PLAN2SPACE_RUNTIME_DOCUMENT_PATCH_EVENT
 } from "../src/lib/runtime/runtime-asset-bridge";
-import { resolveFocusPlacementSessionUpdate } from "../src/lib/runtime/focus-placement-session";
+import {
+  resolveFocusPlacementAttachmentLabel,
+  resolveFocusPlacementAvailability,
+  resolveFocusPlacementFeedback,
+  resolveFocusPlacementSessionUpdate
+} from "../src/lib/runtime/focus-placement-session";
 import { useSceneStore } from "../src/lib/stores/useSceneStore";
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -213,6 +218,34 @@ try {
     scaleInfo: legacyState.scaleInfo as ReturnType<typeof useSceneStore.getState>["scaleInfo"],
     assets: legacyState.assets as ReturnType<typeof useSceneStore.getState>["assets"]
   });
+  const deskAsset = useSceneStore.getState().assets.find((asset) => asset.id === "desk-1") ?? null;
+  const mouseAsset = useSceneStore.getState().assets.find((asset) => asset.id === "mouse-1") ?? null;
+  const deskSurface = runtimeAssets[0]?.supportSurfaces[0] ?? null;
+  assert(deskAsset && mouseAsset && deskSurface, "focus placement smoke requires desk, object, and support surface fixtures");
+
+  const blockedAvailability = resolveFocusPlacementAvailability({
+    selectedAsset: null,
+    supportAsset: deskAsset,
+    focusSurface: deskSurface
+  });
+  assert(
+    blockedAvailability.enabled === false && blockedAvailability.hint.includes("제품"),
+    "focus placement should expose a blocked hint when no selected asset is available"
+  );
+
+  const readyAvailability = resolveFocusPlacementAvailability({
+    selectedAsset: mouseAsset,
+    supportAsset: deskAsset,
+    focusSurface: deskSurface
+  });
+  assert(
+    readyAvailability.enabled === true && readyAvailability.hint === "정밀 배치",
+    "focus placement should expose a ready hint when the selected asset is compatible"
+  );
+  assert(
+    resolveFocusPlacementAttachmentLabel("place_on_surface") === "Place On Surface",
+    "focus placement should expose a stable attachment label for HUD rendering"
+  );
 
   const transaction = kernel.begin({
     objectId: "mouse-1",
@@ -253,6 +286,11 @@ try {
     "preview world transform should follow the focused support surface"
   );
   assert(nextState.constraintReport?.valid === true, "desk-top prototype update should stay valid");
+  const readyFeedback = resolveFocusPlacementFeedback(
+    nextState.constraintReport ?? null,
+    nextState.collisionReport ?? null
+  );
+  assert(readyFeedback.badgeLabel === "Ready", "valid focus placement should map to a ready HUD state");
   assert(Number(patchEventCount) === 0, "focus placement should not publish document patches before commit");
 
   const invalidTransaction = kernel.begin({
@@ -268,6 +306,14 @@ try {
     rotationMilliDeg: 0
   });
   assert(invalidState.constraintReport?.valid === false, "out-of-bounds candidate should become invalid");
+  const blockedFeedback = resolveFocusPlacementFeedback(
+    invalidState.constraintReport ?? null,
+    invalidState.collisionReport ?? null
+  );
+  assert(
+    blockedFeedback.badgeLabel === "Blocked" && blockedFeedback.blocked,
+    "invalid focus placement should map to a blocked HUD state"
+  );
   let invalidCommitFailed = false;
   try {
     invalidTransaction.commit();
