@@ -25,6 +25,7 @@ import InteractionManager from "../canvas/interaction/InteractionManager";
 import ViewerProductHotspots from "../canvas/interaction/ViewerProductHotspots";
 import Crosshair from "../overlay/hud/Crosshair";
 import FocusPlacementHud from "../overlay/hud/FocusPlacementHud";
+import FocusPlacementLauncher from "../overlay/hud/FocusPlacementLauncher";
 import MobileControls from "../overlay/hud/MobileControls";
 import MobileTouchHint from "../overlay/hud/MobileTouchHint";
 import ScenePerformanceBudgetHud from "../overlay/hud/ScenePerformanceBudgetHud";
@@ -180,6 +181,7 @@ export function SceneViewport({
         <>
           {hudProfile === "full" ? <Crosshair /> : null}
           {resolvedInteractionMode === "editor" ? <FocusPlacementHud /> : null}
+          {resolvedInteractionMode === "editor" ? <FocusPlacementLauncher /> : null}
           <ScenePerformanceBudgetHud />
           <MobileTouchHint />
           <MobileControls />

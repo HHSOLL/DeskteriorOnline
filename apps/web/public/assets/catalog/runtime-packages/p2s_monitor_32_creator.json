@@ -1,0 +1,351 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_monitor_32_creator",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "Television_01",
+  "manifestId": "p2s_monitor_32_creator",
+  "label": "P2S 32형 크리에이터 모니터",
+  "assetId": "/assets/models/Television_01/Television_01_1k.gltf",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/Television_01/Television_01_1k.gltf",
+  "dimensionsMm": {
+    "width": 715,
+    "depth": 230,
+    "height": 520
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "monitor-back",
+        "anchorTypes": [
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          0.429,
+          0.18719999999999998
+        ],
+        "top": 0.281,
+        "surfaceType": "monitor_back",
+        "allowedAttachments": [
+          "vesa_mount"
+        ],
+        "localFrame": {
+          "originMm": [
+            0,
+            281,
+            -28
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            1000,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            -1000
+          ]
+        }
+      }
+    ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "manual_required",
+      "reason": "catalog display variant must expose a VESA target for mounted focus placement",
+      "points": [
+        {
+          "id": "monitor-vesa-100",
+          "type": "vesa_mount",
+          "localPositionMm": [
+            0,
+            281,
+            -24
+          ],
+          "localNormal": [
+            0,
+            0,
+            -1000
+          ],
+          "localTangent": [
+            1000,
+            0,
+            0
+          ],
+          "compatibleWith": [
+            "monitor_back",
+            "vesa-plate"
+          ],
+          "constraints": {
+            "vesaPatternMm": [
+              100,
+              100
+            ],
+            "minClearanceMm": 40,
+            "maxLoadKg": 9
+          }
+        }
+      ]
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/Television_01/Television_01_1k.gltf",
+    "productId": "p2s_monitor_32_creator",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 715,
+      "depth": 230,
+      "height": 520
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Display",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/Television_01/Television_01_1k.gltf",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/Television_01/Television_01_1k.gltf",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 715,
+          "depth": 230,
+          "height": 520
+        },
+        "centerMm": [
+          0,
+          260,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [
+      {
+        "id": "monitor-back",
+        "type": "monitor_back",
+        "localFrame": {
+          "originMm": [
+            0,
+            281,
+            -28
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            1000,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            -1000
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -214,
+            -94
+          ],
+          "max": [
+            215,
+            94
+          ]
+        },
+        "allowedAttachments": [
+          "vesa_mount"
+        ]
+      }
+    ],
+    "attachmentPoints": [
+      {
+        "id": "monitor-vesa-100",
+        "type": "vesa_mount",
+        "localPositionMm": [
+          0,
+          281,
+          -24
+        ],
+        "localNormal": [
+          0,
+          0,
+          -1000
+        ],
+        "localTangent": [
+          1000,
+          0,
+          0
+        ],
+        "compatibleWith": [
+          "monitor_back",
+          "vesa-plate"
+        ],
+        "constraints": {
+          "vesaPatternMm": [
+            100,
+            100
+          ],
+          "minClearanceMm": 40,
+          "maxLoadKg": 9
+        }
+      }
+    ],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 32형 크리에이터 모니터",
+        "finishColor": "Satin black",
+        "finishMaterial": "Plastic display shell with metal stand",
+        "detailNotes": "Real-scale display variant with inferred VESA attachment metadata for monitor-arm placement."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 715,
+        "depth": 230,
+        "height": 520
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/Television_01/Television_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/Television_01/Television_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_monitor_32_creator.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/Television_01/Television_01_1k.gltf"
+      }
+    ],
+    "proxyPath": "/assets/models/Television_01/Television_01_1k.gltf",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_monitor_32_creator.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

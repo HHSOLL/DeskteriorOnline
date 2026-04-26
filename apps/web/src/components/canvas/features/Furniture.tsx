@@ -21,6 +21,7 @@ import { scheduleInteractionLatency } from "../../../lib/performance/scene-telem
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
 import {
   resolveFocusPlacementEntry,
+  resolveFocusPlacementFeedback,
   resolveFocusSurfaceLabel
 } from "../../../lib/runtime/focus-placement-session";
 import { useRuntimeRendererAdapter } from "../../../lib/runtime/runtime-renderer-context";
@@ -47,6 +48,7 @@ import { useInteractionRegistry } from "../interaction/InteractionManager";
 import type { SceneAsset } from "../../../lib/stores/useSceneStore";
 
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+const relativePreviewEuler = new THREE.Euler();
 const MAX_DYNAMIC_EMITTERS = 6;
 const LIGHT_EMITTER_HINT_IDS = new Set([
   "p2s_desk_lamp_glow",
@@ -1015,6 +1017,26 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     lightProfile != null &&
     (viewMode !== "top" || topMode === "desk-precision");
   const isVisible = resolveRuntimeAssetVisibility(runtimeRenderer, runtimeEngine, asset);
+  const activeFocusFeedback =
+    activeFocusPlacementSession?.objectId === asset.id
+      ? resolveFocusPlacementFeedback(
+          activeFocusPlacementSession.constraintReport,
+          activeFocusPlacementSession.collisionReport
+        )
+      : null;
+  const ghostDimensions = asset.product?.dimensionsMm
+    ? {
+        width: Math.max(asset.product.dimensionsMm.width / 1000, 0.04),
+        depth: Math.max(asset.product.dimensionsMm.depth / 1000, 0.04),
+        height: Math.max(asset.product.dimensionsMm.height / 1000, 0.02)
+      }
+    : null;
+  const focusGhostColor =
+    activeFocusFeedback?.tone === "blocked"
+      ? "#fb7185"
+      : activeFocusFeedback?.tone === "warning"
+        ? "#fbbf24"
+        : "#34d399";
 
   const handleReadOnlySelect = (event: ThreeEvent<PointerEvent>) => {
     if (!readOnly) return;
@@ -1209,10 +1231,24 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       return;
     }
 
-    applyRuntimeTransformToObject(
-      groupRef.current,
-      resolveRuntimeAssetTransform(runtimeRenderer, runtimeEngine, asset)
-    );
+    const resolvedTransform = resolveRuntimeAssetTransform(runtimeRenderer, runtimeEngine, asset);
+    if (viewMode === "walk") {
+      groupRef.current.position.set(
+        resolvedTransform.position[0] - asset.position[0],
+        resolvedTransform.position[1] - asset.position[1],
+        resolvedTransform.position[2] - asset.position[2]
+      );
+      relativePreviewEuler.set(
+        resolvedTransform.rotation[0] - asset.rotation[0],
+        resolvedTransform.rotation[1] - asset.rotation[1],
+        resolvedTransform.rotation[2] - asset.rotation[2]
+      );
+      groupRef.current.rotation.copy(relativePreviewEuler);
+      groupRef.current.scale.set(...resolvedTransform.scale);
+      return;
+    }
+
+    applyRuntimeTransformToObject(groupRef.current, resolvedTransform);
   });
 
   const content = isPlaceholderAsset(asset.assetId) ? (
@@ -1250,6 +1286,37 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       <RigidBody type="fixed" colliders="cuboid" position={asset.position} rotation={asset.rotation}>
         <group ref={groupRef} name={`furniture:${asset.id}`} scale={asset.scale} {...groupProps}>
           {content}
+          {activeFocusFeedback && ghostDimensions ? (
+            <mesh
+              name={`focus-placement-ghost:${asset.id}`}
+              position={[0, ghostDimensions.height / 2, 0]}
+              renderOrder={20}
+            >
+              <boxGeometry args={[ghostDimensions.width, ghostDimensions.height, ghostDimensions.depth]} />
+              <meshBasicMaterial
+                color={focusGhostColor}
+                transparent
+                opacity={activeFocusFeedback.tone === "blocked" ? 0.22 : 0.16}
+                depthWrite={false}
+              />
+            </mesh>
+          ) : null}
+          {activeFocusFeedback && ghostDimensions ? (
+            <mesh
+              name={`focus-placement-ghost-outline:${asset.id}`}
+              position={[0, ghostDimensions.height / 2, 0]}
+              renderOrder={21}
+            >
+              <boxGeometry args={[ghostDimensions.width, ghostDimensions.height, ghostDimensions.depth]} />
+              <meshBasicMaterial
+                color={focusGhostColor}
+                wireframe
+                transparent
+                opacity={0.9}
+                depthTest={false}
+              />
+            </mesh>
+          ) : null}
           {shouldRenderLight ? (
             <pointLight
               position={lightProfile.offset}

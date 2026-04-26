@@ -1,0 +1,29 @@
+[
+  {
+    "id": "magnetic-pad",
+    "type": "magnetic_attach",
+    "localPositionMm": [
+      0,
+      0,
+      0
+    ],
+    "localNormal": [
+      0,
+      -1000,
+      0
+    ],
+    "localTangent": [
+      1000,
+      0,
+      0
+    ],
+    "compatibleWith": [
+      "desk-underside",
+      "desk_edge"
+    ],
+    "constraints": {
+      "minClearanceMm": 10,
+      "maxLoadKg": 1
+    }
+  }
+]

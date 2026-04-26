@@ -100,20 +100,28 @@ function DetailedFloorMeshes({
 
   useEffect(() => {
     if (!textures || !hasRenderableTextureSet) return;
+    const repeatX = Math.max(1, width / Math.max(0.25, textureConfig.repeatScaleMeters[0]));
+    const repeatY = Math.max(1, depth / Math.max(0.25, textureConfig.repeatScaleMeters[1]));
     Object.values(textures).forEach((texture) => {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(Math.max(1, width / 3.8), Math.max(1, depth / 3.8));
+      texture.repeat.set(repeatX, repeatY);
+      texture.center.set(0.5, 0.5);
+      texture.rotation = textureConfig.rotationRadians;
       texture.anisotropy = 8;
       texture.minFilter = THREE.LinearMipmapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
+      texture.needsUpdate = true;
     });
 
     textures.map.colorSpace = THREE.SRGBColorSpace;
     textures.roughnessMap.colorSpace = THREE.NoColorSpace;
     textures.normalMap.colorSpace = THREE.NoColorSpace;
     textures.bumpMap.colorSpace = THREE.NoColorSpace;
-  }, [depth, hasRenderableTextureSet, textures, width]);
+    Object.values(textures).forEach((texture) => {
+      texture.needsUpdate = true;
+    });
+  }, [depth, hasRenderableTextureSet, textureConfig, textures, width]);
 
   const material = useMemo(() => {
     if (isWhitePreview || !textures || !hasRenderableTextureSet) {

@@ -216,6 +216,7 @@ export type ProjectSnapshot = {
   assets: SceneAsset[];
   wallMaterialIndex: number;
   floorMaterialIndex: number;
+  ceilingMaterialIndex?: number;
   lighting: LightingSettings;
 };
 
@@ -238,6 +239,7 @@ type SceneDataState = {
   materials: Record<string, MaterialRef>;
   wallMaterialIndex: number;
   floorMaterialIndex: number;
+  ceilingMaterialIndex: number;
   lighting: LightingSettings;
   selectedAssetId: string | null;
   entranceId: string | null;
@@ -260,6 +262,7 @@ type SceneState = SceneDataState & {
   setScaleInfo: (scaleInfo: ScaleInfo) => void;
   setWallMaterialIndex: (index: number) => void;
   setFloorMaterialIndex: (index: number) => void;
+  setCeilingMaterialIndex: (index: number) => void;
   setLighting: (lighting: Partial<LightingSettings>) => void;
   setSelectedAssetId: (id: string | null) => void;
   setEntranceId: (id: string | null) => void;
@@ -315,6 +318,7 @@ const initialSceneState: SceneDataState = {
   materials: {},
   wallMaterialIndex: 0,
   floorMaterialIndex: 0,
+  ceilingMaterialIndex: 0,
   lighting: DEFAULT_LIGHTING,
   selectedAssetId: null,
   entranceId: null,
@@ -606,6 +610,7 @@ function buildSnapshot(
     assets: state.assets,
     wallMaterialIndex: state.wallMaterialIndex,
     floorMaterialIndex: state.floorMaterialIndex,
+    ceilingMaterialIndex: state.ceilingMaterialIndex,
     lighting: state.lighting
   };
 }
@@ -624,6 +629,7 @@ function serializeSnapshot(snapshot: ProjectSnapshot) {
     assets: snapshot.assets,
     wallMaterialIndex: snapshot.wallMaterialIndex,
     floorMaterialIndex: snapshot.floorMaterialIndex,
+    ceilingMaterialIndex: snapshot.ceilingMaterialIndex ?? snapshot.wallMaterialIndex ?? 0,
     lighting: snapshot.lighting
   });
 }
@@ -642,6 +648,7 @@ function applySnapshot(snapshot: ProjectSnapshot) {
     assets: snapshot.assets,
     wallMaterialIndex: snapshot.wallMaterialIndex,
     floorMaterialIndex: snapshot.floorMaterialIndex,
+    ceilingMaterialIndex: snapshot.ceilingMaterialIndex ?? snapshot.wallMaterialIndex ?? 0,
     lighting: snapshot.lighting ?? DEFAULT_LIGHTING
   };
 }
@@ -705,6 +712,7 @@ export const useSceneStore = create<SceneState>((set) => ({
     })),
   setWallMaterialIndex: (index) => set({ wallMaterialIndex: index }),
   setFloorMaterialIndex: (index) => set({ floorMaterialIndex: index }),
+  setCeilingMaterialIndex: (index) => set({ ceilingMaterialIndex: index }),
   setLighting: (lighting) =>
     set((state) => ({
       lighting: {

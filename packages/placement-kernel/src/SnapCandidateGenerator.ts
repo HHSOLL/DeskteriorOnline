@@ -12,12 +12,24 @@ function snapToStep(value: number, step: number) {
   return Math.round(value / step) * step;
 }
 
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
 export class SnapCandidateGenerator {
   resolveRule(
     attachmentType: AttachmentType,
     surface?: SupportSurface | null
   ): SnapRule {
-    if (attachmentType === "edge_clamp" || surface?.type === "desk_edge") {
+    if (
+      attachmentType === "edge_clamp" ||
+      attachmentType === "underside_screw" ||
+      attachmentType === "vesa_mount" ||
+      attachmentType === "cable_route" ||
+      surface?.type === "desk_edge" ||
+      surface?.type === "desk_underside" ||
+      surface?.type === "monitor_back"
+    ) {
       return {
         moveStepMm: 10,
         rotateStepMilliDeg: 5000
@@ -47,11 +59,30 @@ export class SnapCandidateGenerator {
     surface?: SupportSurface | null
   ): SurfaceLocalPose {
     const rule = this.resolveRule(attachmentType, surface);
-    return {
+    const snapped = {
       uMm: snapToStep(localPose.uMm, rule.moveStepMm),
       vMm: snapToStep(localPose.vMm, rule.moveStepMm),
       normalOffsetMm: snapToStep(localPose.normalOffsetMm, rule.moveStepMm),
       rotationMilliDeg: snapToStep(localPose.rotationMilliDeg, rule.rotateStepMilliDeg)
     };
+
+    if (
+      surface &&
+      (
+        attachmentType === "edge_clamp" ||
+        attachmentType === "underside_screw" ||
+        attachmentType === "vesa_mount" ||
+        attachmentType === "cable_route"
+      )
+    ) {
+      return {
+        ...snapped,
+        uMm: clamp(snapped.uMm, surface.boundsMm.min[0], surface.boundsMm.max[0]),
+        vMm: clamp(snapped.vMm, surface.boundsMm.min[1], surface.boundsMm.max[1]),
+        normalOffsetMm: Math.max(0, snapped.normalOffsetMm)
+      };
+    }
+
+    return snapped;
   }
 }

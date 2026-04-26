@@ -1,0 +1,269 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_desk_mat_black_xl",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_desk_tray_oak",
+  "manifestId": "p2s_desk_mat_black_xl",
+  "label": "P2S 블랙 XL 데스크 매트",
+  "assetId": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+  "dimensionsMm": {
+    "width": 1000,
+    "depth": 450,
+    "height": 4
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "surface-top",
+        "anchorTypes": [
+          "desk_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          0.9,
+          0.387
+        ],
+        "top": 0.004,
+        "surfaceType": "desktop_top",
+        "allowedAttachments": [
+          "place_on_surface"
+        ],
+        "margin": [
+          0.02,
+          0.02
+        ]
+      }
+    ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+    "productId": "p2s_desk_mat_black_xl",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 1000,
+      "depth": 450,
+      "height": 4
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Desk Mat",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 1000,
+          "depth": 450,
+          "height": 4
+        },
+        "centerMm": [
+          0,
+          2,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [
+      {
+        "id": "surface-top",
+        "type": "desktop_top",
+        "localFrame": {
+          "originMm": [
+            0,
+            4,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            1000,
+            0
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -430,
+            -174
+          ],
+          "max": [
+            430,
+            174
+          ]
+        },
+        "allowedAttachments": [
+          "place_on_surface"
+        ]
+      }
+    ],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 블랙 XL 데스크 매트",
+        "finishColor": "Black",
+        "finishMaterial": "Soft desk mat surface",
+        "detailNotes": "Scale-locked desk mat variant for composition and clearance testing."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 1000,
+        "depth": 450,
+        "height": 4
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_desk_mat_black_xl.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_desk_mat_black_xl.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_mat_black_xl.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

@@ -1,6 +1,7 @@
 import type { RuntimeAsset } from "@deskterioronline/scene-schema";
 import type { SupportSurface } from "@deskterioronline/scene-schema";
 import type { PlacementCandidate, ConstraintReport } from "./types";
+import { CableRouteSolver } from "./CableRouteSolver";
 import { MonitorArmSolver } from "./MonitorArmSolver";
 import {
   rectContainedBySurface,
@@ -10,6 +11,7 @@ import {
 } from "./footprint";
 
 export class ConstraintSolver {
+  private readonly cableRouteSolver = new CableRouteSolver();
   private readonly monitorArmSolver = new MonitorArmSolver();
 
   evaluate(
@@ -41,6 +43,11 @@ export class ConstraintSolver {
     const errors: ConstraintReport["errors"] = [];
     const warnings: ConstraintReport["warnings"] = [];
     const validatesSurfaceFootprint = candidate.attachmentType === "place_on_surface";
+    const validatesMountedPoint =
+      candidate.attachmentType === "edge_clamp" ||
+      candidate.attachmentType === "underside_screw" ||
+      candidate.attachmentType === "vesa_mount" ||
+      candidate.attachmentType === "cable_route";
 
     if (!surface) {
       errors.push({
@@ -166,9 +173,14 @@ export class ConstraintSolver {
         const constrainedThicknessPoints = compatiblePoints.filter(
           (point) => point.constraints.requiredThicknessMm
         );
-        if (
+        if (constrainedThicknessPoints.length > 0 && typeof surface.thicknessMm !== "number") {
+          errors.push({
+            code: "SURFACE_THICKNESS_MISSING",
+            message: "Surface thickness must be authored before this mounted attachment can be validated.",
+            severity: "error"
+          });
+        } else if (
           constrainedThicknessPoints.length > 0 &&
-          typeof surface.thicknessMm === "number" &&
           !constrainedThicknessPoints.some((point) => {
             const requiredThickness = point.constraints.requiredThicknessMm;
             return (
@@ -185,11 +197,41 @@ export class ConstraintSolver {
           });
         }
 
+        const clearanceRequirements = compatiblePoints
+          .map((point) => point.constraints.minClearanceMm)
+          .filter((value): value is number => typeof value === "number");
+        if (
+          candidate.attachmentType === "underside_screw" &&
+          clearanceRequirements.length > 0 &&
+          candidate.localPose.normalOffsetMm < Math.min(...clearanceRequirements)
+        ) {
+          errors.push({
+            code: "KNEE_CLEARANCE_INSUFFICIENT",
+            message: "Underside screw attachment does not preserve the required knee clearance.",
+            severity: "error"
+          });
+        }
+
         const footprint = resolveLocalFootprintBounds(
           candidate.localPose,
           runtimeAsset.dimensionsMm,
           surface.type
         );
+
+        if (validatesMountedPoint) {
+          const pointInsideSurface =
+            candidate.localPose.uMm >= surface.boundsMm.min[0] &&
+            candidate.localPose.uMm <= surface.boundsMm.max[0] &&
+            candidate.localPose.vMm >= surface.boundsMm.min[1] &&
+            candidate.localPose.vMm <= surface.boundsMm.max[1];
+          if (!pointInsideSurface) {
+            errors.push({
+              code: "MOUNTED_POINT_OUTSIDE_SURFACE",
+              message: "Mounted attachment point must remain inside the focused support surface.",
+              severity: "error"
+            });
+          }
+        }
 
         if (validatesSurfaceFootprint) {
           if (!rectContainedBySurface(footprint, surface)) {
@@ -223,13 +265,44 @@ export class ConstraintSolver {
           }
         }
 
+        if (candidate.attachmentType === "underside_screw") {
+          if (!rectContainedBySurface(footprint, surface)) {
+            errors.push({
+              code: "UNDERSIDE_FOOTPRINT_EXCEEDED",
+              message: "Underside mounted accessory footprint must remain below the desk surface.",
+              severity: "error"
+            });
+          }
+
+          if (surface.noPlaceZones?.some((zone) => rectOverlapsSurfaceZone(footprint, zone))) {
+            errors.push({
+              code: "KNEE_ZONE_OVERLAP",
+              message: "Underside mounted accessory overlaps the reserved knee-clearance zone.",
+              severity: "error"
+            });
+          }
+        }
+
+        if (candidate.attachmentType === "cable_route") {
+          const routeReport = this.cableRouteSolver.validate(candidate.cableRoute, surface);
+          errors.push(...routeReport.errors);
+          warnings.push(...routeReport.warnings);
+        }
+
         const edgeClearanceMm = resolveSurfaceEdgeClearanceMm(footprint, surface);
-        if (candidate.attachmentType === "edge_clamp" && edgeClearanceMm > 24) {
-          errors.push({
-            code: "EDGE_CLAMP_NOT_ON_EDGE",
-            message: "Edge clamp placement must stay close to the support edge.",
-            severity: "error"
-          });
+        if (candidate.attachmentType === "edge_clamp") {
+          const edgeBandMm = 24;
+          const vEdgeDistance = Math.min(
+            Math.abs(candidate.localPose.vMm - surface.boundsMm.min[1]),
+            Math.abs(surface.boundsMm.max[1] - candidate.localPose.vMm)
+          );
+          if (vEdgeDistance > edgeBandMm) {
+            errors.push({
+              code: "EDGE_CLAMP_NOT_ON_EDGE",
+              message: "Edge clamp placement must stay close to the support edge.",
+              severity: "error"
+            });
+          }
         } else if (validatesSurfaceFootprint && edgeClearanceMm < 40) {
           warnings.push({
             code: "EDGE_CLEARANCE_LOW",

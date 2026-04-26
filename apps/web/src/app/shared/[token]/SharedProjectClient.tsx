@@ -179,6 +179,7 @@ export function SharedProjectClient({
       },
       wallMaterialIndex: 0,
       floorMaterialIndex: 0,
+      ceilingMaterialIndex: 0,
       lighting: {
         mode: "direct",
         ambientIntensity: 0.35,
@@ -211,6 +212,7 @@ export function SharedProjectClient({
       scaleInfo: scenePayload.scaleInfo,
       wallMaterialIndex: scenePayload.wallMaterialIndex,
       floorMaterialIndex: scenePayload.floorMaterialIndex,
+      ceilingMaterialIndex: scenePayload.ceilingMaterialIndex,
       lighting: scenePayload.lighting
     });
     setSelectedAssetId(null);

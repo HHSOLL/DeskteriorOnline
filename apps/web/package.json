@@ -15,6 +15,7 @@
     "primary:e2e:room-flow": "node --import tsx scripts/e2e-primary-room-flow.ts --mode=smoke",
     "primary:e2e:room-flow:strict": "E2E_ROOM_FLOW_STRICT=1 node --import tsx scripts/e2e-primary-room-flow.ts --mode=contract",
     "primary:e2e:room-flow:full": "node --import tsx scripts/e2e-primary-room-flow.ts --mode=flow --strict",
+    "functional:e2e:browser": "node --import tsx scripts/e2e-functional-browser-flow.ts",
     "assets:export:deskterior": "node --import tsx scripts/export-deskterior-runtime.ts",
     "assets:sync:deskterior": "node --import tsx scripts/sync-deskterior-catalog.ts",
     "assets:sync:ktx2-transcoder": "node --import tsx scripts/sync-ktx2-transcoder.ts",

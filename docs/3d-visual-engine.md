@@ -750,6 +750,19 @@ Updated:
 Removed/Deprecated:
 - hidden object가 runtime renderer handle에 남아 있어도 실제 draw path에서 문제 없다는 가정.
 
+## 2026-04-24 변경 동기화 (Room Visual Quality Slice)
+Added:
+- Wall/floor/ceiling material presets carry `repeatScaleMeters`, `rotationRadians`, and `previewThumbnail` so UV repeat stays close to real-world scale.
+- Procedural walls render interior baseboards with door/opening gaps, and walk-mode ceilings render perimeter trim/corner caps.
+- Builder preview must be browser-capturable for before/after evidence; preview disables unstable post effects and keeps `preserveDrawingBuffer` enabled only on the builder preview viewport.
+
+Updated:
+- Builder preview render quality uses continuous frames because scene shell and texture loading are async during step transitions.
+- Room material presets must cover paint, wallpaper/acoustic panel, wood, tile, carpet, concrete, and resilient floor categories before feature RC.
+
+Removed/Deprecated:
+- A flat wall/floor color swatch without physical texture scale is no longer an acceptable room-quality default.
+
 ## 2026-04-23 변경 동기화 (Focus Placement Walk Prototype)
 Added:
 - walk mode의 `Focus Placement`는 선택된 배치 대상 자산을 runtime preview로만 움직이고, `Enter` 전에는 `SceneDocument`를 건드리지 않는 HUD/keyboard session으로 동작해야 한다.

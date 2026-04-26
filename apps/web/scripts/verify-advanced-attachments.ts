@@ -87,6 +87,22 @@ const state: LegacySceneStoreStateLike = {
       position: [0, 0, 0],
       rotation: [0, 0, 0],
       scale: [1, 1, 1]
+    },
+    {
+      id: "tray-1",
+      assetId: "p2s_under_desk_tray_mount",
+      catalogItemId: "p2s_under_desk_tray_mount",
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
+    },
+    {
+      id: "cable-1",
+      assetId: "p2s_cable_route",
+      catalogItemId: "p2s_cable_route",
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
     }
   ],
   wallMaterialIndex: 0,
@@ -120,6 +136,18 @@ const runtimeAssets: RuntimeAsset[] = [
     colliders: [],
     supportSurfaces: [
       {
+        id: "desktop_top",
+        type: "desktop_top",
+        localFrame: {
+          originMm: [0, 740, 0],
+          tangentU: [1000, 0, 0],
+          tangentV: [0, 0, 1000],
+          normal: [0, 1000, 0]
+        },
+        boundsMm: { min: [-650, -300], max: [650, 300] },
+        allowedAttachments: ["place_on_surface", "cable_route"]
+      },
+      {
         id: "back_edge",
         type: "desk_edge",
         localFrame: {
@@ -131,6 +159,20 @@ const runtimeAssets: RuntimeAsset[] = [
         boundsMm: { min: [-600, -20], max: [600, 20] },
         thicknessMm: 40,
         allowedAttachments: ["edge_clamp"]
+      },
+      {
+        id: "desk_underside",
+        type: "desk_underside",
+        localFrame: {
+          originMm: [0, 700, 0],
+          tangentU: [1000, 0, 0],
+          tangentV: [0, 0, 1000],
+          normal: [0, -1000, 0]
+        },
+        boundsMm: { min: [-650, -280], max: [650, 280] },
+        thicknessMm: 40,
+        allowedAttachments: ["underside_screw"],
+        noPlaceZones: [{ min: [-260, -180], max: [260, 180] }]
       }
     ],
     attachmentPoints: [],
@@ -231,6 +273,81 @@ const runtimeAssets: RuntimeAsset[] = [
     }
   },
   {
+    assetId: "p2s_under_desk_tray_mount",
+    units: "mm",
+    dimensionsMm: { width: 300, depth: 120, height: 70 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "tray.glb", triangleCount: 5000, drawCallBudget: 4 }],
+      proxy: "tray.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 5000,
+      textureBudgetMb: 8
+    },
+    colliders: [],
+    supportSurfaces: [],
+    attachmentPoints: [
+      {
+        id: "underside-screw-rail",
+        type: "underside_screw",
+        localPositionMm: [0, 70, 0],
+        localNormal: [0, 1000, 0],
+        localTangent: [1000, 0, 0],
+        compatibleWith: ["desk_underside"],
+        constraints: {
+          minClearanceMm: 80,
+          requiredThicknessMm: [20, 60]
+        }
+      }
+    ],
+    materialVariants: [{ id: "default", label: "Default" }],
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 300, depth: 120, height: 70 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
+  },
+  {
+    assetId: "p2s_cable_route",
+    units: "mm",
+    dimensionsMm: { width: 20, depth: 20, height: 12 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "cable.glb", triangleCount: 1000, drawCallBudget: 1 }],
+      proxy: "cable.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 1000,
+      textureBudgetMb: 2
+    },
+    colliders: [],
+    supportSurfaces: [],
+    attachmentPoints: [
+      {
+        id: "desktop-cable-route",
+        type: "cable_route",
+        localPositionMm: [0, 0, 0],
+        localNormal: [0, 1000, 0],
+        localTangent: [1000, 0, 0],
+        compatibleWith: ["desktop_top"],
+        constraints: {
+          minClearanceMm: 5
+        }
+      }
+    ],
+    materialVariants: [{ id: "default", label: "Default" }],
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 20, depth: 20, height: 12 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
+  },
+  {
     assetId: "p2s_monitor_27",
     units: "mm",
     dimensionsMm: { width: 612, depth: 190, height: 540 },
@@ -321,16 +438,53 @@ try {
     attachmentType: "edge_clamp"
   });
   const edgeClampState = edgeClampTransaction.update({
+    uMm: 900,
+    vMm: 80,
+    normalOffsetMm: 0,
+    rotationMilliDeg: 0
+  });
+  assert(
+    edgeClampState.constraintReport?.valid === true &&
+      edgeClampState.activeCandidate?.localPose.uMm === 600 &&
+      edgeClampState.activeCandidate.localPose.vMm === 20,
+    "monitor arm edge clamp should clamp to the authored edge and pass support thickness validation"
+  );
+  edgeClampTransaction.commit();
+
+  const noThicknessRuntimeAssets = runtimeAssets.map((asset) =>
+    asset.assetId === "p2s_desk_oak"
+      ? {
+          ...asset,
+          supportSurfaces: asset.supportSurfaces.map((surface) =>
+            surface.id === "back_edge"
+              ? {
+                  ...surface,
+                  thicknessMm: undefined
+                }
+              : surface
+          )
+        }
+      : asset
+  );
+  const noThicknessEngine = createEngine(document, noThicknessRuntimeAssets);
+  const noThicknessKernel = new PlacementKernel(noThicknessEngine);
+  const noThicknessTransaction = noThicknessKernel.begin({
+    objectId: "arm-1",
+    supportObjectId: "desk-1",
+    attachmentType: "edge_clamp"
+  });
+  const noThicknessState = noThicknessTransaction.update({
     uMm: 140,
     vMm: 8,
     normalOffsetMm: 0,
     rotationMilliDeg: 0
   });
   assert(
-    edgeClampState.constraintReport?.valid === true,
-    "monitor arm edge clamp should pass support thickness validation"
+    noThicknessState.constraintReport?.errors.some(
+      (issue) => issue.code === "SURFACE_THICKNESS_MISSING"
+    ),
+    "edge clamp validation should fail when the support surface has no authored thickness"
   );
-  edgeClampTransaction.commit();
 
   const vesaTransaction = kernel.begin({
     objectId: "monitor-1",
@@ -349,7 +503,9 @@ try {
   );
   const vesaCommitted = vesaTransaction.commit();
   assert(
-    vesaCommitted.attachmentType === "vesa_mount" && vesaCommitted.surfaceId === "vesa_plate",
+    vesaCommitted.mode === "surface_local" &&
+      vesaCommitted.attachmentType === "vesa_mount" &&
+      vesaCommitted.surfaceId === "vesa_plate",
     "vesa-mounted monitor should persist on the monitor-arm end-effector surface"
   );
 
@@ -369,6 +525,164 @@ try {
       (issue) => issue.code === "VESA_PATTERN_INCOMPATIBLE"
     ),
     "mismatched monitor patterns should be rejected before commit"
+  );
+
+  const trayTransaction = kernel.begin({
+    objectId: "tray-1",
+    supportObjectId: "desk-1",
+    attachmentType: "underside_screw"
+  });
+  const trayState = trayTransaction.update({
+    uMm: 430,
+    vMm: 0,
+    normalOffsetMm: 90,
+    rotationMilliDeg: 0
+  });
+  assert(
+    trayState.constraintReport?.valid === true,
+    "under-desk tray should pass underside screw thickness and knee-clearance validation"
+  );
+  const trayCommitted = trayTransaction.commit();
+  assert(
+    trayCommitted.mode === "surface_local" &&
+      trayCommitted.attachmentType === "underside_screw" &&
+      trayCommitted.surfaceId === "desk_underside",
+    "under-desk tray should persist the underside screw relation"
+  );
+
+  const kneeBlockedTransaction = kernel.begin({
+    objectId: "tray-1",
+    supportObjectId: "desk-1",
+    attachmentType: "underside_screw"
+  });
+  const kneeBlockedState = kneeBlockedTransaction.update({
+    uMm: 0,
+    vMm: 0,
+    normalOffsetMm: 40,
+    rotationMilliDeg: 0
+  });
+  assert(
+    kneeBlockedState.constraintReport?.errors.some(
+      (issue) => issue.code === "KNEE_CLEARANCE_INSUFFICIENT" || issue.code === "KNEE_ZONE_OVERLAP"
+    ),
+    "under-desk tray should be rejected when it violates knee clearance"
+  );
+
+  const movedDeskDocument = migrateLegacySceneStoreStateToV2(
+    {
+      ...state,
+      assets: [
+        {
+          id: "desk-rotated",
+          assetId: "p2s_desk_oak",
+          catalogItemId: "p2s_desk_oak",
+          position: [2, 0, 1],
+          rotation: [0, Math.PI / 2, 0],
+          scale: [1, 1, 1]
+        },
+        {
+          id: "tray-rotated",
+          assetId: "p2s_under_desk_tray_mount",
+          catalogItemId: "p2s_under_desk_tray_mount",
+          position: [0, 0, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1]
+        }
+      ]
+    },
+    {
+      id: "verify-rotated-surface-relation",
+      version: 2
+    }
+  );
+  const movedDeskEngine = createEngine(movedDeskDocument, runtimeAssets);
+  const movedDeskKernel = new PlacementKernel(movedDeskEngine);
+  const movedTrayTransaction = movedDeskKernel.begin({
+    objectId: "tray-rotated",
+    supportObjectId: "desk-rotated",
+    attachmentType: "underside_screw"
+  });
+  const movedTrayState = movedTrayTransaction.update({
+    uMm: 430,
+    vMm: 0,
+    normalOffsetMm: 90,
+    rotationMilliDeg: 0
+  });
+  assert(movedTrayState.constraintReport?.valid === true, "rotated desk tray placement should remain valid");
+  const movedTrayPreview = movedTrayTransaction.previewWorldTransform();
+  assert(
+    movedTrayPreview?.world.positionMm &&
+      Math.abs(movedTrayPreview.world.positionMm[0] - 2000) <= 2 &&
+      Math.abs(movedTrayPreview.world.positionMm[2] - 570) <= 2,
+    "surface-local preview should follow the moved and rotated desk relation"
+  );
+  const movedTrayCommitted = movedTrayTransaction.commit();
+  assert(
+    movedTrayCommitted.mode === "surface_local" &&
+      movedTrayCommitted.supportObjectId === "desk-rotated",
+    "surface-local commit should persist the support relation after desk move/rotate"
+  );
+
+  const cableTransaction = kernel.begin({
+    objectId: "cable-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "cable_route"
+  });
+  const cableState = cableTransaction.update({
+    localPose: {
+      uMm: -500,
+      vMm: 240,
+      normalOffsetMm: 10,
+      rotationMilliDeg: 0
+    },
+    cableRoute: {
+      waypoints: [
+        { uMm: -500, vMm: 240, normalOffsetMm: 10 },
+        { uMm: -120, vMm: 240, normalOffsetMm: 10 },
+        { uMm: 260, vMm: 120, normalOffsetMm: 10 }
+      ],
+      bendRadiusMm: 30,
+      slackMm: 90
+    }
+  });
+  assert(cableState.constraintReport?.valid === true, "valid desktop cable route should pass validation");
+  const cableCommitted = cableTransaction.commit();
+  assert(
+    cableCommitted.mode === "surface_local" &&
+      cableCommitted.attachmentType === "cable_route" &&
+      cableCommitted.cableRoute?.waypoints.length === 3,
+    "cable route placement should persist route waypoint data"
+  );
+
+  const invalidCableTransaction = kernel.begin({
+    objectId: "cable-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "cable_route"
+  });
+  const invalidCableState = invalidCableTransaction.update({
+    localPose: {
+      uMm: 0,
+      vMm: 0,
+      normalOffsetMm: 10,
+      rotationMilliDeg: 0
+    },
+    cableRoute: {
+      waypoints: [
+        { uMm: -500, vMm: 240 },
+        { uMm: 900, vMm: 240 }
+      ],
+      bendRadiusMm: -1
+    }
+  });
+  assert(
+    invalidCableState.constraintReport?.errors.some(
+      (issue) =>
+        issue.code === "CABLE_ROUTE_WAYPOINT_OUT_OF_BOUNDS" ||
+        issue.code === "CABLE_ROUTE_BEND_RADIUS_INVALID"
+    ),
+    "invalid cable route geometry should be rejected before commit"
   );
 
   const articulationReachable = monitorArmSolver.solve(
@@ -446,26 +760,27 @@ try {
   });
   const publishedEngine = createEngine(publishedDocument, [publishedDesk, publishedTray]);
   const publishedKernel = new PlacementKernel(publishedEngine);
-  const trayTransaction = publishedKernel.begin({
+  const publishedTrayTransaction = publishedKernel.begin({
     objectId: "tray-published",
     supportObjectId: "desk-published",
     attachmentType: "underside_screw"
   });
-  const trayState = trayTransaction.update({
+  const publishedTrayState = publishedTrayTransaction.update({
     uMm: 0,
     vMm: 0,
     normalOffsetMm: 90,
     rotationMilliDeg: 0
   });
   assert(
-    trayState.constraintReport?.valid === true,
+    publishedTrayState.constraintReport?.valid === true,
     "published under-desk tray must pass real desk_underside attachment validation"
   );
-  const trayCommitted = trayTransaction.commit();
+  const publishedTrayCommitted = publishedTrayTransaction.commit();
   assert(
-    trayCommitted.attachmentType === "underside_screw" &&
-      trayCommitted.supportObjectId === "desk-published" &&
-      trayCommitted.surfaceId === "desk-underside",
+    publishedTrayCommitted.mode === "surface_local" &&
+      publishedTrayCommitted.attachmentType === "underside_screw" &&
+      publishedTrayCommitted.supportObjectId === "desk-published" &&
+      publishedTrayCommitted.surfaceId === "desk-underside",
     "published under-desk tray commit must persist the desk underside attachment relation"
   );
 
@@ -476,8 +791,12 @@ try {
         edgeClampValid: edgeClampState.constraintReport?.valid ?? false,
         vesaValid: vesaState.constraintReport?.valid ?? false,
         vesaPlacement: vesaCommitted,
-        publishedUnderDeskTrayValid: trayState.constraintReport?.valid ?? false,
-        publishedUnderDeskTrayPlacement: trayCommitted,
+        localUnderDeskTrayValid: trayState.constraintReport?.valid ?? false,
+        localUnderDeskTrayPlacement: trayCommitted,
+        movedRotatedDeskPlacement: movedTrayCommitted,
+        cableRoutePlacement: cableCommitted,
+        publishedUnderDeskTrayValid: publishedTrayState.constraintReport?.valid ?? false,
+        publishedUnderDeskTrayPlacement: publishedTrayCommitted,
         articulationReachableJoints: articulationReachable.joints,
         articulationUnreachableErrors: articulationUnreachable.errors.map((issue) => issue.code)
       },

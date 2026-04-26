@@ -1,0 +1,334 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_cable_tray_bamboo_700",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_under_desk_tray_mount",
+  "manifestId": "p2s_cable_tray_bamboo_700",
+  "label": "P2S 밤부 케이블 트레이 700",
+  "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  "dimensionsMm": {
+    "width": 700,
+    "depth": 190,
+    "height": 85
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "surface-top",
+        "anchorTypes": [
+          "desk_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          0.63,
+          0.16340000000000002
+        ],
+        "top": 0.085,
+        "surfaceType": "desktop_top",
+        "allowedAttachments": [
+          "place_on_surface"
+        ],
+        "margin": [
+          0.02,
+          0.02
+        ]
+      }
+    ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "manual_required",
+      "reason": "catalog under-desk cable variant must expose underside screw metadata",
+      "points": [
+        {
+          "id": "underside-screw-rail",
+          "type": "underside_screw",
+          "localPositionMm": [
+            0,
+            85,
+            0
+          ],
+          "localNormal": [
+            0,
+            1000,
+            0
+          ],
+          "localTangent": [
+            1000,
+            0,
+            0
+          ],
+          "compatibleWith": [
+            "desk-underside",
+            "desk_underside"
+          ],
+          "constraints": {
+            "requiredThicknessMm": [
+              18,
+              55
+            ],
+            "minClearanceMm": 80,
+            "maxLoadKg": 8
+          }
+        }
+      ]
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+    "productId": "p2s_cable_tray_bamboo_700",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 700,
+      "depth": 190,
+      "height": 85
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Cable Management",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 700,
+          "depth": 190,
+          "height": 85
+        },
+        "centerMm": [
+          0,
+          43,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [
+      {
+        "id": "surface-top",
+        "type": "desktop_top",
+        "localFrame": {
+          "originMm": [
+            0,
+            85,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            1000,
+            0
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -295,
+            -62
+          ],
+          "max": [
+            295,
+            62
+          ]
+        },
+        "allowedAttachments": [
+          "place_on_surface"
+        ]
+      }
+    ],
+    "attachmentPoints": [
+      {
+        "id": "underside-screw-rail",
+        "type": "underside_screw",
+        "localPositionMm": [
+          0,
+          85,
+          0
+        ],
+        "localNormal": [
+          0,
+          1000,
+          0
+        ],
+        "localTangent": [
+          1000,
+          0,
+          0
+        ],
+        "compatibleWith": [
+          "desk-underside",
+          "desk_underside"
+        ],
+        "constraints": {
+          "requiredThicknessMm": [
+            18,
+            55
+          ],
+          "minClearanceMm": 80,
+          "maxLoadKg": 8
+        }
+      }
+    ],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 밤부 케이블 트레이 700",
+        "finishColor": "Black",
+        "finishMaterial": "Steel or reinforced felt",
+        "detailNotes": "Mounted cable tray with inferred underside_screw metadata."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 700,
+        "depth": 190,
+        "height": 85
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_cable_tray_bamboo_700.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_cable_tray_bamboo_700.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_cable_tray_bamboo_700.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

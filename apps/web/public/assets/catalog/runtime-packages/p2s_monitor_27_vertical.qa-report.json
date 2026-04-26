@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "measuredBoundsMm": {
+    "width": 370,
+    "depth": 205,
+    "height": 615
+  },
+  "dimensionErrorMm": {
+    "width": 0,
+    "depth": 0,
+    "height": 0
+  },
+  "validatorVersion": "asset-compiler-alpha-v3"
+}

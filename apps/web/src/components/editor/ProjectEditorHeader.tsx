@@ -143,6 +143,10 @@ export function ProjectEditorHeader({
                   <LayoutGrid className="h-3.5 w-3.5" />
                   추가
                 </button>
+              </>
+            ) : null}
+            {canShowPanels && viewMode === "top" ? (
+              <>
                 <button
                   type="button"
                   onClick={onShowInspector}
@@ -197,6 +201,7 @@ export function ProjectEditorHeader({
               type="button"
               onClick={onSave}
               disabled={isSaving || (!isDirty && !saveError)}
+              data-testid="project-save-button"
               className="inline-flex h-8 items-center gap-1.5 rounded-full border border-[#171411] bg-[#171411] px-3 text-[10px] font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-45"
             >
               <Save className="h-3.5 w-3.5" />

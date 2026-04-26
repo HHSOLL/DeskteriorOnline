@@ -11,9 +11,28 @@ import { useShellSelector } from "../../../lib/stores/scene-slices";
 import type { Wall } from "../../../lib/stores/useSceneStore";
 import { getWallRenderPlacement } from "../../../lib/geometry/wall-placement";
 import {
+  resolveOpeningBottomOffset,
+  resolveOpeningRange,
+  resolveTrimSegments,
+  resolveWallCornerCaps,
+  resolveWallInteriorSide
+} from "../../../lib/geometry/wall-finish";
+import {
   WALL_TEXTURE_PRESETS,
-  resolveRuntimeTextureSet
+  resolveRuntimeTextureSet,
+  type RoomShellTexturePreset
 } from "../../../lib/textures/room-shell-textures";
+
+const BASEBOARD_HEIGHT = 0.11;
+const BASEBOARD_DEPTH = 0.035;
+const TRIM_OVERLAP = 0.006;
+
+type LoadedTextureSet = {
+  map: THREE.Texture;
+  roughnessMap: THREE.Texture;
+  normalMap: THREE.Texture;
+  bumpMap: THREE.Texture;
+};
 
 function hasRenderableTexture(texture: THREE.Texture | undefined) {
   if (!texture) return false;
@@ -21,30 +40,70 @@ function hasRenderableTexture(texture: THREE.Texture | undefined) {
   return Boolean((texture as { image?: unknown }).image ?? sourceData);
 }
 
+function cloneTextureSet(textures: LoadedTextureSet): LoadedTextureSet {
+  return {
+    map: textures.map.clone(),
+    roughnessMap: textures.roughnessMap.clone(),
+    normalMap: textures.normalMap.clone(),
+    bumpMap: textures.bumpMap.clone()
+  };
+}
+
+function configureSurfaceTextures(
+  textures: LoadedTextureSet,
+  textureConfig: RoomShellTexturePreset,
+  width: number,
+  height: number,
+  anisotropy: number
+) {
+  const repeatX = Math.max(1, width / Math.max(0.25, textureConfig.repeatScaleMeters[0]));
+  const repeatY = Math.max(1, height / Math.max(0.25, textureConfig.repeatScaleMeters[1]));
+
+  Object.values(textures).forEach((texture) => {
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(repeatX, repeatY);
+    texture.center.set(0.5, 0.5);
+    texture.rotation = textureConfig.rotationRadians;
+    texture.anisotropy = anisotropy;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.needsUpdate = true;
+  });
+
+  textures.map.colorSpace = THREE.SRGBColorSpace;
+  textures.roughnessMap.colorSpace = THREE.NoColorSpace;
+  textures.normalMap.colorSpace = THREE.NoColorSpace;
+  textures.bumpMap.colorSpace = THREE.NoColorSpace;
+  Object.values(textures).forEach((texture) => {
+    texture.needsUpdate = true;
+  });
+}
+
 function WallMesh({
   wallId,
-  materialTemplate
+  textureConfig,
+  textures,
+  hasRenderableTextureSet,
+  isWhitePreview
 }: {
   wallId: string;
-  materialTemplate: THREE.Material;
+  textureConfig: RoomShellTexturePreset;
+  textures: LoadedTextureSet | null;
+  hasRenderableTextureSet: boolean;
+  isWhitePreview: boolean;
 }) {
   const walls = useShellSelector((slice) => slice.walls);
   const openings = useShellSelector((slice) => slice.openings);
   const floors = useShellSelector((slice) => slice.floors);
   const scale = useShellSelector((slice) => slice.scale);
   const wall = useMemo(() => walls.find((item) => item.id === wallId), [wallId, walls]);
-  const material = useMemo(() => materialTemplate.clone(), [materialTemplate]);
 
   const wallOpenings = useMemo(() => openings.filter((opening) => opening.wallId === wallId), [openings, wallId]);
 
-  const { baseGeometry, holeGeometries, position, rotation } = useMemo(() => {
+  const wallRender = useMemo(() => {
     if (!wall) {
-      return {
-        baseGeometry: null,
-        holeGeometries: [],
-        position: [0, 0, 0] as [number, number, number],
-        rotation: [0, 0, 0] as [number, number, number]
-      };
+      return null;
     }
 
     const placement = getWallRenderPlacement(wall, floors, scale);
@@ -65,14 +124,7 @@ function WallMesh({
         const usableWidth = Math.min(width, length - offset);
         if (usableWidth <= 0.05) return null;
 
-        const bottomOffset =
-          typeof opening.verticalOffset === "number"
-            ? opening.verticalOffset * scale
-            : typeof opening.sillHeight === "number"
-              ? opening.sillHeight * scale
-              : opening.type === "window"
-                ? 0.9 * scale
-                : 0;
+        const bottomOffset = resolveOpeningBottomOffset(opening, scale);
         const holeHeight = Math.min(baseHeight, height - bottomOffset);
         if (holeHeight <= 0.05) return null;
 
@@ -87,29 +139,68 @@ function WallMesh({
       baseGeometry: geometry,
       holeGeometries: holes,
       position: [placement.start[0], 0, placement.start[1]] as [number, number, number],
-      rotation: [0, -placement.angle, 0] as [number, number, number]
+      rotation: [0, -placement.angle, 0] as [number, number, number],
+      length,
+      height
     };
   }, [floors, scale, wall, wallOpenings]);
 
+  const materialBundle = useMemo(() => {
+    if (!wallRender) return null;
+
+    if (isWhitePreview || !textures || !hasRenderableTextureSet) {
+      return {
+        material: new THREE.MeshStandardMaterial({
+          color: textureConfig.color ?? textureConfig.topColor,
+          roughness: 0.86,
+          metalness: 0.02,
+          envMapIntensity: 0.36,
+          side: THREE.DoubleSide
+        }),
+        textures: []
+      };
+    }
+
+    const clonedTextures = cloneTextureSet(textures);
+    configureSurfaceTextures(clonedTextures, textureConfig, wallRender.length, wallRender.height, 4);
+
+    return {
+      material: new THREE.MeshStandardMaterial({
+        color: textureConfig.color,
+        map: clonedTextures.map,
+        roughnessMap: clonedTextures.roughnessMap,
+        normalMap: clonedTextures.normalMap,
+        bumpMap: clonedTextures.bumpMap,
+        bumpScale: textureConfig.bumpScale,
+        roughness: textureConfig.roughness,
+        normalScale: new THREE.Vector2(textureConfig.normalScale, textureConfig.normalScale),
+        envMapIntensity: textureConfig.envMapIntensity,
+        side: THREE.DoubleSide
+      }),
+      textures: Object.values(clonedTextures)
+    };
+  }, [hasRenderableTextureSet, isWhitePreview, textureConfig, textures, wallRender]);
+
   useEffect(() => {
     return () => {
-      baseGeometry?.dispose();
-      holeGeometries.forEach((geometry) => geometry.dispose());
-      material.dispose();
+      wallRender?.baseGeometry?.dispose();
+      wallRender?.holeGeometries.forEach((geometry) => geometry.dispose());
+      materialBundle?.material.dispose();
+      materialBundle?.textures.forEach((texture) => texture.dispose());
     };
-  }, [baseGeometry, holeGeometries, material]);
+  }, [materialBundle, wallRender]);
 
-  if (!wall || !baseGeometry) return null;
+  if (!wall || !wallRender?.baseGeometry || !materialBundle) return null;
 
   return (
-    <mesh name={`wall:${wall.id}`} position={position} rotation={rotation} castShadow receiveShadow>
+    <mesh name={`wall:${wall.id}`} position={wallRender.position} rotation={wallRender.rotation} castShadow receiveShadow>
       <Geometry computeVertexNormals>
-        <Base geometry={baseGeometry} />
-        {holeGeometries.map((geometry, index) => (
+        <Base geometry={wallRender.baseGeometry} />
+        {wallRender.holeGeometries.map((geometry, index) => (
           <Subtraction key={`${wall.id}-hole-${index}`} geometry={geometry} />
         ))}
       </Geometry>
-      <primitive object={material} attach="material" />
+      <primitive object={materialBundle.material} attach="material" />
     </mesh>
   );
 }
@@ -161,11 +252,99 @@ function TopWallFootprint({
   );
 }
 
+function BaseboardTrim({
+  wallId,
+  color
+}: {
+  wallId: string;
+  color: string;
+}) {
+  const walls = useShellSelector((slice) => slice.walls);
+  const openings = useShellSelector((slice) => slice.openings);
+  const floors = useShellSelector((slice) => slice.floors);
+  const scale = useShellSelector((slice) => slice.scale);
+  const wall = useMemo(() => walls.find((item) => item.id === wallId), [wallId, walls]);
+  const wallOpenings = useMemo(() => openings.filter((opening) => opening.wallId === wallId), [openings, wallId]);
+
+  const trim = useMemo(() => {
+    if (!wall) return null;
+
+    const placement = getWallRenderPlacement(wall, floors, scale);
+    const length = Math.max(0.05, placement.length);
+    const thickness = Math.max(0.02, wall.thickness * scale);
+    const interiorSide = resolveWallInteriorSide(wall, placement, scale);
+    const blockedRanges = wallOpenings
+      .map((opening) => {
+        const bottomOffset = resolveOpeningBottomOffset(opening, scale);
+
+        if (opening.type !== "door" && bottomOffset > BASEBOARD_HEIGHT + 0.03) {
+          return null;
+        }
+
+        return resolveOpeningRange(opening, placement, scale);
+      })
+      .filter((range): range is { start: number; end: number } => Boolean(range));
+
+    return {
+      position: [placement.start[0], 0, placement.start[1]] as [number, number, number],
+      rotation: [0, -placement.angle, 0] as [number, number, number],
+      localZ: interiorSide * (thickness / 2 + BASEBOARD_DEPTH / 2 - TRIM_OVERLAP),
+      segments: resolveTrimSegments(length, blockedRanges)
+    };
+  }, [floors, scale, wall, wallOpenings]);
+
+  if (!trim || trim.segments.length === 0) return null;
+
+  return (
+    <group name={`baseboard:${wallId}`} position={trim.position} rotation={trim.rotation}>
+      {trim.segments.map((segment, index) => (
+        <mesh
+          key={`${wallId}-baseboard-${index}`}
+          position={[segment.start + segment.length / 2, BASEBOARD_HEIGHT / 2, trim.localZ]}
+          castShadow
+          receiveShadow
+        >
+          <boxGeometry args={[segment.length, BASEBOARD_HEIGHT, BASEBOARD_DEPTH]} />
+          <meshStandardMaterial color={color} roughness={0.72} metalness={0.01} envMapIntensity={0.32} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function CornerCapColumns({ color }: { color: string }) {
+  const walls = useShellSelector((slice) => slice.walls);
+  const scale = useShellSelector((slice) => slice.scale);
+  const caps = useMemo(() => resolveWallCornerCaps(walls, scale), [scale, walls]);
+
+  if (caps.length === 0) return null;
+
+  return (
+    <group name="wall-corner-caps">
+      {caps.map((cap) => (
+        <mesh
+          key={cap.id}
+          name={`wall-corner-cap:${cap.id}`}
+          position={[cap.position[0], cap.height / 2, cap.position[1]]}
+          rotation={[0, Math.PI / 8, 0]}
+          castShadow
+          receiveShadow
+        >
+          <cylinderGeometry args={[cap.radius, cap.radius, cap.height, 8]} />
+          <meshStandardMaterial color={color} roughness={0.78} metalness={0.01} envMapIntensity={0.3} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number; walls: Wall[] }) {
   const isWhitePreview = wallMaterialIndex < 0;
   const gl = useThree((state) => state.gl);
   const textureConfig =
     WALL_TEXTURE_PRESETS[wallMaterialIndex % WALL_TEXTURE_PRESETS.length] ?? WALL_TEXTURE_PRESETS[0];
+  const baseboardColor = isWhitePreview ? "#f2ede4" : "#e8dfd3";
+  const cornerCapColor = isWhitePreview ? "#f5f0e9" : "#eadfd2";
   configureRuntimeAssetLoaders(gl);
   const textureUrls = useMemo(
     () => (isWhitePreview ? null : resolveRuntimeTextureSet(textureConfig)),
@@ -201,57 +380,22 @@ function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
     [textures]
   );
 
-  useEffect(() => {
-    if (!textures || !hasRenderableTextureSet) return;
-    Object.values(textures).forEach((texture) => {
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(1, 1);
-      texture.anisotropy = 4;
-    });
-
-    textures.map.colorSpace = THREE.SRGBColorSpace;
-    textures.roughnessMap.colorSpace = THREE.NoColorSpace;
-    textures.normalMap.colorSpace = THREE.NoColorSpace;
-    textures.bumpMap.colorSpace = THREE.NoColorSpace;
-  }, [hasRenderableTextureSet, textures]);
-
-  const material = useMemo(() => {
-    if (isWhitePreview || !textures || !hasRenderableTextureSet) {
-      return new THREE.MeshStandardMaterial({
-        color: textureConfig.color ?? textureConfig.topColor,
-        roughness: 0.86,
-        metalness: 0.02,
-        envMapIntensity: 0.36,
-        side: THREE.DoubleSide
-      });
-    }
-
-    return new THREE.MeshStandardMaterial({
-      color: textureConfig.color,
-      map: textures.map,
-      roughnessMap: textures.roughnessMap,
-      normalMap: textures.normalMap,
-      bumpMap: textures.bumpMap,
-      bumpScale: textureConfig.bumpScale,
-      roughness: textureConfig.roughness,
-      normalScale: new THREE.Vector2(textureConfig.normalScale, textureConfig.normalScale),
-      envMapIntensity: textureConfig.envMapIntensity,
-      side: THREE.DoubleSide
-    });
-  }, [hasRenderableTextureSet, isWhitePreview, textureConfig, textures]);
-
-  useEffect(() => {
-    return () => {
-      material.dispose();
-    };
-  }, [material]);
-
   return (
     <group>
       {walls.map((wall) => (
-        <WallMesh key={wall.id} wallId={wall.id} materialTemplate={material} />
+        <WallMesh
+          key={wall.id}
+          wallId={wall.id}
+          textureConfig={textureConfig}
+          textures={textures}
+          hasRenderableTextureSet={hasRenderableTextureSet}
+          isWhitePreview={isWhitePreview}
+        />
       ))}
+      {walls.map((wall) => (
+        <BaseboardTrim key={`${wall.id}-baseboard`} wallId={wall.id} color={baseboardColor} />
+      ))}
+      <CornerCapColumns color={cornerCapColor} />
     </group>
   );
 }

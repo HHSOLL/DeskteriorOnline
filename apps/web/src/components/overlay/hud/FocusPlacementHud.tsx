@@ -12,6 +12,68 @@ function formatRotation(rotationMilliDeg: number) {
   return (rotationMilliDeg / 1000).toFixed(1);
 }
 
+function dispatchPoseInput(update: {
+  uMm?: number;
+  vMm?: number;
+  normalOffsetMm?: number;
+  rotationMilliDeg?: number;
+}) {
+  window.dispatchEvent(
+    new CustomEvent("deskterioronline:focus-placement:set-local-pose", {
+      detail: update
+    })
+  );
+}
+
+function dispatchPlacementAction(action: "commit" | "cancel") {
+  window.dispatchEvent(new Event(`deskterioronline:focus-placement:${action}`));
+}
+
+function NumericPoseInput({
+  label,
+  value,
+  step,
+  unit,
+  onValue
+}: {
+  label: string;
+  value: number | string;
+  step: number;
+  unit: string;
+  onValue: (value: number) => void;
+}) {
+  return (
+    <label className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+      <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">{label}</div>
+      <div className="mt-1 flex items-center gap-2">
+        <input
+          type="number"
+          value={value}
+          step={step}
+          onChange={(event) => {
+            const numericValue = Number(event.currentTarget.value);
+            if (Number.isFinite(numericValue)) {
+              onValue(numericValue);
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              dispatchPlacementAction("commit");
+            }
+            if (event.key === "Escape") {
+              event.preventDefault();
+              dispatchPlacementAction("cancel");
+            }
+          }}
+          className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/25 px-2 py-1 text-sm font-medium text-white outline-none transition focus:border-sky-300/45"
+        />
+        <span className="shrink-0 text-xs text-white/55">{unit}</span>
+      </div>
+    </label>
+  );
+}
+
 function resolveStepClassName(state: "done" | "active" | "blocked" | "pending") {
   switch (state) {
     case "done":
@@ -63,7 +125,10 @@ export default function FocusPlacementHud() {
   const clearance = wizardState?.clearance;
 
   return (
-    <div className="pointer-events-none absolute right-4 top-4 z-40 w-[min(360px,calc(100%-2rem))] rounded-[24px] border border-white/14 bg-black/55 px-4 py-4 text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+    <div
+      className="pointer-events-auto absolute right-4 top-4 z-40 w-[min(360px,calc(100%-2rem))] rounded-[24px] border border-white/14 bg-black/55 px-4 py-4 text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl"
+      data-testid="focus-placement-hud"
+    >
       <div className="mb-3 flex items-center justify-between gap-3">
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-[0.32em] text-white/55">
@@ -135,22 +200,34 @@ export default function FocusPlacementHud() {
             {session.moveStepMm}mm / {(session.rotateStepMilliDeg / 1000).toFixed(1)}deg
           </div>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
-          <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">{axisLabels?.u ?? "Offset U"}</div>
-          <div className="mt-1 font-medium text-white">{session.localPose.uMm} mm</div>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
-          <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">{axisLabels?.v ?? "Offset V"}</div>
-          <div className="mt-1 font-medium text-white">{session.localPose.vMm} mm</div>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
-          <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">{axisLabels?.rotation ?? "Rotation"}</div>
-          <div className="mt-1 font-medium text-white">{formatRotation(session.localPose.rotationMilliDeg)} deg</div>
-        </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
-          <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">{axisLabels?.normal ?? "Normal"}</div>
-          <div className="mt-1 font-medium text-white">{session.localPose.normalOffsetMm} mm</div>
-        </div>
+        <NumericPoseInput
+          label={axisLabels?.u ?? "Offset U"}
+          value={session.localPose.uMm}
+          step={session.moveStepMm}
+          unit="mm"
+          onValue={(value) => dispatchPoseInput({ uMm: value })}
+        />
+        <NumericPoseInput
+          label={axisLabels?.v ?? "Offset V"}
+          value={session.localPose.vMm}
+          step={session.moveStepMm}
+          unit="mm"
+          onValue={(value) => dispatchPoseInput({ vMm: value })}
+        />
+        <NumericPoseInput
+          label={axisLabels?.rotation ?? "Rotation"}
+          value={formatRotation(session.localPose.rotationMilliDeg)}
+          step={session.rotateStepMilliDeg / 1000}
+          unit="deg"
+          onValue={(value) => dispatchPoseInput({ rotationMilliDeg: Math.round(value * 1000) })}
+        />
+        <NumericPoseInput
+          label={axisLabels?.normal ?? "Normal"}
+          value={session.localPose.normalOffsetMm}
+          step={session.moveStepMm}
+          unit="mm"
+          onValue={(value) => dispatchPoseInput({ normalOffsetMm: value })}
+        />
       </div>
 
       {showWizardPanels ? (
@@ -248,6 +325,24 @@ export default function FocusPlacementHud() {
             <div>Enter: 확정, Esc: 취소</div>
           </>
         ) : null}
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => dispatchPlacementAction("cancel")}
+          className="rounded-2xl border border-white/12 bg-white/8 px-3 py-2 text-sm font-semibold text-white/75 transition hover:bg-white/12"
+        >
+          취소
+        </button>
+        <button
+          type="button"
+          disabled={feedback.tone === "blocked"}
+          onClick={() => dispatchPlacementAction("commit")}
+          className="rounded-2xl border border-emerald-300/35 bg-emerald-400/18 px-3 py-2 text-sm font-semibold text-emerald-50 transition hover:bg-emerald-400/24 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/8 disabled:text-white/40"
+        >
+          확정
+        </button>
       </div>
     </div>
   );

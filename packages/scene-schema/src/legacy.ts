@@ -127,6 +127,7 @@ export type LegacySceneDocumentLike = {
   materialOverride?: {
     wallMaterialIndex: number;
     floorMaterialIndex: number;
+    ceilingMaterialIndex?: number;
   };
   materials?: Array<{
     id: string;
@@ -150,6 +151,7 @@ export type LegacySceneStoreStateLike = {
   assets: LegacySceneAssetLike[];
   wallMaterialIndex?: number;
   floorMaterialIndex?: number;
+  ceilingMaterialIndex?: number;
   lighting?: Record<string, unknown>;
 };
 
@@ -356,6 +358,15 @@ export function migrateLegacySceneDocumentToV2(
               ? `floor:${input.materialOverride.floorMaterialIndex}`
               : null
         },
+        {
+          id: "ceiling:default",
+          materialId:
+            typeof input.materialOverride?.ceilingMaterialIndex === "number"
+              ? `ceiling:${input.materialOverride.ceilingMaterialIndex}`
+              : typeof input.materialOverride?.wallMaterialIndex === "number"
+                ? `ceiling:${input.materialOverride.wallMaterialIndex}`
+                : null
+        },
         ...mapLegacyObjectMaterials(legacyAssets)
       ],
     cameras: [],
@@ -385,7 +396,8 @@ export function migrateLegacySceneStoreStateToV2(
       nodes: input.assets,
       materialOverride: {
         wallMaterialIndex: input.wallMaterialIndex ?? 0,
-        floorMaterialIndex: input.floorMaterialIndex ?? 0
+        floorMaterialIndex: input.floorMaterialIndex ?? 0,
+        ceilingMaterialIndex: input.ceilingMaterialIndex ?? input.wallMaterialIndex ?? 0
       },
       lighting: input.lighting
     },

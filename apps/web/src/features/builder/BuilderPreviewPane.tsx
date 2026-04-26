@@ -261,6 +261,14 @@ export function BuilderPreviewPane({
       <SceneViewport
         className="h-full min-h-[320px] !rounded-none !border-0 !shadow-none lg:h-full lg:min-h-0"
         camera={{ fov: 46, position: [8, 5, 8] }}
+        gl={{
+          antialias: true,
+          alpha: false,
+          stencil: false,
+          depth: true,
+          powerPreference: "high-performance",
+          preserveDrawingBuffer: true
+        }}
         chromeTone="light"
         showHud={false}
         interactionMode="preview"

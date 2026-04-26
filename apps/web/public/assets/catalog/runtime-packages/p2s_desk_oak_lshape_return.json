@@ -1,0 +1,435 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_desk_oak_lshape_return",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_desk_oak",
+  "manifestId": "p2s_desk_oak_lshape_return",
+  "label": "P2S 오크 리턴 데스크",
+  "assetId": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+  "dimensionsMm": {
+    "width": 1800,
+    "depth": 800,
+    "height": 740
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "desk-top",
+        "anchorTypes": [
+          "desk_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          1.8,
+          0.8
+        ],
+        "top": 0.74,
+        "surfaceType": "desktop_top",
+        "allowedAttachments": [
+          "place_on_surface"
+        ],
+        "margin": [
+          0.08,
+          0.08
+        ]
+      },
+      {
+        "id": "desk-edge",
+        "anchorTypes": [
+          "desk_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          -0.4
+        ],
+        "size": [
+          1.8,
+          0.032
+        ],
+        "top": 0.724,
+        "surfaceType": "desk_edge",
+        "allowedAttachments": [
+          "edge_clamp"
+        ],
+        "thicknessMm": 32,
+        "localFrame": {
+          "originMm": [
+            0,
+            724,
+            -400
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            1000,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            -1000
+          ]
+        }
+      },
+      {
+        "id": "desk-underside",
+        "anchorTypes": [
+          "desk_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          1.48,
+          0.62
+        ],
+        "top": 0.708,
+        "surfaceType": "desk_underside",
+        "allowedAttachments": [
+          "underside_screw"
+        ],
+        "thicknessMm": 32,
+        "localFrame": {
+          "originMm": [
+            0,
+            708,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            -1000,
+            0
+          ]
+        }
+      }
+    ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+    "productId": "p2s_desk_oak_lshape_return",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 1800,
+      "depth": 800,
+      "height": 740
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "DeskteriorOnline Studio",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/p2s_desk_oak/p2s_desk_oak.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 1800,
+          "depth": 800,
+          "height": 740
+        },
+        "centerMm": [
+          0,
+          370,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [
+      {
+        "id": "desk-top",
+        "type": "desktop_top",
+        "localFrame": {
+          "originMm": [
+            0,
+            740,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            1000,
+            0
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -820,
+            -320
+          ],
+          "max": [
+            820,
+            320
+          ]
+        },
+        "allowedAttachments": [
+          "place_on_surface"
+        ]
+      },
+      {
+        "id": "desk-edge",
+        "type": "desk_edge",
+        "localFrame": {
+          "originMm": [
+            0,
+            724,
+            -400
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            1000,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            -1000
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -900,
+            -416
+          ],
+          "max": [
+            900,
+            -384
+          ]
+        },
+        "thicknessMm": 32,
+        "allowedAttachments": [
+          "edge_clamp"
+        ]
+      },
+      {
+        "id": "desk-underside",
+        "type": "desk_underside",
+        "localFrame": {
+          "originMm": [
+            0,
+            708,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            -1000,
+            0
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -740,
+            -310
+          ],
+          "max": [
+            740,
+            310
+          ]
+        },
+        "thicknessMm": 32,
+        "allowedAttachments": [
+          "underside_screw"
+        ]
+      }
+    ],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 오크 리턴 데스크",
+        "finishColor": "Natural oak",
+        "finishMaterial": "Oak veneer with black metal support",
+        "detailNotes": "Large surface variant for multiple monitors, speaker pair, desk mat, and decor composition."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 1800,
+        "depth": 800,
+        "height": 740
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_desk_oak/p2s_desk_oak.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_desk_oak_lshape_return.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_desk_oak/p2s_desk_oak.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_desk_oak_lshape_return.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_oak_lshape_return.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

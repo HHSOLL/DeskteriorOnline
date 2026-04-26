@@ -1,0 +1,33 @@
+[
+  {
+    "id": "edge-clamp",
+    "type": "edge_clamp",
+    "localPositionMm": [
+      0,
+      0,
+      0
+    ],
+    "localNormal": [
+      0,
+      0,
+      -1000
+    ],
+    "localTangent": [
+      1000,
+      0,
+      0
+    ],
+    "compatibleWith": [
+      "desk-edge",
+      "desk_edge"
+    ],
+    "constraints": {
+      "requiredThicknessMm": [
+        12,
+        55
+      ],
+      "minClearanceMm": 20,
+      "maxLoadKg": 2
+    }
+  }
+]

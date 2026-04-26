@@ -90,6 +90,7 @@ export type SceneNode = SceneObject;
 export type MaterialOverride = {
   wallMaterialIndex: number;
   floorMaterialIndex: number;
+  ceilingMaterialIndex?: number;
 };
 
 export type LightInstance = LightingSettings;
@@ -138,6 +139,7 @@ export type SceneStorePatch = {
   assets: SceneAsset[];
   wallMaterialIndex: number;
   floorMaterialIndex: number;
+  ceilingMaterialIndex: number;
   lighting: LightingSettings;
   entranceId: string | null;
 };
@@ -150,6 +152,29 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isArray(value: unknown): value is unknown[] {
   return Array.isArray(value);
+}
+
+function toRuntimePlacementRecord(value: unknown): PlacementRecord | null {
+  if (!isRecord(value) || typeof value.mode !== "string") {
+    return null;
+  }
+
+  if (value.mode === "world" && isRecord(value.world)) {
+    return value as PlacementRecord;
+  }
+
+  if (
+    value.mode === "surface_local" &&
+    typeof value.supportObjectId === "string" &&
+    typeof value.surfaceId === "string" &&
+    typeof value.attachmentType === "string" &&
+    isRecord(value.localPose) &&
+    isArray(value.scalePermille)
+  ) {
+    return value as PlacementRecord;
+  }
+
+  return null;
 }
 
 function toSafeNumber(value: unknown, fallback: number) {
@@ -450,7 +475,11 @@ function parseSceneDocumentFromVersion(version: Record<string, unknown>): SceneD
     nodes: rawDocument.nodes as SceneNode[],
     materialOverride: {
       wallMaterialIndex: toSafeNumber(rawMaterialOverride?.wallMaterialIndex, 0),
-      floorMaterialIndex: toSafeNumber(rawMaterialOverride?.floorMaterialIndex, 0)
+      floorMaterialIndex: toSafeNumber(rawMaterialOverride?.floorMaterialIndex, 0),
+      ceilingMaterialIndex: toSafeNumber(
+        rawMaterialOverride?.ceilingMaterialIndex,
+        toSafeNumber(rawMaterialOverride?.wallMaterialIndex, 0)
+      )
     },
     lighting: {
       mode: rawLighting?.mode === "indirect" ? "indirect" : "direct",
@@ -503,7 +532,7 @@ export function toSceneStorePatch(scene: SceneDocumentBootstrap): SceneStorePatc
         position: placement.position,
         rotation: placement.rotation,
         scale: placement.scale,
-        placement: node.placement ?? null,
+        placement: toRuntimePlacementRecord(node.placement),
         visible: toMetadataBoolean(node.metadata?.visible ?? node.visible ?? true),
         catalogItemId: node.metadata?.catalogItemId ?? node.catalogItemId,
         product: toSceneAssetProduct(node.metadata, node.product) ?? node.product ?? null,
@@ -518,6 +547,8 @@ export function toSceneStorePatch(scene: SceneDocumentBootstrap): SceneStorePatc
     }),
     wallMaterialIndex: scene.document.materialOverride.wallMaterialIndex,
     floorMaterialIndex: scene.document.materialOverride.floorMaterialIndex,
+    ceilingMaterialIndex:
+      scene.document.materialOverride.ceilingMaterialIndex ?? scene.document.materialOverride.wallMaterialIndex,
     lighting: scene.document.lighting,
     entranceId: scene.entranceId
   };

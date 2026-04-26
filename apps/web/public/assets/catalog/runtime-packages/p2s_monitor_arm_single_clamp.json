@@ -1,0 +1,409 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_monitor_arm_single_clamp",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "desk_lamp_arm_01",
+  "manifestId": "p2s_monitor_arm_single_clamp",
+  "label": "P2S 싱글 모니터암 클램프",
+  "assetId": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+  "dimensionsMm": {
+    "width": 120,
+    "depth": 110,
+    "height": 520
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "vesa-plate",
+        "anchorTypes": [
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          0.24,
+          0.24
+        ],
+        "top": 0.354,
+        "surfaceType": "monitor_back",
+        "allowedAttachments": [
+          "vesa_mount"
+        ],
+        "localFrame": {
+          "originMm": [
+            0,
+            354,
+            264
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            1000,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            1000
+          ]
+        }
+      }
+    ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "manual_required",
+      "reason": "catalog monitor-arm variant reuses a proxy model but must expose edge clamp and VESA target metadata",
+      "points": [
+        {
+          "id": "desk-edge-clamp",
+          "type": "edge_clamp",
+          "localPositionMm": [
+            0,
+            0,
+            0
+          ],
+          "localNormal": [
+            0,
+            0,
+            -1000
+          ],
+          "localTangent": [
+            1000,
+            0,
+            0
+          ],
+          "compatibleWith": [
+            "desk-edge",
+            "desk_edge"
+          ],
+          "constraints": {
+            "requiredThicknessMm": [
+              18,
+              70
+            ],
+            "minClearanceMm": 60,
+            "maxLoadKg": 12
+          }
+        },
+        {
+          "id": "vesa-plate",
+          "type": "vesa_mount",
+          "localPositionMm": [
+            0,
+            354,
+            264
+          ],
+          "localNormal": [
+            0,
+            0,
+            1000
+          ],
+          "localTangent": [
+            1000,
+            0,
+            0
+          ],
+          "compatibleWith": [
+            "monitor_back"
+          ],
+          "constraints": {
+            "vesaPatternMm": [
+              100,
+              100
+            ],
+            "maxLoadKg": 9
+          }
+        }
+      ]
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+    "productId": "p2s_monitor_arm_single_clamp",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 120,
+      "depth": 110,
+      "height": 520
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Mount",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 120,
+          "depth": 110,
+          "height": 520
+        },
+        "centerMm": [
+          0,
+          260,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [
+      {
+        "id": "vesa-plate",
+        "type": "monitor_back",
+        "localFrame": {
+          "originMm": [
+            0,
+            354,
+            264
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            1000,
+            0
+          ],
+          "normal": [
+            0,
+            0,
+            1000
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -120,
+            -120
+          ],
+          "max": [
+            120,
+            120
+          ]
+        },
+        "allowedAttachments": [
+          "vesa_mount"
+        ]
+      }
+    ],
+    "attachmentPoints": [
+      {
+        "id": "desk-edge-clamp",
+        "type": "edge_clamp",
+        "localPositionMm": [
+          0,
+          0,
+          0
+        ],
+        "localNormal": [
+          0,
+          0,
+          -1000
+        ],
+        "localTangent": [
+          1000,
+          0,
+          0
+        ],
+        "compatibleWith": [
+          "desk-edge",
+          "desk_edge"
+        ],
+        "constraints": {
+          "requiredThicknessMm": [
+            18,
+            70
+          ],
+          "minClearanceMm": 60,
+          "maxLoadKg": 12
+        }
+      },
+      {
+        "id": "vesa-plate",
+        "type": "vesa_mount",
+        "localPositionMm": [
+          0,
+          354,
+          264
+        ],
+        "localNormal": [
+          0,
+          0,
+          1000
+        ],
+        "localTangent": [
+          1000,
+          0,
+          0
+        ],
+        "compatibleWith": [
+          "monitor_back"
+        ],
+        "constraints": {
+          "vesaPatternMm": [
+            100,
+            100
+          ],
+          "maxLoadKg": 9
+        }
+      }
+    ],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 싱글 모니터암 클램프",
+        "finishColor": "Matte black",
+        "finishMaterial": "Powder-coated aluminum arm with steel clamp",
+        "detailNotes": "Mounted accessory with inferred edge clamp and VESA target metadata."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 120,
+        "depth": 110,
+        "height": 520
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_monitor_arm_single_clamp.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf"
+      }
+    ],
+    "proxyPath": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_monitor_arm_single_clamp.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

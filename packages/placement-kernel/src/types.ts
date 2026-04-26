@@ -1,10 +1,17 @@
-import type { AttachmentType, SurfaceLocalPose, SupportSurface } from "@deskterioronline/scene-schema";
+import type {
+  AttachmentType,
+  CableRouteRecord,
+  SurfaceLocalPose,
+  SupportSurface
+} from "@deskterioronline/scene-schema";
 
 export type SurfaceHit = {
   objectId: string;
   surfaceId: string;
   surface: SupportSurface;
   distance: number;
+  localPose?: Partial<SurfaceLocalPose>;
+  worldPointMm?: [number, number, number];
 };
 
 export type ConstraintIssue = {
@@ -35,4 +42,5 @@ export type PlacementCandidate = {
   surfaceId: string;
   attachmentType: AttachmentType;
   localPose: SurfaceLocalPose;
+  cableRoute?: CableRouteRecord;
 };

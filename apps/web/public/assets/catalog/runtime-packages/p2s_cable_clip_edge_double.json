@@ -1,0 +1,267 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_cable_clip_edge_double",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_under_desk_tray_mount",
+  "manifestId": "p2s_cable_clip_edge_double",
+  "label": "P2S 엣지 케이블 클립 더블",
+  "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  "dimensionsMm": {
+    "width": 44,
+    "depth": 24,
+    "height": 18
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "manual_required",
+      "reason": "catalog edge cable clip variant must expose edge clamp metadata",
+      "points": [
+        {
+          "id": "edge-clamp",
+          "type": "edge_clamp",
+          "localPositionMm": [
+            0,
+            0,
+            0
+          ],
+          "localNormal": [
+            0,
+            0,
+            -1000
+          ],
+          "localTangent": [
+            1000,
+            0,
+            0
+          ],
+          "compatibleWith": [
+            "desk-edge",
+            "desk_edge"
+          ],
+          "constraints": {
+            "requiredThicknessMm": [
+              12,
+              55
+            ],
+            "minClearanceMm": 20,
+            "maxLoadKg": 2
+          }
+        }
+      ]
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+    "productId": "p2s_cable_clip_edge_double",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 44,
+      "depth": 24,
+      "height": 18
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Cable Management",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 44,
+          "depth": 24,
+          "height": 18
+        },
+        "centerMm": [
+          0,
+          9,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [
+      {
+        "id": "edge-clamp",
+        "type": "edge_clamp",
+        "localPositionMm": [
+          0,
+          0,
+          0
+        ],
+        "localNormal": [
+          0,
+          0,
+          -1000
+        ],
+        "localTangent": [
+          1000,
+          0,
+          0
+        ],
+        "compatibleWith": [
+          "desk-edge",
+          "desk_edge"
+        ],
+        "constraints": {
+          "requiredThicknessMm": [
+            12,
+            55
+          ],
+          "minClearanceMm": 20,
+          "maxLoadKg": 2
+        }
+      }
+    ],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 엣지 케이블 클립 더블",
+        "finishColor": "Black",
+        "finishMaterial": "Flexible silicone or ABS plastic",
+        "detailNotes": "Mounted cable clip with inferred clamp/screw metadata for focus placement."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 44,
+        "depth": 24,
+        "height": 18
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_cable_clip_edge_double.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_cable_clip_edge_double.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_cable_clip_edge_double.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

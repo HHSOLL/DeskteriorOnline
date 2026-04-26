@@ -1,0 +1,33 @@
+[
+  {
+    "id": "underside-screw-rail",
+    "type": "underside_screw",
+    "localPositionMm": [
+      0,
+      90,
+      0
+    ],
+    "localNormal": [
+      0,
+      1000,
+      0
+    ],
+    "localTangent": [
+      1000,
+      0,
+      0
+    ],
+    "compatibleWith": [
+      "desk-underside",
+      "desk_underside"
+    ],
+    "constraints": {
+      "requiredThicknessMm": [
+        18,
+        55
+      ],
+      "minClearanceMm": 80,
+      "maxLoadKg": 8
+    }
+  }
+]

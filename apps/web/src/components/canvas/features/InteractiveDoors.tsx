@@ -6,6 +6,10 @@ import gsap from "gsap";
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
 import { useShellSelector } from "../../../lib/stores/scene-slices";
 import { getWallRenderPlacement } from "../../../lib/geometry/wall-placement";
+import {
+  resolveOpeningBottomOffset,
+  resolveWallInteriorSide
+} from "../../../lib/geometry/wall-finish";
 import { useInteractionRegistry } from "../interaction/InteractionManager";
 
 type DoorSpec = {
@@ -15,6 +19,8 @@ type DoorSpec = {
   width: number;
   height: number;
   thickness: number;
+  wallThickness: number;
+  interiorSide: number;
 };
 
 type WindowSpec = {
@@ -24,6 +30,8 @@ type WindowSpec = {
   width: number;
   height: number;
   thickness: number;
+  wallThickness: number;
+  interiorSide: number;
 };
 
 type DoorVariant = "single" | "double" | "french";
@@ -65,6 +73,16 @@ const WINDOW_ASSETS: Record<WindowVariant, WindowAssetConfig> = {
     path: "/assets/models/p2s_opening_window_wide/p2s_opening_window_wide.glb"
   }
 };
+
+const FRAME_DEPTH = 0.038;
+const FRAME_OVERLAP = 0.005;
+const DOOR_CASING_WIDTH = 0.064;
+const WINDOW_CASING_WIDTH = 0.052;
+const DOOR_THRESHOLD_HEIGHT = 0.032;
+const DOOR_THRESHOLD_DEPTH = 0.12;
+const WINDOW_SILL_HEIGHT = 0.045;
+const WINDOW_SILL_DEPTH = 0.16;
+const WINDOW_SILL_OVERHANG = 0.12;
 
 function resolveDoorVariant(width: number): DoorVariant {
   if (width >= 1.52) return "french";
@@ -120,6 +138,70 @@ function normalizeOpeningAsset(root: THREE.Object3D) {
   } as const;
 }
 
+function OpeningFrame({
+  id,
+  type,
+  position,
+  angle,
+  width,
+  height,
+  wallThickness,
+  interiorSide
+}: {
+  id: string;
+  type: "door" | "window";
+  position: [number, number, number];
+  angle: number;
+  width: number;
+  height: number;
+  wallThickness: number;
+  interiorSide: number;
+}) {
+  const casingWidth = type === "door" ? DOOR_CASING_WIDTH : WINDOW_CASING_WIDTH;
+  const color = type === "door" ? "#eadfd1" : "#eee4d8";
+  const localZ = interiorSide * (wallThickness / 2 + FRAME_DEPTH / 2 - FRAME_OVERLAP);
+  const thresholdZ = interiorSide * (wallThickness / 2 + DOOR_THRESHOLD_DEPTH / 2 - FRAME_OVERLAP);
+  const sillZ = interiorSide * (wallThickness / 2 + WINDOW_SILL_DEPTH / 2 - FRAME_OVERLAP);
+
+  return (
+    <group name={`${type}-frame:${id}`} position={position} rotation={[0, angle, 0]}>
+      {[0, width].map((x, index) => (
+        <mesh key={`${id}-side-${index}`} position={[x, height / 2, localZ]} castShadow receiveShadow>
+          <boxGeometry args={[casingWidth, height + casingWidth * 0.6, FRAME_DEPTH]} />
+          <meshStandardMaterial color={color} roughness={0.68} metalness={0.01} envMapIntensity={0.34} />
+        </mesh>
+      ))}
+      <mesh position={[width / 2, height + casingWidth / 2, localZ]} castShadow receiveShadow>
+        <boxGeometry args={[width + casingWidth * 2, casingWidth, FRAME_DEPTH]} />
+        <meshStandardMaterial color={color} roughness={0.68} metalness={0.01} envMapIntensity={0.34} />
+      </mesh>
+      {type === "door" ? (
+        <mesh position={[width / 2, DOOR_THRESHOLD_HEIGHT / 2, thresholdZ]} castShadow receiveShadow>
+          <boxGeometry args={[width + casingWidth, DOOR_THRESHOLD_HEIGHT, DOOR_THRESHOLD_DEPTH]} />
+          <meshStandardMaterial color="#d6cabd" roughness={0.62} metalness={0.02} envMapIntensity={0.28} />
+        </mesh>
+      ) : (
+        <>
+          <mesh position={[width / 2, -casingWidth / 2, localZ]} castShadow receiveShadow>
+            <boxGeometry args={[width + casingWidth * 2, casingWidth, FRAME_DEPTH]} />
+            <meshStandardMaterial color={color} roughness={0.68} metalness={0.01} envMapIntensity={0.34} />
+          </mesh>
+          <mesh position={[width / 2, -casingWidth - WINDOW_SILL_HEIGHT / 2, sillZ]} castShadow receiveShadow>
+            <boxGeometry
+              args={[
+                width + WINDOW_SILL_OVERHANG * 2,
+                WINDOW_SILL_HEIGHT,
+                WINDOW_SILL_DEPTH
+              ]}
+            />
+            <meshStandardMaterial color="#ded2c4" roughness={0.66} metalness={0.01} envMapIntensity={0.3} />
+          </mesh>
+        </>
+      )}
+    </group>
+  );
+}
+
 function DoorAssetModel({ door }: { door: DoorSpec }) {
   const registry = useInteractionRegistry();
   const rootRef = useRef<THREE.Group | null>(null);
@@ -173,19 +255,31 @@ function DoorAssetModel({ door }: { door: DoorSpec }) {
   }, [registry, runtimeAsset.highlightMesh]);
 
   return (
-    <group
-      ref={rootRef}
-      name={`door:${door.id}`}
-      position={door.position}
-      rotation={[0, door.angle, 0]}
-      scale={[
-        door.width / runtimeAsset.baseSize.width,
-        door.height / runtimeAsset.baseSize.height,
-        door.thickness / runtimeAsset.baseSize.thickness
-      ]}
-    >
-      <primitive object={runtimeAsset.root} />
-    </group>
+    <>
+      <OpeningFrame
+        id={door.id}
+        type="door"
+        position={door.position}
+        angle={door.angle}
+        width={door.width}
+        height={door.height}
+        wallThickness={door.wallThickness}
+        interiorSide={door.interiorSide}
+      />
+      <group
+        ref={rootRef}
+        name={`door:${door.id}`}
+        position={door.position}
+        rotation={[0, door.angle, 0]}
+        scale={[
+          door.width / runtimeAsset.baseSize.width,
+          door.height / runtimeAsset.baseSize.height,
+          door.thickness / runtimeAsset.baseSize.thickness
+        ]}
+      >
+        <primitive object={runtimeAsset.root} />
+      </group>
+    </>
   );
 }
 
@@ -205,18 +299,30 @@ function WindowAssetModel({ window }: { window: WindowSpec }) {
   }, [gltf.scene]);
 
   return (
-    <group
-      name={`window:${window.id}`}
-      position={window.position}
-      rotation={[0, window.angle, 0]}
-      scale={[
-        window.width / runtimeAsset.baseSize.width,
-        window.height / runtimeAsset.baseSize.height,
-        window.thickness / runtimeAsset.baseSize.thickness
-      ]}
-    >
-      <primitive object={runtimeAsset.root} />
-    </group>
+    <>
+      <OpeningFrame
+        id={window.id}
+        type="window"
+        position={window.position}
+        angle={window.angle}
+        width={window.width}
+        height={window.height}
+        wallThickness={window.wallThickness}
+        interiorSide={window.interiorSide}
+      />
+      <group
+        name={`window:${window.id}`}
+        position={window.position}
+        rotation={[0, window.angle, 0]}
+        scale={[
+          window.width / runtimeAsset.baseSize.width,
+          window.height / runtimeAsset.baseSize.height,
+          window.thickness / runtimeAsset.baseSize.thickness
+        ]}
+      >
+        <primitive object={runtimeAsset.root} />
+      </group>
+    </>
   );
 }
 
@@ -239,11 +345,12 @@ export default function InteractiveDoors() {
 
         const width = Math.max(0.72, opening.width * scale);
         const height = Math.max(1.95, opening.height * scale);
-        const thickness = Math.max(0.06, wall.thickness * scale * 0.72);
+        const wallThickness = Math.max(0.02, wall.thickness * scale);
+        const thickness = Math.max(0.06, wallThickness * 0.72);
         const offset = Math.min(Math.max(0, opening.offset * scale + placement.startInset), Math.max(0, length - width));
         const startX = placement.start[0] + placement.direction[0] * offset;
         const startZ = placement.start[1] + placement.direction[1] * offset;
-        const bottomOffset = typeof opening.verticalOffset === "number" ? opening.verticalOffset * scale : 0;
+        const bottomOffset = resolveOpeningBottomOffset(opening, scale);
 
         return {
           id: opening.id,
@@ -251,7 +358,9 @@ export default function InteractiveDoors() {
           angle: -placement.angle,
           width,
           height,
-          thickness
+          thickness,
+          wallThickness,
+          interiorSide: resolveWallInteriorSide(wall, placement, scale)
         } satisfies DoorSpec;
       })
       .filter((entry): entry is DoorSpec => Boolean(entry));
@@ -270,11 +379,12 @@ export default function InteractiveDoors() {
 
         const width = Math.max(0.92, opening.width * scale);
         const height = Math.max(0.88, opening.height * scale);
-        const thickness = Math.max(0.08, wall.thickness * scale * 0.82);
+        const wallThickness = Math.max(0.02, wall.thickness * scale);
+        const thickness = Math.max(0.08, wallThickness * 0.82);
         const offset = Math.min(Math.max(0, opening.offset * scale + placement.startInset), Math.max(0, length - width));
         const startX = placement.start[0] + placement.direction[0] * offset;
         const startZ = placement.start[1] + placement.direction[1] * offset;
-        const sillHeight = typeof opening.sillHeight === "number" ? opening.sillHeight * scale : 0.9;
+        const sillHeight = resolveOpeningBottomOffset(opening, scale);
 
         return {
           id: opening.id,
@@ -282,7 +392,9 @@ export default function InteractiveDoors() {
           angle: -placement.angle,
           width,
           height,
-          thickness
+          thickness,
+          wallThickness,
+          interiorSide: resolveWallInteriorSide(wall, placement, scale)
         } satisfies WindowSpec;
       })
       .filter((entry): entry is WindowSpec => Boolean(entry));

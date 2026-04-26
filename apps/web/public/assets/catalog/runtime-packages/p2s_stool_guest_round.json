@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_stool_guest_round",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "bar_chair_round_01",
+  "manifestId": "p2s_stool_guest_round",
+  "label": "P2S 라운드 게스트 스툴",
+  "assetId": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+  "dimensionsMm": {
+    "width": 420,
+    "depth": 420,
+    "height": 460
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+    "productId": "p2s_stool_guest_round",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 420,
+      "depth": 420,
+      "height": 460
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Workspace",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 420,
+          "depth": 420,
+          "height": 460
+        },
+        "centerMm": [
+          0,
+          230,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 라운드 게스트 스툴",
+        "finishColor": "Oak / black",
+        "finishMaterial": "Wood seat with powder-coated steel",
+        "detailNotes": "Compact floor prop for desk-side styling."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 420,
+        "depth": 420,
+        "height": 460
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_stool_guest_round.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_stool_guest_round.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_stool_guest_round.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_stool_guest_round.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_stool_guest_round.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_stool_guest_round.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf"
+      }
+    ],
+    "proxyPath": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_stool_guest_round.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_stool_guest_round.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_stool_guest_round.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_stool_guest_round.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_stool_guest_round.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_stool_guest_round.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

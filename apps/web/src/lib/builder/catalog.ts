@@ -293,6 +293,550 @@ const DEFAULT_CATALOG_SOURCE = [
   }
 ] as const;
 
+const P2S_INTERNAL_LICENSE = {
+  spdx: "LicenseRef-DeskteriorOnline-Internal",
+  label: "DeskteriorOnline Internal Catalog",
+  requiresAttribution: false
+} as const;
+
+const P2S_PRODUCT_CONTRACT = {
+  source: {
+    kind: "deskterioronline_blender",
+    name: "DeskteriorOnline Catalog Variant",
+    path: "apps/web/public/assets/catalog/runtime-packages.json",
+    url: null
+  },
+  license: P2S_INTERNAL_LICENSE,
+  pivot: {
+    x: "center",
+    y: "floor",
+    z: "center"
+  },
+  collisionProxy: {
+    kind: "box",
+    derivesFrom: "dimensionsMm"
+  },
+  textureSet: {
+    workflow: "pbr_metallic_roughness",
+    authored: "procedural",
+    ktx2Ready: false
+  },
+  lodProfile: {
+    strategy: "single_mesh",
+    levelCount: 1,
+    maxDrawCalls: 16,
+    maxTriangleCount: 8000
+  }
+} as const;
+
+const P2S_ASSET_IDS = {
+  desk: "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+  keyboard: "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+  mouse: "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+  speaker: "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb",
+  lamp: "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb",
+  tray: "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+  cableTray: "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  stand: "/assets/models/p2s_monitor_stand/p2s_monitor_stand.glb",
+  mug: "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+  books: "/assets/models/p2s_book_stack_warm/p2s_book_stack_warm.glb",
+  plant: "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb"
+} as const;
+
+const P2S_THUMBNAILS = {
+  desk: "/assets/catalog/thumbnails/p2s_desk_oak.webp",
+  keyboard: "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
+  mouse: "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
+  speaker: "/assets/catalog/thumbnails/p2s_compact_speaker.webp",
+  lamp: "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
+  tray: "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp",
+  cableTray: "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
+  stand: "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
+  mug: "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
+  books: "/assets/catalog/thumbnails/p2s_book_stack_warm.webp",
+  plant: "/assets/catalog/thumbnails/p2s_desk_planter_pilea.webp"
+} as const;
+
+const COMMERCIAL_CATALOG_VARIANTS = [
+  {
+    id: "p2s_desk_walnut_160",
+    label: "P2S 월넛 데스크 1600",
+    category: "Tables",
+    assetId: P2S_ASSET_IDS.desk,
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "1600mm급 홈오피스 데스크입니다. edge clamp와 underside tray 배치를 지원합니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩229,000",
+    options: "1600x700x740 mm · desk_edge · desk_underside",
+    dimensionsMm: { width: 1600, depth: 700, height: 740 },
+    finishColor: "Dark walnut",
+    finishMaterial: "Walnut veneer over engineered wood",
+    detailNotes: "Real-scale desk variant for wide monitor, keyboard, mouse, and mounted accessory placement.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_desk_white_compact_120",
+    label: "P2S 화이트 컴팩트 데스크 1200",
+    category: "Tables",
+    assetId: P2S_ASSET_IDS.desk,
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "작은 방용 1200mm 데스크입니다. 상판과 가장자리 부착 배치를 지원합니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩159,000",
+    options: "1200x600x735 mm · desktop_top",
+    dimensionsMm: { width: 1200, depth: 600, height: 735 },
+    finishColor: "Warm white",
+    finishMaterial: "Matte laminate over engineered wood",
+    detailNotes: "Compact real-scale desk for small rooms and L-shaped room test scenes.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_desk_black_sitstand_150",
+    label: "P2S 블랙 싯스탠드 데스크 1500",
+    category: "Tables",
+    assetId: P2S_ASSET_IDS.desk,
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "전동 데스크 범위 치수를 반영한 1500mm 작업대입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩429,000",
+    options: "1500x750x720 mm · clamp/tray ready",
+    dimensionsMm: { width: 1500, depth: 750, height: 720 },
+    finishColor: "Matte black",
+    finishMaterial: "Powder coated metal frame with laminate top",
+    detailNotes: "Sit-stand style envelope for mounted monitor arm and under-desk cable route validation.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_desk_oak_lshape_return",
+    label: "P2S 오크 리턴 데스크",
+    category: "Tables",
+    assetId: P2S_ASSET_IDS.desk,
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "코너형 작업 공간에 맞는 깊은 상판 데스크 variant입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩289,000",
+    options: "1800x800x740 mm · wide surface",
+    dimensionsMm: { width: 1800, depth: 800, height: 740 },
+    finishColor: "Natural oak",
+    finishMaterial: "Oak veneer with black metal support",
+    detailNotes: "Large surface variant for multiple monitors, speaker pair, desk mat, and decor composition.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_desk_bamboo_minimal_140",
+    label: "P2S 밤부 미니멀 데스크 1400",
+    category: "Tables",
+    assetId: P2S_ASSET_IDS.desk,
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "1400mm 폭의 밝은 대나무 톤 데스크입니다. 상판, edge clamp, underside accessory 배치를 지원합니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩199,000",
+    options: "1400x650x740 mm · desktop_top · desk_edge · desk_underside",
+    dimensionsMm: { width: 1400, depth: 650, height: 740 },
+    finishColor: "Natural bamboo",
+    finishMaterial: "Bamboo veneer over engineered wood with satin finish",
+    detailNotes: "Mid-size real-scale desk variant for common bedroom and home-office deskterior layouts.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_task_chair_mesh_black",
+    label: "P2S 메쉬 태스크 체어",
+    category: "Seating",
+    assetId: "/assets/models/SchoolChair_01/SchoolChair_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "홈오피스 책상 앞 배치를 위한 표준 작업 의자입니다.",
+    brand: "Generic Workspace",
+    price: "₩139,000",
+    options: "650x650x960 mm",
+    dimensionsMm: { width: 650, depth: 650, height: 960 },
+    finishColor: "Black mesh",
+    finishMaterial: "Mesh back, fabric seat, nylon base",
+    detailNotes: "Real-scale task chair envelope; floor placement only.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_task_chair_fabric_grey",
+    label: "P2S 패브릭 태스크 체어",
+    category: "Seating",
+    assetId: "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "차분한 회색 패브릭 작업 의자입니다.",
+    brand: "Generic Workspace",
+    price: "₩119,000",
+    options: "610x610x880 mm",
+    dimensionsMm: { width: 610, depth: 610, height: 880 },
+    finishColor: "Warm grey",
+    finishMaterial: "Woven fabric and steel legs",
+    detailNotes: "Floor-placed chair sized against real desk seat clearances.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_stool_guest_round",
+    label: "P2S 라운드 게스트 스툴",
+    category: "Seating",
+    assetId: "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "작은 방 보조 좌석으로 쓰는 원형 스툴입니다.",
+    brand: "Generic Workspace",
+    price: "₩49,000",
+    options: "420x420x460 mm",
+    dimensionsMm: { width: 420, depth: 420, height: 460 },
+    finishColor: "Oak / black",
+    finishMaterial: "Wood seat with powder-coated steel",
+    detailNotes: "Compact floor prop for desk-side styling.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  ...([
+    ["p2s_monitor_24_ips_black", "P2S 24형 IPS 모니터", "540x180x410 mm", { width: 540, depth: 180, height: 410 }],
+    ["p2s_monitor_27_4k_silver", "P2S 27형 4K 모니터", "615x205x455 mm", { width: 615, depth: 205, height: 455 }],
+    ["p2s_monitor_32_creator", "P2S 32형 크리에이터 모니터", "715x230x520 mm", { width: 715, depth: 230, height: 520 }],
+    ["p2s_monitor_34_ultrawide", "P2S 34형 울트라와이드 모니터", "815x240x470 mm", { width: 815, depth: 240, height: 470 }],
+    ["p2s_monitor_27_vertical", "P2S 세로형 27형 모니터", "370x205x615 mm", { width: 370, depth: 205, height: 615 }]
+  ] as const).map(([id, label, options, dimensionsMm]) => ({
+    id,
+    label,
+    category: "Electronics",
+    assetId: "/assets/models/Television_01/Television_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.stand,
+    scale: [1, 1, 1],
+    description: "VESA 100x100 호환 모니터입니다. 모니터암 타깃 배치 검증에 사용할 수 있습니다.",
+    brand: "Generic Display",
+    price: "₩229,000",
+    options: `${options} · VESA 100x100`,
+    dimensionsMm,
+    finishColor: "Satin black",
+    finishMaterial: "Plastic display shell with metal stand",
+    detailNotes: "Real-scale display variant with inferred VESA attachment metadata for monitor-arm placement.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  })),
+  ...([
+    ["p2s_monitor_arm_single_clamp", "P2S 싱글 모니터암 클램프", "120x110x520 mm", { width: 120, depth: 110, height: 520 }],
+    ["p2s_monitor_arm_dual_crossbar", "P2S 듀얼 모니터암", "740x140x540 mm", { width: 740, depth: 140, height: 540 }],
+    ["p2s_monitor_arm_heavy_duty", "P2S 헤비듀티 모니터암", "150x130x600 mm", { width: 150, depth: 130, height: 600 }]
+  ] as const).map(([id, label, options, dimensionsMm]) => ({
+    id,
+    label,
+    category: "Electronics",
+    assetId: "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.lamp,
+    scale: [1, 1, 1],
+    description: "책상 가장자리에 클램프로 고정하는 VESA 모니터암입니다.",
+    brand: "Generic Mount",
+    price: "₩89,000",
+    options: `${options} · edge_clamp · VESA`,
+    dimensionsMm,
+    finishColor: "Matte black",
+    finishMaterial: "Powder-coated aluminum arm with steel clamp",
+    detailNotes: "Mounted accessory with inferred edge clamp and VESA target metadata.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  })),
+  ...([
+    ["p2s_keyboard_75_white", "P2S 75% 화이트 키보드", { width: 330, depth: 135, height: 32 }, "Warm white"],
+    ["p2s_keyboard_tkl_graphite", "P2S TKL 그래파이트 키보드", { width: 360, depth: 140, height: 34 }, "Graphite"],
+    ["p2s_keyboard_65_wood", "P2S 65% 우드 키보드", { width: 315, depth: 120, height: 30 }, "Walnut"],
+    ["p2s_keyboard_full_silver", "P2S 풀사이즈 실버 키보드", { width: 440, depth: 135, height: 28 }, "Silver"],
+    ["p2s_keyboard_split_ergo_black", "P2S 스플릿 에르고 키보드", { width: 390, depth: 175, height: 38 }, "Black"]
+  ] as const).map(([id, label, dimensionsMm, finishColor]) => ({
+    id,
+    label,
+    category: "Electronics",
+    assetId: P2S_ASSET_IDS.keyboard,
+    thumbnail: P2S_THUMBNAILS.keyboard,
+    scale: [1, 1, 1],
+    description: "desktop_top 정밀 배치용 실측 키보드 variant입니다.",
+    brand: "Generic Keyboard",
+    price: "₩89,000",
+    options: `${dimensionsMm.width}x${dimensionsMm.depth}x${dimensionsMm.height} mm`,
+    dimensionsMm,
+    finishColor,
+    finishMaterial: "Matte keycaps over low-profile chassis",
+    detailNotes: "Surface-placeable keyboard with scale-locked real dimensions.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  })),
+  ...([
+    ["p2s_mouse_vertical_black", "P2S 버티컬 마우스", { width: 78, depth: 120, height: 72 }, "Black"],
+    ["p2s_mouse_travel_white", "P2S 트래블 마우스", { width: 62, depth: 100, height: 34 }, "White"],
+    ["p2s_mouse_ergo_grey", "P2S 에르고 마우스", { width: 76, depth: 122, height: 46 }, "Grey"],
+    ["p2s_mouse_gaming_graphite", "P2S 게이밍 마우스", { width: 72, depth: 126, height: 42 }, "Graphite"],
+    ["p2s_mouse_trackball_silver", "P2S 트랙볼 마우스", { width: 95, depth: 130, height: 50 }, "Silver"]
+  ] as const).map(([id, label, dimensionsMm, finishColor]) => ({
+    id,
+    label,
+    category: "Electronics",
+    assetId: P2S_ASSET_IDS.mouse,
+    thumbnail: P2S_THUMBNAILS.mouse,
+    scale: [1, 1, 1],
+    description: "desktop_top 정밀 배치용 실측 마우스 variant입니다.",
+    brand: "Generic Mouse",
+    price: "₩49,000",
+    options: `${dimensionsMm.width}x${dimensionsMm.depth}x${dimensionsMm.height} mm`,
+    dimensionsMm,
+    finishColor,
+    finishMaterial: "Soft-touch plastic and rubber feet",
+    detailNotes: "Surface-placeable mouse with scale-locked real dimensions.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  })),
+  {
+    id: "p2s_speaker_pair_white",
+    label: "P2S 화이트 스피커 페어",
+    category: "Electronics",
+    assetId: P2S_ASSET_IDS.speaker,
+    thumbnail: P2S_THUMBNAILS.speaker,
+    scale: [1, 1, 1],
+    description: "데스크 좌우 배치를 위한 compact speaker variant입니다.",
+    brand: "Generic Audio",
+    price: "₩129,000",
+    options: "110x150x240 mm",
+    dimensionsMm: { width: 110, depth: 150, height: 240 },
+    finishColor: "Matte white",
+    finishMaterial: "Painted cabinet with fabric grille",
+    detailNotes: "Surface-placeable speaker sized for monitor-side composition.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_speaker_soundbar_slim",
+    label: "P2S 슬림 사운드바",
+    category: "Electronics",
+    assetId: "/assets/models/boombox/boombox_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.speaker,
+    scale: [1, 1, 1],
+    description: "모니터 아래에 두는 슬림 사운드바입니다.",
+    brand: "Generic Audio",
+    price: "₩99,000",
+    options: "500x86x62 mm",
+    dimensionsMm: { width: 500, depth: 86, height: 62 },
+    finishColor: "Black",
+    finishMaterial: "Aluminum grille and plastic shell",
+    detailNotes: "Surface-placeable audio bar for monitor stand setups.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_speaker_studio_black",
+    label: "P2S 블랙 스튜디오 스피커 페어",
+    category: "Electronics",
+    assetId: P2S_ASSET_IDS.speaker,
+    thumbnail: P2S_THUMBNAILS.speaker,
+    scale: [1, 1, 1],
+    description: "모니터 양쪽에 두는 조금 큰 nearfield speaker variant입니다.",
+    brand: "Generic Audio",
+    price: "₩189,000",
+    options: "135x170x285 mm",
+    dimensionsMm: { width: 135, depth: 170, height: 285 },
+    finishColor: "Matte black",
+    finishMaterial: "Painted MDF cabinet with fabric grille",
+    detailNotes: "Surface-placeable speaker variant for wider desk and monitor-arm compositions.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_monitor_light_bar_black",
+    label: "P2S 모니터 라이트바",
+    category: "Lighting",
+    assetId: P2S_ASSET_IDS.lamp,
+    thumbnail: P2S_THUMBNAILS.lamp,
+    scale: [1, 1, 1],
+    description: "모니터 상단에 걸쳐 쓰는 라이트바 범위 치수 variant입니다.",
+    brand: "Generic Lighting",
+    price: "₩69,000",
+    options: "450x35x35 mm · light-emitter",
+    dimensionsMm: { width: 450, depth: 35, height: 35 },
+    finishColor: "Black",
+    finishMaterial: "Anodized aluminum with diffuser",
+    detailNotes: "Light bar catalog item for desk ambience testing.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_led_task_lamp_slim",
+    label: "P2S 슬림 LED 태스크 램프",
+    category: "Lighting",
+    assetId: "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.lamp,
+    scale: [1, 1, 1],
+    description: "얇은 암을 가진 LED 작업등입니다.",
+    brand: "Generic Lighting",
+    price: "₩79,000",
+    options: "180x160x520 mm · light-emitter",
+    dimensionsMm: { width: 180, depth: 160, height: 520 },
+    finishColor: "Black",
+    finishMaterial: "Powder-coated metal with LED diffuser",
+    detailNotes: "Desk lamp variant with real envelope for surface placement.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "p2s_desk_lamp_dome_warm",
+    label: "P2S 돔 쉐이드 데스크 램프",
+    category: "Lighting",
+    assetId: P2S_ASSET_IDS.lamp,
+    thumbnail: P2S_THUMBNAILS.lamp,
+    scale: [1, 1, 1],
+    description: "따뜻한 책상 분위기를 만드는 돔형 데스크 램프 variant입니다.",
+    brand: "Generic Lighting",
+    price: "₩59,000",
+    options: "210x210x380 mm · light-emitter",
+    dimensionsMm: { width: 210, depth: 210, height: 380 },
+    finishColor: "Warm brass",
+    finishMaterial: "Painted metal shade with warm diffuser",
+    detailNotes: "Desk lamp variant that changes room mood in shared viewer and walk placement scenes.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  ...([
+    ["p2s_desk_mat_felt_grey", "P2S 펠트 데스크 매트 그레이", { width: 900, depth: 400, height: 4 }, "Felt grey"],
+    ["p2s_desk_mat_leather_camel", "P2S 레더 데스크 매트 카멜", { width: 800, depth: 350, height: 3 }, "Camel"],
+    ["p2s_desk_mat_cork_natural", "P2S 코르크 데스크 매트", { width: 700, depth: 330, height: 5 }, "Natural cork"],
+    ["p2s_desk_mat_black_xl", "P2S 블랙 XL 데스크 매트", { width: 1000, depth: 450, height: 4 }, "Black"],
+    ["p2s_desk_mat_wool_blue", "P2S 울 데스크 매트 블루", { width: 850, depth: 380, height: 4 }, "Muted blue"]
+  ] as const).map(([id, label, dimensionsMm, finishColor]) => ({
+    id,
+    label,
+    category: "Decor",
+    assetId: P2S_ASSET_IDS.tray,
+    thumbnail: P2S_THUMBNAILS.tray,
+    scale: [1, 1, 1],
+    description: "키보드와 마우스를 함께 올리는 얇은 desktop_top 매트입니다.",
+    brand: "Generic Desk Mat",
+    price: "₩29,000",
+    options: `${dimensionsMm.width}x${dimensionsMm.depth}x${dimensionsMm.height} mm`,
+    dimensionsMm,
+    finishColor,
+    finishMaterial: "Soft desk mat surface",
+    detailNotes: "Scale-locked desk mat variant for composition and clearance testing.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  })),
+  ...([
+    ["p2s_cable_tray_mesh_600", "P2S 메쉬 케이블 트레이 600", { width: 600, depth: 180, height: 90 }],
+    ["p2s_cable_tray_felt_500", "P2S 펠트 케이블 해먹", { width: 500, depth: 160, height: 70 }],
+    ["p2s_cable_tray_bamboo_700", "P2S 밤부 케이블 트레이 700", { width: 700, depth: 190, height: 85 }]
+  ] as const).map(([id, label, dimensionsMm]) => ({
+    id,
+    label,
+    category: "Storage",
+    assetId: P2S_ASSET_IDS.cableTray,
+    thumbnail: P2S_THUMBNAILS.cableTray,
+    scale: [1, 1, 1],
+    description: "desk_underside에 나사로 설치하는 케이블 트레이 variant입니다.",
+    brand: "Generic Cable Management",
+    price: "₩39,000",
+    options: `${dimensionsMm.width}x${dimensionsMm.depth}x${dimensionsMm.height} mm · underside_screw`,
+    dimensionsMm,
+    finishColor: "Black",
+    finishMaterial: "Steel or reinforced felt",
+    detailNotes: "Mounted cable tray with inferred underside_screw metadata.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  })),
+  ...([
+    ["p2s_cable_clip_edge_single", "P2S 엣지 케이블 클립 싱글", { width: 28, depth: 24, height: 18 }],
+    ["p2s_cable_clip_edge_double", "P2S 엣지 케이블 클립 더블", { width: 44, depth: 24, height: 18 }],
+    ["p2s_cable_clip_adhesive_3slot", "P2S 3슬롯 케이블 클립", { width: 62, depth: 22, height: 16 }],
+    ["p2s_cable_clip_magnetic", "P2S 마그네틱 케이블 클립", { width: 34, depth: 20, height: 14 }],
+    ["p2s_cable_clip_underdesk_loop", "P2S 언더데스크 케이블 루프", { width: 60, depth: 36, height: 22 }]
+  ] as const).map(([id, label, dimensionsMm]) => ({
+    id,
+    label,
+    category: "Storage",
+    assetId: P2S_ASSET_IDS.cableTray,
+    thumbnail: P2S_THUMBNAILS.cableTray,
+    scale: [1, 1, 1],
+    description: "desk_edge 또는 desk_underside에 부착하는 소형 케이블 정리 accessory입니다.",
+    brand: "Generic Cable Management",
+    price: "₩9,000",
+    options: `${dimensionsMm.width}x${dimensionsMm.depth}x${dimensionsMm.height} mm · edge/underside attachment`,
+    dimensionsMm,
+    finishColor: "Black",
+    finishMaterial: "Flexible silicone or ABS plastic",
+    detailNotes: "Mounted cable clip with inferred clamp/screw metadata for focus placement.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  })),
+  ...([
+    ["p2s_wall_shelf_oak_800", "P2S 오크 벽선반 800", "/assets/models/Shelf_01/Shelf_01_1k.gltf", { width: 800, depth: 240, height: 60 }],
+    ["p2s_pegboard_grid_white", "P2S 화이트 페그보드", "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf", { width: 760, depth: 42, height: 560 }],
+    ["p2s_steel_shelf_compact", "P2S 컴팩트 스틸 선반", "/assets/models/steel_frame_shelves_01/steel_frame_shelves_01_1k.gltf", { width: 900, depth: 350, height: 1200 }]
+  ] as const).map(([id, label, assetId, dimensionsMm]) => ({
+    id,
+    label,
+    category: "Storage",
+    assetId,
+    thumbnail: P2S_THUMBNAILS.stand,
+    scale: [1, 1, 1],
+    description: "데스크 주변 수납과 소품 배치를 위한 선반/페그보드입니다.",
+    brand: "Generic Storage",
+    price: "₩59,000",
+    options: `${dimensionsMm.width}x${dimensionsMm.depth}x${dimensionsMm.height} mm`,
+    dimensionsMm,
+    finishColor: "Neutral",
+    finishMaterial: "Wood or powder-coated steel",
+    detailNotes: "Storage surface with inferred shelf/furniture support surface metadata.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  })),
+  ...([
+    ["p2s_decor_mug_espresso", "P2S 에스프레소 머그", P2S_ASSET_IDS.mug, P2S_THUMBNAILS.mug, { width: 92, depth: 72, height: 72 }],
+    ["p2s_decor_mug_tall", "P2S 톨 세라믹 머그", P2S_ASSET_IDS.mug, P2S_THUMBNAILS.mug, { width: 110, depth: 84, height: 120 }],
+    ["p2s_decor_books_minimal", "P2S 미니멀 북 스택", P2S_ASSET_IDS.books, P2S_THUMBNAILS.books, { width: 180, depth: 240, height: 58 }],
+    ["p2s_decor_books_large", "P2S 라지 북 스택", P2S_ASSET_IDS.books, P2S_THUMBNAILS.books, { width: 220, depth: 300, height: 96 }],
+    ["p2s_decor_planter_white", "P2S 화이트 플랜터", P2S_ASSET_IDS.plant, P2S_THUMBNAILS.plant, { width: 120, depth: 120, height: 150 }],
+    ["p2s_decor_planter_mini", "P2S 미니 플랜터", P2S_ASSET_IDS.plant, P2S_THUMBNAILS.plant, { width: 80, depth: 80, height: 105 }],
+    ["p2s_decor_pen_cup", "P2S 펜 컵", P2S_ASSET_IDS.mug, P2S_THUMBNAILS.mug, { width: 82, depth: 82, height: 105 }],
+    ["p2s_decor_catchall_tray", "P2S 캐치올 트레이", P2S_ASSET_IDS.tray, P2S_THUMBNAILS.tray, { width: 210, depth: 140, height: 24 }],
+    ["p2s_decor_note_stack", "P2S 노트 스택", P2S_ASSET_IDS.books, P2S_THUMBNAILS.books, { width: 148, depth: 210, height: 36 }],
+    ["p2s_decor_small_frame", "P2S 소형 액자", P2S_ASSET_IDS.books, P2S_THUMBNAILS.books, { width: 160, depth: 24, height: 210 }],
+    ["p2s_decor_clock_round", "P2S 라운드 데스크 시계", "/assets/models/alarm_clock_01/alarm_clock_01_1k.gltf", P2S_THUMBNAILS.mug, { width: 110, depth: 55, height: 110 }],
+    ["p2s_decor_camera_vintage", "P2S 빈티지 카메라", "/assets/models/Camera_01/Camera_01_1k.gltf", P2S_THUMBNAILS.tray, { width: 145, depth: 80, height: 95 }],
+    ["p2s_decor_candle_pair", "P2S 캔들 페어", "/assets/models/brass_candleholders/brass_candleholders_1k.gltf", P2S_THUMBNAILS.mug, { width: 120, depth: 60, height: 160 }],
+    ["p2s_decor_gamepad", "P2S 게임패드", "/assets/models/gamepad/gamepad_1k.gltf", P2S_THUMBNAILS.mouse, { width: 155, depth: 105, height: 55 }],
+    ["p2s_decor_headphone_stand", "P2S 헤드폰 스탠드", P2S_ASSET_IDS.stand, P2S_THUMBNAILS.stand, { width: 160, depth: 160, height: 260 }],
+    ["p2s_decor_acoustic_panel", "P2S 미니 어쿠스틱 패널", P2S_ASSET_IDS.books, P2S_THUMBNAILS.books, { width: 300, depth: 32, height: 300 }],
+    ["p2s_decor_phone_stand", "P2S 알루미늄 폰 스탠드", P2S_ASSET_IDS.stand, P2S_THUMBNAILS.stand, { width: 86, depth: 96, height: 132 }],
+    ["p2s_decor_glass_vase", "P2S 글라스 미니 베이스", P2S_ASSET_IDS.plant, P2S_THUMBNAILS.plant, { width: 92, depth: 92, height: 180 }],
+    ["p2s_decor_block_calendar", "P2S 블록 캘린더", P2S_ASSET_IDS.books, P2S_THUMBNAILS.books, { width: 150, depth: 58, height: 92 }],
+    ["p2s_decor_minimal_figure", "P2S 미니멀 피규어", P2S_ASSET_IDS.mug, P2S_THUMBNAILS.mug, { width: 74, depth: 60, height: 150 }]
+  ] as const).map(([id, label, assetId, thumbnail, dimensionsMm]) => ({
+    id,
+    label,
+    category: "Decor",
+    assetId,
+    thumbnail,
+    scale: [1, 1, 1],
+    description: "데스크와 선반 위를 꾸미는 실측 소품 variant입니다.",
+    brand: "Generic Decor",
+    price: "₩19,000",
+    options: `${dimensionsMm.width}x${dimensionsMm.depth}x${dimensionsMm.height} mm`,
+    dimensionsMm,
+    finishColor: "Neutral accent",
+    finishMaterial: "Mixed decorative material",
+    detailNotes: "Scale-locked decor prop for deskterior styling and shared viewer product details.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  }))
+] as const;
+
 function isSupportedCatalogAssetId(assetId: string) {
   const normalized = assetId.trim();
   return (
@@ -597,7 +1141,7 @@ function normalizeCatalogItem(item: unknown): LibraryCatalogItem | null {
   } satisfies LibraryCatalogItem;
 }
 
-export const DEFAULT_CATALOG: LibraryCatalogItem[] = DEFAULT_CATALOG_SOURCE.map((item) =>
+export const DEFAULT_CATALOG: LibraryCatalogItem[] = [...DEFAULT_CATALOG_SOURCE, ...COMMERCIAL_CATALOG_VARIANTS].map((item) =>
   normalizeCatalogItem(item)
 ).filter((item): item is LibraryCatalogItem => item !== null);
 
@@ -626,15 +1170,16 @@ export function toCatalogProductSnapshot(item: LibraryCatalogItem): CatalogProdu
 }
 
 export function normalizeCatalog(input: unknown) {
-  if (!Array.isArray(input)) {
-    return DEFAULT_CATALOG;
-  }
-
-  const normalized = input
+  const source = Array.isArray(input) ? input : DEFAULT_CATALOG_SOURCE;
+  const normalized = [...source, ...COMMERCIAL_CATALOG_VARIANTS]
     .map((item) => normalizeCatalogItem(item))
     .filter((item): item is LibraryCatalogItem => item !== null);
+  const byId = new Map<string, LibraryCatalogItem>();
+  normalized.forEach((item) => {
+    byId.set(item.id, item);
+  });
 
-  return normalized.length > 0 ? normalized : DEFAULT_CATALOG;
+  return byId.size > 0 ? Array.from(byId.values()) : DEFAULT_CATALOG;
 }
 
 export function getLibraryCategories(items: LibraryCatalogItem[]): LibraryCatalogCategory[] {

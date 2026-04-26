@@ -1,0 +1,41 @@
+[
+  {
+    "id": "shelf-top",
+    "type": "shelf_top",
+    "localFrame": {
+      "originMm": [
+        0,
+        60,
+        0
+      ],
+      "tangentU": [
+        1000,
+        0,
+        0
+      ],
+      "tangentV": [
+        0,
+        0,
+        1000
+      ],
+      "normal": [
+        0,
+        1000,
+        0
+      ]
+    },
+    "boundsMm": {
+      "min": [
+        -340,
+        -83
+      ],
+      "max": [
+        340,
+        83
+      ]
+    },
+    "allowedAttachments": [
+      "place_on_surface"
+    ]
+  }
+]

@@ -84,7 +84,8 @@ export const SaveVersionSchema = z.object({
   assets: z.array(z.record(z.string(), z.unknown())).default([]),
   materials: z.object({
     wallIndex: z.number(),
-    floorIndex: z.number()
+    floorIndex: z.number(),
+    ceilingIndex: z.number().optional()
   }),
   lighting: z
     .object({
@@ -647,7 +648,8 @@ function buildSceneDocument(
     }),
     materialOverride: {
       wallMaterialIndex: materials.wallIndex,
-      floorMaterialIndex: materials.floorIndex
+      floorMaterialIndex: materials.floorIndex,
+      ceilingMaterialIndex: materials.ceilingIndex ?? materials.wallIndex
     },
     lighting: normalizedLighting
   };
@@ -703,6 +705,9 @@ function buildProjectVersionCustomization(
       },
       wall: {
         materialSkuId: `wall:${materials.wallIndex}`
+      },
+      ceiling: {
+        materialSkuId: `ceiling:${materials.ceilingIndex ?? materials.wallIndex}`
       },
       lighting: normalizedLighting
     },

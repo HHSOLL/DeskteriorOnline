@@ -33,6 +33,7 @@ export type SaveProjectPayload = {
   materials: {
     wallIndex: number;
     floorIndex: number;
+    ceilingIndex?: number;
   };
   lighting?: LightingSettings;
   thumbnailDataUrl?: string | null;

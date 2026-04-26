@@ -1,0 +1,41 @@
+[
+  {
+    "id": "surface-top",
+    "type": "desktop_top",
+    "localFrame": {
+      "originMm": [
+        0,
+        4,
+        0
+      ],
+      "tangentU": [
+        1000,
+        0,
+        0
+      ],
+      "tangentV": [
+        0,
+        0,
+        1000
+      ],
+      "normal": [
+        0,
+        1000,
+        0
+      ]
+    },
+    "boundsMm": {
+      "min": [
+        -362,
+        -143
+      ],
+      "max": [
+        363,
+        143
+      ]
+    },
+    "allowedAttachments": [
+      "place_on_surface"
+    ]
+  }
+]

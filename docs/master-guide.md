@@ -1093,3 +1093,16 @@ Updated:
 
 Removed/Deprecated:
 - authored attachment constraint는 runtime 내부 검증만 통과하면 제품 UI에는 드러나지 않아도 된다는 가정.
+
+## 2026-04-24 변경 동기화 (Room / Placement Feature Slice)
+Added:
+- Room shell은 단순 box wall이 아니라 architectural finish layer를 포함해야 하며, 기본 방도 baseboard, ceiling trim, visible opening/frame treatment, real-scale material repeat을 갖춰야 한다.
+- Material system은 wall/floor/ceiling을 독립 assignment로 다루고, UI는 texture preview와 category를 함께 노출해야 한다.
+- Walkthrough placement는 top view로 돌아가지 않고도 asset drawer -> asset select -> focus placement -> keyboard/numeric micro-adjust -> commit/cancel 경로가 이어져야 한다.
+- Runtime catalog bridge는 published package metadata와 catalog variant dimensions를 조합해 mounted accessory의 support surface / attachment candidates를 복원해야 한다.
+
+Updated:
+- Feature RC 판단은 release gate dashboard가 아니라 브라우저에서 사람이 방 생성, 재질 변경, 제품 선택, walk placement, 저장/공유 재현을 실제로 수행할 수 있는지를 기준으로 한다.
+
+Removed/Deprecated:
+- production 운영 gate close 상태를 기능 완성의 대체 지표로 사용하는 기준.

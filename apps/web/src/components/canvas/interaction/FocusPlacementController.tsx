@@ -92,6 +92,10 @@ function resolveCandidateFromRequest(request: FocusPlacementRequest, candidateIn
   );
 }
 
+function isFinitePoseValue(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
 function resolveRuntimeAssetForObject(engine: Engine, objectId: string) {
   const runtimeObject = engine.runtimeScene.objectRegistry.get(objectId);
   if (!runtimeObject) {
@@ -269,6 +273,56 @@ export default function FocusPlacementController() {
       return;
     }
 
+    const applyLocalPose = (nextLocalPose: SurfaceLocalPose) => {
+      if (!transactionRef.current) {
+        return;
+      }
+
+      const nextState = transactionRef.current.update(nextLocalPose);
+      const sessionState = resolveFocusPlacementSessionUpdate(nextLocalPose, nextState);
+      updateSession({
+        ...sessionState,
+        wizardState: resolveFocusPlacementWizardState({
+          attachmentType: activeSession.attachmentType,
+          localPose: sessionState.localPose,
+          selectedRuntimeAsset: resolveRuntimeAssetForObject(engine, activeSession.objectId),
+          supportRuntimeAsset: resolveRuntimeAssetForObject(engine, activeSession.supportObjectId),
+          surfaceId: activeSession.surfaceId,
+          constraintReport: sessionState.constraintReport,
+          collisionReport: sessionState.collisionReport
+        })
+      });
+    };
+
+    const commitActivePlacement = () => {
+      if (!transactionRef.current) {
+        return;
+      }
+
+      try {
+        transactionRef.current.commit();
+        commitRuntimePlacementToStore({
+          objectId: activeSession.objectId,
+          engine
+        });
+        recordSnapshot("집중 배치");
+        transactionRef.current = null;
+        clearSession();
+        setIsTransforming(false);
+      } catch (error) {
+        console.error("[FocusPlacementController] failed to commit focus placement", error);
+      }
+    };
+
+    const cancelActivePlacement = () => {
+      if (transactionRef.current) {
+        transactionRef.current.cancel();
+        transactionRef.current = null;
+      }
+      clearSession();
+      setIsTransforming(false);
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!transactionRef.current || shouldIgnoreKeyboardTarget(event.target)) {
         return;
@@ -372,27 +426,12 @@ export default function FocusPlacementController() {
         }
         case "Enter": {
           event.preventDefault();
-          try {
-            transactionRef.current.commit();
-            commitRuntimePlacementToStore({
-              objectId: activeSession.objectId,
-              engine
-            });
-            recordSnapshot("집중 배치");
-            transactionRef.current = null;
-            clearSession();
-            setIsTransforming(false);
-          } catch (error) {
-            console.error("[FocusPlacementController] failed to commit focus placement", error);
-          }
+          commitActivePlacement();
           return;
         }
         case "Escape":
           event.preventDefault();
-          transactionRef.current.cancel();
-          transactionRef.current = null;
-          clearSession();
-          setIsTransforming(false);
+          cancelActivePlacement();
           return;
         default:
           return;
@@ -403,24 +442,33 @@ export default function FocusPlacementController() {
       }
 
       event.preventDefault();
-      const nextState = transactionRef.current.update(nextLocalPose);
-      const sessionState = resolveFocusPlacementSessionUpdate(nextLocalPose, nextState);
-      updateSession({
-        ...sessionState,
-        wizardState: resolveFocusPlacementWizardState({
-          attachmentType: activeSession.attachmentType,
-          localPose: sessionState.localPose,
-          selectedRuntimeAsset: resolveRuntimeAssetForObject(engine, activeSession.objectId),
-          supportRuntimeAsset: resolveRuntimeAssetForObject(engine, activeSession.supportObjectId),
-          surfaceId: activeSession.surfaceId,
-          constraintReport: sessionState.constraintReport,
-          collisionReport: sessionState.collisionReport
-        })
-      });
+      applyLocalPose(nextLocalPose);
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("deskterioronline:focus-placement:commit", commitActivePlacement);
+    window.addEventListener("deskterioronline:focus-placement:cancel", cancelActivePlacement);
+    const handleNumericPoseInput = (event: Event) => {
+      const detail = (event as CustomEvent<Partial<SurfaceLocalPose>>).detail;
+      if (!detail || typeof detail !== "object") {
+        return;
+      }
+
+      applyLocalPose({
+        ...activeSession.localPose,
+        ...(isFinitePoseValue(detail.uMm) ? { uMm: detail.uMm } : {}),
+        ...(isFinitePoseValue(detail.vMm) ? { vMm: detail.vMm } : {}),
+        ...(isFinitePoseValue(detail.normalOffsetMm) ? { normalOffsetMm: detail.normalOffsetMm } : {}),
+        ...(isFinitePoseValue(detail.rotationMilliDeg) ? { rotationMilliDeg: detail.rotationMilliDeg } : {})
+      });
+    };
+    window.addEventListener("deskterioronline:focus-placement:set-local-pose", handleNumericPoseInput);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("deskterioronline:focus-placement:commit", commitActivePlacement);
+      window.removeEventListener("deskterioronline:focus-placement:cancel", cancelActivePlacement);
+      window.removeEventListener("deskterioronline:focus-placement:set-local-pose", handleNumericPoseInput);
+    };
   }, [activateCandidate, activeSession, clearSession, engine, recordSnapshot, setIsTransforming, updateSession]);
 
   useEffect(() => {

@@ -75,6 +75,10 @@ export type CuratedAttachmentAuthoring = {
 
 export type CuratedDeskteriorAsset = {
   key: string;
+  packageKind?: "curated_asset" | "catalog_variant";
+  baseAssetKey?: string | null;
+  thumbnailPublicPath?: string | null;
+  catalogEntry?: Record<string, unknown>;
   manifestId: string;
   sourcePath: string;
   runtimePath: string;
@@ -112,10 +116,13 @@ export type AssetCompilerPaths = {
 
 export type RuntimePackageIndexEntry = {
   key: string;
+  packageKind?: "curated_asset" | "catalog_variant";
+  baseAssetKey?: string | null;
   manifestId: string;
   label: string;
   assetId: string;
   packagePath: string;
+  runtimeAsset?: RuntimeAsset;
   qaStatus: AssetQaReport["status"];
   warningCount: number;
   surfaceCount: number;
@@ -133,6 +140,8 @@ export type RuntimePackageDescriptor = {
   schemaVersion: "asset-package-alpha-v2";
   generatedAt: string;
   key: string;
+  packageKind?: "curated_asset" | "catalog_variant";
+  baseAssetKey?: string | null;
   manifestId: string;
   label: string;
   assetId: string;

@@ -6,6 +6,7 @@ import {
   type PlacementRecord,
   type RuntimeAsset
 } from "@deskterioronline/scene-schema";
+import { BoxGeometry, Mesh, MeshBasicMaterial } from "three";
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
@@ -79,6 +80,25 @@ const state: LegacySceneStoreStateLike = {
       scale: [1, 1, 1]
     },
     {
+      id: "keyboard-1",
+      assetId: "p2s_keyboard_compact",
+      catalogItemId: "p2s_keyboard_compact",
+      product: {
+        id: "p2s_keyboard_compact",
+        name: "Keyboard",
+        category: "desk_accessory",
+        dimensionsMm: { width: 440, depth: 140, height: 32 },
+        pivot: { x: "center", y: "floor", z: "center" },
+        collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
+        lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 4, maxTriangleCount: 4000 },
+        textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
+        scaleLocked: true
+      },
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
+    },
+    {
       id: "mouse-1",
       assetId: "p2s_mouse_wireless",
       catalogItemId: "p2s_mouse_wireless",
@@ -109,6 +129,25 @@ const state: LegacySceneStoreStateLike = {
         pivot: { x: "center", y: "floor", z: "center" },
         collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
         lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 3, maxTriangleCount: 3000 },
+        textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
+        scaleLocked: true
+      },
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
+    },
+    {
+      id: "speaker-1",
+      assetId: "p2s_speaker_compact",
+      catalogItemId: "p2s_speaker_compact",
+      product: {
+        id: "p2s_speaker_compact",
+        name: "Speaker",
+        category: "desk_accessory",
+        dimensionsMm: { width: 120, depth: 120, height: 180 },
+        pivot: { x: "center", y: "floor", z: "center" },
+        collisionProxy: { kind: "box", derivesFrom: "dimensionsMm" },
+        lodProfile: { strategy: "single_mesh", levelCount: 1, maxDrawCalls: 4, maxTriangleCount: 5000 },
         textureSet: { workflow: "pbr_metallic_roughness", authored: "procedural", ktx2Ready: false },
         scaleLocked: true
       },
@@ -209,6 +248,31 @@ try {
       }
     },
     {
+      assetId: "p2s_keyboard_compact",
+      units: "mm" as const,
+      dimensionsMm: { width: 440, depth: 140, height: 32 },
+      scaleLocked: true as const,
+      pivot: { x: "center" as const, y: "floor" as const, z: "center" as const },
+      sourceProvenance: { method: "manual" as const, license: "internal", attributionRequired: false },
+      runtime: {
+        lods: [{ id: "lod0", level: 0, model: "keyboard.glb", triangleCount: 4000, drawCallBudget: 4 }],
+        proxy: "keyboard.proxy.glb",
+        defaultLod: 0,
+        triangleBudget: 4000,
+        textureBudgetMb: 8
+      },
+      colliders: [],
+      supportSurfaces: [],
+      attachmentPoints: [],
+      materialVariants: [{ id: "default", label: "Default" }],
+      qaStatus: {
+        status: "passed" as const,
+        measuredBoundsMm: { width: 440, depth: 140, height: 32 },
+        dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+        validatorVersion: "alpha"
+      }
+    },
+    {
       assetId: "p2s_mouse_wireless",
       units: "mm" as const,
       dimensionsMm: { width: 84, depth: 126, height: 52 },
@@ -229,6 +293,31 @@ try {
       qaStatus: {
         status: "passed" as const,
         measuredBoundsMm: { width: 84, depth: 126, height: 52 },
+        dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+        validatorVersion: "alpha"
+      }
+    },
+    {
+      assetId: "p2s_speaker_compact",
+      units: "mm" as const,
+      dimensionsMm: { width: 120, depth: 120, height: 180 },
+      scaleLocked: true as const,
+      pivot: { x: "center" as const, y: "floor" as const, z: "center" as const },
+      sourceProvenance: { method: "manual" as const, license: "internal", attributionRequired: false },
+      runtime: {
+        lods: [{ id: "lod0", level: 0, model: "speaker.glb", triangleCount: 5000, drawCallBudget: 4 }],
+        proxy: "speaker.proxy.glb",
+        defaultLod: 0,
+        triangleBudget: 5000,
+        textureBudgetMb: 8
+      },
+      colliders: [],
+      supportSurfaces: [],
+      attachmentPoints: [],
+      materialVariants: [{ id: "default", label: "Default" }],
+      qaStatus: {
+        status: "passed" as const,
+        measuredBoundsMm: { width: 120, depth: 120, height: 180 },
         dimensionErrorMm: { width: 0, depth: 0, height: 0 },
         validatorVersion: "alpha"
       }
@@ -325,6 +414,49 @@ try {
   );
 
   const kernel = new PlacementKernel(engine);
+  const deskSurfaceMesh = new Mesh(
+    new BoxGeometry(1.6, 0.08, 0.7).translate(0, 0.7, 0),
+    new MeshBasicMaterial()
+  );
+  deskSurfaceMesh.position.set(1.6, 0, 1.2);
+  deskSurfaceMesh.updateMatrixWorld(true);
+
+  const keyboardTransaction = kernel.begin({
+    objectId: "keyboard-1",
+    supportObjectId: "desk-1",
+    attachmentType: "place_on_surface",
+    geometryPick: {
+      ray: {
+        origin: [1.24, 2, 1.02],
+        direction: [0, -1, 0]
+      },
+      candidates: [
+        {
+          objectId: "desk-1",
+          surfaceId: "desktop_top",
+          surface: runtimeAssets[0]!.supportSurfaces[0]!,
+          mesh: deskSurfaceMesh
+        }
+      ]
+    }
+  });
+  const pickedKeyboardPose = keyboardTransaction.getState().activeCandidate?.localPose;
+  assert(
+    pickedKeyboardPose &&
+      Math.abs(pickedKeyboardPose.uMm + 360) <= 2 &&
+      Math.abs(pickedKeyboardPose.vMm + 180) <= 2,
+    "BVH geometry picking should resolve a desktop_top hit into support-local keyboard coordinates"
+  );
+  const keyboardState = keyboardTransaction.update(pickedKeyboardPose);
+  assert(keyboardState.constraintReport?.valid === true, "keyboard should place on desktop_top from a BVH pick");
+  const keyboardCommitted = keyboardTransaction.commit();
+  assert(
+    keyboardCommitted.mode === "surface_local" &&
+      keyboardCommitted.surfaceId === "desktop_top" &&
+      keyboardCommitted.attachmentType === "place_on_surface",
+    "keyboard desktop_top placement should persist surface-local relation"
+  );
+
   const transaction = kernel.begin({
     objectId: "mouse-1",
     supportObjectId: "desk-1",
@@ -347,8 +479,32 @@ try {
   assert(committed.mode === "surface_local", "placement commit should persist a surface-local placement");
 
   const patches = engine.buildDocumentPatch();
-  assert(patches.length === 1, `expected one placement patch, received ${patches.length}`);
-  assert(patches[0]?.nextPlacement.mode === "surface_local", "patch should keep surface-local placement");
+  assert(patches.length === 2, `expected two placement patches, received ${patches.length}`);
+  assert(
+    patches.every((patch) => patch.nextPlacement.mode === "surface_local"),
+    "patches should keep surface-local placement records"
+  );
+
+  const speakerTransaction = kernel.begin({
+    objectId: "speaker-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "place_on_surface"
+  });
+  const speakerState = speakerTransaction.update({
+    uMm: -480,
+    vMm: 190,
+    normalOffsetMm: 0,
+    rotationMilliDeg: 0
+  });
+  assert(speakerState.constraintReport?.valid === true, "speaker should place on desktop_top");
+  const speakerCommitted = speakerTransaction.commit();
+  assert(
+    speakerCommitted.mode === "surface_local" &&
+      speakerCommitted.surfaceId === "desktop_top" &&
+      speakerCommitted.attachmentType === "place_on_surface",
+    "speaker desktop_top placement should persist surface-local relation"
+  );
 
   const unvalidatedTransaction = kernel.begin({
     objectId: "mouse-1",
@@ -461,7 +617,8 @@ try {
   assert(mountedState.constraintReport?.valid === true, "mounted candidate should pass attachment validation on the desk edge");
   const mountedCommitted = mountedTransaction.commit();
   assert(
-    mountedCommitted.surfaceId === "back_edge" &&
+    mountedCommitted.mode === "surface_local" &&
+      mountedCommitted.surfaceId === "back_edge" &&
       mountedCommitted.localPose.uMm === 260 &&
       mountedCommitted.localPose.vMm === 10 &&
       mountedCommitted.localPose.normalOffsetMm === 0 &&
@@ -476,6 +633,9 @@ try {
         patchCount: patches.length,
         nextPlacement: patches[0]?.nextPlacement,
         attachmentChildren: attachmentGraph.getChildren(initialGraph, "desk-1"),
+        keyboardPlacement: keyboardCommitted,
+        mousePlacement: committed,
+        speakerPlacement: speakerCommitted,
         mountedPlacement: mountedCommitted
       },
       null,

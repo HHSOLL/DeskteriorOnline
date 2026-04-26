@@ -30,6 +30,7 @@ export function useRuntimeEngineBridge() {
     navGraph,
     wallMaterialIndex,
     floorMaterialIndex,
+    ceilingMaterialIndex,
     lighting
   } = useShellStore();
   const { assets } = useAssetStore();
@@ -49,11 +50,13 @@ export function useRuntimeEngineBridge() {
       assets,
       wallMaterialIndex,
       floorMaterialIndex,
+      ceilingMaterialIndex,
       lighting
     }),
     [
       assets,
       cameraAnchors,
+      ceilingMaterialIndex,
       ceilings,
       floorMaterialIndex,
       floors,

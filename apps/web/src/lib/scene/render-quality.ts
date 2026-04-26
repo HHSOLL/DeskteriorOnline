@@ -179,17 +179,17 @@ export function resolveSceneRenderQuality({
 
   if (isBuilderPreview) {
     return {
-      frameLoop: "demand",
+      frameLoop: "always",
       dpr: constrainedDevice ? clampRange(0.8, 1) : clampRange(0.9, 1.15),
       toneMapping: "neutral",
       toneMappingExposure: constrainedDevice ? 0.98 : 1.01,
       enableShadows: !constrainedDevice,
       shadowMapSize: constrainedDevice ? 512 : 768,
-      enablePostEffects: !constrainedDevice,
-      enableBloom: !constrainedDevice,
-      bloomIntensity: constrainedDevice ? 0 : 0.18,
-      vignetteDarkness: constrainedDevice ? 0 : 0.18,
-      noiseOpacity: constrainedDevice ? 0 : 0.003,
+      enablePostEffects: false,
+      enableBloom: false,
+      bloomIntensity: 0,
+      vignetteDarkness: 0,
+      noiseOpacity: 0,
       enableSsao: false,
       enableSSR: false,
       ssrIntensity: 0,

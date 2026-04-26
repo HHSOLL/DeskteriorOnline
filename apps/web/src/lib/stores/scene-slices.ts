@@ -27,6 +27,7 @@ export type ShellSlice = {
   navGraph: NavGraph;
   wallMaterialIndex: number;
   floorMaterialIndex: number;
+  ceilingMaterialIndex: number;
   lighting: LightingSettings;
   setWalls: (walls: Wall[]) => void;
   setOpenings: (openings: Opening[]) => void;
@@ -39,6 +40,7 @@ export type ShellSlice = {
   setScaleInfo: (scaleInfo: ScaleInfo) => void;
   setWallMaterialIndex: (index: number) => void;
   setFloorMaterialIndex: (index: number) => void;
+  setCeilingMaterialIndex: (index: number) => void;
   setLighting: (lighting: Partial<LightingSettings>) => void;
   setScene: (scene: any) => void;
   resetScene: () => void;
@@ -92,6 +94,7 @@ const selectShellSlice = (state: SceneStoreState): ShellSlice => ({
   navGraph: state.navGraph,
   wallMaterialIndex: state.wallMaterialIndex,
   floorMaterialIndex: state.floorMaterialIndex,
+  ceilingMaterialIndex: state.ceilingMaterialIndex,
   lighting: state.lighting,
   setWalls: state.setWalls,
   setOpenings: state.setOpenings,
@@ -104,6 +107,7 @@ const selectShellSlice = (state: SceneStoreState): ShellSlice => ({
   setScaleInfo: state.setScaleInfo,
   setWallMaterialIndex: state.setWallMaterialIndex,
   setFloorMaterialIndex: state.setFloorMaterialIndex,
+  setCeilingMaterialIndex: state.setCeilingMaterialIndex,
   setLighting: state.setLighting,
   setScene: state.setScene,
   resetScene: state.resetScene

@@ -113,9 +113,11 @@ export default function ProjectEditorPage() {
     scaleInfo,
     wallMaterialIndex,
     floorMaterialIndex,
+    ceilingMaterialIndex,
     lighting,
     setWallMaterialIndex,
     setFloorMaterialIndex,
+    setCeilingMaterialIndex,
     setLighting,
     setScene,
     resetScene
@@ -440,7 +442,14 @@ export default function ProjectEditorPage() {
       });
       setSelectedAssetId(id);
       recordSnapshot(`제품 추가: ${item.label}`);
-      toast.success(`${item.label} 제품을 추가했습니다.`);
+      if (viewMode === "walk") {
+        setPanels({ assets: false, properties: false });
+        toast.success(`${item.label} 제품을 선택했습니다.`, {
+          description: "설치할 책상/표면을 화면 중앙에 맞춘 뒤 E 키로 집중 배치를 시작하세요."
+        });
+      } else {
+        toast.success(`${item.label} 제품을 추가했습니다.`);
+      }
     },
     [
       addFurniture,
@@ -449,7 +458,9 @@ export default function ProjectEditorPage() {
       recordSnapshot,
       sceneCenter.x,
       sceneCenter.z,
-      setSelectedAssetId
+      setPanels,
+      setSelectedAssetId,
+      viewMode
     ]
   );
 
@@ -570,6 +581,13 @@ export default function ProjectEditorPage() {
     },
     [recordSnapshot, setFloorMaterialIndex]
   );
+  const applyCeilingFinish = useCallback(
+    (index: number) => {
+      setCeilingMaterialIndex(index);
+      recordSnapshot("천장 마감 변경");
+    },
+    [recordSnapshot, setCeilingMaterialIndex]
+  );
   const applyLightingSetting = useCallback(
     (updates: Partial<typeof lighting>) => {
       setLighting(updates);
@@ -594,6 +612,7 @@ export default function ProjectEditorPage() {
   const isSceneVisible = hasSceneGeometry && (viewMode === "top" || viewMode === "walk");
   const showLaunchState = !hasSceneGeometry;
   const isTopEditorVisible = isSceneVisible && viewMode === "top";
+  const isAssetDrawerAvailable = isSceneVisible;
   const launchMetrics = [
     { label: "진입", value: "빌더" },
     { label: "제품 목록", value: `${libraryCatalog.length}개` },
@@ -611,6 +630,9 @@ export default function ProjectEditorPage() {
   const launchPreviewItems = featuredLibraryCatalog.slice(0, 3);
   const normalizedProjectName = projectNameDraft.trim();
   const activePanel = panels.assets ? "assets" : panels.properties ? "properties" : null;
+  const visiblePanel = activePanel === "assets" || (activePanel === "properties" && isTopEditorVisible)
+    ? activePanel
+    : null;
   const topModeNotice =
     topMode === "room"
       ? "룸 배치 모드: 제품 본체를 직접 드래그해 큰 위치를 잡습니다. 250mm snap과 월드 기준 정렬만 유지합니다."
@@ -633,7 +655,8 @@ export default function ProjectEditorPage() {
       assets,
       materials: {
         wallIndex: wallMaterialIndex,
-        floorIndex: floorMaterialIndex
+        floorIndex: floorMaterialIndex,
+        ceilingIndex: ceilingMaterialIndex
       },
       lighting,
       assetSummary: buildProjectAssetSummary(libraryCatalog, assets),
@@ -642,6 +665,7 @@ export default function ProjectEditorPage() {
     [
       assets,
       cameraAnchors,
+      ceilingMaterialIndex,
       ceilings,
       currentProject?.name,
       entranceId,
@@ -674,14 +698,18 @@ export default function ProjectEditorPage() {
     autosaveDelayMs: 2500
   });
   useEffect(() => {
-    if (!isSceneVisible || isTopEditorVisible) return;
-    setPanels({ assets: false, properties: false });
+    if (!isSceneVisible) {
+      setPanels({ assets: false, properties: false });
+      return;
+    }
+    if (viewMode === "top") return;
+    setPanels({ properties: false });
     setTransformMode("translate");
     setTransformSpace("world");
     setIsTransforming(false);
   }, [
     isSceneVisible,
-    isTopEditorVisible,
+    viewMode,
     setIsTransforming,
     setPanels,
     setTransformMode,
@@ -778,8 +806,8 @@ export default function ProjectEditorPage() {
         onTitleChange={setProjectNameDraft}
         onTitleCommit={() => setProjectNameDraft((current) => current.trim())}
         viewMode={viewMode}
-        canShowPanels={isTopEditorVisible}
-        activePanel={activePanel}
+        canShowPanels={isAssetDrawerAvailable}
+        activePanel={visiblePanel}
         onBack={() => router.push("/studio")}
         onShowAssets={toggleAssetPanel}
         onShowInspector={toggleInspectorPanel}
@@ -814,10 +842,10 @@ export default function ProjectEditorPage() {
             >
               <div className="flex h-full min-h-0 w-full gap-3 xl:gap-3">
                 <div className="relative min-h-0 min-w-0 flex-1 overflow-hidden p2s-workspace-viewport">
-                  {isTopEditorVisible && (
+                  {isSceneVisible && (
                     <>
                       <AnimatePresence initial={false}>
-                        {activePanel ? (
+                        {visiblePanel ? (
                           <>
                             <motion.button
                               type="button"
@@ -836,7 +864,7 @@ export default function ProjectEditorPage() {
                               className="absolute inset-y-3 left-3 z-[30] flex w-[min(92vw,400px)] flex-col overflow-hidden rounded-[24px] border border-black/10 bg-white/96 shadow-[0_18px_44px_rgba(17,19,22,0.14)]"
                               onClick={(event) => event.stopPropagation()}
                             >
-                              {activePanel === "assets" ? (
+                              {visiblePanel === "assets" ? (
                                 <BuilderLibraryShelf
                                   items={filteredLibraryCatalog}
                                   featuredItems={featuredLibraryCatalog}
@@ -853,7 +881,7 @@ export default function ProjectEditorPage() {
                                   onAddStarterSet={addStarterSetToScene}
                                   onAddItem={addCatalogItemToScene}
                                 />
-                              ) : (
+                              ) : visiblePanel === "properties" ? (
                                 <BuilderInspectorPanel
                                   visible
                                   layout="inline"
@@ -863,6 +891,7 @@ export default function ProjectEditorPage() {
                                   transformSpace={transformSpace}
                                   wallMaterialIndex={wallMaterialIndex}
                                   floorMaterialIndex={floorMaterialIndex}
+                                  ceilingMaterialIndex={ceilingMaterialIndex}
                                   lighting={lighting}
                                   wallsCount={walls.length}
                                   floorsCount={floors.length}
@@ -874,6 +903,7 @@ export default function ProjectEditorPage() {
                                   onTransformSpaceChange={setTransformSpace}
                                   onWallMaterialChange={applyWallFinish}
                                   onFloorMaterialChange={applyFloorFinish}
+                                  onCeilingMaterialChange={applyCeilingFinish}
                                   onLightingChange={applyLightingSetting}
                                   onLightingCommit={commitLightingSetting}
                                   onApplyLightingPreset={applyLightingPreset}
@@ -881,7 +911,7 @@ export default function ProjectEditorPage() {
                                   onRemoveAsset={removeAssetFromInspector}
                                   formatAssetLabel={formatAssetIdLabel}
                                 />
-                              )}
+                              ) : null}
                             </motion.div>
                           </>
                         ) : null}

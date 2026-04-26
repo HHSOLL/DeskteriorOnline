@@ -1,0 +1,326 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_pegboard_grid_white",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "wooden_display_shelves_01",
+  "manifestId": "p2s_pegboard_grid_white",
+  "label": "P2S 화이트 페그보드",
+  "assetId": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+  "dimensionsMm": {
+    "width": 760,
+    "depth": 42,
+    "height": 560
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "shelf-top",
+        "anchorTypes": [
+          "shelf_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          0.684,
+          0.06
+        ],
+        "top": 0.56,
+        "surfaceType": "shelf_top",
+        "allowedAttachments": [
+          "place_on_surface"
+        ],
+        "margin": [
+          0.02,
+          0.02
+        ]
+      }
+    ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "manual_required",
+      "reason": "catalog wall storage variant must expose wall attachment metadata",
+      "points": [
+        {
+          "id": "wall-fastener",
+          "type": "wall_attach",
+          "localPositionMm": [
+            0,
+            280,
+            -21
+          ],
+          "localNormal": [
+            0,
+            0,
+            -1000
+          ],
+          "localTangent": [
+            1000,
+            0,
+            0
+          ],
+          "compatibleWith": [
+            "wall",
+            "pegboard"
+          ],
+          "constraints": {
+            "minClearanceMm": 40,
+            "maxLoadKg": 8
+          }
+        }
+      ]
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+    "productId": "p2s_pegboard_grid_white",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 760,
+      "depth": 42,
+      "height": 560
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Storage",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 760,
+          "depth": 42,
+          "height": 560
+        },
+        "centerMm": [
+          0,
+          280,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [
+      {
+        "id": "shelf-top",
+        "type": "shelf_top",
+        "localFrame": {
+          "originMm": [
+            0,
+            560,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            1000,
+            0
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -322,
+            -10
+          ],
+          "max": [
+            322,
+            10
+          ]
+        },
+        "allowedAttachments": [
+          "place_on_surface"
+        ]
+      }
+    ],
+    "attachmentPoints": [
+      {
+        "id": "wall-fastener",
+        "type": "wall_attach",
+        "localPositionMm": [
+          0,
+          280,
+          -21
+        ],
+        "localNormal": [
+          0,
+          0,
+          -1000
+        ],
+        "localTangent": [
+          1000,
+          0,
+          0
+        ],
+        "compatibleWith": [
+          "wall",
+          "pegboard"
+        ],
+        "constraints": {
+          "minClearanceMm": 40,
+          "maxLoadKg": 8
+        }
+      }
+    ],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 화이트 페그보드",
+        "finishColor": "Neutral",
+        "finishMaterial": "Wood or powder-coated steel",
+        "detailNotes": "Storage surface with inferred shelf/furniture support surface metadata."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 760,
+        "depth": 42,
+        "height": 560
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_pegboard_grid_white.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf"
+      }
+    ],
+    "proxyPath": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_pegboard_grid_white.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_pegboard_grid_white.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

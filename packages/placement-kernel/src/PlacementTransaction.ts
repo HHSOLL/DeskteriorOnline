@@ -1,7 +1,9 @@
-import { SceneCompiler, type Engine } from "@deskterioronline/engine-core";
+import type { Engine } from "@deskterioronline/engine-core";
 import {
+  type CableRouteRecord,
   type PlacementRecord,
   type RuntimeAsset,
+  type SurfaceLocalPose,
   type SurfacePlacementRecord,
   isSurfacePlacementRecord,
   serializeWorldTransform
@@ -12,12 +14,20 @@ import { CollisionValidator } from "./CollisionValidator";
 import { ConstraintSolver } from "./ConstraintSolver";
 import { SnapCandidateGenerator } from "./SnapCandidateGenerator";
 import { SurfaceResolver } from "./SurfaceResolver";
+import { buildSurfacePlacementFromCandidate, resolveSurfaceLocalWorldTransform } from "./surfaceTransform";
 
 export type PlacementTransactionState = {
   activeCandidate: PlacementCandidate | null;
   constraintReport: ConstraintReport | null;
   collisionReport: CollisionReport | null;
 };
+
+export type PlacementUpdateInput =
+  | SurfaceLocalPose
+  | {
+      localPose: SurfaceLocalPose;
+      cableRoute?: CableRouteRecord;
+    };
 
 export class PlacementTransaction {
   private readonly surfaceResolver: SurfaceResolver;
@@ -40,6 +50,7 @@ export class PlacementTransaction {
     supportObjectId: string;
     surfaceId: string;
     attachmentType: SurfacePlacementRecord["attachmentType"];
+    initialLocalPose?: Partial<SurfaceLocalPose>;
   }) {
     const surfaceHit = this.surfaceResolver.resolve(input.supportObjectId, input.surfaceId);
     if (!surfaceHit) {
@@ -55,21 +66,23 @@ export class PlacementTransaction {
       surfaceId: input.surfaceId,
       attachmentType: input.attachmentType,
       localPose: {
-        uMm: 0,
-        vMm: 0,
-        normalOffsetMm: 0,
-        rotationMilliDeg: 0
+        uMm: input.initialLocalPose?.uMm ?? 0,
+        vMm: input.initialLocalPose?.vMm ?? 0,
+        normalOffsetMm: input.initialLocalPose?.normalOffsetMm ?? 0,
+        rotationMilliDeg: input.initialLocalPose?.rotationMilliDeg ?? 0
       }
     };
 
     return this.getState();
   }
 
-  update(localPose: PlacementCandidate["localPose"]) {
+  update(input: PlacementUpdateInput) {
     if (!this.activeCandidate) {
       throw new Error("Placement transaction has not started.");
     }
 
+    const localPose = "localPose" in input ? input.localPose : input;
+    const cableRoute = "localPose" in input ? input.cableRoute : undefined;
     const snappedLocalPose = this.snapCandidateGenerator.snapLocalPose(
       localPose,
       this.activeCandidate.attachmentType,
@@ -78,7 +91,8 @@ export class PlacementTransaction {
 
     this.activeCandidate = {
       ...this.activeCandidate,
-      localPose: snappedLocalPose
+      localPose: snappedLocalPose,
+      ...(cableRoute ? { cableRoute } : {})
     };
 
     const runtimeAsset = this.resolveActiveRuntimeAsset();
@@ -122,16 +136,13 @@ export class PlacementTransaction {
       throw new Error(`Object ${this.objectId} was not found.`);
     }
 
-    const nextPlacement: PlacementRecord = {
-      mode: "surface_local",
-      supportObjectId: this.activeCandidate.supportObjectId,
-      surfaceId: this.activeCandidate.surfaceId,
-      attachmentType: this.activeCandidate.attachmentType,
-      localPose: this.activeCandidate.localPose,
-      scalePermille: runtimeObject.placement.mode === "world"
+    const scalePermille = runtimeObject.placement.mode === "world"
         ? runtimeObject.placement.world.scalePermille
-        : runtimeObject.placement.scalePermille
-    };
+        : runtimeObject.placement.scalePermille;
+    const nextPlacement: PlacementRecord = buildSurfacePlacementFromCandidate({
+      candidate: this.activeCandidate,
+      scalePermille
+    });
 
     this.engine.setObjectPlacement(
       this.objectId,
@@ -187,24 +198,30 @@ export class PlacementTransaction {
       return null;
     }
 
+    const supportObject = this.engine.runtimeScene.objectRegistry.get(this.activeCandidate.supportObjectId);
+    if (!supportObject || !this.surfaceHit) {
+      return null;
+    }
+
     const scalePermille = isSurfacePlacementRecord(runtimeObject.placement)
       ? runtimeObject.placement.scalePermille
       : runtimeObject.placement.world.scalePermille;
-    const previewPlacement: PlacementRecord = {
-      mode: "surface_local",
-      supportObjectId: this.activeCandidate.supportObjectId,
-      surfaceId: this.activeCandidate.surfaceId,
-      attachmentType: this.activeCandidate.attachmentType,
-      localPose: this.activeCandidate.localPose,
-      scalePermille
-    };
 
-    return SceneCompiler.resolvePlacementTransform(
-      runtimeObject.objectDocument,
-      previewPlacement,
-      this.engine.runtimeScene.objectRegistry,
-      this.engine.runtimeScene.runtimeAssets
-    );
+    const previewPlacement = buildSurfacePlacementFromCandidate({
+      candidate: this.activeCandidate,
+      scalePermille
+    });
+
+    if (!isSurfacePlacementRecord(previewPlacement)) {
+      return null;
+    }
+
+    return resolveSurfaceLocalWorldTransform({
+      placement: previewPlacement,
+      runtimeObject,
+      supportObject,
+      surface: this.surfaceHit.surface
+    });
   }
 
   private resolveSupportRuntimeAsset(supportObjectId: string): RuntimeAsset | null {

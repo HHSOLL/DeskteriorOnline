@@ -1,0 +1,259 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_cable_clip_magnetic",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_under_desk_tray_mount",
+  "manifestId": "p2s_cable_clip_magnetic",
+  "label": "P2S 마그네틱 케이블 클립",
+  "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+  "dimensionsMm": {
+    "width": 34,
+    "depth": 20,
+    "height": 14
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "manual_required",
+      "reason": "catalog magnetic clip variant must expose magnetic attachment metadata",
+      "points": [
+        {
+          "id": "magnetic-pad",
+          "type": "magnetic_attach",
+          "localPositionMm": [
+            0,
+            0,
+            0
+          ],
+          "localNormal": [
+            0,
+            -1000,
+            0
+          ],
+          "localTangent": [
+            1000,
+            0,
+            0
+          ],
+          "compatibleWith": [
+            "desk-underside",
+            "desk_edge"
+          ],
+          "constraints": {
+            "minClearanceMm": 10,
+            "maxLoadKg": 1
+          }
+        }
+      ]
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+    "productId": "p2s_cable_clip_magnetic",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 34,
+      "depth": 20,
+      "height": 14
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Cable Management",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 34,
+          "depth": 20,
+          "height": 14
+        },
+        "centerMm": [
+          0,
+          7,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [
+      {
+        "id": "magnetic-pad",
+        "type": "magnetic_attach",
+        "localPositionMm": [
+          0,
+          0,
+          0
+        ],
+        "localNormal": [
+          0,
+          -1000,
+          0
+        ],
+        "localTangent": [
+          1000,
+          0,
+          0
+        ],
+        "compatibleWith": [
+          "desk-underside",
+          "desk_edge"
+        ],
+        "constraints": {
+          "minClearanceMm": 10,
+          "maxLoadKg": 1
+        }
+      }
+    ],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 마그네틱 케이블 클립",
+        "finishColor": "Black",
+        "finishMaterial": "Flexible silicone or ABS plastic",
+        "detailNotes": "Mounted cable clip with inferred clamp/screw metadata for focus placement."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 34,
+        "depth": 20,
+        "height": 14
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_cable_clip_magnetic.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_cable_clip_magnetic.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_cable_clip_magnetic.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

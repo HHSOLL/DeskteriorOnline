@@ -1,7 +1,9 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-23T21:41:00.301Z",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
   "key": "p2s_monitor_stand",
+  "packageKind": "curated_asset",
+  "baseAssetKey": null,
   "manifestId": "p2s_monitor_stand_wood",
   "label": "P2S 우드 모니터 스탠드",
   "assetId": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.glb",

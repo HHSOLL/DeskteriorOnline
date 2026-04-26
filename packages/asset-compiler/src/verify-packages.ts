@@ -7,6 +7,7 @@ import type {
   MaterialVariant,
   SupportSurface
 } from "@deskterioronline/scene-schema";
+import { getPublishedCatalogVariantAssets } from "./catalog-variants";
 import { getCuratedDeskteriorAssets } from "./curated-assets";
 import { createAssetCompilerPaths } from "./paths";
 import type { RuntimePackageCatalog, RuntimePackageDescriptor } from "./types";
@@ -213,6 +214,8 @@ function validateAttachmentAuthoring(
 export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRuntimePackageSummary> {
   const paths = createAssetCompilerPaths();
   const curatedAssets = getCuratedDeskteriorAssets(paths);
+  const catalogVariantAssets = await getPublishedCatalogVariantAssets(paths, curatedAssets);
+  const runtimePackageAssets = [...curatedAssets, ...catalogVariantAssets];
   const errors: PackageVerificationError[] = [];
   const results: PublishedRuntimePackageResult[] = [];
 
@@ -223,11 +226,11 @@ export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRu
       path: paths.runtimePackageIndexPath
     });
   }
-  if (index.assets.length !== curatedAssets.length) {
+  if (index.assets.length !== runtimePackageAssets.length) {
     addError(
       errors,
       "package.index_count_invalid",
-      `runtime package index should include ${curatedAssets.length} curated assets, found ${index.assets.length}.`,
+      `runtime package index should include ${runtimePackageAssets.length} runtime packages, found ${index.assets.length}.`,
       { path: paths.runtimePackageIndexPath }
     );
   }
@@ -239,14 +242,18 @@ export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRu
   let thumbnailFiles = 0;
   let sidecarValidated = 0;
 
-  for (const asset of curatedAssets) {
+  for (const asset of runtimePackageAssets) {
     expectedRuntimeJsonFiles.add(`${asset.key}.json`);
     expectedRuntimeJsonFiles.add(`${asset.key}.colliders.json`);
     expectedRuntimeJsonFiles.add(`${asset.key}.support-surfaces.json`);
     expectedRuntimeJsonFiles.add(`${asset.key}.attachment-points.json`);
     expectedRuntimeJsonFiles.add(`${asset.key}.material-variants.json`);
     expectedRuntimeJsonFiles.add(`${asset.key}.qa-report.json`);
-    expectedThumbnailFiles.add(`${asset.key}.webp`);
+    if (asset.thumbnailPublicPath?.startsWith("/assets/catalog/thumbnails/")) {
+      expectedThumbnailFiles.add(path.basename(asset.thumbnailPublicPath));
+    } else {
+      expectedThumbnailFiles.add(`${asset.key}.webp`);
+    }
 
     const result: PublishedRuntimePackageResult = {
       key: asset.key,
@@ -271,6 +278,12 @@ export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRu
 
     if (entry.packagePath !== `/assets/catalog/runtime-packages/${asset.key}.json`) {
       addError(errors, "package.index_path_mismatch", `${asset.key} packagePath does not match the published descriptor convention.`, {
+        assetKey: asset.key,
+        path: paths.runtimePackageIndexPath
+      });
+    }
+    if ((entry.packageKind ?? "curated_asset") !== (asset.packageKind ?? "curated_asset")) {
+      addError(errors, "package.index_kind_mismatch", `${asset.key} packageKind does not match expected package source.`, {
         assetKey: asset.key,
         path: paths.runtimePackageIndexPath
       });
@@ -454,7 +467,7 @@ export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRu
     ok: errors.length === 0,
     runtimePackageIndexPath: paths.runtimePackageIndexPath,
     counts: {
-      curatedAssets: curatedAssets.length,
+      curatedAssets: runtimePackageAssets.length,
       descriptors,
       proxyFiles,
       thumbnailFiles,

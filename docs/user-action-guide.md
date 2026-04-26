@@ -1019,3 +1019,15 @@ Updated:
 
 Removed/Deprecated:
 - integrity detector는 corrupt sample issue list만 확인하면 충분하다는 가정.
+
+## 2026-04-24 변경 동기화 (Feature Browser QA)
+Added:
+- 기능 검증 시 `npm --workspace apps/web run functional:e2e:browser`로 로컬 브라우저에서 builder step, material selection, preview render, lighting selection을 확인한다.
+- Codex 앱 내장 Node에서 Next SWC native addon code-sign 오류가 나면 bundled runtime Node를 PATH 앞에 둔다: `PATH=/Users/sol/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH`.
+- Walk view 기능 검증은 asset drawer가 walk mode에서도 열리는지, focus placement HUD의 keyboard/numeric micro-adjust가 동작하는지, mounted candidate가 보이는지 실제 UI로 확인한다.
+
+Updated:
+- 기능 RC 판단은 `qa:primary`/release gate뿐 아니라 local 또는 preview browser에서 사용자가 직접 조작 가능한지까지 포함한다.
+
+Removed/Deprecated:
+- script-level smoke만으로 room quality와 walkthrough placement를 검증 완료로 처리하는 절차.

@@ -44,12 +44,25 @@ export type SurfaceLocalPose = {
   rotationMilliDeg: number;
 };
 
+export type CableRouteWaypoint = {
+  uMm: number;
+  vMm: number;
+  normalOffsetMm?: number;
+};
+
+export type CableRouteRecord = {
+  waypoints: CableRouteWaypoint[];
+  bendRadiusMm?: number;
+  slackMm?: number;
+};
+
 export type SurfacePlacementRecord = {
   mode: "surface_local";
   supportObjectId: string;
   surfaceId: string;
   attachmentType: AttachmentType;
   localPose: SurfaceLocalPose;
+  cableRoute?: CableRouteRecord;
   scalePermille: Vector3Permille;
 };
 

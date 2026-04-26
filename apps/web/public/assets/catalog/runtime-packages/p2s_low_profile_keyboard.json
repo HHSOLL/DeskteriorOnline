@@ -1,7 +1,9 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-23T21:41:00.301Z",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
   "key": "p2s_low_profile_keyboard",
+  "packageKind": "curated_asset",
+  "baseAssetKey": null,
   "manifestId": "p2s_low_profile_keyboard",
   "label": "P2S 로우 프로파일 키보드",
   "assetId": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",

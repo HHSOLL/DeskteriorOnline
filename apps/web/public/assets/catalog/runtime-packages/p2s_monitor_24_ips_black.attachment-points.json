@@ -1,0 +1,33 @@
+[
+  {
+    "id": "monitor-vesa-100",
+    "type": "vesa_mount",
+    "localPositionMm": [
+      0,
+      221,
+      -24
+    ],
+    "localNormal": [
+      0,
+      0,
+      -1000
+    ],
+    "localTangent": [
+      1000,
+      0,
+      0
+    ],
+    "compatibleWith": [
+      "monitor_back",
+      "vesa-plate"
+    ],
+    "constraints": {
+      "vesaPatternMm": [
+        100,
+        100
+      ],
+      "minClearanceMm": 40,
+      "maxLoadKg": 9
+    }
+  }
+]

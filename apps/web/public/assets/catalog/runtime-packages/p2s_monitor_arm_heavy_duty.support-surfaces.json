@@ -1,0 +1,41 @@
+[
+  {
+    "id": "vesa-plate",
+    "type": "monitor_back",
+    "localFrame": {
+      "originMm": [
+        0,
+        408,
+        312
+      ],
+      "tangentU": [
+        1000,
+        0,
+        0
+      ],
+      "tangentV": [
+        0,
+        1000,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        1000
+      ]
+    },
+    "boundsMm": {
+      "min": [
+        -120,
+        -120
+      ],
+      "max": [
+        120,
+        120
+      ]
+    },
+    "allowedAttachments": [
+      "vesa_mount"
+    ]
+  }
+]

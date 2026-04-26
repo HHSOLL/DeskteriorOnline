@@ -1,0 +1,62 @@
+[
+  {
+    "id": "desk-edge-clamp",
+    "type": "edge_clamp",
+    "localPositionMm": [
+      0,
+      0,
+      0
+    ],
+    "localNormal": [
+      0,
+      0,
+      -1000
+    ],
+    "localTangent": [
+      1000,
+      0,
+      0
+    ],
+    "compatibleWith": [
+      "desk-edge",
+      "desk_edge"
+    ],
+    "constraints": {
+      "requiredThicknessMm": [
+        18,
+        70
+      ],
+      "minClearanceMm": 60,
+      "maxLoadKg": 12
+    }
+  },
+  {
+    "id": "vesa-plate",
+    "type": "vesa_mount",
+    "localPositionMm": [
+      0,
+      367,
+      336
+    ],
+    "localNormal": [
+      0,
+      0,
+      1000
+    ],
+    "localTangent": [
+      1000,
+      0,
+      0
+    ],
+    "compatibleWith": [
+      "monitor_back"
+    ],
+    "constraints": {
+      "vesaPatternMm": [
+        100,
+        100
+      ],
+      "maxLoadKg": 9
+    }
+  }
+]

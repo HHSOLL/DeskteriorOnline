@@ -1240,3 +1240,18 @@ Updated:
 
 Removed/Deprecated:
 - strict room-flow 검증이 외부에서 이미 떠 있는 base URL에만 의존해도 충분하다는 가정.
+
+## 2026-04-24 변경 동기화 (Feature Completion Slice 1)
+Added:
+- Room visual quality 작업으로 wall/floor/ceiling shell에 real-scale texture repeat, material preview thumbnail metadata, 자동 baseboard, walk-mode ceiling trim/corner cap 기준을 추가한다.
+- editor inspector는 wall/floor/ceiling 재질을 별도로 선택하고 preview thumbnail + category로 구분해 보여줘야 한다.
+- walk-mode asset drawer와 focus placement numeric micro-adjust를 실제 editor UI 경로에서 사용할 수 있어야 한다.
+- `functional:e2e:browser`를 추가해 로컬 브라우저에서 builder step, material selection, preview render, lighting selection을 검증한다.
+
+Updated:
+- 기능 완성도 평가는 P0 운영 gate와 분리하고, 실제 사용자 조작 기준으로 room quality / walk placement / catalog depth를 별도 판단한다.
+- builder-preview render quality는 visual E2E와 사용자 preview를 위해 always frameloop + post effect off + capture buffer on 조합을 사용한다.
+
+Removed/Deprecated:
+- verify script 통과만으로 데스크테리어 기능 RC를 선언할 수 있다는 가정.
+- wall/floor만 재질 선택이 가능하면 room material system이 충분하다는 가정.

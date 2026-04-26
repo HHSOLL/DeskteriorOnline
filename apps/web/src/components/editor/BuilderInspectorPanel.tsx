@@ -15,7 +15,12 @@ import {
   type PrecisionSurfaceLockInfo
 } from "./PrecisionSurfaceMicroView";
 import { PrecisionSurfaceProjectionView } from "./PrecisionSurfaceProjectionView";
-import { builderFloorFinishes, builderWallFinishes } from "../../lib/builder/templates";
+import { builderCeilingFinishes, builderFloorFinishes, builderWallFinishes } from "../../lib/builder/templates";
+import {
+  CEILING_TEXTURE_PRESETS,
+  FLOOR_TEXTURE_PRESETS,
+  WALL_TEXTURE_PRESETS
+} from "../../lib/textures/room-shell-textures";
 import {
   LIGHTING_PRESETS,
   inferLightingPresetId,
@@ -37,6 +42,7 @@ type BuilderInspectorPanelProps = {
   transformSpace: TransformSpace;
   wallMaterialIndex: number;
   floorMaterialIndex: number;
+  ceilingMaterialIndex: number;
   lighting: LightingSettings;
   wallsCount: number;
   floorsCount: number;
@@ -48,6 +54,7 @@ type BuilderInspectorPanelProps = {
   onTransformSpaceChange: (space: TransformSpace) => void;
   onWallMaterialChange: (index: number) => void;
   onFloorMaterialChange: (index: number) => void;
+  onCeilingMaterialChange: (index: number) => void;
   onLightingChange: (lighting: Partial<LightingSettings>) => void;
   onLightingCommit: () => void;
   onApplyLightingPreset: (presetId: LightingPresetId) => void;
@@ -67,6 +74,13 @@ function toRoundedDegree(value: number) {
   return Math.round(radiansToDegrees(value) * 10) / 10;
 }
 
+function materialPreviewStyle(preset: { previewThumbnail?: string; topColor: string }) {
+  return {
+    backgroundColor: preset.topColor,
+    backgroundImage: preset.previewThumbnail ? `url(${preset.previewThumbnail})` : undefined
+  };
+}
+
 export function BuilderInspectorPanel({
   visible,
   layout = "overlay",
@@ -76,6 +90,7 @@ export function BuilderInspectorPanel({
   transformSpace,
   wallMaterialIndex,
   floorMaterialIndex,
+  ceilingMaterialIndex,
   lighting,
   wallsCount,
   floorsCount,
@@ -87,6 +102,7 @@ export function BuilderInspectorPanel({
   onTransformSpaceChange,
   onWallMaterialChange,
   onFloorMaterialChange,
+  onCeilingMaterialChange,
   onLightingChange,
   onLightingCommit,
   onApplyLightingPreset,
@@ -226,41 +242,100 @@ export function BuilderInspectorPanel({
 
         <div className="space-y-3">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">벽 마감</p>
-          <div className="flex flex-wrap gap-2">
-            {builderWallFinishes.map((finish) => (
-              <button
-                key={finish.id}
-                type="button"
-                onClick={() => onWallMaterialChange(finish.id)}
-                className={`rounded-full px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] transition ${
-                  wallMaterialIndex === finish.id
-                    ? "bg-[#1c1a17] text-white"
-                    : "border border-black/10 bg-[#f4f4f1] text-[#5f584e] hover:border-black/20 hover:bg-white"
-                }`}
-              >
-                {finish.name}
-              </button>
-            ))}
+          <div className="grid grid-cols-2 gap-2">
+            {builderWallFinishes.map((finish) => {
+              const preset = WALL_TEXTURE_PRESETS[finish.id] ?? WALL_TEXTURE_PRESETS[0];
+              return (
+                <button
+                  key={finish.id}
+                  type="button"
+                  onClick={() => onWallMaterialChange(finish.id)}
+                  className={`flex min-h-[72px] items-center gap-3 rounded-[16px] border px-2.5 py-2 text-left transition ${
+                    wallMaterialIndex === finish.id
+                      ? "border-[#1c1a17] bg-[#1c1a17] text-white"
+                      : "border-black/10 bg-[#f4f4f1] text-[#5f584e] hover:border-black/20 hover:bg-white"
+                  }`}
+                >
+                  <span
+                    aria-hidden
+                    className="h-11 w-11 shrink-0 rounded-[10px] border border-black/10 bg-cover bg-center"
+                    style={materialPreviewStyle(preset)}
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-[10px] font-bold uppercase tracking-[0.12em]">{finish.name}</span>
+                    <span className={`mt-1 block text-[10px] ${wallMaterialIndex === finish.id ? "text-white/65" : "text-[#81786c]"}`}>
+                      {finish.category}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         <div className="space-y-3">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">바닥 마감</p>
-          <div className="flex flex-wrap gap-2">
-            {builderFloorFinishes.map((finish) => (
-              <button
-                key={finish.id}
-                type="button"
-                onClick={() => onFloorMaterialChange(finish.id)}
-                className={`rounded-full px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] transition ${
-                  floorMaterialIndex === finish.id
-                    ? "bg-[#1c1a17] text-white"
-                    : "border border-black/10 bg-[#f4f4f1] text-[#5f584e] hover:border-black/20 hover:bg-white"
-                }`}
-              >
-                {finish.name}
-              </button>
-            ))}
+          <div className="grid grid-cols-2 gap-2">
+            {builderFloorFinishes.map((finish) => {
+              const preset = FLOOR_TEXTURE_PRESETS[finish.id] ?? FLOOR_TEXTURE_PRESETS[0];
+              return (
+                <button
+                  key={finish.id}
+                  type="button"
+                  onClick={() => onFloorMaterialChange(finish.id)}
+                  className={`flex min-h-[72px] items-center gap-3 rounded-[16px] border px-2.5 py-2 text-left transition ${
+                    floorMaterialIndex === finish.id
+                      ? "border-[#1c1a17] bg-[#1c1a17] text-white"
+                      : "border-black/10 bg-[#f4f4f1] text-[#5f584e] hover:border-black/20 hover:bg-white"
+                  }`}
+                >
+                  <span
+                    aria-hidden
+                    className="h-11 w-11 shrink-0 rounded-[10px] border border-black/10 bg-cover bg-center"
+                    style={materialPreviewStyle(preset)}
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-[10px] font-bold uppercase tracking-[0.12em]">{finish.name}</span>
+                    <span className={`mt-1 block text-[10px] ${floorMaterialIndex === finish.id ? "text-white/65" : "text-[#81786c]"}`}>
+                      {finish.category}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#7a7064]">천장 마감</p>
+          <div className="grid grid-cols-2 gap-2">
+            {builderCeilingFinishes.map((finish) => {
+              const preset = CEILING_TEXTURE_PRESETS[finish.id] ?? CEILING_TEXTURE_PRESETS[0];
+              return (
+                <button
+                  key={finish.id}
+                  type="button"
+                  onClick={() => onCeilingMaterialChange(finish.id)}
+                  className={`flex min-h-[72px] items-center gap-3 rounded-[16px] border px-2.5 py-2 text-left transition ${
+                    ceilingMaterialIndex === finish.id
+                      ? "border-[#1c1a17] bg-[#1c1a17] text-white"
+                      : "border-black/10 bg-[#f4f4f1] text-[#5f584e] hover:border-black/20 hover:bg-white"
+                  }`}
+                >
+                  <span
+                    aria-hidden
+                    className="h-11 w-11 shrink-0 rounded-[10px] border border-black/10 bg-cover bg-center"
+                    style={materialPreviewStyle(preset)}
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-[10px] font-bold uppercase tracking-[0.12em]">{finish.name}</span>
+                    <span className={`mt-1 block text-[10px] ${ceilingMaterialIndex === finish.id ? "text-white/65" : "text-[#81786c]"}`}>
+                      {finish.category}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 

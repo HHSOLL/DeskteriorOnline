@@ -1,0 +1,121 @@
+[
+  {
+    "id": "desk-top",
+    "type": "desktop_top",
+    "localFrame": {
+      "originMm": [
+        0,
+        735,
+        0
+      ],
+      "tangentU": [
+        1000,
+        0,
+        0
+      ],
+      "tangentV": [
+        0,
+        0,
+        1000
+      ],
+      "normal": [
+        0,
+        1000,
+        0
+      ]
+    },
+    "boundsMm": {
+      "min": [
+        -520,
+        -220
+      ],
+      "max": [
+        520,
+        220
+      ]
+    },
+    "allowedAttachments": [
+      "place_on_surface"
+    ]
+  },
+  {
+    "id": "desk-edge",
+    "type": "desk_edge",
+    "localFrame": {
+      "originMm": [
+        0,
+        719,
+        -300
+      ],
+      "tangentU": [
+        1000,
+        0,
+        0
+      ],
+      "tangentV": [
+        0,
+        1000,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        -1000
+      ]
+    },
+    "boundsMm": {
+      "min": [
+        -600,
+        -316
+      ],
+      "max": [
+        600,
+        -284
+      ]
+    },
+    "thicknessMm": 32,
+    "allowedAttachments": [
+      "edge_clamp"
+    ]
+  },
+  {
+    "id": "desk-underside",
+    "type": "desk_underside",
+    "localFrame": {
+      "originMm": [
+        0,
+        703,
+        0
+      ],
+      "tangentU": [
+        1000,
+        0,
+        0
+      ],
+      "tangentV": [
+        0,
+        0,
+        1000
+      ],
+      "normal": [
+        0,
+        -1000,
+        0
+      ]
+    },
+    "boundsMm": {
+      "min": [
+        -440,
+        -210
+      ],
+      "max": [
+        440,
+        210
+      ]
+    },
+    "thicknessMm": 32,
+    "allowedAttachments": [
+      "underside_screw"
+    ]
+  }
+]

@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_decor_candle_pair",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "brass_candleholders",
+  "manifestId": "p2s_decor_candle_pair",
+  "label": "P2S 캔들 페어",
+  "assetId": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+  "dimensionsMm": {
+    "width": 120,
+    "depth": 60,
+    "height": 160
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+    "productId": "p2s_decor_candle_pair",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 120,
+      "depth": 60,
+      "height": 160
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Decor",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 120,
+          "depth": 60,
+          "height": 160
+        },
+        "centerMm": [
+          0,
+          80,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 캔들 페어",
+        "finishColor": "Neutral accent",
+        "finishMaterial": "Mixed decorative material",
+        "detailNotes": "Scale-locked decor prop for deskterior styling and shared viewer product details."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 120,
+        "depth": 60,
+        "height": 160
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_decor_candle_pair.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf"
+      }
+    ],
+    "proxyPath": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_decor_candle_pair.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_decor_candle_pair.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

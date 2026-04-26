@@ -1,0 +1,16 @@
+[
+  {
+    "id": "bounds-box",
+    "kind": "box",
+    "sizeMm": {
+      "width": 420,
+      "depth": 420,
+      "height": 460
+    },
+    "centerMm": [
+      0,
+      230,
+      0
+    ]
+  }
+]

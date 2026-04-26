@@ -1,7 +1,9 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-23T21:41:00.301Z",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
   "key": "p2s_desk_tray_oak",
+  "packageKind": "curated_asset",
+  "baseAssetKey": null,
   "manifestId": "p2s_desk_tray_oak",
   "label": "P2S 오크 데스크 트레이",
   "assetId": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",

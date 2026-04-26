@@ -18,6 +18,7 @@ import type {
   RuntimePackageDescriptor,
   RuntimePackageFileRef
 } from "./types";
+import { getPublishedCatalogVariantAssets } from "./catalog-variants";
 import { buildCuratedValidationSummary, type ValidationResult } from "./validate";
 
 type ManifestEntry = Record<string, unknown> & {
@@ -391,6 +392,49 @@ function publicCatalogPath(fileName: string) {
   return `/assets/catalog/runtime-packages/${fileName}`;
 }
 
+function resolveVariantProxyPublicPath(asset: CuratedDeskteriorAsset) {
+  if (asset.packageKind !== "catalog_variant") {
+    return `/assets/models/${asset.key}/${asset.key}.proxy.glb`;
+  }
+  if (asset.baseAssetKey && asset.baseAssetKey.startsWith("p2s_")) {
+    return `/assets/models/${asset.baseAssetKey}/${asset.baseAssetKey}.proxy.glb`;
+  }
+  return asset.expectedAssetId;
+}
+
+async function ensurePackageProxyFile(asset: CuratedDeskteriorAsset, proxyPublicPath: string, publicRoot: string) {
+  const proxyLocalPath = path.join(publicRoot, proxyPublicPath.replace(/^\//, ""));
+  if (asset.packageKind === "catalog_variant") {
+    if (await fileExists(proxyLocalPath)) {
+      return true;
+    }
+    if (proxyPublicPath !== asset.expectedAssetId) {
+      const fallbackPath = path.join(publicRoot, asset.expectedAssetId.replace(/^\//, ""));
+      return fileExists(fallbackPath);
+    }
+    return false;
+  }
+  return ensureProxyFile(asset.runtimePath, proxyLocalPath);
+}
+
+function resolveThumbnailPublicPath(asset: CuratedDeskteriorAsset) {
+  return asset.thumbnailPublicPath ?? `/assets/catalog/thumbnails/${asset.key}.webp`;
+}
+
+async function ensurePackageThumbnailFile(
+  asset: CuratedDeskteriorAsset,
+  thumbnailPublicPath: string,
+  paths: ReturnType<typeof createAssetCompilerPaths>,
+  label: string,
+  dimensionsMm: RuntimeAsset["dimensionsMm"]
+) {
+  const thumbnailLocalPath = path.join(paths.publicRoot, thumbnailPublicPath.replace(/^\//, ""));
+  if (asset.thumbnailPublicPath && (await fileExists(thumbnailLocalPath))) {
+    return true;
+  }
+  return ensureThumbnailFile(thumbnailLocalPath, label, dimensionsMm, asset.key);
+}
+
 function buildFileRef(pathValue: string | null, required: boolean, exists: boolean): RuntimePackageFileRef {
   return {
     path: pathValue,
@@ -537,6 +581,8 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
   const errors: string[] = [];
   const generatedAt = new Date().toISOString();
   const curatedAssets = getCuratedDeskteriorAssets(paths);
+  const catalogVariantAssets = await getPublishedCatalogVariantAssets(paths, curatedAssets);
+  const runtimePackageAssets = [...curatedAssets, ...catalogVariantAssets];
   const validatorVersion = "asset-compiler-alpha-v3";
   const validationSummary = await buildCuratedValidationSummary(false, false);
   const validationByKey = new Map(validationSummary.results.map((entry) => [entry.key, entry]));
@@ -556,8 +602,8 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
   const expectedRuntimeJsonFiles = new Set<string>();
   const expectedThumbnailFiles = new Set<string>();
 
-  for (const asset of curatedAssets) {
-    const entry = manifestById.get(asset.manifestId);
+  for (const asset of runtimePackageAssets) {
+    const entry = (manifestById.get(asset.manifestId) ?? asset.catalogEntry) as ManifestEntry | undefined;
     if (!entry) {
       errors.push(`manifest entry ${asset.manifestId} is missing`);
       continue;
@@ -592,7 +638,7 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
       continue;
     }
 
-    const supportProfile = normalizeSupportProfile(entry.supportProfile);
+    const supportProfile = asset.supportProfileExpectation ?? normalizeSupportProfile(entry.supportProfile);
     if (asset.supportProfileExpectation && !supportProfile) {
       errors.push(`manifest ${asset.manifestId} is missing supportProfile`);
       continue;
@@ -610,18 +656,11 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
     const attachmentPoints = buildAttachmentPoints(asset, errors);
     const materialVariants = buildMaterialVariants(entry);
 
-    const proxyPublicPath = `/assets/models/${asset.key}/${asset.key}.proxy.glb`;
-    const proxyLocalPath = path.join(paths.publicRoot, proxyPublicPath.replace(/^\//, ""));
-    const proxyExists = await ensureProxyFile(asset.runtimePath, proxyLocalPath);
+    const proxyPublicPath = resolveVariantProxyPublicPath(asset);
+    const proxyExists = await ensurePackageProxyFile(asset, proxyPublicPath, paths.publicRoot);
 
-    const thumbnailPublicPath = `/assets/catalog/thumbnails/${asset.key}.webp`;
-    const thumbnailLocalPath = path.join(paths.thumbnailDir, `${asset.key}.webp`);
-    const thumbnailExists = await ensureThumbnailFile(
-      thumbnailLocalPath,
-      entry.label,
-      dimensionsMm,
-      asset.key
-    );
+    const thumbnailPublicPath = resolveThumbnailPublicPath(asset);
+    const thumbnailExists = await ensurePackageThumbnailFile(asset, thumbnailPublicPath, paths, entry.label, dimensionsMm);
 
     const qaReport = buildQaReport(dimensionsMm, validatorVersion, validationByKey.get(asset.key));
     if (qaReport.status === "failed") {
@@ -652,6 +691,8 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
       schemaVersion: "asset-package-alpha-v2",
       generatedAt,
       key: asset.key,
+      packageKind: asset.packageKind ?? "curated_asset",
+      baseAssetKey: asset.baseAssetKey ?? null,
       manifestId: asset.manifestId,
       label: entry.label,
       assetId: asset.expectedAssetId,
@@ -703,7 +744,9 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
       `${asset.key}.qa-report.json`
     ];
     fileNames.forEach((name) => expectedRuntimeJsonFiles.add(name));
-    expectedThumbnailFiles.add(`${asset.key}.webp`);
+    if (thumbnailPublicPath.startsWith("/assets/catalog/thumbnails/")) {
+      expectedThumbnailFiles.add(path.basename(thumbnailPublicPath));
+    }
 
     pendingOutputs.push(
       { filePath: path.join(paths.runtimePackageDir, `${asset.key}.json`), content: stringifyJson(descriptor) },
@@ -729,10 +772,13 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
     generatedAt,
     assets: packages.map((entry) => ({
       key: entry.key,
+      packageKind: entry.packageKind ?? "curated_asset",
+      baseAssetKey: entry.baseAssetKey ?? null,
       manifestId: entry.manifestId,
       label: entry.label,
       assetId: entry.assetId,
       packagePath: `/assets/catalog/runtime-packages/${entry.key}.json`,
+      runtimeAsset: entry.runtimeAsset,
       qaStatus: entry.qa.status,
       warningCount: entry.qa.warnings.length,
       surfaceCount: entry.runtimeAsset.supportSurfaces.length,

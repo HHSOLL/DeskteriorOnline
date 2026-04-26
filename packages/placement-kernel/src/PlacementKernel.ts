@@ -1,6 +1,6 @@
 import type { Engine } from "@deskterioronline/engine-core";
 import type { AttachmentType } from "@deskterioronline/scene-schema";
-import { RayPicker } from "./RayPicker";
+import { RayPicker, type RayPickerGeometryCandidate } from "./RayPicker";
 import { PlacementTransaction } from "./PlacementTransaction";
 import { SurfaceResolver } from "./SurfaceResolver";
 import type { SurfaceHit } from "./types";
@@ -39,17 +39,36 @@ export class PlacementKernel {
     surfaceId?: string;
     preferredSurfaceId?: string;
     surfaceHits?: SurfaceHit[];
+    geometryPick?: {
+      ray: {
+        origin: [number, number, number];
+        direction: [number, number, number];
+        near?: number;
+        far?: number;
+      };
+      candidates: RayPickerGeometryCandidate[];
+    };
     attachmentType:
       | "place_on_surface"
       | "wall_attach"
       | "edge_clamp"
       | "underside_screw"
-      | "vesa_mount";
+      | "vesa_mount"
+      | "cable_route";
   }) {
     const compatibleWith = this.resolveCompatibleWith(input.objectId, input.attachmentType);
     const surfaceHit = input.surfaceId
       ? this.surfaceResolver.resolve(input.supportObjectId, input.surfaceId)
-      : this.rayPicker.pick({
+      : input.geometryPick
+        ? this.rayPicker.pickGeometry({
+            supportObjectId: input.supportObjectId,
+            attachmentType: input.attachmentType,
+            preferredSurfaceId: input.preferredSurfaceId,
+            compatibleWith: compatibleWith ?? undefined,
+            ray: input.geometryPick.ray,
+            candidates: input.geometryPick.candidates
+          })
+        : this.rayPicker.pick({
           supportObjectId: input.supportObjectId,
           attachmentType: input.attachmentType,
           preferredSurfaceId: input.preferredSurfaceId,
@@ -66,7 +85,8 @@ export class PlacementKernel {
     transaction.begin({
       supportObjectId: input.supportObjectId,
       surfaceId: surfaceHit.surfaceId,
-      attachmentType: input.attachmentType
+      attachmentType: input.attachmentType,
+      initialLocalPose: surfaceHit.localPose
     });
     return transaction;
   }

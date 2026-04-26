@@ -1,0 +1,41 @@
+[
+  {
+    "id": "monitor-back",
+    "type": "monitor_back",
+    "localFrame": {
+      "originMm": [
+        0,
+        332,
+        -28
+      ],
+      "tangentU": [
+        1000,
+        0,
+        0
+      ],
+      "tangentV": [
+        0,
+        1000,
+        0
+      ],
+      "normal": [
+        0,
+        0,
+        -1000
+      ]
+    },
+    "boundsMm": {
+      "min": [
+        -111,
+        -111
+      ],
+      "max": [
+        111,
+        111
+      ]
+    },
+    "allowedAttachments": [
+      "vesa_mount"
+    ]
+  }
+]

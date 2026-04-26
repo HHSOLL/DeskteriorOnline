@@ -6,6 +6,8 @@ export * from "./ConstraintSolver";
 export * from "./CollisionValidator";
 export * from "./AttachmentGraph";
 export * from "./MonitorArmSolver";
+export * from "./CableRouteSolver";
 export * from "./PlacementTransaction";
 export * from "./PlacementKernel";
 export * from "./footprint";
+export * from "./surfaceTransform";

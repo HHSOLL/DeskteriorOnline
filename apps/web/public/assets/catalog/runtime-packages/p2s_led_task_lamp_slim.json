@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_led_task_lamp_slim",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "desk_lamp_arm_01",
+  "manifestId": "p2s_led_task_lamp_slim",
+  "label": "P2S 슬림 LED 태스크 램프",
+  "assetId": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+  "dimensionsMm": {
+    "width": 180,
+    "depth": 160,
+    "height": 520
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+    "productId": "p2s_led_task_lamp_slim",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 180,
+      "depth": 160,
+      "height": 520
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Lighting",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 180,
+          "depth": 160,
+          "height": 520
+        },
+        "centerMm": [
+          0,
+          260,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 슬림 LED 태스크 램프",
+        "finishColor": "Black",
+        "finishMaterial": "Powder-coated metal with LED diffuser",
+        "detailNotes": "Desk lamp variant with real envelope for surface placement."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 180,
+        "depth": 160,
+        "height": 520
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_led_task_lamp_slim.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf"
+      }
+    ],
+    "proxyPath": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_led_task_lamp_slim.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_led_task_lamp_slim.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

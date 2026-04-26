@@ -112,25 +112,37 @@ export const builderTemplates: BuilderTemplate[] = [
 ];
 
 export const builderWallFinishes = [
-  { id: 0, name: "Soft Plaster" },
-  { id: 1, name: "Gallery White" },
-  { id: 2, name: "Dark Concrete" },
-  { id: 3, name: "Grey Plaster" },
-  { id: 4, name: "Layered Concrete" },
-  { id: 5, name: "Oak Panel" },
-  { id: 6, name: "Walnut Panel" }
+  { id: 0, name: "Soft Plaster", category: "Paint" },
+  { id: 1, name: "Gallery White", category: "Paint" },
+  { id: 2, name: "Dark Concrete", category: "Concrete" },
+  { id: 3, name: "Grey Plaster", category: "Paint" },
+  { id: 4, name: "Layered Concrete", category: "Concrete" },
+  { id: 5, name: "Oak Panel", category: "Wood Panel" },
+  { id: 6, name: "Walnut Panel", category: "Wood Panel" },
+  { id: 7, name: "Worn Wood Slat", category: "Acoustic Panel" },
+  { id: 8, name: "Textile Acoustic", category: "Acoustic Panel" },
+  { id: 9, name: "Terrazzo Wallpaper", category: "Wallpaper" }
 ] as const;
 
 export const builderFloorFinishes = [
-  { id: 0, name: "Oak Boards" },
-  { id: 1, name: "Worn Concrete" },
-  { id: 2, name: "Stone Marble" },
-  { id: 3, name: "Warm Laminate" },
-  { id: 4, name: "Classic Wood" },
-  { id: 5, name: "Brown Linoleum" },
-  { id: 6, name: "Terrazzo Tile" },
-  { id: 7, name: "Anti-Skid Tile" },
-  { id: 8, name: "Soft Carpet" }
+  { id: 0, name: "Oak Boards", category: "Wood" },
+  { id: 1, name: "Worn Concrete", category: "Concrete" },
+  { id: 2, name: "Stone Marble", category: "Stone" },
+  { id: 3, name: "Warm Laminate", category: "Wood" },
+  { id: 4, name: "Classic Wood", category: "Wood" },
+  { id: 5, name: "Brown Linoleum", category: "Resilient" },
+  { id: 6, name: "Terrazzo Tile", category: "Tile" },
+  { id: 7, name: "Anti-Skid Tile", category: "Tile" },
+  { id: 8, name: "Soft Carpet", category: "Carpet" },
+  { id: 9, name: "Black Carpet", category: "Carpet" },
+  { id: 10, name: "Cork Desk Studio", category: "Resilient" }
+] as const;
+
+export const builderCeilingFinishes = [
+  { id: 0, name: "Matte Plaster", category: "Paint" },
+  { id: 1, name: "Gallery White", category: "Paint" },
+  { id: 2, name: "Acoustic Textile", category: "Acoustic" },
+  { id: 3, name: "Concrete Loft", category: "Concrete" }
 ] as const;
 
 export type BuilderSceneInput = {

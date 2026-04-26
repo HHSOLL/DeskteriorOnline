@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "key": "p2s_task_chair_fabric_grey",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "dining_chair_02",
+  "manifestId": "p2s_task_chair_fabric_grey",
+  "label": "P2S 패브릭 태스크 체어",
+  "assetId": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+  "sourcePath": "apps/web/public/assets/catalog/runtime-packages.json",
+  "runtimePath": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+  "dimensionsMm": {
+    "width": 610,
+    "depth": 610,
+    "height": 880
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Catalog Variant",
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Internal",
+      "label": "DeskteriorOnline Internal Catalog",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 16,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+    "productId": "p2s_task_chair_fabric_grey",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 610,
+      "depth": 610,
+      "height": 880
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "Generic Workspace",
+      "license": "LicenseRef-DeskteriorOnline-Internal",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+          "triangleCount": 8000,
+          "drawCallBudget": 16
+        }
+      ],
+      "proxy": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 610,
+          "depth": 610,
+          "height": 880
+        },
+        "centerMm": [
+          0,
+          440,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "P2S 패브릭 태스크 체어",
+        "finishColor": "Warm grey",
+        "finishMaterial": "Woven fabric and steel legs",
+        "detailNotes": "Floor-placed chair sized against real desk seat clearances."
+      }
+    ],
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 610,
+        "depth": 610,
+        "height": 880
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3"
+    }
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "apps/web/public/assets/catalog/runtime-packages.json",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_task_chair_fabric_grey.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf"
+      }
+    ],
+    "proxyPath": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_task_chair_fabric_grey.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_task_chair_fabric_grey.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}
