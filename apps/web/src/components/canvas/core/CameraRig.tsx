@@ -1,6 +1,6 @@
 "use client";
 
-import { OrbitControls, PerspectiveCamera, PointerLockControls } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, type RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -106,9 +106,9 @@ function WalkRig({
   fov: number;
 }) {
   const bodyRef = useRef<RapierRigidBody | null>(null);
-  const pointerLockRef = useRef<any>(null);
+  const pointerLockedRef = useRef(false);
   const moveState = useRef<MoveState>({ forward: false, backward: false, left: false, right: false });
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
   const resetLookDelta = useMobileControlsStore((state) => state.resetLookDelta);
   const yawRef = useRef(0);
   const pitchRef = useRef(0);
@@ -125,29 +125,92 @@ function WalkRig({
 
   useEffect(() => {
     if (isTouch) return;
+    const canvas = gl.domElement;
+    const ownerDocument = canvas.ownerDocument;
+    let pointerLockRequestInFlight = false;
+
+    const canRequestPointerLock = () =>
+      typeof canvas.requestPointerLock === "function" &&
+      canvas.isConnected &&
+      ownerDocument.contains(canvas) &&
+      ownerDocument.visibilityState !== "hidden";
+
+    const handleCanvasClick = () => {
+      if (pointerLockedRef.current || ownerDocument.pointerLockElement === canvas) return;
+      if (pointerLockRequestInFlight || !canRequestPointerLock()) return;
+
+      pointerLockRequestInFlight = true;
+      const lockResult = canvas.requestPointerLock();
+      if (lockResult && typeof lockResult.catch === "function") {
+        lockResult
+          .catch(() => {
+            pointerLockedRef.current = false;
+          })
+          .finally(() => {
+            pointerLockRequestInFlight = false;
+          });
+      } else {
+        pointerLockRequestInFlight = false;
+      }
+    };
+
+    const handlePointerLockChange = () => {
+      pointerLockedRef.current = ownerDocument.pointerLockElement === canvas;
+      if (!pointerLockedRef.current) {
+        moveState.current = { forward: false, backward: false, left: false, right: false };
+      }
+    };
+
+    const handlePointerLockError = () => {
+      pointerLockRequestInFlight = false;
+      pointerLockedRef.current = false;
+    };
+
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!pointerLockedRef.current) return;
+      yawRef.current -= event.movementX * 0.002;
+      pitchRef.current -= event.movementY * 0.002;
+      pitchRef.current = Math.max(-1.2, Math.min(1.2, pitchRef.current));
+      camera.rotation.set(pitchRef.current, yawRef.current, 0, "YXZ");
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (!pointerLockedRef.current) return;
       if (event.code === "KeyW") moveState.current.forward = true;
       if (event.code === "KeyS") moveState.current.backward = true;
       if (event.code === "KeyA") moveState.current.left = true;
       if (event.code === "KeyD") moveState.current.right = true;
     };
     const handleKeyUp = (event: KeyboardEvent) => {
+      if (!pointerLockedRef.current) return;
       if (event.code === "KeyW") moveState.current.forward = false;
       if (event.code === "KeyS") moveState.current.backward = false;
       if (event.code === "KeyA") moveState.current.left = false;
       if (event.code === "KeyD") moveState.current.right = false;
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    canvas.addEventListener("click", handleCanvasClick);
+    ownerDocument.addEventListener("pointerlockchange", handlePointerLockChange);
+    ownerDocument.addEventListener("pointerlockerror", handlePointerLockError);
+    ownerDocument.addEventListener("mousemove", handleMouseMove);
+    ownerDocument.addEventListener("keydown", handleKeyDown);
+    ownerDocument.addEventListener("keyup", handleKeyUp);
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
+      canvas.removeEventListener("click", handleCanvasClick);
+      ownerDocument.removeEventListener("pointerlockchange", handlePointerLockChange);
+      ownerDocument.removeEventListener("pointerlockerror", handlePointerLockError);
+      ownerDocument.removeEventListener("mousemove", handleMouseMove);
+      ownerDocument.removeEventListener("keydown", handleKeyDown);
+      ownerDocument.removeEventListener("keyup", handleKeyUp);
+      if (ownerDocument.pointerLockElement === canvas) {
+        ownerDocument.exitPointerLock();
+      }
+      pointerLockedRef.current = false;
     };
-  }, [isTouch]);
+  }, [camera, gl.domElement, isTouch]);
 
   useFrame(() => {
-    if (!pointerLockRef.current?.isLocked && !isTouch) return;
+    if (!pointerLockedRef.current && !isTouch) return;
     const body = bodyRef.current;
     if (!body) return;
     if (isTouch) {
@@ -201,7 +264,6 @@ function WalkRig({
       <CapsuleCollider args={[0.35, 0.6]} />
       <group position={[0, EYE_HEIGHT, 0]}>
         <PerspectiveCamera makeDefault fov={fov} near={0.03} far={farClip} />
-        {!isTouch ? <PointerLockControls ref={pointerLockRef} /> : null}
       </group>
     </RigidBody>
   );

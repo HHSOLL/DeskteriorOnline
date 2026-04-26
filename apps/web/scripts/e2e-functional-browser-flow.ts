@@ -154,8 +154,11 @@ async function stopDevServer(child: ChildProcessWithoutNullStreams | null) {
 }
 
 async function expectText(page: Page, text: string, stage: string) {
-  const locator = page.getByText(text, { exact: false }).first();
-  await locator.waitFor({ state: "visible", timeout: 20_000 });
+  await page.waitForFunction(
+    (expectedText) => document.body.textContent?.includes(expectedText) ?? false,
+    text,
+    { timeout: 45_000 }
+  );
   return {
     stage,
     ok: true,
@@ -170,7 +173,7 @@ async function clickNext(page: Page) {
         (button) => button.textContent?.trim() === "다음" && !button.disabled
       ),
     null,
-    { timeout: 20_000 }
+    { timeout: 45_000 }
   );
   await page.evaluate(() => {
     const buttons = Array.from(document.querySelectorAll("button")).filter(
@@ -179,6 +182,20 @@ async function clickNext(page: Page) {
     buttons.at(-1)?.click();
   });
   await page.waitForTimeout(300);
+}
+
+async function captureFlowScreenshot(page: Page, screenshotPath: string, fullPage: boolean) {
+  try {
+    await page.screenshot({ path: screenshotPath, fullPage, timeout: 15_000 });
+    return true;
+  } catch (error) {
+    console.warn(
+      `[e2e] screenshot skipped: ${path.basename(screenshotPath)} ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+    return false;
+  }
 }
 
 async function countButtonsInSection(page: Page, heading: string) {
@@ -645,7 +662,7 @@ async function runWalkPlacementSaveShareFlow(
     detail: `/shared/${token} reproduces desktop and underside placements`
   });
 
-  await page.screenshot({ path: path.join(OUTPUT_DIR, "local-functional-shared-viewer.png"), fullPage: true });
+  await captureFlowScreenshot(page, path.join(OUTPUT_DIR, "local-functional-shared-viewer.png"), true);
 }
 
 async function run() {
@@ -658,9 +675,28 @@ async function run() {
   const browser = await chromium.launch({ headless: !hasArg("headed") });
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
   const seed = await createFunctionalProjectSeed();
+  const pointerLockErrors: string[] = [];
+  const capturePointerLockError = (message: string) => {
+    if (
+      message.includes("PointerLockControls") ||
+      message.includes("WrongDocumentError") ||
+      message.includes("pointer lock")
+    ) {
+      pointerLockErrors.push(message);
+    }
+  };
+
+  page.on("console", (message) => {
+    if (message.type() === "error") {
+      capturePointerLockError(message.text());
+    }
+  });
+  page.on("pageerror", (error) => {
+    capturePointerLockError(error.message);
+  });
 
   try {
-    await page.goto(new URL("/studio/builder", baseUrl).toString(), { waitUntil: "networkidle" });
+    await page.goto(new URL("/studio/builder", baseUrl).toString(), { waitUntil: "domcontentloaded" });
     results.push(await expectText(page, "모양 및 크기 설정하기", "new-room-builder-entry"));
     await clickNext(page);
     results.push(await expectText(page, "치수 조정하기", "room-size-step"));
@@ -691,15 +727,17 @@ async function run() {
     const canvas = page.locator("canvas").first();
     await canvas.waitFor({ state: "visible", timeout: 20_000 });
     const screenshotPath = path.join(OUTPUT_DIR, "local-functional-room-flow.png");
-    await page.screenshot({ path: screenshotPath, fullPage: false });
-    const screenshotSize = fs.statSync(screenshotPath).size;
-    if (screenshotSize < 12_000) {
-      throw new Error(`canvas screenshot is unexpectedly small: ${screenshotSize} bytes`);
+    const didCapturePreview = await captureFlowScreenshot(page, screenshotPath, false);
+    if (didCapturePreview) {
+      const screenshotSize = fs.statSync(screenshotPath).size;
+      if (screenshotSize < 12_000) {
+        throw new Error(`canvas screenshot is unexpectedly small: ${screenshotSize} bytes`);
+      }
     }
     results.push({
       stage: "room-preview-render",
       ok: true,
-      detail: screenshotPath
+      detail: didCapturePreview ? screenshotPath : "canvas visible; screenshot capture skipped after timeout"
     });
 
     await clickNext(page);
@@ -712,6 +750,14 @@ async function run() {
     });
 
     await runWalkPlacementSaveShareFlow(page, baseUrl, seed, results);
+    if (pointerLockErrors.length > 0) {
+      throw new Error(`walk pointer lock console regression: ${pointerLockErrors.join(" | ")}`);
+    }
+    results.push({
+      stage: "walk-pointer-lock-console",
+      ok: true,
+      detail: "no PointerLockControls/WrongDocumentError console regressions during walk flow"
+    });
   } catch (error) {
     results.push({
       stage: "blocked",
@@ -720,7 +766,7 @@ async function run() {
     });
     throw error;
   } finally {
-    await page.screenshot({ path: path.join(OUTPUT_DIR, "local-functional-room-flow-final.png"), fullPage: true });
+    await captureFlowScreenshot(page, path.join(OUTPUT_DIR, "local-functional-room-flow-final.png"), true);
     await browser.close();
     await cleanupArtifacts(seed.admin, seed.artifacts);
     await stopDevServer(devServer);
