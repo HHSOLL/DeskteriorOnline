@@ -774,6 +774,18 @@ Updated:
 Removed/Deprecated:
 - walk mode에서 정밀 배치를 시작해도 top-view gizmo나 store direct mutation을 다시 써도 된다는 가정.
 
+## 2026-04-28 변경 동기화 (Walk-First Placement UX)
+Added:
+- walk mode crosshair는 기본 상태에서 `I` inventory, armed item 상태에서 focused surface placement, active session 상태에서 click/Enter commit affordance를 보여줘야 한다.
+- inventory drawer가 열릴 때 pointer lock은 해제되어야 하며, drawer를 닫은 뒤 canvas click으로 다시 mouse-look을 얻을 수 있어야 한다.
+
+Updated:
+- 상단뷰 렌더는 room shell inspection용 orbit/zoom만 유지하고 asset edit affordance는 숨긴다.
+- focus placement 시작은 선택된 asset + camera-forward highlighted support surface 조합을 기본 경로로 한다.
+
+Removed/Deprecated:
+- top-view gizmo 또는 top-view direct drag를 데스크테리어 배치의 기본 경로로 쓰는 가정.
+
 ## 2026-04-23 변경 동기화 (Asset Compiler Alpha Publish)
 Added:
 - curated asset publish의 첫 단계로 manifest 외에 per-asset runtime package descriptor를 같이 생성하는 기준을 추가했다.

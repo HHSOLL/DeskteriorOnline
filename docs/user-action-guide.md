@@ -159,8 +159,8 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 
 - 빌더/에디터/뷰어 공통 레이아웃이 유지되는지 확인
 - 에디터 상단 bar, 좌측 rail, 우측 zoom rail, 하단 pill toolbar가 레퍼런스 7번 shell로 노출되는지 확인
-- 상단뷰에서는 `목록/속성/항목뷰/이동/회전` 보조 UI가 사라지고 `추가/설정` drawer 패턴만 남는지 확인
-- 상단뷰 하단 pill toolbar에서 `룸 배치` / `데스크 정밀` 토글이 보이고, 워크뷰에서는 사라지는지 확인
+- 상단뷰에서는 `추가/설정`, asset drawer, direct drag, transform gizmo가 모두 숨겨지고 확인 전용 orbit/zoom만 남는지 확인
+- 워크뷰에서 `I` 키로 인벤토리를 열고 제품 선택 후 화면 중앙의 compatible surface를 클릭 또는 `E`로 focus placement에 진입하는지 확인
 - builder opening preview에서 문/창문이 실제 opening asset처럼 서 있고, style 선택 전에는 white wall/white floor shell이 유지되는지 확인
 - builder opening preview에서 문/창문이 floor에 눕지 않고 wall plane에 수직으로 붙는지 확인
 - builder style 선택지에 room shape 8종, wall finish 7종, floor finish 9종 이상이 노출되는지 확인
@@ -1031,3 +1031,14 @@ Updated:
 
 Removed/Deprecated:
 - script-level smoke만으로 room quality와 walkthrough placement를 검증 완료로 처리하는 절차.
+
+## 2026-04-28 변경 동기화 (Walk Inventory Placement QA)
+Added:
+- 워크뷰 QA는 `I` inventory open -> asset select -> focused surface highlight -> click/`E` placement start -> click/`Enter` commit -> save/reload 유지 순서로 확인한다.
+- inventory에서 선택만 하고 commit하지 않은 draft asset은 autosave payload에 포함되지 않아야 하며, `Escape` 또는 view switch cancel 시 제거되어야 한다.
+
+Updated:
+- 상단뷰 QA는 편집 affordance 확인이 아니라 view-only 상태 확인으로 바뀐다.
+
+Removed/Deprecated:
+- 상단뷰 `룸 배치` / `데스크 정밀` 토글을 제품 배치 QA의 필수 경로로 보는 기준.

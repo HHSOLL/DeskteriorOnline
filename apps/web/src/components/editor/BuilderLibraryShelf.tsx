@@ -9,6 +9,7 @@ import type {
 import { getCatalogPreviewClasses } from "../../lib/builder/catalog";
 
 type BuilderLibraryShelfProps = {
+  mode?: "library" | "inventory";
   items: LibraryCatalogItem[];
   featuredItems: LibraryCatalogItem[];
   spotlightItem: LibraryCatalogItem | null;
@@ -19,6 +20,7 @@ type BuilderLibraryShelfProps = {
   assetCount: number;
   hasActiveFilters: boolean;
   placedItemKeys: ReadonlySet<string>;
+  showStarterSet?: boolean;
   onQueryChange: (value: string) => void;
   onCategoryChange: (value: LibraryCatalogCategoryId) => void;
   onAddStarterSet: () => void;
@@ -41,10 +43,12 @@ function formatDimensionsLabel(item: LibraryCatalogItem) {
 function AssetCard({
   item,
   placed,
+  mode,
   onAdd
 }: {
   item: LibraryCatalogItem;
   placed: boolean;
+  mode: "library" | "inventory";
   onAdd: (item: LibraryCatalogItem) => void;
 }) {
   const preview = getCatalogPreviewClasses(item.tone);
@@ -59,7 +63,7 @@ function AssetCard({
       type="button"
       onClick={() => onAdd(item)}
       className="group text-left"
-      aria-label={`${item.label} 추가`}
+      aria-label={mode === "inventory" ? `${item.label} 선택` : `${item.label} 추가`}
     >
       <article className="flex flex-col">
         <div
@@ -83,6 +87,7 @@ function AssetCard({
 }
 
 export function BuilderLibraryShelf({
+  mode = "library",
   items,
   featuredItems,
   spotlightItem,
@@ -93,6 +98,7 @@ export function BuilderLibraryShelf({
   assetCount,
   hasActiveFilters,
   placedItemKeys,
+  showStarterSet = true,
   onQueryChange,
   onCategoryChange,
   onAddStarterSet,
@@ -101,6 +107,7 @@ export function BuilderLibraryShelf({
   const activeCategoryMeta = categories.find((category) => category.id === activeCategory) ?? categories[0] ?? null;
   const isPlaced = (item: LibraryCatalogItem) => placedItemKeys.has(item.id) || placedItemKeys.has(item.assetId);
   const heroSuggestion = hasActiveFilters ? null : spotlightItem ?? featuredItems[0] ?? null;
+  const isInventory = mode === "inventory";
 
   return (
     <div className="flex h-full flex-col bg-white text-[#171411]">
@@ -149,16 +156,22 @@ export function BuilderLibraryShelf({
 
         <div className="mt-4 flex items-center justify-between gap-3">
           <div className="text-[10px] leading-4 text-[#7d756b]">
-            {heroSuggestion ? `${heroSuggestion.label} 같은 제품을 바로 추가할 수 있습니다.` : "가구를 골라 바로 배치해보세요."}
+            {heroSuggestion
+              ? `${heroSuggestion.label} 같은 제품을 선택할 수 있습니다.`
+              : isInventory
+                ? "배치할 제품을 선택하세요."
+                : "가구를 골라 바로 배치해보세요."}
           </div>
-          <button
-            type="button"
-            onClick={onAddStarterSet}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#171411] transition hover:bg-[#f4f4f1]"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            빠른 세트
-          </button>
+          {showStarterSet ? (
+            <button
+              type="button"
+              onClick={onAddStarterSet}
+              className="inline-flex shrink-0 items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#171411] transition hover:bg-[#f4f4f1]"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              빠른 세트
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -166,7 +179,7 @@ export function BuilderLibraryShelf({
         {items.length > 0 ? (
           <div className="grid grid-cols-2 gap-x-3 gap-y-5 min-[390px]:grid-cols-3">
             {items.map((item) => (
-              <AssetCard key={item.id} item={item} placed={isPlaced(item)} onAdd={onAddItem} />
+              <AssetCard key={item.id} item={item} placed={isPlaced(item)} mode={mode} onAdd={onAddItem} />
             ))}
           </div>
         ) : (

@@ -3,26 +3,30 @@
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
 import { useInteractionStore } from "../../../lib/stores/useInteractionStore";
+import { useWalkInventoryStore } from "../../../lib/stores/useWalkInventoryStore";
 
 export default function Crosshair() {
   const viewMode = useEditorStore((state) => state.viewMode);
   const hint = useInteractionStore((state) => state.hint);
   const activeSession = useFocusPlacementStore((state) => state.activeSession);
+  const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
   if (viewMode !== "walk") return null;
 
   const badgeText = activeSession
     ? activeSession.wizardState?.mode === "monitor_arm"
       ? activeSession.surfaceCandidates.length > 1
-        ? "PageUp/Down — Reach · Tab — Cycle · F — Refocus · Enter — Confirm · Esc — Cancel"
-        : "PageUp/Down — Reach · Enter — Confirm · Esc — Cancel"
+        ? "Click/Enter — Confirm · PageUp/Down — Reach · Tab — Cycle · Esc — Cancel"
+        : "Click/Enter — Confirm · PageUp/Down — Reach · Esc — Cancel"
       : activeSession.surfaceCandidates.length > 1
-        ? "Tab — Cycle · F — Refocus · Enter — Confirm · Esc — Cancel"
-        : "Enter — Confirm · Esc — Cancel"
+        ? "Click/Enter — Confirm · Tab — Cycle · F — Refocus · Esc — Cancel"
+        : "Click/Enter — Confirm · Esc — Cancel"
     : hint
       ? hint.actionable
-        ? `E — ${hint.label}`
+        ? `Click/E — ${hint.label}`
         : hint.label
-      : null;
+      : placementDraft
+        ? `${placementDraft.label} · 표면 조준`
+        : "I — 인벤토리";
   const badgeClassName = activeSession
     ? "bg-white/10 border-white/20 text-white/80"
     : hint?.tone === "blocked"

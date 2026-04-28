@@ -1106,3 +1106,15 @@ Updated:
 
 Removed/Deprecated:
 - production 운영 gate close 상태를 기능 완성의 대체 지표로 사용하는 기준.
+
+## 2026-04-28 변경 동기화 (Walk Inventory Placement)
+Added:
+- Editor placement entry point is now walk-view first: `I` opens the asset inventory, selecting an item arms it for crosshair placement, and click/`E` on a compatible focused surface starts focus placement.
+- A walk inventory draft must be excluded from autosave until the focus placement session is committed; canceling the session removes the draft asset.
+
+Updated:
+- Top view is view-only for product editing. It can frame and inspect the room but must not expose asset add drawers, direct drag, transform gizmos, or transform hotkeys.
+- Walk placement confirmation accepts click or `Enter`; keyboard/numeric micro-adjust remains part of the active focus placement session.
+
+Removed/Deprecated:
+- Top-view room mode / desk precision mode as the primary asset placement surface.

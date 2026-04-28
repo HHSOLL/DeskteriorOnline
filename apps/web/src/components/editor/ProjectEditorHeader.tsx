@@ -141,7 +141,12 @@ export function ProjectEditorHeader({
                   }`}
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
-                  추가
+                  {viewMode === "walk" ? "인벤토리" : "추가"}
+                  {viewMode === "walk" ? (
+                    <span className="ml-0.5 rounded-full border border-current/20 px-1.5 py-0.5 text-[8px] uppercase tracking-[0.12em]">
+                      I
+                    </span>
+                  ) : null}
                 </button>
               </>
             ) : null}

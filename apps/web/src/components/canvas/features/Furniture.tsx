@@ -631,8 +631,7 @@ function InstancedFurnitureCluster({
 
   const allowRoomModeDirectDrag =
     !readOnly && viewMode === "top" && topViewPolicy.allowDirectAssetDrag;
-  const allowInteractiveSelection =
-    readOnly || (viewMode === "top" && !topViewPolicy.allowDirectAssetDrag);
+  const allowInteractiveSelection = readOnly;
   const allowPointerInteraction = allowRoomModeDirectDrag || allowInteractiveSelection;
 
   const applyPreviewPlacementToInstance = useMemo(() => {
@@ -973,7 +972,10 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   const focusSurfaceCandidate =
     focusPlacementEntry.candidates[focusPlacementEntry.preferredCandidateIndex] ?? null;
   const canRegisterFocusPlacement =
-    !readOnly && viewMode === "walk" && focusPlacementEntry.candidates.length > 0;
+    !readOnly &&
+    viewMode === "walk" &&
+    selectedAsset?.id !== asset.id &&
+    focusPlacementEntry.candidates.length > 0;
   const canOfferFocusPlacement =
     canRegisterFocusPlacement && focusPlacementEntry.availability.enabled;
   const topViewPolicy = useMemo(
@@ -1272,9 +1274,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
             onPointerMove: handlePointerMove,
             onPointerLeave: handlePointerUp
           }
-        : {
-            onPointerDown: handlePointerDown
-          }
+        : {}
       : {};
 
   if (!isVisible) {

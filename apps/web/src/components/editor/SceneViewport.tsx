@@ -147,6 +147,12 @@ export function SceneViewport({
       </InteractionManager>
     </>
   );
+  const interactiveSceneContent = (
+    <>
+      {resolvedInteractionMode === "editor" ? <FocusPlacementController /> : null}
+      {sceneContent}
+    </>
+  );
 
   return (
     <div
@@ -171,8 +177,7 @@ export function SceneViewport({
           <SceneRendererSettings quality={quality} toneMappingExposure={toneMappingExposure} />
           <ScenePerformanceTelemetry interactionMode={resolvedInteractionMode} />
           <RuntimeRendererSync />
-          {resolvedInteractionMode === "editor" ? <FocusPlacementController /> : null}
-          {viewMode === "walk" ? <PhysicsWorld>{sceneContent}</PhysicsWorld> : sceneContent}
+          <PhysicsWorld enabled={viewMode === "walk"}>{interactiveSceneContent}</PhysicsWorld>
           <PostEffects quality={quality} />
         </Suspense>
       </Canvas>

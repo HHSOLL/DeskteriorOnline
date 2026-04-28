@@ -110,6 +110,8 @@ function WalkRig({
   const moveState = useRef<MoveState>({ forward: false, backward: false, left: false, right: false });
   const { camera, gl } = useThree();
   const resetLookDelta = useMobileControlsStore((state) => state.resetLookDelta);
+  const panels = useEditorStore((state) => state.panels);
+  const blockPointerLock = panels.assets || panels.properties;
   const yawRef = useRef(0);
   const pitchRef = useRef(0);
 
@@ -130,10 +132,17 @@ function WalkRig({
     let pointerLockRequestInFlight = false;
 
     const canRequestPointerLock = () =>
+      !blockPointerLock &&
       typeof canvas.requestPointerLock === "function" &&
       canvas.isConnected &&
       ownerDocument.contains(canvas) &&
       ownerDocument.visibilityState !== "hidden";
+
+    if (blockPointerLock && ownerDocument.pointerLockElement === canvas) {
+      ownerDocument.exitPointerLock();
+      pointerLockedRef.current = false;
+      moveState.current = { forward: false, backward: false, left: false, right: false };
+    }
 
     const handleCanvasClick = () => {
       if (pointerLockedRef.current || ownerDocument.pointerLockElement === canvas) return;
@@ -207,7 +216,7 @@ function WalkRig({
       }
       pointerLockedRef.current = false;
     };
-  }, [camera, gl.domElement, isTouch]);
+  }, [blockPointerLock, camera, gl.domElement, isTouch]);
 
   useFrame(() => {
     if (!pointerLockedRef.current && !isTouch) return;

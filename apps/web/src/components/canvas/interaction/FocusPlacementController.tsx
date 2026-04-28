@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { toast } from "sonner";
 import type { Engine } from "@deskterioronline/engine-core";
 import { PlacementKernel, type PlacementTransaction } from "@deskterioronline/placement-kernel";
 import type { RuntimeAsset, SurfaceLocalPose } from "@deskterioronline/scene-schema";
@@ -21,6 +22,7 @@ import {
   type FocusPlacementRequest,
   type FocusPlacementSession
 } from "../../../lib/stores/useFocusPlacementStore";
+import { useWalkInventoryStore } from "../../../lib/stores/useWalkInventoryStore";
 
 function shouldIgnoreKeyboardTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -33,6 +35,18 @@ function shouldIgnoreKeyboardTarget(target: EventTarget | null) {
     tagName === "input" ||
     tagName === "textarea" ||
     tagName === "select"
+  );
+}
+
+function shouldIgnorePointerCommitTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+
+  return Boolean(
+    target.closest(
+      "button,a,input,textarea,select,[contenteditable='true'],[data-focus-placement-ui='true']"
+    )
   );
 }
 
@@ -131,7 +145,9 @@ export default function FocusPlacementController() {
   const readOnly = useEditorStore((state) => state.readOnly);
   const setIsTransforming = useEditorStore((state) => state.setIsTransforming);
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
+  const setSelectedAssetId = useSelectionSelector((slice) => slice.setSelectedAssetId);
   const assets = useAssetSelector((slice) => slice.assets);
+  const removeFurniture = useAssetSelector((slice) => slice.removeFurniture);
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
   const pendingRequest = useFocusPlacementStore((state) => state.pendingRequest);
   const activeSession = useFocusPlacementStore((state) => state.activeSession);
@@ -139,6 +155,8 @@ export default function FocusPlacementController() {
   const startSession = useFocusPlacementStore((state) => state.startSession);
   const updateSession = useFocusPlacementStore((state) => state.updateSession);
   const clearSession = useFocusPlacementStore((state) => state.clearSession);
+  const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
+  const clearPlacementDraft = useWalkInventoryStore((state) => state.clearPlacementDraft);
   const transactionRef = useRef<PlacementTransaction | null>(null);
   const kernel = useMemo(() => (engine ? new PlacementKernel(engine) : null), [engine]);
   const assetsById = useMemo(
@@ -237,6 +255,14 @@ export default function FocusPlacementController() {
       });
     } catch (error) {
       console.error("[FocusPlacementController] failed to start focus placement", error);
+      if (placementDraft?.objectId === pendingRequest.objectId) {
+        removeFurniture(pendingRequest.objectId);
+        setSelectedAssetId(null);
+        clearPlacementDraft();
+        toast.error("배치를 시작하지 못했습니다.", {
+          description: "제품 메타데이터나 설치 가능한 표면을 다시 확인해 주세요."
+        });
+      }
       clearPendingRequest();
       clearSession();
       setIsTransforming(false);
@@ -248,7 +274,11 @@ export default function FocusPlacementController() {
     engine,
     kernel,
     pendingRequest,
+    placementDraft,
     readOnly,
+    clearPlacementDraft,
+    removeFurniture,
+    setSelectedAssetId,
     setIsTransforming,
     viewMode
   ]);
@@ -269,7 +299,7 @@ export default function FocusPlacementController() {
   }, [activeSession, clearSession, engine, readOnly, selectedAssetId, setIsTransforming, viewMode]);
 
   useEffect(() => {
-    if (!activeSession) {
+    if (!activeSession || !engine) {
       return;
     }
 
@@ -306,11 +336,17 @@ export default function FocusPlacementController() {
           engine
         });
         recordSnapshot("집중 배치");
+        if (placementDraft?.objectId === activeSession.objectId) {
+          clearPlacementDraft();
+        }
         transactionRef.current = null;
         clearSession();
         setIsTransforming(false);
       } catch (error) {
         console.error("[FocusPlacementController] failed to commit focus placement", error);
+        toast.error("배치할 수 없는 위치입니다.", {
+          description: "충돌, 여유 공간, 표면 호환성을 확인한 뒤 다시 배치해 주세요."
+        });
       }
     };
 
@@ -318,6 +354,11 @@ export default function FocusPlacementController() {
       if (transactionRef.current) {
         transactionRef.current.cancel();
         transactionRef.current = null;
+      }
+      if (placementDraft?.objectId === activeSession.objectId) {
+        removeFurniture(activeSession.objectId);
+        setSelectedAssetId(null);
+        clearPlacementDraft();
       }
       clearSession();
       setIsTransforming(false);
@@ -445,7 +486,17 @@ export default function FocusPlacementController() {
       applyLocalPose(nextLocalPose);
     };
 
+    const handlePointerCommit = (event: MouseEvent) => {
+      if (!transactionRef.current || event.button !== 0 || shouldIgnorePointerCommitTarget(event.target)) {
+        return;
+      }
+
+      event.preventDefault();
+      commitActivePlacement();
+    };
+
     window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("mousedown", handlePointerCommit);
     window.addEventListener("deskterioronline:focus-placement:commit", commitActivePlacement);
     window.addEventListener("deskterioronline:focus-placement:cancel", cancelActivePlacement);
     const handleNumericPoseInput = (event: Event) => {
@@ -465,11 +516,24 @@ export default function FocusPlacementController() {
     window.addEventListener("deskterioronline:focus-placement:set-local-pose", handleNumericPoseInput);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("mousedown", handlePointerCommit);
       window.removeEventListener("deskterioronline:focus-placement:commit", commitActivePlacement);
       window.removeEventListener("deskterioronline:focus-placement:cancel", cancelActivePlacement);
       window.removeEventListener("deskterioronline:focus-placement:set-local-pose", handleNumericPoseInput);
     };
-  }, [activateCandidate, activeSession, clearSession, engine, recordSnapshot, setIsTransforming, updateSession]);
+  }, [
+    activateCandidate,
+    activeSession,
+    clearPlacementDraft,
+    clearSession,
+    engine,
+    placementDraft,
+    recordSnapshot,
+    removeFurniture,
+    setIsTransforming,
+    setSelectedAssetId,
+    updateSession
+  ]);
 
   useEffect(() => {
     return () => {

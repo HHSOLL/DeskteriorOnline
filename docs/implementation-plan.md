@@ -1004,6 +1004,18 @@ Updated:
 Removed/Deprecated:
 - `camera-forward focus surface resolve polish`, `local grid overlay`, `asset compatibility filter`, `collision overlay`가 여전히 Phase 5.5 잔여라는 상태 설명.
 
+## 2026-04-28 변경 동기화 (Walk Inventory Placement Slice)
+Added:
+- Walk inventory slice는 `I` shortcut drawer, selected asset draft, focused surface click/`E` session start, click/`Enter` commit, draft cancel cleanup을 포함한다.
+- Functional browser E2E는 walk view에서 inventory shortcut으로 제품을 선택하고 focus placement HUD로 commit하는 경로를 검증해야 한다.
+
+Updated:
+- Top view scope is reduced to view-only orbit/zoom inspection; feature work for precise deskterior placement belongs in walk mode.
+- Autosave payload must filter uncommitted walk inventory drafts until focus placement commits.
+
+Removed/Deprecated:
+- 상단뷰 direct drag와 desk precision gizmo를 이번 제품 배치 완성의 주 경로로 유지하는 계획.
+
 ## 2026-04-23 변경 동기화 (Phase 4 Asset Compiler Alpha Slice 1)
 Added:
 - `packages/asset-compiler` 패키지와 `apps/web/scripts/asset-compiler.ts` command surface를 추가했다.

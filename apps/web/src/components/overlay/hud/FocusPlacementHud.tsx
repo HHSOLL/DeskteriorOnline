@@ -127,6 +127,7 @@ export default function FocusPlacementHud() {
   return (
     <div
       className="pointer-events-auto absolute right-4 top-4 z-40 w-[min(360px,calc(100%-2rem))] rounded-[24px] border border-white/14 bg-black/55 px-4 py-4 text-white shadow-[0_18px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl"
+      data-focus-placement-ui="true"
       data-testid="focus-placement-hud"
     >
       <div className="mb-3 flex items-center justify-between gap-3">

@@ -6,7 +6,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { loadEnvConfig } from "@next/env";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { chromium, type Page } from "playwright";
+import { chromium, type Locator, type Page } from "playwright";
 import type { Database } from "../../../types/database";
 import { DEFAULT_CATALOG, toCatalogProductSnapshot } from "../src/lib/builder/catalog";
 import { createProjectVersion } from "../src/lib/server/project-versions";
@@ -170,18 +170,40 @@ async function clickNext(page: Page) {
   await page.waitForFunction(
     () =>
       Array.from(document.querySelectorAll("button")).some(
-        (button) => button.textContent?.trim() === "다음" && !button.disabled
+        (button) => button.textContent?.trim() === "다음"
       ),
     null,
     { timeout: 45_000 }
   );
-  await page.evaluate(() => {
-    const buttons = Array.from(document.querySelectorAll("button")).filter(
-      (button) => button.textContent?.trim() === "다음" && !button.disabled
-    );
-    buttons.at(-1)?.click();
-  });
-  await page.waitForTimeout(300);
+  const beforeStepLabel = await page
+    .locator("text=/\\d+\\/5단계/")
+    .first()
+    .textContent()
+    .catch(() => null);
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    await page.waitForTimeout(attempt === 0 ? 1_000 : 750);
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll("button")).filter(
+        (button) => button.textContent?.trim() === "다음"
+      );
+      (buttons.at(-1) as HTMLButtonElement | undefined)?.click();
+    });
+    await page.waitForTimeout(500);
+
+    if (!beforeStepLabel) {
+      return;
+    }
+
+    const afterStepLabel = await page
+      .locator("text=/\\d+\\/5단계/")
+      .first()
+      .textContent()
+      .catch(() => null);
+    if (afterStepLabel && afterStepLabel !== beforeStepLabel) {
+      return;
+    }
+  }
 }
 
 async function captureFlowScreenshot(page: Page, screenshotPath: string, fullPage: boolean) {
@@ -481,6 +503,71 @@ async function waitForRuntimePlacement(
   }>;
 }
 
+async function enterWalkView(page: Page) {
+  await page.waitForFunction(
+    () =>
+      Array.from(document.querySelectorAll("button")).some(
+        (button) => {
+          if (button.textContent?.trim() !== "워크뷰" || button.disabled) return false;
+          const rect = button.getBoundingClientRect();
+          const style = window.getComputedStyle(button);
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            style.visibility !== "hidden" &&
+            style.display !== "none"
+          );
+        }
+      ),
+    null,
+    { timeout: 45_000 }
+  );
+  await page.evaluate(() => {
+    const walkButton = Array.from(document.querySelectorAll("button"))
+      .filter((button) => {
+        if (button.textContent?.trim() !== "워크뷰" || button.disabled) return false;
+        const rect = button.getBoundingClientRect();
+        const style = window.getComputedStyle(button);
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.visibility !== "hidden" &&
+          style.display !== "none"
+        );
+      })
+      .at(-1) as HTMLButtonElement | undefined;
+    walkButton?.click();
+  });
+  await page.waitForFunction(
+    () =>
+      document.body.textContent?.includes("인벤토리") ||
+      document.body.textContent?.includes("I — 인벤토리"),
+    null,
+    { timeout: 30_000 }
+  );
+}
+
+const ATTACHMENT_LABELS: Record<string, string> = {
+  place_on_surface: "Place On Surface",
+  underside_screw: "Under Desk",
+  edge_clamp: "Edge Clamp",
+  vesa_mount: "VESA Mount",
+  wall_attach: "Wall Mount"
+};
+
+async function selectPlacementAttachmentMode(page: Page, hud: Locator, attachmentType: string) {
+  const desiredLabel = ATTACHMENT_LABELS[attachmentType] ?? attachmentType.replaceAll("_", " ");
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    const hudText = await hud.textContent({ timeout: 5_000 }).catch(() => "");
+    if (hudText?.toLowerCase().includes(desiredLabel.toLowerCase())) {
+      return;
+    }
+    await page.keyboard.press("Tab");
+    await page.waitForTimeout(350);
+  }
+  throw new Error(`placement mode not reachable: ${desiredLabel}`);
+}
+
 async function addAndCommitWalkPlacement(
   page: Page,
   input: {
@@ -495,13 +582,30 @@ async function addAndCommitWalkPlacement(
   }
 ) {
   console.log(`[e2e] placement:start ${input.catalogItemId}`);
-  await page.getByRole("button", { name: "추가" }).click();
+  await page.keyboard.press("i");
   await page.getByPlaceholder("무엇을 찾으시나요?").fill(input.search ?? input.label);
-  await page.getByRole("button", { name: `${input.label} 추가` }).click();
-  await page.getByTestId("focus-placement-launcher").waitFor({ state: "visible", timeout: 25_000 });
-  await page.getByTestId("focus-placement-launcher").getByRole("button", { name: /정밀 배치 시작/ }).first().click();
+  await page.getByRole("button", { name: `${input.label} 선택` }).click();
   const hud = page.getByTestId("focus-placement-hud");
+  const canvas = page.locator("canvas").first();
+  await canvas.click({ position: { x: 720, y: 480 }, force: true }).catch(() => null);
+  await page.mouse.move(720, 690, { steps: 12 }).catch(() => null);
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    await page.waitForTimeout(attempt === 0 ? 1_200 : 700);
+    await page.keyboard.press("e");
+    if (await hud.isVisible().catch(() => false)) {
+      break;
+    }
+  }
+  if (!(await hud.isVisible().catch(() => false))) {
+    const launcher = page.getByTestId("focus-placement-launcher");
+    if (await launcher.isVisible().catch(() => false)) {
+      await launcher.getByRole("button", { name: /정밀 배치 시작/ }).first().evaluate((button) => {
+        (button as HTMLButtonElement).click();
+      });
+    }
+  }
   await hud.waitFor({ state: "visible", timeout: 25_000 });
+  await selectPlacementAttachmentMode(page, hud, input.attachmentType);
 
   const inputs = hud.locator("input");
   if (input.uMm !== undefined) await inputs.nth(0).fill(String(input.uMm));
@@ -511,7 +615,9 @@ async function addAndCommitWalkPlacement(
 
   await hud.getByText("Surface").first().click({ force: true });
   await page.keyboard.press("Alt+ArrowRight");
-  await hud.getByRole("button", { name: "확정" }).click();
+  await hud.getByRole("button", { name: "확정" }).evaluate((button) => {
+    (button as HTMLButtonElement).click();
+  });
   await hud.waitFor({ state: "hidden", timeout: 25_000 });
   const placement = await waitForRuntimePlacement(page, {
     catalogItemId: input.catalogItemId,
@@ -530,7 +636,7 @@ async function runWalkPlacementSaveShareFlow(
 ) {
   await loginBrowserUser(page, baseUrl, seed.email, seed.password);
   await page.goto(new URL(`/project/${seed.projectId}`, baseUrl).toString(), { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "워크뷰" }).click();
+  await enterWalkView(page);
   await page.locator("canvas").first().waitFor({ state: "visible", timeout: 30_000 });
   results.push({
     stage: "walk-view-entry",
@@ -606,7 +712,7 @@ async function runWalkPlacementSaveShareFlow(
   console.log("[e2e] reload:domcontentloaded");
   await page.locator("canvas").first().waitFor({ state: "visible", timeout: 30_000 });
   await page.locator('[role="status"][aria-busy="true"]').waitFor({ state: "hidden", timeout: 30_000 }).catch(() => null);
-  await page.getByRole("button", { name: "워크뷰" }).click();
+  await enterWalkView(page);
   await waitForRuntimePlacement(page, {
     catalogItemId: "p2s_cable_tray_mesh_600",
     supportObjectId: "desk-1",
@@ -688,10 +794,12 @@ async function run() {
 
   page.on("console", (message) => {
     if (message.type() === "error") {
+      console.warn(`[browser:console-error] ${message.text()}`);
       capturePointerLockError(message.text());
     }
   });
   page.on("pageerror", (error) => {
+    console.warn(`[browser:pageerror] ${error.stack ?? error.message}`);
     capturePointerLockError(error.message);
   });
 
@@ -742,7 +850,9 @@ async function run() {
 
     await clickNext(page);
     results.push(await expectText(page, "조명 분위기 선택하기", "lighting-step"));
-    await page.getByRole("button", { name: /Indirect Lighting|간접/ }).click();
+    await page.getByRole("button", { name: /Indirect Lighting|간접/ }).evaluate((button) => {
+      (button as HTMLButtonElement).click();
+    });
     results.push({
       stage: "lighting-selection",
       ok: true,

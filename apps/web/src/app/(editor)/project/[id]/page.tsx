@@ -3,11 +3,9 @@
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Crosshair, LayoutGrid } from "lucide-react";
 import { BuilderLibraryShelf } from "../../../../components/editor/BuilderLibraryShelf";
 import {
   useEditorStore,
-  type EditorTopMode,
   type EditorViewMode
 } from "../../../../lib/stores/useEditorStore";
 import { useProjectStore } from "../../../../lib/stores/useProjectStore";
@@ -25,7 +23,6 @@ import { PrecisionMeasurementOverlay } from "../../../../components/editor/Preci
 import { ProjectEditorViewport } from "../../../../components/editor/ProjectEditorViewport";
 import { ProjectEditorHeader } from "../../../../components/editor/ProjectEditorHeader";
 import { ShareModal } from "../../../../components/editor/ShareModal";
-import { StudioModeToggle } from "../../../../components/editor/StudioModeToggle";
 import { useAssetCatalog } from "../../../../components/editor/useAssetCatalog";
 import { useEditorSaveSession } from "../../../../components/editor/useEditorSaveSession";
 import "../../../../lib/polyfills/progress-event";
@@ -55,6 +52,8 @@ import {
   formatSupportSurfaceLabel,
   resolveSupportSurfaceLock
 } from "../../../../lib/scene/support-profiles";
+import { useFocusPlacementStore } from "../../../../lib/stores/useFocusPlacementStore";
+import { useWalkInventoryStore } from "../../../../lib/stores/useWalkInventoryStore";
 
 const STARTER_SET_OFFSETS: Array<[number, number]> = [
   [-2.2, -1.2],
@@ -91,7 +90,6 @@ export default function ProjectEditorPage() {
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const setViewMode = useEditorStore((state) => state.setViewMode);
-  const setTopMode = useEditorStore((state) => state.setTopMode);
   const applyShellPreset = useEditorStore((state) => state.applyShellPreset);
   const panels = useEditorStore((state) => state.panels);
   const setPanels = useEditorStore((state) => state.setPanels);
@@ -127,6 +125,10 @@ export default function ProjectEditorPage() {
   const { entranceId, setEntranceId } = useCameraStore();
   const { initializeHistory, recordSnapshot } = usePublishStore();
   const { currentProject, loadProject } = useProjectStore();
+  const activeFocusPlacement = useFocusPlacementStore((state) => state.activeSession);
+  const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
+  const setPlacementDraft = useWalkInventoryStore((state) => state.setPlacementDraft);
+  const clearPlacementDraft = useWalkInventoryStore((state) => state.clearPlacementDraft);
 
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
@@ -137,13 +139,6 @@ export default function ProjectEditorPage() {
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
-  );
-  const topModeOptions = useMemo(
-    () => [
-      { id: "room", label: "룸 배치", icon: LayoutGrid },
-      { id: "desk-precision", label: "데스크 정밀", icon: Crosshair }
-    ],
-    []
   );
   const {
     catalog: libraryCatalog,
@@ -293,6 +288,9 @@ export default function ProjectEditorPage() {
       toast.error(scaleGateMessage);
       return;
     }
+    if (mode === "walk" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     setViewMode(mode);
   };
 
@@ -402,8 +400,35 @@ export default function ProjectEditorPage() {
     []
   );
 
+  const cancelWalkInventoryDraft = useCallback(() => {
+    if (!placementDraft) {
+      return false;
+    }
+
+    removeFurniture(placementDraft.objectId);
+    if (selectedAssetId === placementDraft.objectId) {
+      setSelectedAssetId(null);
+    }
+    clearPlacementDraft();
+    return true;
+  }, [
+    clearPlacementDraft,
+    placementDraft,
+    removeFurniture,
+    selectedAssetId,
+    setSelectedAssetId
+  ]);
+
   const addCatalogItemToScene = useCallback(
     (item: LibraryCatalogItem) => {
+      if (viewMode !== "walk") {
+        toast.info("워크뷰에서 인벤토리로 배치합니다.", {
+          description: "워크뷰로 전환한 뒤 I 키를 눌러 제품을 선택하세요."
+        });
+        return;
+      }
+
+      cancelWalkInventoryDraft();
       const id = createAssetId();
       const productSnapshot = toCatalogProductSnapshot(item);
       const supportProfile = item.supportProfile ?? null;
@@ -441,30 +466,32 @@ export default function ProjectEditorPage() {
         materialId: null
       });
       setSelectedAssetId(id);
-      recordSnapshot(`제품 추가: ${item.label}`);
-      if (viewMode === "walk") {
-        setPanels({ assets: false, properties: false });
-        toast.success(`${item.label} 제품을 선택했습니다.`, {
-          description: "설치할 책상/표면을 화면 중앙에 맞춘 뒤 E 키로 집중 배치를 시작하세요."
-        });
-      } else {
-        toast.success(`${item.label} 제품을 추가했습니다.`);
-      }
+      setPlacementDraft({ objectId: id, label: item.label });
+      setPanels({ assets: false, properties: false });
+      toast.success(`${item.label} 선택됨`, {
+        description: "표면을 화면 중앙에 맞춘 뒤 클릭 또는 E 키로 배치를 시작하세요."
+      });
     },
     [
       addFurniture,
       anchorContext,
+      cancelWalkInventoryDraft,
       createAssetId,
-      recordSnapshot,
       sceneCenter.x,
       sceneCenter.z,
       setPanels,
+      setPlacementDraft,
       setSelectedAssetId,
       viewMode
     ]
   );
 
   const addStarterSetToScene = useCallback(() => {
+    if (viewMode === "walk") {
+      toast.info("워크뷰에서는 제품을 하나씩 선택해 배치합니다.");
+      return;
+    }
+
     const selectedItems = selectStarterSetItems(libraryCatalog, STARTER_SET_OFFSETS.length);
     const nextSceneAssets = [...assets];
 
@@ -523,7 +550,8 @@ export default function ProjectEditorPage() {
     recordSnapshot,
     sceneCenter.x,
     sceneCenter.z,
-    setSelectedAssetId
+    setSelectedAssetId,
+    viewMode
   ]);
 
   const updateAssetFromInspector = useCallback(
@@ -611,8 +639,7 @@ export default function ProjectEditorPage() {
   const canEnter3D = hasSceneGeometry && !getScaleGateMessage(scale, scaleInfo);
   const isSceneVisible = hasSceneGeometry && (viewMode === "top" || viewMode === "walk");
   const showLaunchState = !hasSceneGeometry;
-  const isTopEditorVisible = isSceneVisible && viewMode === "top";
-  const isAssetDrawerAvailable = isSceneVisible;
+  const isWalkInventoryAvailable = isSceneVisible && viewMode === "walk";
   const launchMetrics = [
     { label: "진입", value: "빌더" },
     { label: "제품 목록", value: `${libraryCatalog.length}개` },
@@ -630,13 +657,16 @@ export default function ProjectEditorPage() {
   const launchPreviewItems = featuredLibraryCatalog.slice(0, 3);
   const normalizedProjectName = projectNameDraft.trim();
   const activePanel = panels.assets ? "assets" : panels.properties ? "properties" : null;
-  const visiblePanel = activePanel === "assets" || (activePanel === "properties" && isTopEditorVisible)
-    ? activePanel
-    : null;
-  const topModeNotice =
-    topMode === "room"
-      ? "룸 배치 모드: 제품 본체를 직접 드래그해 큰 위치를 잡습니다. 250mm snap과 월드 기준 정렬만 유지합니다."
-      : "데스크 정밀 모드: surface/anchor 기준의 미세 배치를 위해 gizmo를 사용합니다. 25mm / 15도 snap이 적용됩니다.";
+  const visiblePanel: "assets" | "properties" | null =
+    activePanel === "assets" && isWalkInventoryAvailable ? "assets" : null;
+  const topModeNotice = "상단뷰는 확인 전용입니다. 제품 배치는 워크뷰에서 I 키로 인벤토리를 열어 진행합니다.";
+  const persistedAssets = useMemo(
+    () =>
+      placementDraft
+        ? assets.filter((asset) => asset.id !== placementDraft.objectId)
+        : assets,
+    [assets, placementDraft]
+  );
 
   const savePayload = useMemo(
     () => ({
@@ -652,18 +682,17 @@ export default function ProjectEditorPage() {
         navGraph,
         entranceId
       },
-      assets,
+      assets: persistedAssets,
       materials: {
         wallIndex: wallMaterialIndex,
         floorIndex: floorMaterialIndex,
         ceilingIndex: ceilingMaterialIndex
       },
       lighting,
-      assetSummary: buildProjectAssetSummary(libraryCatalog, assets),
+      assetSummary: buildProjectAssetSummary(libraryCatalog, persistedAssets),
       projectName: normalizedProjectName || currentProject?.name || "새 공간 디자인"
     }),
     [
-      assets,
       cameraAnchors,
       ceilingMaterialIndex,
       ceilings,
@@ -676,6 +705,7 @@ export default function ProjectEditorPage() {
       navGraph,
       normalizedProjectName,
       openings,
+      persistedAssets,
       rooms,
       scale,
       scaleInfo,
@@ -702,7 +732,10 @@ export default function ProjectEditorPage() {
       setPanels({ assets: false, properties: false });
       return;
     }
-    if (viewMode === "top") return;
+    if (viewMode === "top") {
+      setPanels({ assets: false, properties: false });
+      return;
+    }
     setPanels({ properties: false });
     setTransformMode("translate");
     setTransformSpace("world");
@@ -716,36 +749,100 @@ export default function ProjectEditorPage() {
     setTransformSpace
   ]);
 
+  useEffect(() => {
+    if (viewMode !== "top" || activeFocusPlacement) return;
+    cancelWalkInventoryDraft();
+  }, [activeFocusPlacement, cancelWalkInventoryDraft, viewMode]);
+
   const closePanels = useCallback(() => {
     setPanels({ assets: false, properties: false });
   }, [setPanels]);
-  const activateAssetPanel = () => setPanels({ assets: true, properties: false });
-  const activateInspectorPanel = () => setPanels({ assets: false, properties: true });
-  const toggleAssetPanel = () => {
+  const activateAssetPanel = useCallback(() => {
+    if (!isWalkInventoryAvailable) return;
+    setPanels({ assets: true, properties: false });
+  }, [isWalkInventoryAvailable, setPanels]);
+  const activateInspectorPanel = useCallback(() => {
+    setPanels({ assets: false, properties: true });
+  }, [setPanels]);
+  const toggleAssetPanel = useCallback(() => {
+    if (!isWalkInventoryAvailable) return;
     if (panels.assets && !panels.properties) {
       closePanels();
       return;
     }
     activateAssetPanel();
-  };
-  const toggleInspectorPanel = () => {
+  }, [
+    activateAssetPanel,
+    closePanels,
+    isWalkInventoryAvailable,
+    panels.assets,
+    panels.properties
+  ]);
+  const toggleInspectorPanel = useCallback(() => {
     if (panels.properties && !panels.assets) {
       closePanels();
       return;
     }
     activateInspectorPanel();
-  };
+  }, [activateInspectorPanel, closePanels, panels.assets, panels.properties]);
 
   useEffect(() => {
-    if (!isTopEditorVisible || (!panels.assets && !panels.properties)) return;
+    if (!isSceneVisible) return;
+
+    const shouldIgnoreShortcutTarget = (target: EventTarget | null) => {
+      if (!(target instanceof HTMLElement)) {
+        return false;
+      }
+
+      const tagName = target.tagName.toLowerCase();
+      return (
+        target.isContentEditable ||
+        tagName === "input" ||
+        tagName === "textarea" ||
+        tagName === "select"
+      );
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key.toLowerCase() === "i" && viewMode === "walk") {
+        if (shouldIgnoreShortcutTarget(event.target)) return;
+        event.preventDefault();
+        if (panels.assets) {
+          closePanels();
+        } else {
+          activateAssetPanel();
+        }
+        return;
+      }
+
+      if (event.key !== "Escape" || activeFocusPlacement) {
+        return;
+      }
+
+      if (panels.assets || panels.properties) {
+        event.preventDefault();
         closePanels();
+        return;
+      }
+
+      if (viewMode === "walk" && cancelWalkInventoryDraft()) {
+        event.preventDefault();
+        toast.info("선택한 제품을 내려놓았습니다.");
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [closePanels, isTopEditorVisible, panels.assets, panels.properties]);
+  }, [
+    activeFocusPlacement,
+    activateAssetPanel,
+    cancelWalkInventoryDraft,
+    closePanels,
+    isSceneVisible,
+    panels.assets,
+    panels.properties,
+    viewMode
+  ]);
 
   useEffect(() => {
     if (viewMode !== "top") return;
@@ -806,7 +903,7 @@ export default function ProjectEditorPage() {
         onTitleChange={setProjectNameDraft}
         onTitleCommit={() => setProjectNameDraft((current) => current.trim())}
         viewMode={viewMode}
-        canShowPanels={isAssetDrawerAvailable}
+        canShowPanels={isWalkInventoryAvailable}
         activePanel={visiblePanel}
         onBack={() => router.push("/studio")}
         onShowAssets={toggleAssetPanel}
@@ -866,6 +963,7 @@ export default function ProjectEditorPage() {
                             >
                               {visiblePanel === "assets" ? (
                                 <BuilderLibraryShelf
+                                  mode="inventory"
                                   items={filteredLibraryCatalog}
                                   featuredItems={featuredLibraryCatalog}
                                   spotlightItem={librarySpotlightItem}
@@ -876,6 +974,7 @@ export default function ProjectEditorPage() {
                                   assetCount={assets.length}
                                   hasActiveFilters={libraryHasActiveFilters}
                                   placedItemKeys={placedItemKeys}
+                                  showStarterSet={false}
                                   onQueryChange={setLibraryQuery}
                                   onCategoryChange={setLibraryCategory}
                                   onAddStarterSet={addStarterSetToScene}
@@ -975,18 +1074,6 @@ export default function ProjectEditorPage() {
       {isSceneVisible ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-4 z-[100] flex justify-center px-3 sm:bottom-6">
           <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-black/10 bg-white/96 p-1.5 shadow-[0_16px_34px_rgba(16,18,22,0.14)]">
-            {viewMode === "top" ? (
-              <div className="rounded-full border border-black/10 bg-[#f7f7f4] p-1">
-                <StudioModeToggle
-                  value={topMode}
-                  modes={topModeOptions}
-                  onChange={(id) => setTopMode(id as EditorTopMode)}
-                  variant="solid"
-                  hideLabelsOnMobile
-                  className="gap-1"
-                />
-              </div>
-            ) : null}
             <div className="flex items-center gap-1 rounded-full bg-[#f4f4f1] p-1">
               <button
                 type="button"

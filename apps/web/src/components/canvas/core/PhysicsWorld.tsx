@@ -9,6 +9,7 @@ import { getWallRenderPlacement } from "../../../lib/geometry/wall-placement";
 type PhysicsWorldProps = {
   children: ReactNode;
   debug?: boolean;
+  enabled?: boolean;
 };
 
 const DEFAULT_HEIGHT = 2.8;
@@ -38,7 +39,7 @@ function computeBounds(walls: { start: [number, number]; end: [number, number] }
   return { minX, maxX, minZ, maxZ };
 }
 
-export default function PhysicsWorld({ children, debug }: PhysicsWorldProps) {
+export default function PhysicsWorld({ children, debug, enabled = true }: PhysicsWorldProps) {
   const walls = useShellSelector((slice) => slice.walls);
   const openings = useShellSelector((slice) => slice.openings);
   const floors = useShellSelector((slice) => slice.floors);
@@ -130,21 +131,25 @@ export default function PhysicsWorld({ children, debug }: PhysicsWorldProps) {
   return (
     <Physics gravity={[0, -9.81, 0]}>
       {/* Floor Collider */}
-      <RigidBody type="fixed" colliders={false}>
-        <CuboidCollider
-          args={[width / 2, FLOOR_THICKNESS / 2, depth / 2]}
-          position={[centerX, -FLOOR_THICKNESS / 2, centerZ]}
-        />
-      </RigidBody>
+      {enabled ? (
+        <RigidBody type="fixed" colliders={false}>
+          <CuboidCollider
+            args={[width / 2, FLOOR_THICKNESS / 2, depth / 2]}
+            position={[centerX, -FLOOR_THICKNESS / 2, centerZ]}
+          />
+        </RigidBody>
+      ) : null}
 
       {/* Wall Colliders */}
-      {wallColliders.map((wall) =>
-        wall ? (
-          <RigidBody key={wall.id} type="fixed" colliders={false} position={wall.position} rotation={wall.rotation}>
-            <CuboidCollider args={wall.args} />
-          </RigidBody>
-        ) : null
-      )}
+      {enabled
+        ? wallColliders.map((wall) =>
+            wall ? (
+              <RigidBody key={wall.id} type="fixed" colliders={false} position={wall.position} rotation={wall.rotation}>
+                <CuboidCollider args={wall.args} />
+              </RigidBody>
+            ) : null
+          )
+        : null}
 
       {children}
     </Physics>

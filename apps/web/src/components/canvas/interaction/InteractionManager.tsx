@@ -138,15 +138,32 @@ export default function InteractionManager({ children }: InteractionManagerProps
   });
 
   useEffect(() => {
+    const triggerFocusedInteraction = (event?: KeyboardEvent | MouseEvent) => {
+      const target = hoveredRef.current;
+      const callback = target?.userData?.onInteract as undefined | (() => void);
+      if (!callback) return;
+      event?.preventDefault();
+      callback();
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (viewMode !== "walk" || readOnly || hasActiveFocusPlacement) return;
       if (event.key.toLowerCase() !== "e") return;
-      const target = hoveredRef.current;
-      const callback = target?.userData?.onInteract as undefined | (() => void);
-      if (callback) callback();
+      triggerFocusedInteraction(event);
     };
+
+    const handleMouseDown = (event: MouseEvent) => {
+      if (viewMode !== "walk" || readOnly || hasActiveFocusPlacement) return;
+      if (event.button !== 0) return;
+      triggerFocusedInteraction(event);
+    };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("mousedown", handleMouseDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("mousedown", handleMouseDown);
+    };
   }, [hasActiveFocusPlacement, readOnly, viewMode]);
 
   return (
