@@ -67,17 +67,18 @@ export const ROOM_SHELL_KTX2_ENABLED = process.env.NEXT_PUBLIC_ENABLE_KTX2_TEXTU
 
 export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
   defineRoomShellTexturePreset({
-    topColor: "#d8d1c8",
-    map: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_diff_2k.jpg",
+    topColor: "#dedbd3",
+    map: "/assets/textures/ai_limewash_wall/ai_limewash_wall_diff_1k.jpg",
     roughnessMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_rough_2k.jpg",
     normalMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_disp_2k.png",
     bumpMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_disp_2k.png",
-    color: "#f3f2ef",
-    roughness: 0.85,
-    bumpScale: 0.012,
-    normalScale: 0.3,
-    envMapIntensity: 0.5,
-    repeatScaleMeters: [2.4, 2.4]
+    color: "#ebe7df",
+    roughness: 0.88,
+    bumpScale: 0.009,
+    normalScale: 0.2,
+    envMapIntensity: 0.42,
+    previewThumbnail: "/assets/textures/ai_limewash_wall/ai_limewash_wall_diff_1k.jpg",
+    repeatScaleMeters: [2.8, 2.8]
   }),
   defineRoomShellTexturePreset({
     topColor: "#babcc0",
@@ -203,15 +204,16 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
 
 export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
   defineRoomShellTexturePreset({
-    topColor: "#b79a75",
-    map: "/assets/textures/weathered_brown_planks_2k.blend/textures/weathered_brown_planks_diff_2k.jpg",
-    roughnessMap: "/assets/textures/weathered_brown_planks_2k.blend/textures/weathered_brown_planks_rough_2k.jpg",
-    normalMap: "/assets/textures/weathered_brown_planks_2k.blend/textures/weathered_brown_planks_disp_2k.png",
-    bumpMap: "/assets/textures/weathered_brown_planks_2k.blend/textures/weathered_brown_planks_disp_2k.png",
-    roughness: 0.7,
-    bumpScale: 0.012,
-    normalScale: 0.35,
-    repeatScaleMeters: [2.6, 2.6]
+    topColor: "#d7bd96",
+    map: "/assets/textures/ai_light_oak_floor/ai_light_oak_floor_diff_1k.jpg",
+    roughnessMap: "/assets/textures/wood_floor/wood_floor_rough_2k.jpg",
+    normalMap: "/assets/textures/wood_floor/wood_floor_disp_2k.jpg",
+    bumpMap: "/assets/textures/wood_floor/wood_floor_disp_2k.jpg",
+    roughness: 0.66,
+    bumpScale: 0.01,
+    normalScale: 0.24,
+    previewThumbnail: "/assets/textures/ai_light_oak_floor/ai_light_oak_floor_diff_1k.jpg",
+    repeatScaleMeters: [3.4, 3.4]
   }),
   defineRoomShellTexturePreset({
     topColor: "#8f8479",

@@ -130,6 +130,7 @@ function WalkRig({
     const canvas = gl.domElement;
     const ownerDocument = canvas.ownerDocument;
     let pointerLockRequestInFlight = false;
+    const previousTabIndex = canvas.getAttribute("tabindex");
 
     const canRequestPointerLock = () =>
       !blockPointerLock &&
@@ -138,20 +139,31 @@ function WalkRig({
       ownerDocument.contains(canvas) &&
       ownerDocument.visibilityState !== "hidden";
 
-    if (blockPointerLock && ownerDocument.pointerLockElement === canvas) {
+    const isPointerLocked = () => ownerDocument.pointerLockElement === canvas;
+
+    canvas.tabIndex = 0;
+
+    if (blockPointerLock && isPointerLocked()) {
       ownerDocument.exitPointerLock();
       pointerLockedRef.current = false;
       moveState.current = { forward: false, backward: false, left: false, right: false };
     }
 
-    const handleCanvasClick = () => {
-      if (pointerLockedRef.current || ownerDocument.pointerLockElement === canvas) return;
+    const handleCanvasPointerDown = (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      if (pointerLockedRef.current || isPointerLocked()) return;
       if (pointerLockRequestInFlight || !canRequestPointerLock()) return;
 
+      event.preventDefault();
+      canvas.focus({ preventScroll: true });
       pointerLockRequestInFlight = true;
       const lockResult = canvas.requestPointerLock();
-      if (lockResult && typeof lockResult.catch === "function") {
+      pointerLockedRef.current = true;
+      if (lockResult && typeof lockResult.then === "function") {
         lockResult
+          .then(() => {
+            pointerLockedRef.current = isPointerLocked();
+          })
           .catch(() => {
             pointerLockedRef.current = false;
           })
@@ -164,7 +176,7 @@ function WalkRig({
     };
 
     const handlePointerLockChange = () => {
-      pointerLockedRef.current = ownerDocument.pointerLockElement === canvas;
+      pointerLockedRef.current = isPointerLocked();
       if (!pointerLockedRef.current) {
         moveState.current = { forward: false, backward: false, left: false, right: false };
       }
@@ -176,7 +188,8 @@ function WalkRig({
     };
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (!pointerLockedRef.current) return;
+      if (!pointerLockedRef.current && !isPointerLocked()) return;
+      pointerLockedRef.current = true;
       yawRef.current -= event.movementX * 0.002;
       pitchRef.current -= event.movementY * 0.002;
       pitchRef.current = Math.max(-1.2, Math.min(1.2, pitchRef.current));
@@ -184,41 +197,54 @@ function WalkRig({
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!pointerLockedRef.current) return;
+      if (!pointerLockedRef.current && !isPointerLocked()) return;
+      pointerLockedRef.current = true;
+      if (["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)) event.preventDefault();
       if (event.code === "KeyW") moveState.current.forward = true;
       if (event.code === "KeyS") moveState.current.backward = true;
       if (event.code === "KeyA") moveState.current.left = true;
       if (event.code === "KeyD") moveState.current.right = true;
     };
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (!pointerLockedRef.current) return;
+      if (!pointerLockedRef.current && !isPointerLocked()) return;
+      if (["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)) event.preventDefault();
       if (event.code === "KeyW") moveState.current.forward = false;
       if (event.code === "KeyS") moveState.current.backward = false;
       if (event.code === "KeyA") moveState.current.left = false;
       if (event.code === "KeyD") moveState.current.right = false;
     };
 
-    canvas.addEventListener("click", handleCanvasClick);
+    canvas.addEventListener("pointerdown", handleCanvasPointerDown);
     ownerDocument.addEventListener("pointerlockchange", handlePointerLockChange);
     ownerDocument.addEventListener("pointerlockerror", handlePointerLockError);
     ownerDocument.addEventListener("mousemove", handleMouseMove);
     ownerDocument.addEventListener("keydown", handleKeyDown);
     ownerDocument.addEventListener("keyup", handleKeyUp);
     return () => {
-      canvas.removeEventListener("click", handleCanvasClick);
+      canvas.removeEventListener("pointerdown", handleCanvasPointerDown);
       ownerDocument.removeEventListener("pointerlockchange", handlePointerLockChange);
       ownerDocument.removeEventListener("pointerlockerror", handlePointerLockError);
       ownerDocument.removeEventListener("mousemove", handleMouseMove);
       ownerDocument.removeEventListener("keydown", handleKeyDown);
       ownerDocument.removeEventListener("keyup", handleKeyUp);
-      if (ownerDocument.pointerLockElement === canvas) {
+      if (isPointerLocked()) {
         ownerDocument.exitPointerLock();
+      }
+      if (previousTabIndex === null) {
+        canvas.removeAttribute("tabindex");
+      } else {
+        canvas.setAttribute("tabindex", previousTabIndex);
       }
       pointerLockedRef.current = false;
     };
   }, [blockPointerLock, camera, gl.domElement, isTouch]);
 
   useFrame(() => {
+    const isDesktopPointerLocked =
+      !isTouch && gl.domElement.ownerDocument.pointerLockElement === gl.domElement;
+    if (isDesktopPointerLocked) {
+      pointerLockedRef.current = true;
+    }
     if (!pointerLockedRef.current && !isTouch) return;
     const body = bodyRef.current;
     if (!body) return;

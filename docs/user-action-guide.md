@@ -1042,3 +1042,15 @@ Updated:
 
 Removed/Deprecated:
 - 상단뷰 `룸 배치` / `데스크 정밀` 토글을 제품 배치 QA의 필수 경로로 보는 기준.
+
+## 2026-04-28 변경 동기화 (Walk Pointer Lock QA)
+Added:
+- 워크뷰 진입 후 canvas를 한 번 클릭하면 마우스 커서가 숨겨지고, F12/DevTools 전환 없이 즉시 mouse-look과 `W/A/S/D` 이동이 동작하는지 확인한다.
+- 워크뷰에서 inventory/properties drawer가 열리면 pointer lock이 해제되고, drawer를 닫은 뒤 canvas 클릭으로 다시 mouse-look이 복구되는지 확인한다.
+- builder/editor 기본 wall/floor material 첫 preset이 생성형 limewash wall + light oak floor texture thumbnail과 runtime surface로 보이는지 확인한다.
+
+Updated:
+- 워크뷰 QA 기준을 focus placement뿐 아니라 pointer lock 진입/해제/재진입까지 포함하도록 확장한다.
+
+Removed/Deprecated:
+- F12를 눌러 DevTools focus 전환을 해야 워크뷰 이동이 정상화되는 상태를 허용하는 기준.

@@ -1253,6 +1253,17 @@ Updated:
 Removed/Deprecated:
 - strict room-flow 검증이 외부에서 이미 떠 있는 base URL에만 의존해도 충분하다는 가정.
 
+## 2026-04-28 변경 동기화 (Walk Pointer Lock + AI Texture Slice)
+Added:
+- 워크뷰 pointer lock 입력 회귀 수정 slice를 추가해 canvas pointerdown/focus/requestPointerLock 이후 DevTools 없이 mouse-look + WASD를 확인한다.
+- room shell 기본 텍스처 개선 slice로 생성형 wall/floor color texture를 public runtime asset에 추가하고 첫 번째 material preset에 연결한다.
+
+Updated:
+- P2 렌더/워크뷰 안정화 범위에 pointer lock state canonicalization과 생성형 texture baseline 교체를 포함한다.
+
+Removed/Deprecated:
+- 워크뷰 입력 문제를 사용자 DevTools focus workaround로 남겨두는 상태.
+
 ## 2026-04-24 변경 동기화 (Feature Completion Slice 1)
 Added:
 - Room visual quality 작업으로 wall/floor/ceiling shell에 real-scale texture repeat, material preview thumbnail metadata, 자동 baseboard, walk-mode ceiling trim/corner cap 기준을 추가한다.
