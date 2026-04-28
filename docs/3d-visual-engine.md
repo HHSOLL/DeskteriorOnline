@@ -830,6 +830,20 @@ Updated:
 Removed/Deprecated:
 - hidden QA surface가 asset status를 summary 숫자만으로 보여줘도 충분하다는 가정.
 
+## 2026-04-28 변경 동기화 (Walk Pointer Lock + AI Texture Baseline)
+Added:
+- editor walk view의 desktop mouse-look은 pointer lock ref 상태뿐 아니라 `document.pointerLockElement`를 canonical source로 확인해야 한다.
+- walk canvas는 pointer lock 요청 전 focus 가능한 canvas로 전환되어야 하며, `W/A/S/D` 입력은 pointer lock 활성 중 기본 브라우저 동작을 막아야 한다.
+- room shell 기본 wall/floor texture는 생성형 이미지 기반 limewash wall / light oak floor color map을 첫 번째 preset으로 사용하고, PBR 보조맵은 기존 runtime texture path와 결합한다.
+
+Updated:
+- walk view 입력 안정성 기준을 “click으로 pointer lock 진입”에서 “click 직후 DevTools focus 전환 없이 mouse-look + WASD가 즉시 동작”으로 강화한다.
+- 기본 room shell visual baseline을 legacy plaster/weathered plank에서 생성형 limewash wall + light oak floor 조합으로 갱신한다.
+
+Removed/Deprecated:
+- pointer lock change 이벤트가 ref를 갱신하지 못하면 walk input이 멈춰도 된다는 가정.
+- 기본 바닥이 어두운 weathered plank여야 한다는 가정.
+
 ## 2026-04-23 변경 동기화 (Phase 9 Commercial QA Visual Slice 3)
 Added:
 - hidden QA surface의 compatibility matrix card는 verification status, last verified timestamp, method, evidence를 함께 보여줘야 한다.
