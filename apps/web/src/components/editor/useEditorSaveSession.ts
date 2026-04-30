@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { saveProject, type SaveProjectPayload } from "../../lib/api/project";
 import { useProjectStore } from "../../lib/stores/useProjectStore";
@@ -32,7 +32,7 @@ export function useEditorSaveSession({
   payloadRef.current = payload;
   signatureRef.current = signature;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ready) return;
     readyRef.current = true;
     setLastSavedSignature((current) => current ?? signature);

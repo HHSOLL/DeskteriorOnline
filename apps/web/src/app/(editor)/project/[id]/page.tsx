@@ -81,6 +81,14 @@ function computeBounds(walls: { start: [number, number]; end: [number, number] }
   return { minX, maxX, minZ, maxZ };
 }
 
+function requiresSurfaceFocusPlacement(anchorType: ReturnType<typeof inferAnchorTypeForCatalogItem>) {
+  return (
+    anchorType === "desk_surface" ||
+    anchorType === "shelf_surface" ||
+    anchorType === "furniture_surface"
+  );
+}
+
 export default function ProjectEditorPage() {
   const params = useParams();
   const router = useRouter();
@@ -466,10 +474,19 @@ export default function ProjectEditorPage() {
         materialId: null
       });
       setSelectedAssetId(id);
-      setPlacementDraft({ objectId: id, label: item.label });
       setPanels({ assets: false, properties: false });
-      toast.success(`${item.label} 선택됨`, {
-        description: "표면을 화면 중앙에 맞춘 뒤 클릭 또는 E 키로 배치를 시작하세요."
+
+      if (requiresSurfaceFocusPlacement(anchoredPlacement.anchorType)) {
+        setPlacementDraft({ objectId: id, label: item.label });
+        toast.success(`${item.label} 선택됨`, {
+          description: "표면을 화면 중앙에 맞춘 뒤 클릭 또는 E 키로 배치를 시작하세요."
+        });
+        return;
+      }
+
+      recordSnapshot("워크뷰 제품 추가");
+      toast.success(`${item.label} 배치됨`, {
+        description: "현재 워크뷰 장면에 배치되어 저장 대상에 포함됩니다."
       });
     },
     [
@@ -477,6 +494,7 @@ export default function ProjectEditorPage() {
       anchorContext,
       cancelWalkInventoryDraft,
       createAssetId,
+      recordSnapshot,
       sceneCenter.x,
       sceneCenter.z,
       setPanels,
