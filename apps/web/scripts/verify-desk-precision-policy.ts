@@ -89,6 +89,22 @@ function main() {
     "desk precision Q/E should keep transform mode aligned with rotation"
   );
 
+  const rotateRPreview = resolveDeskPrecisionHotkeyPreview({
+    event: { key: "r" },
+    asset: baseAsset,
+    policy: precisionPolicy
+  });
+  assert.equal(
+    rotateRPreview?.commitMode,
+    "preview-batched",
+    "desk precision R rotate should follow the same preview-batched contract"
+  );
+  assert.equal(
+    rotateRPreview?.updates.rotation?.[1],
+    Math.PI / 180,
+    "desk precision R rotate should use the default 1deg rotation step"
+  );
+
   console.log(
     JSON.stringify(
       {
@@ -101,6 +117,7 @@ function main() {
           translationSnapMm: precisionPolicy.translationSnap * 1000,
           rotationSnapDeg: precisionPolicy.rotationSnap * (180 / Math.PI),
           hotkeyCommitMode: nudgePreview?.commitMode,
+          rHotkeyCommitMode: rotateRPreview?.commitMode,
           hotkeyCommitDelayMs: DESK_PRECISION_HOTKEY_COMMIT_DELAY_MS
         }
       },

@@ -224,6 +224,63 @@ async function countButtonsInSection(page: Page, heading: string) {
   return page.locator("section").filter({ hasText: heading }).locator("button").count();
 }
 
+async function clickVisibleButtonByText(
+  page: Page,
+  pattern: RegExp,
+  options: { bottomMost?: boolean; timeoutMs?: number } = {}
+) {
+  const timeoutMs = options.timeoutMs ?? 25_000;
+  await page.waitForFunction(
+    ({ source, flags }) =>
+      Array.from(document.querySelectorAll("button")).some((button) => {
+        const text = button.textContent?.replace(/\s+/g, " ").trim() ?? "";
+        if (!new RegExp(source, flags).test(text) || button.disabled) return false;
+        const rect = button.getBoundingClientRect();
+        const style = window.getComputedStyle(button);
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.visibility !== "hidden" &&
+          style.display !== "none"
+        );
+      }),
+    { source: pattern.source, flags: pattern.flags },
+    { timeout: timeoutMs }
+  );
+
+  const clicked = await page.evaluate(
+    ({ source, flags, bottomMost }) => {
+      const matcher = new RegExp(source, flags);
+      const candidates = Array.from(document.querySelectorAll("button"))
+        .map((button, index) => ({ button, index, rect: button.getBoundingClientRect() }))
+        .filter(({ button, rect }) => {
+          const text = button.textContent?.replace(/\s+/g, " ").trim() ?? "";
+          const style = window.getComputedStyle(button);
+          return (
+            matcher.test(text) &&
+            !button.disabled &&
+            rect.width > 0 &&
+            rect.height > 0 &&
+            style.visibility !== "hidden" &&
+            style.display !== "none"
+          );
+        })
+        .sort((a, b) =>
+          bottomMost ? b.rect.top - a.rect.top || b.index - a.index : a.index - b.index
+        );
+      const target = candidates[0]?.button as HTMLButtonElement | undefined;
+      target?.click();
+      return target?.textContent?.replace(/\s+/g, " ").trim() ?? null;
+    },
+    { source: pattern.source, flags: pattern.flags, bottomMost: Boolean(options.bottomMost) }
+  );
+
+  if (!clicked) {
+    throw new Error(`visible button not found: ${pattern}`);
+  }
+  return clicked;
+}
+
 function requireCatalogItem(id: string) {
   const item = DEFAULT_CATALOG.find((candidate) => candidate.id === id);
   if (!item) {
@@ -504,11 +561,13 @@ async function waitForRuntimePlacement(
 }
 
 async function enterWalkView(page: Page) {
-  await page.waitForFunction(
-    () =>
-      Array.from(document.querySelectorAll("button")).some(
-        (button) => {
-          if (button.textContent?.trim() !== "워크뷰" || button.disabled) return false;
+  const waitForWalkInventoryReady = () =>
+    page.waitForFunction(
+      () =>
+        document.body.textContent?.includes("I — 인벤토리") ||
+        Array.from(document.querySelectorAll("button")).some((button) => {
+          const text = button.textContent?.replace(/\s+/g, " ").trim() ?? "";
+          if (!text.includes("인벤토리")) return false;
           const rect = button.getBoundingClientRect();
           const style = window.getComputedStyle(button);
           return (
@@ -517,15 +576,27 @@ async function enterWalkView(page: Page) {
             style.visibility !== "hidden" &&
             style.display !== "none"
           );
-        }
-      ),
-    null,
-    { timeout: 45_000 }
-  );
-  await page.evaluate(() => {
-    const walkButton = Array.from(document.querySelectorAll("button"))
-      .filter((button) => {
-        if (button.textContent?.trim() !== "워크뷰" || button.disabled) return false;
+        }),
+      null,
+      { timeout: 4_000 }
+    );
+
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    await clickVisibleButtonByText(page, /^워크뷰$/, { bottomMost: true, timeoutMs: 45_000 });
+    try {
+      await waitForWalkInventoryReady();
+      return;
+    } catch {
+      await page.waitForTimeout(750);
+    }
+  }
+
+  await page.waitForFunction(
+    () =>
+      document.body.textContent?.includes("I — 인벤토리") ||
+      Array.from(document.querySelectorAll("button")).some((button) => {
+        const text = button.textContent?.replace(/\s+/g, " ").trim() ?? "";
+        if (!text.includes("인벤토리")) return false;
         const rect = button.getBoundingClientRect();
         const style = window.getComputedStyle(button);
         return (
@@ -534,14 +605,7 @@ async function enterWalkView(page: Page) {
           style.visibility !== "hidden" &&
           style.display !== "none"
         );
-      })
-      .at(-1) as HTMLButtonElement | undefined;
-    walkButton?.click();
-  });
-  await page.waitForFunction(
-    () =>
-      document.body.textContent?.includes("인벤토리") ||
-      document.body.textContent?.includes("I — 인벤토리"),
+      }),
     null,
     { timeout: 30_000 }
   );
@@ -595,8 +659,7 @@ async function openWalkInventory(page: Page) {
     return searchInput;
   }
 
-  const inventoryButton = page.getByRole("button", { name: /인벤토리|추가/ }).last();
-  await inventoryButton.click({ force: true });
+  await clickVisibleButtonByText(page, /인벤토리|추가/, { bottomMost: false });
   await searchInput.waitFor({ state: "visible", timeout: 25_000 });
   return searchInput;
 }
@@ -669,6 +732,8 @@ async function runWalkPlacementSaveShareFlow(
 ) {
   await loginBrowserUser(page, baseUrl, seed.email, seed.password);
   await page.goto(new URL(`/project/${seed.projectId}`, baseUrl).toString(), { waitUntil: "networkidle" });
+  await page.locator("canvas").first().waitFor({ state: "visible", timeout: 30_000 });
+  await page.locator('[role="status"][aria-busy="true"]').waitFor({ state: "hidden", timeout: 30_000 }).catch(() => null);
   await enterWalkView(page);
   await page.locator("canvas").first().waitFor({ state: "visible", timeout: 30_000 });
   results.push({
@@ -815,6 +880,7 @@ async function run() {
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
   const seed = await createFunctionalProjectSeed();
   const pointerLockErrors: string[] = [];
+  const serverResponseErrors: string[] = [];
   const capturePointerLockError = (message: string) => {
     if (
       message.includes("PointerLockControls") ||
@@ -834,6 +900,11 @@ async function run() {
   page.on("pageerror", (error) => {
     console.warn(`[browser:pageerror] ${error.stack ?? error.message}`);
     capturePointerLockError(error.message);
+  });
+  page.on("response", (response) => {
+    if (response.status() >= 500) {
+      serverResponseErrors.push(`${response.status()} ${response.url()}`);
+    }
   });
 
   try {
@@ -895,6 +966,9 @@ async function run() {
     await runWalkPlacementSaveShareFlow(page, baseUrl, seed, results);
     if (pointerLockErrors.length > 0) {
       throw new Error(`walk pointer lock console regression: ${pointerLockErrors.join(" | ")}`);
+    }
+    if (serverResponseErrors.length > 0) {
+      throw new Error(`browser flow server error responses: ${serverResponseErrors.join(" | ")}`);
     }
     results.push({
       stage: "walk-pointer-lock-console",

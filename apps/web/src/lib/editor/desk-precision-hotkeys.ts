@@ -72,7 +72,7 @@ export function resolveDeskPrecisionHotkeyPreview(input: {
     };
   }
 
-  if (key === "q" || key === "e") {
+  if (key === "q" || key === "e" || key === "r") {
     const direction = key === "q" ? -1 : 1;
     return {
       updates: {

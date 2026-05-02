@@ -1234,3 +1234,19 @@ Updated:
 Removed/Deprecated:
 - click/`E`로 launcher action을 호출해야만 walk placement가 시작되는 UX.
 - desk precision keyboard nudge가 preview 없이 즉시 store commit을 만드는 방식.
+
+## 2026-05-03 변경 동기화 (Placement Policy Closure)
+Added:
+- walk crosshair aim의 `rayHitConfidence`는 pending focus placement request에 보존되어 ghost preview 시작 시 candidate ranking에 그대로 재사용되어야 한다.
+- 이미 commit된 asset의 crosshair 재배치는 자동 시작하지 않는다. 현재 자동 aim은 새 `placementDraft`에만 적용하고, 기존 asset은 launcher/명시 relocate flow로 시작하는 정책을 유지한다.
+- `functional:e2e:browser`는 로컬 Supabase 설정이 있을 때 builder -> walk placement -> save/reload -> share -> shared viewer placement parity를 확인하는 브라우저 시나리오로 본다.
+- shared viewer activity logging은 best-effort로 처리하며, tracking persistence 실패가 viewer 렌더링이나 브라우저 5xx 콘솔 오류로 전파되면 안 된다.
+
+Updated:
+- `desk precision` keyboard rotate 정책에 `R`을 포함한다. 방향키/Q/E/R 모두 renderer preview를 먼저 갱신하고 idle batch에서 한 번만 store/document commit을 만든다.
+- walk aim 검증은 helper 직접 호출뿐 아니라 pending request에 저장된 confidence가 start 단계 ranking까지 유지되는지 확인해야 한다.
+- functional browser QA는 shared viewer 중 5xx response가 발생하면 실패로 본다.
+
+Removed/Deprecated:
+- crosshair aim event의 confidence가 pending request activation에서 기본값 `0.8`로 되돌아가는 상태.
+- desk precision `R` 키만 즉시 rotate commit을 만드는 예외.

@@ -1403,3 +1403,19 @@ Updated:
 Removed/Deprecated:
 - `AIM_AT_SURFACE`가 타입/테스트에만 있고 앱 adapter에 연결되지 않은 상태.
 - desk precision keyboard path가 `commitRuntimeAssetUpdateToStore`와 `recordSnapshot`을 keydown마다 직접 호출하는 상태.
+
+## 2026-05-03 변경 동기화 (Walk Aim Confidence + Hotkey Exception Closure)
+Added:
+- PR 12 완료: `FocusPlacementRequest.aimRayHitConfidence`를 추가해 crosshair aim confidence가 pending request와 `START_PLACEMENT` candidate ranking까지 유지되도록 한다.
+- PR 12 완료: `R` rotate hotkey를 desk precision preview-batched helper에 포함해 방향키/Q/E/R 모두 같은 renderer preview -> idle batch commit 계약을 따른다.
+- PR 12 완료: `verify:walk-placement-ux`가 pending request confidence preservation을, `verify:desk-precision`이 `R` preview-batched rotate를 검증한다.
+- PR 12 완료: shared viewer activity logging은 best-effort API로 유지하되 tracking 저장 실패가 브라우저 500 응답으로 남지 않도록 degraded 200 응답으로 낮춘다.
+
+Updated:
+- 기존 commit asset의 walk crosshair relocation은 자동 aim 대상이 아니라 명시 relocate/launcher 흐름으로 유지한다. 기존 asset 자동 재배치는 별도 제품 결정 후 phase backlog로만 추가한다.
+- `functional:e2e:browser`의 현재 보장 범위를 로컬 브라우저 + 로컬 Supabase-backed save/reload/share parity로 명확히 하고, 운영 Supabase/prod 검증은 별도 gate로 남긴다.
+- `functional:e2e:browser`는 shared viewer 렌더링 중 5xx 응답을 release-blocking regression으로 취급한다.
+
+Removed/Deprecated:
+- walk aim confidence가 이벤트 처리 이후 pending request activation에서 손실되는 상태.
+- desk precision `R` 키가 keyboard transform preview/commit 계약에서 빠져 있는 상태.

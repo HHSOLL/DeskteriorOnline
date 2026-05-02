@@ -49,9 +49,9 @@ export async function POST(request: Request, context: { params: { token: string 
   } catch (error) {
     const message = error instanceof Error ? error.message : "Activity tracking is unavailable.";
     return NextResponse.json(
-      { error: message },
+      { recorded: false, deduped: false, degraded: true, error: message },
       {
-        status: 500,
+        status: 200,
         headers: {
           "Cache-Control": "no-store"
         }

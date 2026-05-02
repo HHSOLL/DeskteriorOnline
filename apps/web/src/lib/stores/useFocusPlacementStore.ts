@@ -22,6 +22,7 @@ export type FocusPlacementRequest = {
   objectDimensionsMm: DimensionsMm | null;
   surfaceCandidates: FocusPlacementSurfaceCandidate[];
   preferredCandidateIndex: number;
+  aimRayHitConfidence?: number;
 };
 
 export type FocusPlacementSession = FocusPlacementRequest & {
