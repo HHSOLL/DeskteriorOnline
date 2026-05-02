@@ -1158,3 +1158,19 @@ Updated:
 Removed/Deprecated:
 - walk placement QA를 pointer lock 상태와 launcher 버튼 클릭만으로 완료 처리하는 절차.
 - desk precision keyboard 조작을 keydown마다 개별 commit/snapshot으로 검증하는 절차.
+
+## 2026-05-03 변경 동기화 (Placement Policy QA)
+Added:
+- 워크뷰 QA는 crosshair 거리 기반 confidence가 pending request에 보존되어 ghost preview 시작 후에도 candidate ranking에 같은 값으로 남는지 확인한다.
+- desk precision QA는 방향키/Q/E뿐 아니라 `R` 회전도 renderer preview가 먼저 움직이고 idle batch 뒤 한 번만 저장 snapshot이 생기는지 확인한다.
+- `npm --workspace apps/web run functional:e2e:browser`는 로컬 Supabase 환경에서 room builder, walk placement, save/reload, share creation, shared viewer placement parity까지 확인하는 시나리오로 기록한다.
+- shared viewer activity logging은 best-effort이므로 저장 실패가 있어도 렌더링과 E2E 콘솔에 5xx 응답을 남기면 안 된다.
+
+Updated:
+- 이미 배치 완료된 asset은 바라보기만으로 자동 재배치를 시작하지 않는다. 기존 asset 재배치 검증은 launcher 또는 명시 relocate 흐름이 제공될 때 별도 시나리오로 수행한다.
+- 운영 Supabase/prod 환경 검증은 로컬 functional E2E와 구분해서 release checklist에 별도 evidence로 남긴다.
+- functional browser QA는 pointer-lock regression뿐 아니라 shared viewer 중 발생한 5xx API 응답도 실패로 본다.
+
+Removed/Deprecated:
+- walk aim event의 confidence만 확인하고 pending request activation confidence 보존을 검증하지 않는 절차.
+- desk precision `R` 키를 즉시 commit 예외로 남겨 두는 QA 기준.

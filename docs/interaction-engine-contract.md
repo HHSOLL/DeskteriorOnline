@@ -185,7 +185,9 @@ It must route interaction decisions through `FocusPlacementMachine`:
 
 - Walk crosshair shows target hint, active focus placement validity, and pointer-lock status.
 - Walk crosshair aiming dispatches `AIM_AT_SURFACE` through the app adapter before focus placement starts.
+- Crosshair `rayHitConfidence` is stored on the pending focus placement request and reused when `START_PLACEMENT` activates the ghost preview; the activation step must not reset ranking confidence to the default helper value.
 - Selecting a product and looking at a compatible support object starts a ghost preview without requiring the fallback launcher button.
+- Existing placed asset relocation is explicit for now: auto aim is scoped to a live `placementDraft`, while already-committed assets use the launcher or a future relocate command to avoid accidental walk sessions.
 - Pointer lock release caused by panel focus is visible to the user instead of failing silently.
 - Valid/warning/blocked placement feedback uses `resolveFocusPlacementFeedback`.
 - `verify:walk-placement-ux` covers pointer-lock HUD state, crosshair aim candidate ranking, ghost preview command, and commit patch intent.
@@ -194,7 +196,7 @@ It must route interaction decisions through `FocusPlacementMachine`:
 
 - Desk precision top policy uses `5mm / 1deg` default nudge/rotate and `1mm / 0.1deg` fine hotkeys.
 - Transform controls and keyboard nudges are enabled only for desk precision, while room/top view remains layout/view oriented.
-- Desk precision keyboard nudge/rotate mutates renderer preview first and commits scene store/document state once per idle batch.
+- Desk precision keyboard nudge/rotate, including `R`, mutates renderer preview first and commits scene store/document state once per idle batch.
 - Numeric inspector, surface micro-view, and saved surface-local placement must describe the same mm pose.
 - `verify:desk-precision` covers the policy contract and preview-batched keyboard commit mode.
 

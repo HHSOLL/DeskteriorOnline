@@ -954,3 +954,13 @@ Updated:
 
 Removed/Deprecated:
 - keyboard nudge가 renderer preview 없이 저장 좌표를 먼저 바꾸고 후속 render sync에 의존하는 방식.
+
+## 2026-05-03 변경 동기화 (Preview Input Consistency)
+Added:
+- walk focus ghost preview는 crosshair hit confidence를 pending request에서 보존한 ranking 값으로 시작해 aim 단계와 activation 단계의 visual priority가 drift되지 않아야 한다.
+
+Updated:
+- desk precision keyboard rotate preview 범위에 `R` 키를 포함한다. 방향키/Q/E/R은 모두 preview transform과 demand-frame invalidate를 먼저 수행하고 idle batch commit 후 저장 좌표를 갱신한다.
+
+Removed/Deprecated:
+- `R` rotate만 renderer preview 없이 즉시 store/document commit을 만드는 예외.

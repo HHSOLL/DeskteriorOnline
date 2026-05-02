@@ -12,6 +12,14 @@ export type WalkFocusPlacementAimDetail = {
 
 type FocusPlacementRequestLike = FocusPlacementRequest | FocusPlacementSession;
 
+function normalizeRayHitConfidence(value: number | null | undefined) {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return null;
+  }
+
+  return Math.max(0, Math.min(1, value));
+}
+
 export function resolveWalkFocusPlacementAimKey(request: FocusPlacementRequest) {
   return [
     request.objectId,
@@ -23,6 +31,21 @@ export function resolveWalkFocusPlacementAimKey(request: FocusPlacementRequest) 
 
 export function resolveFocusPlacementAimRequest(target: { userData?: Record<string, unknown> } | null) {
   return (target?.userData?.focusPlacementAimRequest ?? null) as FocusPlacementRequest | null;
+}
+
+export function withFocusPlacementAimMetadata(
+  request: FocusPlacementRequest,
+  rayHitConfidence: number
+): FocusPlacementRequest {
+  const aimRayHitConfidence = normalizeRayHitConfidence(rayHitConfidence);
+  if (aimRayHitConfidence === null) {
+    return request;
+  }
+
+  return {
+    ...request,
+    aimRayHitConfidence
+  };
 }
 
 export function dispatchWalkFocusPlacementAim(detail: WalkFocusPlacementAimDetail) {
@@ -39,8 +62,13 @@ export function dispatchWalkFocusPlacementAim(detail: WalkFocusPlacementAimDetai
 
 export function focusPlacementRequestToInteractionCandidates(
   request: FocusPlacementRequestLike,
-  rayHitConfidence = 0.8
+  rayHitConfidence?: number
 ): InteractionSurfaceCandidate[] {
+  const resolvedRayHitConfidence =
+    normalizeRayHitConfidence(rayHitConfidence) ??
+    normalizeRayHitConfidence(request.aimRayHitConfidence) ??
+    0.8;
+
   return request.surfaceCandidates.map((candidate, index) => ({
     supportObjectId: request.supportObjectId,
     surfaceId: candidate.surfaceId,
@@ -56,7 +84,7 @@ export function focusPlacementRequestToInteractionCandidates(
     visualAffordance: candidate.visualAffordance,
     ranking: {
       ...candidate.ranking,
-      rayHitConfidence,
+      rayHitConfidence: resolvedRayHitConfidence,
       attachmentCompatibility: candidate.enabled ? 1 : 0,
       surfaceVisibility: candidate.ranking.surfaceVisibility ?? 0.75,
       distancePriority: Math.max(candidate.ranking.distancePriority ?? 0, 1 - index * 0.05),

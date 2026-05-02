@@ -9,6 +9,7 @@ import {
   dispatchWalkFocusPlacementAim,
   focusPlacementRequestToInteractionCandidates,
   resolveWalkFocusPlacementAimKey,
+  withFocusPlacementAimMetadata,
   type WalkFocusPlacementAimDetail
 } from "../src/lib/runtime/walk-focus-aim";
 import { useInteractionStore } from "../src/lib/stores/useInteractionStore";
@@ -166,6 +167,18 @@ function main() {
     "crosshair ray confidence should flow into candidate ranking"
   );
 
+  const aimedRequest = withFocusPlacementAimMetadata(request, 0.91);
+  assert.equal(
+    aimedRequest.aimRayHitConfidence,
+    0.91,
+    "walk aim should persist ray confidence on the pending focus placement request"
+  );
+  assert.equal(
+    focusPlacementRequestToInteractionCandidates(aimedRequest)[0]?.ranking?.rayHitConfidence,
+    0.91,
+    "pending focus placement start should keep the original crosshair ray confidence"
+  );
+
   const machine = createFocusPlacementMachine({ mode: "walk" });
   let result = machine.dispatch({
     type: "AIM_AT_SURFACE",
@@ -255,6 +268,7 @@ function main() {
         crosshairAim: {
           event: WALK_FOCUS_PLACEMENT_AIM_EVENT,
           candidateCount: interactionCandidates.length,
+          preservedRayHitConfidence: aimedRequest.aimRayHitConfidence,
           patchCountBeforeCommit: 0,
           patchCountOnCommit: 1
         }

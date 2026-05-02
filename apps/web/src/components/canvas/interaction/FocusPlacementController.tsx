@@ -32,6 +32,7 @@ import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
 import {
   focusPlacementRequestToInteractionCandidates,
   WALK_FOCUS_PLACEMENT_AIM_EVENT,
+  withFocusPlacementAimMetadata,
   type WalkFocusPlacementAimDetail
 } from "../../../lib/runtime/walk-focus-aim";
 import { useAssetSelector, usePublishSelector, useSelectionSelector } from "../../../lib/stores/scene-slices";
@@ -365,20 +366,24 @@ export default function FocusPlacementController() {
         machineRef.current = machine;
       }
 
+      const aimedRequest = withFocusPlacementAimMetadata(
+        detail.request,
+        detail.rayHitConfidence
+      );
+
       machine.dispatch({
         type: "AIM_AT_SURFACE",
         payload: {
-          objectId: detail.request.objectId,
-          supportObjectId: detail.request.supportObjectId,
-          surfaceId: detail.request.surfaceId,
-          candidates: focusPlacementRequestToInteractionCandidates(
-            detail.request,
-            detail.rayHitConfidence
-          ),
-          rayHitConfidence: detail.rayHitConfidence
+          objectId: aimedRequest.objectId,
+          supportObjectId: aimedRequest.supportObjectId,
+          surfaceId: aimedRequest.surfaceId,
+          candidates: focusPlacementRequestToInteractionCandidates(aimedRequest),
+          ...(typeof aimedRequest.aimRayHitConfidence === "number"
+            ? { rayHitConfidence: aimedRequest.aimRayHitConfidence }
+            : {})
         }
       });
-      requestFocusPlacement(detail.request);
+      requestFocusPlacement(aimedRequest);
     };
 
     window.addEventListener(WALK_FOCUS_PLACEMENT_AIM_EVENT, handleAimAtSurface);
