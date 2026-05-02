@@ -68,7 +68,7 @@ export function resolveSceneRenderQuality({
   if (isTopView) {
     if (isSharedViewer) {
       return {
-        frameLoop: "always",
+        frameLoop: "demand",
         dpr: constrainedDevice ? clampRange(0.88, 1.04) : clampRange(0.98, 1.16),
         toneMapping: "aces",
         toneMappingExposure: 1.1,
@@ -96,7 +96,7 @@ export function resolveSceneRenderQuality({
 
     if (isViewerShowcase) {
       return {
-        frameLoop: "always",
+        frameLoop: "demand",
         dpr: constrainedDevice ? clampRange(0.96, 1.12) : clampRange(1.04, 1.22),
         toneMapping: "neutral",
         toneMappingExposure: constrainedDevice ? 1.02 : 1.06,
@@ -124,7 +124,7 @@ export function resolveSceneRenderQuality({
 
     if (topMode === "desk-precision") {
       return {
-        frameLoop: "always",
+        frameLoop: "demand",
         dpr: constrainedDevice ? clampRange(1.02, 1.18) : clampRange(1.14, 1.34),
         toneMapping: "neutral",
         toneMappingExposure: constrainedDevice ? 1.02 : 1.06,
@@ -151,7 +151,7 @@ export function resolveSceneRenderQuality({
     }
 
     return {
-      frameLoop: "always",
+      frameLoop: "demand",
       dpr: constrainedDevice ? clampRange(0.98, 1.14) : clampRange(1.08, 1.28),
       toneMapping: "neutral",
       toneMappingExposure: constrainedDevice ? 1.02 : 1.05,
@@ -179,7 +179,7 @@ export function resolveSceneRenderQuality({
 
   if (isBuilderPreview) {
     return {
-      frameLoop: "always",
+      frameLoop: "demand",
       dpr: constrainedDevice ? clampRange(0.8, 1) : clampRange(0.9, 1.15),
       toneMapping: "neutral",
       toneMappingExposure: constrainedDevice ? 0.98 : 1.01,

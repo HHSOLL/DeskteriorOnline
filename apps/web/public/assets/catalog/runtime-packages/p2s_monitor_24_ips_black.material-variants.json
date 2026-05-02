@@ -4,6 +4,14 @@
     "label": "P2S 24형 IPS 모니터",
     "finishColor": "Satin black",
     "finishMaterial": "Plastic display shell with metal stand",
-    "detailNotes": "Real-scale display variant with inferred VESA attachment metadata for monitor-arm placement."
+    "detailNotes": "Real-scale display variant with inferred VESA attachment metadata for monitor-arm placement.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

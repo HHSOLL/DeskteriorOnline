@@ -48,13 +48,7 @@ export class PlacementKernel {
       };
       candidates: RayPickerGeometryCandidate[];
     };
-    attachmentType:
-      | "place_on_surface"
-      | "wall_attach"
-      | "edge_clamp"
-      | "underside_screw"
-      | "vesa_mount"
-      | "cable_route";
+    attachmentType: AttachmentType;
   }) {
     const compatibleWith = this.resolveCompatibleWith(input.objectId, input.attachmentType);
     const surfaceHit = input.surfaceId

@@ -4,6 +4,14 @@
     "label": "P2S 샌드 세라믹 머그",
     "finishColor": "Sand beige",
     "finishMaterial": "Glazed ceramic",
-    "detailNotes": "Single handled mug with thick ceramic wall and soft satin glaze. Dimensions reflect Blender-measured envelope for shelf and desk placement."
+    "detailNotes": "Single handled mug with thick ceramic wall and soft satin glaze. Dimensions reflect Blender-measured envelope for shelf and desk placement.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "ceramic",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

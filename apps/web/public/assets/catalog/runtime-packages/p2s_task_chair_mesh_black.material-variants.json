@@ -4,6 +4,14 @@
     "label": "P2S 메쉬 태스크 체어",
     "finishColor": "Black mesh",
     "finishMaterial": "Mesh back, fabric seat, nylon base",
-    "detailNotes": "Real-scale task chair envelope; floor placement only."
+    "detailNotes": "Real-scale task chair envelope; floor placement only.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "fabric",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

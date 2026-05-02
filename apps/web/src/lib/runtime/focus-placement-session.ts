@@ -13,12 +13,21 @@ import type {
   SurfaceLocalPose,
   SupportSurface
 } from "@deskterioronline/scene-schema";
+import {
+  rankInteractionCandidates,
+  type BlockedReason,
+  type CandidateRankingSignals,
+  type CandidateVisualAffordance,
+  type RankedInteractionSurfaceCandidate
+} from "@deskterioronline/interaction-engine";
 import type { SceneAsset } from "../stores/useSceneStore";
 
 export type FocusPlacementAttachmentType =
   | "place_on_surface"
   | "edge_clamp"
   | "underside_screw"
+  | "grommet_hole"
+  | "wall_screw"
   | "wall_attach"
   | "vesa_mount";
 
@@ -33,7 +42,17 @@ export type FocusPlacementSurfaceCandidate = {
   enabled: boolean;
   tone: "ready" | "blocked" | "info";
   reason: string | null;
+  ranking: CandidateRankingSignals;
+  score: number;
+  rank: number;
+  blockedReasons: BlockedReason[];
+  visualAffordance: CandidateVisualAffordance;
 };
+
+type FocusPlacementCandidateSeed = Omit<
+  FocusPlacementSurfaceCandidate,
+  "ranking" | "score" | "rank" | "blockedReasons" | "visualAffordance"
+>;
 
 export type FocusPlacementAvailability = {
   enabled: boolean;
@@ -108,6 +127,8 @@ const FOCUS_ATTACHMENT_TYPES: FocusPlacementAttachmentType[] = [
   "place_on_surface",
   "edge_clamp",
   "underside_screw",
+  "grommet_hole",
+  "wall_screw",
   "wall_attach",
   "vesa_mount"
 ];
@@ -237,6 +258,83 @@ function resolveCandidatePriority(
       : 10;
 
   return attachmentPriority + SURFACE_TYPE_PRIORITY[candidate.surfaceType];
+}
+
+function resolveSurfaceVisibilitySignal(surfaceType: SupportSurface["type"]) {
+  switch (surfaceType) {
+    case "desktop_top":
+    case "shelf_top":
+      return 0.92;
+    case "wall":
+    case "pegboard":
+    case "monitor_back":
+      return 0.78;
+    case "desk_edge":
+      return 0.72;
+    case "floor":
+      return 0.66;
+    case "desk_underside":
+      return 0.46;
+    default:
+      return 0.6;
+  }
+}
+
+function resolveCandidateRankingSignals(input: {
+  candidate: FocusPlacementCandidateSeed;
+  selectedRuntimeAsset: RuntimeAsset | null;
+  candidateIndex: number;
+}) {
+  const { candidate, selectedRuntimeAsset, candidateIndex } = input;
+  const priority = resolveCandidatePriority(
+    candidate as FocusPlacementSurfaceCandidate,
+    selectedRuntimeAsset
+  );
+
+  return {
+    rayHitConfidence: 0.72,
+    attachmentCompatibility: candidate.enabled ? 1 : 0,
+    surfaceVisibility: resolveSurfaceVisibilitySignal(candidate.surfaceType),
+    distancePriority: Math.max(0.2, 1 - candidateIndex * 0.04),
+    userSelectedSupportBonus: 0.2,
+    preferredSurfaceBonus: Math.max(0, 0.65 - priority * 0.04),
+    outOfBoundsPenalty: candidate.enabled ? 0 : 1
+  } satisfies CandidateRankingSignals;
+}
+
+function resolveFocusCandidateTone(candidate: RankedInteractionSurfaceCandidate) {
+  if (candidate.visualAffordance.tone === "valid") {
+    return "ready" as const;
+  }
+  if (
+    candidate.visualAffordance.tone === "blocked" ||
+    candidate.blockedReasons.some((reason) => reason.severity === "error")
+  ) {
+    return "blocked" as const;
+  }
+  return "info" as const;
+}
+
+function fromRankedCandidate(candidate: RankedInteractionSurfaceCandidate): FocusPlacementSurfaceCandidate {
+  return {
+    surfaceId: candidate.surfaceId,
+    surfaceLabel: candidate.surfaceLabel ?? candidate.surfaceId,
+    surfaceType: candidate.surfaceType,
+    attachmentType: candidate.attachmentType as FocusPlacementAttachmentType,
+    surfaceBoundsMm: candidate.surfaceBoundsMm ?? { min: [0, 0], max: [0, 0] },
+    noPlaceZones: candidate.noPlaceZones ?? [],
+    preferredZones: candidate.preferredZones ?? [],
+    enabled:
+      candidate.enabled &&
+      !candidate.blockedReasons.some((reason) => reason.severity === "error"),
+    tone: resolveFocusCandidateTone(candidate),
+    reason: candidate.blockedReasons[0]?.message ?? candidate.reason ?? null,
+    ranking: candidate.ranking ?? {},
+    score: candidate.score,
+    rank: candidate.rank,
+    blockedReasons: candidate.blockedReasons,
+    visualAffordance: candidate.visualAffordance
+  };
 }
 
 function resolveCandidateState(input: {
@@ -406,11 +504,11 @@ export function resolveFocusPlacementEntry(input: {
   supportSurfaces: SupportSurface[];
 }): FocusPlacementEntry {
   const { selectedAsset, selectedRuntimeAsset, supportAsset, supportSurfaces } = input;
-  const candidates = supportSurfaces
+  const candidateSeeds: FocusPlacementCandidateSeed[] = supportSurfaces
     .flatMap((surface) =>
       surface.allowedAttachments
         .filter(isFocusPlacementAttachmentType)
-        .map((attachmentType) => {
+        .map((attachmentType): FocusPlacementCandidateSeed => {
           const state = resolveCandidateState({
             selectedAsset,
             selectedRuntimeAsset,
@@ -429,23 +527,28 @@ export function resolveFocusPlacementEntry(input: {
             enabled: state.enabled,
             tone: state.tone,
             reason: state.reason
-          } satisfies FocusPlacementSurfaceCandidate;
+          };
         })
-    )
-    .sort((left, right) => {
-      if (left.enabled !== right.enabled) {
-        return left.enabled ? -1 : 1;
-      }
-
-      return (
-        resolveCandidatePriority(left, selectedRuntimeAsset) -
-        resolveCandidatePriority(right, selectedRuntimeAsset)
-      );
-    });
+    );
+  const candidates = rankInteractionCandidates(
+    candidateSeeds.map((candidate, index) => ({
+      ...candidate,
+      supportObjectId: supportAsset.id,
+      ranking: resolveCandidateRankingSignals({
+        candidate,
+        selectedRuntimeAsset,
+        candidateIndex: index
+      })
+    }))
+  ).map(fromRankedCandidate);
 
   const preferredCandidateIndex = Math.max(
     0,
-    candidates.findIndex((candidate) => candidate.enabled)
+    candidates.findIndex(
+      (candidate) =>
+        candidate.enabled &&
+        !candidate.blockedReasons.some((reason) => reason.severity === "error")
+    )
   );
 
   return {
@@ -474,7 +577,7 @@ export function resolveFocusPlacementStepConfig(
 ) {
   if (attachmentType === "vesa_mount" || surfaceType === "monitor_back") {
     return {
-      moveStepMm: 10,
+      moveStepMm: 5,
       rotateStepMilliDeg: 1000
     };
   }
@@ -484,12 +587,14 @@ export function resolveFocusPlacementStepConfig(
     surfaceType === "desk_edge" ||
     attachmentType === "underside_screw" ||
     surfaceType === "desk_underside" ||
+    attachmentType === "grommet_hole" ||
+    attachmentType === "wall_screw" ||
     attachmentType === "wall_attach" ||
     surfaceType === "wall"
   ) {
     return {
-      moveStepMm: 10,
-      rotateStepMilliDeg: 5000
+      moveStepMm: 5,
+      rotateStepMilliDeg: 1000
     };
   }
 
@@ -548,6 +653,10 @@ export function resolveFocusPlacementAttachmentLabel(
       return "Edge Clamp";
     case "underside_screw":
       return "Under Desk";
+    case "grommet_hole":
+      return "Grommet Hole";
+    case "wall_screw":
+      return "Wall Screw";
     case "wall_attach":
       return "Wall Mount";
     case "place_on_surface":
@@ -588,6 +697,8 @@ export function resolveFocusPlacementWizardState(input: {
   const supportsFootprintClearance =
     attachmentType === "place_on_surface" ||
     attachmentType === "underside_screw" ||
+    attachmentType === "grommet_hole" ||
+    attachmentType === "wall_screw" ||
     attachmentType === "wall_attach";
   const footprint =
     selectedRuntimeAsset && surface && supportsFootprintClearance

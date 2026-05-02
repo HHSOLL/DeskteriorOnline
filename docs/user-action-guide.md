@@ -98,6 +98,11 @@
 46. editor walk와 richer showcase 경로에서만 SSR이 보수적으로 올라오고, shared viewer / top-view / builder preview에서는 SSR이 꺼져 있는지 확인하기
 47. `verify:showcase-activity` 실행 시 recent/rich scene이 older/sparse scene보다 높은 activity rank를 받고, community featured / conversation link가 showcase presentation 경로를 유지하는지 확인하기
 48. showcase 카드 진입 shared viewer는 일반 shared 링크보다 walk framing이 더 타이트하고, top framing이 살짝 더 조여지며, walk mode에서 rim/fill light가 더 풍부하게 읽히는지 확인하기
+49. `/labs/qa`에서 actual SKU hero catalog gate, texture/material library gate, SKU/reference/material QA row가 보이는지 확인하기
+50. 워크뷰 focus placement에서 기본 이동/회전은 5mm/1deg로 스냅되고, `Alt` fine 조작 또는 numeric pose 입력은 1mm/0.1deg로 저장되는지 확인하기
+51. 새 asset을 운영 catalog에 올리기 전 `referencePack`, 공식 치수, reference image, material QA, release eligibility가 `asset:publish` 산출물에 반영되는지 확인하기
+52. wall/floor texture preset이 12개 이하이고, AI 생성 1K texture는 candidate로 표시되며, 상용 preset은 2K source/KTX2/fallback metadata를 가지는지 확인하기
+53. `verify:interaction-engine` 실행 시 preview 상태에서는 document patch가 0건이고, commit 상태에서만 placement patch intent가 1건 발생하는지 확인하기
 
 ## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing QA)
 Added:
@@ -136,6 +141,10 @@ npm --workspace apps/web run qa:primary
 npm --workspace apps/web run verify:scene-document
 npm --workspace apps/web run verify:public-scene
 npm --workspace apps/web run verify:showcase-scene
+npm --workspace apps/web run asset:publish
+npm --workspace apps/web run verify:asset-compiler
+npm --workspace apps/web run verify:commercial-qa
+npm --workspace apps/web run verify:interaction-engine
 E2E_ROOM_FLOW_STRICT=1 npm --workspace apps/web run primary:e2e:room-flow:strict
 npm --workspace apps/web run primary:e2e:room-flow:full
 ```
@@ -159,8 +168,9 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 
 - 빌더/에디터/뷰어 공통 레이아웃이 유지되는지 확인
 - 에디터 상단 bar, 좌측 rail, 우측 zoom rail, 하단 pill toolbar가 레퍼런스 7번 shell로 노출되는지 확인
-- 상단뷰에서는 `추가/설정`, asset drawer, direct drag, transform gizmo가 모두 숨겨지고 확인 전용 orbit/zoom만 남는지 확인
-- 워크뷰에서 `I` 키로 인벤토리를 열고 제품 선택 후 화면 중앙의 compatible surface를 클릭 또는 `E`로 focus placement에 진입하는지 확인
+- 룸 상단뷰에서는 `추가/설정`, asset drawer, direct drag, transform gizmo가 모두 숨겨지고 확인 전용 orbit/zoom만 남는지 확인
+- 데스크 정밀 상단뷰에서는 선택 제품의 transform gizmo, 5mm/1deg snap, arrow nudge, Q/E rotate, surface lock micro-view가 노출되는지 확인
+- 워크뷰에서 crosshair가 pointer-lock 상태와 compatible surface 상태를 표시하고, `I` 키로 인벤토리를 열고 제품 선택 후 화면 중앙의 compatible surface를 클릭 또는 `E`로 focus placement에 진입하는지 확인
 - builder opening preview에서 문/창문이 실제 opening asset처럼 서 있고, style 선택 전에는 white wall/white floor shell이 유지되는지 확인
 - builder opening preview에서 문/창문이 floor에 눕지 않고 wall plane에 수직으로 붙는지 확인
 - builder style 선택지에 room shape 8종, wall finish 7종, floor finish 9종 이상이 노출되는지 확인
@@ -188,6 +198,7 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - `npm --workspace apps/web run verify:showcase-scene`가 gallery/community 카드 projection과 shared viewer public payload의 version/preview asset summary 정합성 검증을 통과하는지 확인
 - `npm --workspace apps/web run asset:publish`가 `runtime-packages.json`, `runtime-packages/*.json`, `*.colliders.json`, `*.support-surfaces.json`, `*.attachment-points.json`, `*.material-variants.json`, `*.qa-report.json`을 생성하는지 확인
 - `npm --workspace apps/web run verify:asset-compiler`가 alpha runtime package index, descriptor, sidecar 정합성을 통과하는지 확인
+- `npm --workspace apps/web run verify:commercial-qa`가 SKU reference/material QA, placement regression, compatibility, scene integrity gate를 모두 읽는지 확인
 - `npm --workspace apps/web run asset:ingest -- --source <source-path>`가 `assets/ingest-staging/<assetKey>/source.asset.json` draft를 생성하는지 확인
 - shared viewer가 generic showcase viewer와 다른 경량 preset으로 동작해도 제품 hotspot / drawer 읽기 흐름은 유지되는지 확인
 - shared viewer walk HUD는 터치 조작용 요소만 남고 crosshair는 보이지 않는지 확인
@@ -218,6 +229,28 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - 제품 클릭 시 정보 drawer가 열리고 최소 필드가 노출되는지 확인
   - 제품명
   - 카테고리
+
+## 2026-05-02 변경 동기화 (Interaction Engine QA)
+Added:
+- `verify:interaction-engine` 실행 명령과 QA 체크리스트 항목을 추가했다.
+- preview 중 document patch 0건, commit 중 placement patch intent 1건을 배포 전 확인 기준으로 추가했다.
+
+Updated:
+- focus placement QA 기준을 HUD/스냅 확인에서 interaction state machine invariant 확인까지 확장한다.
+
+Removed/Deprecated:
+- placement preview 안정성을 수동 브라우저 조작 결과만으로 판단하는 방식.
+
+## 2026-05-01 변경 동기화 (Commercial QA Operation)
+Added:
+- 상용 QA 체크리스트에 actual SKU hero catalog gate, wall/floor texture library gate, 5mm/1deg + 1mm/0.1deg focus placement 검증을 추가했다.
+- `asset:publish`, `verify:asset-compiler`, `verify:commercial-qa`를 기본 실행 명령에 추가했다.
+
+Updated:
+- asset publish 확인 범위를 sidecar 생성 여부에서 SKU/reference/material QA metadata 발행 여부까지 확장한다.
+
+Removed/Deprecated:
+- `/labs/qa`가 단순 runtime package inventory만 보여주면 충분하다는 QA 가정.
   - 브랜드
   - 가격
   - 옵션/규격
@@ -685,7 +718,7 @@ Removed/Deprecated:
 
 ## 2026-04-19 변경 동기화 (KTX2 Runtime Ready + Demand Frame Loop QA)
 Added:
-- `assets:sync:ktx2-transcoder -- --check`와 idle 안정화 확인 항목을 QA 체크리스트에 추가했다.
+- `assets:sync:ktx2-transcoder -- --check`, `verify:render-quality`, idle 안정화 확인 항목을 QA 체크리스트에 추가했다.
 - 자산 운영 단계에 basis transcoder public sync 절차를 추가했다.
 
 Updated:
@@ -1054,3 +1087,48 @@ Updated:
 
 Removed/Deprecated:
 - F12를 눌러 DevTools focus 전환을 해야 워크뷰 이동이 정상화되는 상태를 허용하는 기준.
+
+## 2026-05-02 변경 동기화 (Attachment Guard QA)
+Added:
+- `npm --workspace apps/web run verify:advanced-attachments` 실행 시 wall screw placement, wall mounted overlap blocked, grommet-hole placement, invalid grommet blocked 항목이 함께 통과하는지 확인한다.
+- `npm --workspace apps/web run verify:focus-placement` 실행 시 `wall_screw`와 `grommet_hole` 후보가 focus placement candidate로 노출되고 mount-target affordance를 갖는지 확인한다.
+
+Updated:
+- 워크뷰 배치 QA는 desk/edge/underside/VESA뿐 아니라 wall screw와 grommet hole 같은 mounted point attachment까지 포함한다.
+
+Removed/Deprecated:
+- wall/grommet attachment 검증을 asset metadata 단계로만 미루고 runtime placement QA에서 제외하는 절차.
+
+## 2026-05-02 변경 동기화 (Asset Metadata Gate QA)
+Added:
+- asset metadata QA는 `npm --workspace apps/web run verify:asset-compiler`에서 `Metadata gates valid`가 전체 asset 수와 같은지 확인한다.
+- commercial QA는 `npm --workspace apps/web run verify:commercial-qa`에서 `asset-metadata-gate`가 `pass`이고 `metadataGatePassedAssets`가 `totalAssets`와 같은지 확인한다.
+
+Updated:
+- catalog QA는 파일 존재와 thumbnail 확인뿐 아니라 mm 치수, scale lock, collider, support/attachment metadata, provenance, SKU/manufacturer를 함께 검증한다.
+
+Removed/Deprecated:
+- asset compiler verify가 sidecar parity만 통과하면 상용 catalog QA가 충분하다는 절차.
+
+## 2026-05-02 변경 동기화 (Viewer Parity Gate QA)
+Added:
+- 공유/쇼케이스/커뮤니티 parity 확인은 `npm --workspace apps/web run verify:viewer-parity`를 기본으로 실행한다.
+- 세부 확인이 필요하면 `verify:public-scene`에서 scene document hash와 runtime asset refs를, `verify:showcase-scene`에서 thumbnail source와 showcase card parity를 각각 확인한다.
+- commercial QA는 `viewer-parity` release gate가 `pass`인지 확인한다.
+
+Updated:
+- shared viewer QA는 링크 열림 여부뿐 아니라 pinned version, document hash, preview asset count, runtime asset ids, thumbnail source 일치성을 포함한다.
+
+Removed/Deprecated:
+- community card와 shared viewer를 별도 화면 smoke로만 보고 동일 scene snapshot 검증을 생략하는 절차.
+
+## 2026-05-02 변경 동기화 (Commercial QA Readiness Score)
+Added:
+- `/labs/qa` 진입 시 readiness score, pass/warning/fail gate count, warning/blocker 목록을 먼저 확인한다.
+- `npm --workspace apps/web run verify:commercial-qa`는 current build가 hero SKU/asset QA warning 때문에 `warning` 상태임을 명시적으로 검증한다.
+
+Updated:
+- commercial QA 절차는 개별 release gate 확인 후 마지막에 사람이 종합하는 방식에서 readiness score를 기준으로 먼저 판단하는 방식으로 바뀐다.
+
+Removed/Deprecated:
+- release dashboard에 숫자형 readiness 판단이 없어도 충분하다는 절차.

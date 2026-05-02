@@ -4,6 +4,14 @@
     "label": "P2S 웜 북 스택",
     "finishColor": "Terracotta / mustard / cocoa",
     "finishMaterial": "Laminated paper cover over board",
-    "detailNotes": "Three-book horizontal stack with a warm editorial palette for desk, shelf, and side table styling."
+    "detailNotes": "Three-book horizontal stack with a warm editorial palette for desk, shelf, and side table styling.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "paper",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

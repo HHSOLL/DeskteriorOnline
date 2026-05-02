@@ -4,6 +4,14 @@
     "label": "P2S 라운드 게스트 스툴",
     "finishColor": "Oak / black",
     "finishMaterial": "Wood seat with powder-coated steel",
-    "detailNotes": "Compact floor prop for desk-side styling."
+    "detailNotes": "Compact floor prop for desk-side styling.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "wood",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

@@ -33,6 +33,8 @@
 - `renderer.info.memory.textures`와 `renderer.info.memory.geometries`는 장시간 편집 중 지속 증가하지 않아야 한다.
 - hero asset runtime size: `5~15MB` 권장, 소품은 이보다 작아야 한다.
 - baseColor texture: 기본 `1K`, hero `2K`, 예외적으로만 `4K`
+- wall/floor commercial preset은 각각 12개 이하로 유지하고, 2K source + runtime KTX2 + constrained 1K fallback metadata를 가진다.
+- AI 생성 1K wall/floor texture는 candidate로 집계하며 paid-beta texture library pass 조건으로 보지 않는다.
 - 동적 조명 예산:
   - 가구 기반 point/spot light 활성 수 `<= 6`
   - 조명 자산 없는 장면에서 추가 light pass 없음
@@ -166,6 +168,7 @@ window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__.stop({
 ```bash
 npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json
 npm --workspace apps/web run perf:report:verify -- --report=/absolute/path/to/perf-report.json --baseline=/absolute/path/to/perf-baseline.json
+npm --workspace apps/web run verify:render-quality
 npm --workspace apps/web run verify:performance-budget
 ```
 
@@ -191,6 +194,7 @@ interaction note: drag/rotate 동안 눈에 띄는 frame drop 없음
 - 읽기 전용 뷰어는 에디터보다 가벼운 interaction tree 유지
 - 조명 제품은 카탈로그 힌트 기반으로만 동적 light를 켜고, 상한(6개)을 반드시 유지
 - 신규 runtime 자산은 파일 크기, texture 크기, draw call 영향도를 같이 검토한다.
+- 신규 runtime 자산은 performance 예산과 별개로 `commercialReadiness.releaseEligible` 여부를 분리 기록한다. paid-beta hero SKU gate는 20개 이상 release-eligible hero SKU가 필요하다.
 - top-view / builder-preview가 continuous frameloop를 다시 사용해야 한다면 이유와 invalidate 대체 경로를 함께 남긴다.
 - publish/share/public 뷰어 실패는 로깅 이벤트로 남겨 재현 가능해야 함
 - 회귀가 budget 초과 시, 기능 추가보다 성능 회귀 원인 제거를 우선
@@ -204,6 +208,17 @@ Updated:
 
 Removed/Deprecated:
 - 상단뷰 전체를 하나의 render budget으로만 취급하는 측정 가정.
+
+## 2026-05-01 변경 동기화 (Commercial Asset/Texture Budget Gate)
+Added:
+- wall/floor texture preset count와 AI candidate texture count를 commercial QA snapshot에서 release gate로 추적한다.
+- paid-beta hero SKU는 runtime 성능 예산 외에 referencePack/material QA/release eligibility를 별도 gate로 통과해야 한다.
+
+Updated:
+- render cost budget을 texture resolution만이 아니라 source quality tier/KTX2/fallback metadata까지 포함하는 기준으로 확장한다.
+
+Removed/Deprecated:
+- hero asset runtime size와 texture budget만 맞으면 실제 SKU asset으로 충분하다는 가정.
 
 ## 2026-04-19 변경 동기화 (Viewer Preset Split)
 Added:

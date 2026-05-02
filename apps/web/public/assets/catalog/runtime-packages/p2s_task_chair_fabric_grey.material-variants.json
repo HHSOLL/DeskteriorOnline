@@ -4,6 +4,14 @@
     "label": "P2S 패브릭 태스크 체어",
     "finishColor": "Warm grey",
     "finishMaterial": "Woven fabric and steel legs",
-    "detailNotes": "Floor-placed chair sized against real desk seat clearances."
+    "detailNotes": "Floor-placed chair sized against real desk seat clearances.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

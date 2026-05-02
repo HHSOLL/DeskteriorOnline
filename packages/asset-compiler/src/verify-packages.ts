@@ -28,6 +28,8 @@ type PublishedRuntimePackageResult = {
   fileManifestValid: boolean;
   surfaceInvariantValid: boolean;
   authoringValid: boolean;
+  metadataGateValid: boolean;
+  commercialReadinessValid: boolean;
 };
 
 export type PublishedRuntimePackageSummary = {
@@ -83,6 +85,287 @@ function toPublicFilePath(publicRoot: string, publicPath: string | null) {
 
 function deepEqualJson(left: unknown, right: unknown) {
   return JSON.stringify(left) === JSON.stringify(right);
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function isPositiveFiniteNumber(value: unknown): value is number {
+  return isFiniteNumber(value) && value > 0;
+}
+
+function isFiniteVector(value: unknown, length: number) {
+  return Array.isArray(value) && value.length === length && value.every((entry) => isFiniteNumber(entry));
+}
+
+function validateDimensionsContract(
+  descriptor: RuntimePackageDescriptor,
+  errors: PackageVerificationError[],
+  assetKey: string
+) {
+  let valid = true;
+  const descriptorDimensions = descriptor.dimensionsMm;
+  const runtimeDimensions = descriptor.runtimeAsset.dimensionsMm;
+
+  if (
+    !isPositiveFiniteNumber(descriptorDimensions.width) ||
+    !isPositiveFiniteNumber(descriptorDimensions.depth) ||
+    !isPositiveFiniteNumber(descriptorDimensions.height)
+  ) {
+    valid = false;
+    addError(errors, "package.dimensions_invalid", `${assetKey} descriptor dimensionsMm must be positive finite millimeters.`, {
+      assetKey
+    });
+  }
+
+  if (!deepEqualJson(descriptorDimensions, runtimeDimensions)) {
+    valid = false;
+    addError(errors, "package.dimensions_mismatch", `${assetKey} descriptor and runtimeAsset dimensionsMm differ.`, {
+      assetKey
+    });
+  }
+
+  if (descriptor.runtimeAsset.units !== "mm") {
+    valid = false;
+    addError(errors, "package.units_invalid", `${assetKey} runtimeAsset.units must remain mm.`, { assetKey });
+  }
+
+  if (descriptor.scaleLocked !== true || descriptor.runtimeAsset.scaleLocked !== true) {
+    valid = false;
+    addError(errors, "package.scale_lock_invalid", `${assetKey} descriptor and runtimeAsset must keep scaleLocked=true.`, {
+      assetKey
+    });
+  }
+
+  return valid;
+}
+
+function validateColliderContract(
+  descriptor: RuntimePackageDescriptor,
+  colliders: ColliderDefinition[],
+  errors: PackageVerificationError[],
+  assetKey: string
+) {
+  let valid = true;
+  if (colliders.length === 0) {
+    valid = false;
+    addError(errors, "package.collider_missing", `${assetKey} must publish at least one collider sidecar entry.`, {
+      assetKey
+    });
+  }
+
+  for (const collider of colliders) {
+    if (!isNonEmptyString(collider.id)) {
+      valid = false;
+      addError(errors, "package.collider_id_missing", `${assetKey} has a collider without an id.`, { assetKey });
+    }
+
+    if (collider.kind === "box") {
+      const size = collider.sizeMm;
+      if (
+        !isPositiveFiniteNumber(size.width) ||
+        !isPositiveFiniteNumber(size.depth) ||
+        !isPositiveFiniteNumber(size.height) ||
+        !isFiniteVector(collider.centerMm, 3)
+      ) {
+        valid = false;
+        addError(errors, "package.collider_box_invalid", `${assetKey} collider ${collider.id} has invalid box dimensions or center.`, {
+          assetKey
+        });
+      }
+    } else if (!isNonEmptyString(collider.source)) {
+      valid = false;
+      addError(errors, "package.collider_source_missing", `${assetKey} collider ${collider.id} is missing a source path.`, {
+        assetKey
+      });
+    }
+  }
+
+  const boundsBox = colliders.find(
+    (collider): collider is Extract<ColliderDefinition, { kind: "box" }> =>
+      collider.kind === "box" && collider.id === "bounds-box"
+  );
+  if (!boundsBox || !deepEqualJson(boundsBox.sizeMm, descriptor.runtimeAsset.dimensionsMm)) {
+    valid = false;
+    addError(errors, "package.collider_bounds_missing", `${assetKey} must publish a bounds-box collider derived from dimensionsMm.`, {
+      assetKey
+    });
+  }
+
+  return valid;
+}
+
+function validateSupportSurfaceContract(
+  descriptor: RuntimePackageDescriptor,
+  supportSurfaces: SupportSurface[],
+  errors: PackageVerificationError[],
+  assetKey: string
+) {
+  let valid = true;
+  const expectedSurfaces = descriptor.supportProfile?.surfaces ?? [];
+  if (expectedSurfaces.length > 0 && supportSurfaces.length === 0) {
+    valid = false;
+    addError(errors, "package.support_surface_missing", `${assetKey} declares a support profile but published no support surfaces.`, {
+      assetKey
+    });
+  }
+
+  const supportSurfaceIds = new Set(supportSurfaces.map((surface) => surface.id));
+  for (const expectedSurface of expectedSurfaces) {
+    if (!supportSurfaceIds.has(expectedSurface.id)) {
+      valid = false;
+      addError(errors, "package.support_surface_expected_missing", `${assetKey} is missing expected support surface ${expectedSurface.id}.`, {
+        assetKey
+      });
+    }
+  }
+
+  for (const surface of supportSurfaces) {
+    const frame = surface.localFrame;
+    const bounds = surface.boundsMm;
+    if (!isNonEmptyString(surface.id)) {
+      valid = false;
+      addError(errors, "package.support_surface_id_missing", `${assetKey} has a support surface without an id.`, {
+        assetKey
+      });
+    }
+    if (
+      !isFiniteVector(frame.originMm, 3) ||
+      !isFiniteVector(frame.tangentU, 3) ||
+      !isFiniteVector(frame.tangentV, 3) ||
+      !isFiniteVector(frame.normal, 3)
+    ) {
+      valid = false;
+      addError(errors, "package.support_surface_frame_invalid", `${assetKey} support surface ${surface.id} has an invalid localFrame.`, {
+        assetKey
+      });
+    }
+    if (
+      !isFiniteVector(bounds.min, 2) ||
+      !isFiniteVector(bounds.max, 2) ||
+      bounds.min[0] >= bounds.max[0] ||
+      bounds.min[1] >= bounds.max[1]
+    ) {
+      valid = false;
+      addError(errors, "package.support_surface_bounds_invalid", `${assetKey} support surface ${surface.id} has invalid boundsMm.`, {
+        assetKey
+      });
+    }
+    if (!Array.isArray(surface.allowedAttachments) || surface.allowedAttachments.length === 0) {
+      valid = false;
+      addError(
+        errors,
+        "package.support_surface_attachment_missing",
+        `${assetKey} support surface ${surface.id} must declare allowedAttachments.`,
+        { assetKey }
+      );
+    }
+  }
+
+  return valid;
+}
+
+function validateAttachmentPointContract(
+  descriptor: RuntimePackageDescriptor,
+  attachmentPoints: AttachmentPoint[],
+  errors: PackageVerificationError[],
+  assetKey: string
+) {
+  let valid = true;
+  for (const point of attachmentPoints) {
+    if (!isNonEmptyString(point.id)) {
+      valid = false;
+      addError(errors, "package.attachment_point_id_missing", `${assetKey} has an attachment point without an id.`, {
+        assetKey
+      });
+    }
+    if (
+      !isFiniteVector(point.localPositionMm, 3) ||
+      !isFiniteVector(point.localNormal, 3) ||
+      !isFiniteVector(point.localTangent, 3)
+    ) {
+      valid = false;
+      addError(errors, "package.attachment_point_frame_invalid", `${assetKey} attachment point ${point.id} has invalid local vectors.`, {
+        assetKey
+      });
+    }
+    if (!Array.isArray(point.compatibleWith) || point.compatibleWith.length === 0) {
+      valid = false;
+      addError(
+        errors,
+        "package.attachment_point_compatibility_missing",
+        `${assetKey} attachment point ${point.id} must declare compatibleWith targets.`,
+        { assetKey }
+      );
+    }
+    if (!point.constraints || typeof point.constraints !== "object") {
+      valid = false;
+      addError(errors, "package.attachment_point_constraints_missing", `${assetKey} attachment point ${point.id} is missing constraints.`, {
+        assetKey
+      });
+    }
+  }
+
+  if (descriptor.authoring.attachmentPoints.mode === "manual_required" && attachmentPoints.length === 0) {
+    valid = false;
+    addError(errors, "package.attachment_point_required_missing", `${assetKey} requires authored attachment points for commercial placement.`, {
+      assetKey
+    });
+  }
+
+  return valid;
+}
+
+function validateRuntimeMetadataGate(
+  descriptor: RuntimePackageDescriptor,
+  colliders: ColliderDefinition[],
+  supportSurfaces: SupportSurface[],
+  attachmentPoints: AttachmentPoint[],
+  errors: PackageVerificationError[],
+  assetKey: string
+) {
+  const commercial = descriptor.runtimeAsset.commercialReadiness ?? descriptor.commercialReadiness;
+  let valid = true;
+
+  if (!validateDimensionsContract(descriptor, errors, assetKey)) valid = false;
+  if (!validateColliderContract(descriptor, colliders, errors, assetKey)) valid = false;
+  if (!validateSupportSurfaceContract(descriptor, supportSurfaces, errors, assetKey)) valid = false;
+  if (!validateAttachmentPointContract(descriptor, attachmentPoints, errors, assetKey)) valid = false;
+
+  if (!isNonEmptyString(descriptor.label) || !isNonEmptyString(descriptor.key) || !isNonEmptyString(descriptor.manifestId)) {
+    valid = false;
+    addError(errors, "package.catalog_identity_missing", `${assetKey} descriptor catalog identity is incomplete.`, {
+      assetKey
+    });
+  }
+
+  if (!isNonEmptyString(descriptor.runtimeAsset.productId)) {
+    valid = false;
+    addError(errors, "package.product_id_missing", `${assetKey} runtimeAsset.productId is required for catalog traceability.`, {
+      assetKey
+    });
+  }
+
+  if (
+    !descriptor.runtimeAsset.sourceProvenance ||
+    !isNonEmptyString(descriptor.runtimeAsset.sourceProvenance.manufacturer) ||
+    !isNonEmptyString(descriptor.runtimeAsset.sourceProvenance.license)
+  ) {
+    valid = false;
+    addError(errors, "package.source_provenance_missing", `${assetKey} runtimeAsset source provenance must include manufacturer and license.`, {
+      assetKey
+    });
+  }
+
+  if (!commercial || !isNonEmptyString(commercial.sku) || !isNonEmptyString(commercial.manufacturer)) {
+    valid = false;
+    addError(errors, "package.commercial_metadata_missing", `${assetKey} must publish sku and manufacturer metadata.`, {
+      assetKey
+    });
+  }
+
+  return valid;
 }
 
 function validateSidecarParity(
@@ -211,6 +494,73 @@ function validateAttachmentAuthoring(
   return true;
 }
 
+function validateCommercialReadiness(
+  descriptor: RuntimePackageDescriptor,
+  indexEntry: RuntimePackageCatalog["assets"][number],
+  errors: PackageVerificationError[],
+  assetKey: string
+) {
+  const descriptorReadiness = descriptor.commercialReadiness;
+  const runtimeReadiness = descriptor.runtimeAsset.commercialReadiness;
+  if (!descriptorReadiness || !runtimeReadiness) {
+    addError(errors, "package.commercial_readiness_missing", `${assetKey} is missing commercial readiness metadata.`, {
+      assetKey
+    });
+    return false;
+  }
+
+  let valid = true;
+  if (!deepEqualJson(descriptorReadiness, runtimeReadiness)) {
+    valid = false;
+    addError(
+      errors,
+      "package.commercial_readiness_mismatch",
+      `${assetKey} commercial readiness differs between descriptor and runtimeAsset.`,
+      { assetKey }
+    );
+  }
+  if (!isNonEmptyString(runtimeReadiness.sku) || !isNonEmptyString(runtimeReadiness.manufacturer)) {
+    valid = false;
+    addError(errors, "package.commercial_identity_missing", `${assetKey} is missing sku/manufacturer metadata.`, {
+      assetKey
+    });
+  }
+  if (
+    indexEntry.commercialTier !== runtimeReadiness.tier ||
+    indexEntry.sku !== runtimeReadiness.sku ||
+    indexEntry.manufacturer !== runtimeReadiness.manufacturer ||
+    indexEntry.releaseEligible !== runtimeReadiness.releaseEligible
+  ) {
+    valid = false;
+    addError(
+      errors,
+      "package.commercial_index_mismatch",
+      `${assetKey} runtime package index does not match descriptor commercial metadata.`,
+      { assetKey }
+    );
+  }
+  if (runtimeReadiness.tier === "hero_sku") {
+    const requiredReferenceImages = runtimeReadiness.referencePack.referenceImages.filter((image) => image.required);
+    if (requiredReferenceImages.length < 4) {
+      valid = false;
+      addError(
+        errors,
+        "package.hero_reference_pack_incomplete",
+        `${assetKey} hero SKU requires front/side/top/material references before release.`,
+        { assetKey }
+      );
+    }
+    if (!runtimeReadiness.releaseEligible) {
+      valid = false;
+      addError(errors, "package.hero_release_not_eligible", `${assetKey} hero SKU is not release eligible.`, {
+        assetKey
+      });
+    }
+  }
+
+  return valid;
+}
+
 export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRuntimePackageSummary> {
   const paths = createAssetCompilerPaths();
   const curatedAssets = getCuratedDeskteriorAssets(paths);
@@ -263,7 +613,9 @@ export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRu
       sidecarsValid: false,
       fileManifestValid: false,
       surfaceInvariantValid: false,
-      authoringValid: false
+      authoringValid: false,
+      metadataGateValid: false,
+      commercialReadinessValid: false
     };
 
     const entry = index.assets.find((candidate) => candidate.key === asset.key);
@@ -315,6 +667,7 @@ export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRu
         path: descriptorPath
       });
     }
+    result.commercialReadinessValid = validateCommercialReadiness(descriptor, entry, errors, asset.key);
 
     const sourceBlendPath = path.join(paths.repoRoot, descriptor.files.sourceBlend.path ?? "");
     const runtimeModelPath = toPublicFilePath(paths.publicRoot, descriptor.files.runtimeModel.path);
@@ -409,6 +762,14 @@ export async function buildPublishedRuntimePackageSummary(): Promise<PublishedRu
     );
     result.surfaceInvariantValid = validateSurfaceInvariants(descriptor, supportSurfaces, errors, asset.key);
     result.authoringValid = validateAttachmentAuthoring(descriptor, attachmentPoints, errors, asset.key);
+    result.metadataGateValid = validateRuntimeMetadataGate(
+      descriptor,
+      colliders,
+      supportSurfaces,
+      attachmentPoints,
+      errors,
+      asset.key
+    );
 
     if (
       entry.surfaceCount !== supportSurfaces.length ||
@@ -490,12 +851,13 @@ export function printPublishedRuntimePackageSummary(summary: PublishedRuntimePac
   console.log(`- Proxy files found: ${summary.counts.proxyFiles}/${summary.counts.curatedAssets}`);
   console.log(`- Thumbnail files found: ${summary.counts.thumbnailFiles}/${summary.counts.curatedAssets}`);
   console.log(`- Sidecars validated: ${summary.counts.sidecarValidated}/${summary.counts.curatedAssets}`);
+  console.log(`- Metadata gates valid: ${summary.results.filter((result) => result.metadataGateValid).length}/${summary.counts.curatedAssets}`);
   console.log(`- Errors: ${summary.counts.errors}`);
   console.log("");
   console.log("Packages:");
   for (const result of summary.results) {
     console.log(
-      `- ${result.key} | descriptor=${result.descriptorExists ? "ok" : "missing"} | proxy=${result.proxyExists ? "ok" : "missing"} | thumbnail=${result.thumbnailExists ? "ok" : "missing"} | sidecars=${result.sidecarsValid ? "ok" : "fail"} | fileManifest=${result.fileManifestValid ? "ok" : "fail"} | surfaces=${result.surfaceInvariantValid ? "ok" : "fail"} | authoring=${result.authoringValid ? "ok" : "fail"}`
+      `- ${result.key} | descriptor=${result.descriptorExists ? "ok" : "missing"} | proxy=${result.proxyExists ? "ok" : "missing"} | thumbnail=${result.thumbnailExists ? "ok" : "missing"} | sidecars=${result.sidecarsValid ? "ok" : "fail"} | fileManifest=${result.fileManifestValid ? "ok" : "fail"} | surfaces=${result.surfaceInvariantValid ? "ok" : "fail"} | authoring=${result.authoringValid ? "ok" : "fail"} | metadata=${result.metadataGateValid ? "ok" : "fail"}`
     );
   }
   if (summary.errors.length > 0) {

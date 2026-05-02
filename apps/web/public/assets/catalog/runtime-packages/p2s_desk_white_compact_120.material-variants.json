@@ -4,6 +4,14 @@
     "label": "P2S 화이트 컴팩트 데스크 1200",
     "finishColor": "Warm white",
     "finishMaterial": "Matte laminate over engineered wood",
-    "detailNotes": "Compact real-scale desk for small rooms and L-shaped room test scenes."
+    "detailNotes": "Compact real-scale desk for small rooms and L-shaped room test scenes.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "wood",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

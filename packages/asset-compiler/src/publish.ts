@@ -5,6 +5,7 @@ import type {
   AttachmentPoint,
   ColliderDefinition,
   MaterialVariant,
+  RuntimeCommercialReadiness,
   RuntimeAsset,
   SupportSurface
 } from "@deskterioronline/scene-schema";
@@ -329,13 +330,48 @@ function buildColliders(dimensionsMm: RuntimeAsset["dimensionsMm"]): ColliderDef
 
 function buildMaterialVariants(entry: ManifestEntry): MaterialVariant[] {
   const label = isNonEmptyString(entry.label) ? entry.label : "Default";
+  const finishMaterial = isNonEmptyString(entry.finishMaterial) ? entry.finishMaterial : null;
+  const normalizedMaterial = finishMaterial?.toLowerCase() ?? "";
+  const materialType: NonNullable<MaterialVariant["slotMaterials"]>[number]["materialType"] =
+    normalizedMaterial.includes("oak") ||
+    normalizedMaterial.includes("walnut") ||
+    normalizedMaterial.includes("wood") ||
+    normalizedMaterial.includes("veneer")
+      ? "wood"
+      : normalizedMaterial.includes("steel") ||
+          normalizedMaterial.includes("metal") ||
+          normalizedMaterial.includes("brass")
+        ? "metal"
+        : normalizedMaterial.includes("plastic") ||
+            normalizedMaterial.includes("acrylic")
+          ? "plastic"
+          : normalizedMaterial.includes("ceramic")
+            ? "ceramic"
+            : normalizedMaterial.includes("paper")
+              ? "paper"
+              : normalizedMaterial.includes("fabric") ||
+                  normalizedMaterial.includes("woven")
+                ? "fabric"
+                : normalizedMaterial.includes("plant") ||
+                    normalizedMaterial.includes("foliage")
+                  ? "foliage"
+                  : "mixed";
+
   return [
     {
       id: "default",
       label,
       finishColor: isNonEmptyString(entry.finishColor) ? entry.finishColor : null,
-      finishMaterial: isNonEmptyString(entry.finishMaterial) ? entry.finishMaterial : null,
-      detailNotes: isNonEmptyString(entry.detailNotes) ? entry.detailNotes : null
+      finishMaterial,
+      detailNotes: isNonEmptyString(entry.detailNotes) ? entry.detailNotes : null,
+      slotMaterials: [
+        {
+          slot: "default",
+          materialType,
+          qaStatus: "pending",
+          referenceNote: "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+        }
+      ]
     }
   ];
 }
@@ -351,7 +387,8 @@ function buildAttachmentPoints(asset: CuratedDeskteriorAsset, errors: string[]):
 function buildQaReport(
   dimensionsMm: RuntimeAsset["dimensionsMm"],
   validatorVersion: string,
-  validationResult: ValidationResult | undefined
+  validationResult: ValidationResult | undefined,
+  asset: CuratedDeskteriorAsset
 ): AssetQaReport {
   const issues: NonNullable<AssetQaReport["issues"]> = [];
 
@@ -372,6 +409,63 @@ function buildQaReport(
     }
   }
 
+  const commercial = asset.commercialMetadata;
+  if (commercial.visualFidelityScore < commercial.qaThresholds.minVisualFidelityScore) {
+    issues.push({
+      code: "COMMERCIAL_VISUAL_FIDELITY_PENDING",
+      severity: commercial.tier === "hero_sku" ? "error" : "warning",
+      message: `visual fidelity score ${commercial.visualFidelityScore.toFixed(2)} is below paid-beta threshold ${commercial.qaThresholds.minVisualFidelityScore.toFixed(2)}`
+    });
+  }
+  if (commercial.dimensionToleranceMm > commercial.qaThresholds.maxDimensionToleranceMm) {
+    issues.push({
+      code: "COMMERCIAL_DIMENSION_TOLERANCE_EXCEEDED",
+      severity: "error",
+      message: `dimension tolerance ${commercial.dimensionToleranceMm}mm exceeds ${commercial.qaThresholds.maxDimensionToleranceMm}mm`
+    });
+  }
+  if (commercial.dimensionTolerancePercent > commercial.qaThresholds.maxDimensionTolerancePercent) {
+    issues.push({
+      code: "COMMERCIAL_DIMENSION_PERCENT_EXCEEDED",
+      severity: "error",
+      message: `dimension tolerance ${commercial.dimensionTolerancePercent}% exceeds ${commercial.qaThresholds.maxDimensionTolerancePercent}%`
+    });
+  }
+  if (
+    commercial.supportSurfaceToleranceMm !== undefined &&
+    commercial.supportSurfaceToleranceMm > commercial.qaThresholds.maxSupportSurfaceToleranceMm
+  ) {
+    issues.push({
+      code: "COMMERCIAL_SUPPORT_SURFACE_TOLERANCE_EXCEEDED",
+      severity: "error",
+      message: `support surface tolerance ${commercial.supportSurfaceToleranceMm}mm exceeds ${commercial.qaThresholds.maxSupportSurfaceToleranceMm}mm`
+    });
+  }
+  if (
+    commercial.footprintToleranceMm !== undefined &&
+    commercial.footprintToleranceMm > commercial.qaThresholds.maxFootprintToleranceMm
+  ) {
+    issues.push({
+      code: "COMMERCIAL_FOOTPRINT_TOLERANCE_EXCEEDED",
+      severity: "error",
+      message: `footprint tolerance ${commercial.footprintToleranceMm}mm exceeds ${commercial.qaThresholds.maxFootprintToleranceMm}mm`
+    });
+  }
+  if (commercial.materialQaStatus !== "passed") {
+    issues.push({
+      code: "COMMERCIAL_MATERIAL_QA_PENDING",
+      severity: commercial.tier === "hero_sku" ? "error" : "warning",
+      message: `slot-level material QA status is ${commercial.materialQaStatus}`
+    });
+  }
+  if (!commercial.releaseEligible) {
+    issues.push({
+      code: "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
+      severity: commercial.tier === "hero_sku" ? "error" : "warning",
+      message: "asset is not eligible for actual-SKU paid beta release"
+    });
+  }
+
   const hasError = issues.some((issue) => issue.severity === "error");
   const hasWarning = issues.some((issue) => issue.severity === "warning");
 
@@ -384,6 +478,20 @@ function buildQaReport(
       height: 0
     },
     validatorVersion,
+    commercialFidelity: {
+      referencePackStatus: commercial.referencePack.status,
+      visualFidelityScore: commercial.visualFidelityScore,
+      dimensionToleranceMm: commercial.dimensionToleranceMm,
+      dimensionTolerancePercent: commercial.dimensionTolerancePercent,
+      ...(commercial.supportSurfaceToleranceMm !== undefined
+        ? { supportSurfaceToleranceMm: commercial.supportSurfaceToleranceMm }
+        : {}),
+      ...(commercial.footprintToleranceMm !== undefined
+        ? { footprintToleranceMm: commercial.footprintToleranceMm }
+        : {}),
+      materialQaStatus: commercial.materialQaStatus,
+      releaseEligible: commercial.releaseEligible
+    },
     ...(issues.length > 0 ? { issues } : {})
   };
 }
@@ -447,6 +555,13 @@ function stringifyJson(value: unknown) {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
 
+function toRuntimeCommercialReadiness(
+  metadata: CuratedDeskteriorAsset["commercialMetadata"]
+): RuntimeCommercialReadiness {
+  const { qaThresholds: _qaThresholds, ...runtimeMetadata } = metadata;
+  return runtimeMetadata;
+}
+
 function buildRuntimeAsset(
   entry: ManifestEntry,
   asset: CuratedDeskteriorAsset,
@@ -491,6 +606,7 @@ function buildRuntimeAsset(
     supportSurfaces,
     attachmentPoints,
     materialVariants,
+    commercialReadiness: toRuntimeCommercialReadiness(asset.commercialMetadata),
     qaStatus
   };
 }
@@ -662,7 +778,7 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
     const thumbnailPublicPath = resolveThumbnailPublicPath(asset);
     const thumbnailExists = await ensurePackageThumbnailFile(asset, thumbnailPublicPath, paths, entry.label, dimensionsMm);
 
-    const qaReport = buildQaReport(dimensionsMm, validatorVersion, validationByKey.get(asset.key));
+    const qaReport = buildQaReport(dimensionsMm, validatorVersion, validationByKey.get(asset.key), asset);
     if (qaReport.status === "failed") {
       errors.push(`qa report failed for ${asset.key}`);
       continue;
@@ -706,6 +822,7 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
         attachmentPoints: asset.attachmentAuthoring
       },
       runtimeAsset,
+      commercialReadiness: toRuntimeCommercialReadiness(asset.commercialMetadata),
       files: {
         sourceBlend: buildFileRef(asset.contractMetadata.source.path ?? asset.sourcePath, true, sourceExists),
         runtimeModel: buildFileRef(asset.expectedAssetId, true, runtimeExists),
@@ -783,7 +900,11 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
       warningCount: entry.qa.warnings.length,
       surfaceCount: entry.runtimeAsset.supportSurfaces.length,
       attachmentPointCount: entry.runtimeAsset.attachmentPoints.length,
-      materialVariantCount: entry.runtimeAsset.materialVariants.length
+      materialVariantCount: entry.runtimeAsset.materialVariants.length,
+      commercialTier: entry.runtimeAsset.commercialReadiness?.tier,
+      sku: entry.runtimeAsset.commercialReadiness?.sku,
+      manufacturer: entry.runtimeAsset.commercialReadiness?.manufacturer,
+      releaseEligible: entry.runtimeAsset.commercialReadiness?.releaseEligible
     }))
   };
 

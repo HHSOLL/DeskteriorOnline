@@ -4,6 +4,14 @@
     "label": "P2S 라지 북 스택",
     "finishColor": "Neutral accent",
     "finishMaterial": "Mixed decorative material",
-    "detailNotes": "Scale-locked decor prop for deskterior styling and shared viewer product details."
+    "detailNotes": "Scale-locked decor prop for deskterior styling and shared viewer product details.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "mixed",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

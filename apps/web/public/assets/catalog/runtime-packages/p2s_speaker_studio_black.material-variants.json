@@ -4,6 +4,14 @@
     "label": "P2S 블랙 스튜디오 스피커 페어",
     "finishColor": "Matte black",
     "finishMaterial": "Painted MDF cabinet with fabric grille",
-    "detailNotes": "Surface-placeable speaker variant for wider desk and monitor-arm compositions."
+    "detailNotes": "Surface-placeable speaker variant for wider desk and monitor-arm compositions.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "fabric",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

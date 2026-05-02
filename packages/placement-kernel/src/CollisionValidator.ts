@@ -4,6 +4,19 @@ import { AttachmentGraph, type AttachmentGraphSnapshot } from "./AttachmentGraph
 import { rectsOverlap, resolveLocalFootprintBounds } from "./footprint";
 import type { CollisionReport, PlacementCandidate } from "./types";
 
+function usesSurfaceFootprintCollision(attachmentType: PlacementCandidate["attachmentType"]) {
+  return (
+    attachmentType === "place_on_surface" ||
+    attachmentType === "underside_screw" ||
+    attachmentType === "grommet_hole" ||
+    attachmentType === "wall_screw" ||
+    attachmentType === "wall_attach" ||
+    attachmentType === "adhesive_patch" ||
+    attachmentType === "magnetic_attach" ||
+    attachmentType === "peg_slot"
+  );
+}
+
 export class CollisionValidator {
   private readonly attachmentGraph = new AttachmentGraph();
 
@@ -54,7 +67,7 @@ export class CollisionValidator {
     );
     const collisions: CollisionReport["collisions"] = [];
 
-    if (candidate.attachmentType !== "place_on_surface") {
+    if (!usesSurfaceFootprintCollision(candidate.attachmentType)) {
       return {
         collided: false,
         collisions
@@ -64,6 +77,9 @@ export class CollisionValidator {
     for (const sibling of this.resolveSiblingObjects(snapshot, candidate)) {
       const siblingRuntimeAsset = this.resolveRuntimeAsset(sibling);
       if (!siblingRuntimeAsset || !isSurfacePlacementRecord(sibling.placement)) {
+        continue;
+      }
+      if (!usesSurfaceFootprintCollision(sibling.placement.attachmentType)) {
         continue;
       }
 

@@ -12,7 +12,7 @@ import { AttachmentGraph, type AttachmentGraphSnapshot } from "./AttachmentGraph
 import type { CollisionReport, ConstraintReport, PlacementCandidate, SurfaceHit } from "./types";
 import { CollisionValidator } from "./CollisionValidator";
 import { ConstraintSolver } from "./ConstraintSolver";
-import { SnapCandidateGenerator } from "./SnapCandidateGenerator";
+import { SnapCandidateGenerator, type SnapRule } from "./SnapCandidateGenerator";
 import { SurfaceResolver } from "./SurfaceResolver";
 import { buildSurfacePlacementFromCandidate, resolveSurfaceLocalWorldTransform } from "./surfaceTransform";
 
@@ -27,6 +27,7 @@ export type PlacementUpdateInput =
   | {
       localPose: SurfaceLocalPose;
       cableRoute?: CableRouteRecord;
+      snapRule?: SnapRule;
     };
 
 export class PlacementTransaction {
@@ -83,10 +84,12 @@ export class PlacementTransaction {
 
     const localPose = "localPose" in input ? input.localPose : input;
     const cableRoute = "localPose" in input ? input.cableRoute : undefined;
+    const snapRule = "localPose" in input ? input.snapRule : undefined;
     const snappedLocalPose = this.snapCandidateGenerator.snapLocalPose(
       localPose,
       this.activeCandidate.attachmentType,
-      this.surfaceHit?.surface ?? null
+      this.surfaceHit?.surface ?? null,
+      snapRule
     );
 
     this.activeCandidate = {

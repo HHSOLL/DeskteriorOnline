@@ -51,7 +51,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 산출물이 없거나 플래그가 꺼져 있으면 JPG/PNG 원본으로 fallback 한다.
 - curated deskterior optimize chain은 기본 `glTF Transform dedup + prune + meshopt`를 사용하고, native `gltfpack`은 `GLTFPACK_BIN` 또는 `--gltfpack-bin`이 있을 때만 optional pass로 추가한다.
 - repo-local native `gltfpack` 설치 경로는 `.tools/gltfpack/current/gltfpack`를 우선 사용한다.
-- builder preview는 `frameloop="demand"`를 유지하지만, editor top-view(room / desk precision)와 editor walk-view는 black flicker 회귀를 막기 위해 안정성 우선 프로필에서 `frameloop="always"`를 사용한다.
+- builder preview와 editor top-view(room / desk precision), shared top viewer는 `frameloop="demand"`를 기본으로 사용하고, camera/orbit/hover/drag/preview/commit 경로에서 명시적으로 `invalidate()`를 호출한다. editor walk-view와 walk shared viewer는 1인칭 이동 안정성을 위해 `frameloop="always"`를 유지한다.
 - 실측 고정 제품(`scaleLocked=true`)은 에디터에서 임의 스케일 변경을 허용하지 않는다.
 - 데스크/선반 표면 배치는 실측 규격이 있으면 해당 값 기반으로 support surface를 계산한다.
 - 기본 desk runtime package는 `desktop_top`만이 아니라 실제 mounted validation용 `desk_edge`, `desk_underside` support surface를 함께 노출해야 한다.
@@ -63,7 +63,7 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 
 ## 아키텍처 경계
 - Frontend: `apps/web` (active product surface)
-- Runtime foundation: `packages/scene-schema`, `packages/engine-core`, `packages/renderer-three`, `packages/placement-kernel`
+- Runtime foundation: `packages/scene-schema`, `packages/engine-core`, `packages/renderer-three`, `packages/placement-kernel`, `packages/interaction-engine`
 - API: `apps/api` (asset generation enqueue + health)
 - Worker: `apps/worker` (asset generation processing)
 - Supabase: auth/storage/database
@@ -73,6 +73,9 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `apps/web`는 UI shell과 canvas host를 우선 책임지고, drag/hover/preview hot path mutation은 점진적으로 runtime foundation으로 이동한다.
 - 저장 문서와 런타임 조작 상태를 같은 React/Zustand mutation 경로로 직접 공유하지 않는다.
 - `SceneDocument`의 canonical unit은 `mm`이며, meter 변환은 renderer/runtime 경계에서만 허용한다.
+- focus/walk/desk precision 배치 상태 전이는 `interaction-engine`이 소유하고, `apps/web` React component는 DOM 입력, HUD, toast, renderer invalidation, store commit adapter 역할만 수행한다.
+- placement preview 상태(`aiming`, `candidate_preview`, `manipulating`, `blocked`)에서는 scene document patch가 0건이어야 하며, `committing` 상태에서만 최소 patch intent를 만들 수 있다.
+- blocked placement는 항상 `NO_SURFACE`, `INCOMPATIBLE_ATTACHMENT`, `OUT_OF_SURFACE_BOUNDS`, `COLLISION`, `INSUFFICIENT_CLEARANCE`, `UNREACHABLE_ARM_TARGET`, `INVALID_CABLE_ROUTE`, `SCALE_LOCKED`, `READ_ONLY`, `MISSING_METADATA` 중 하나 이상의 이유를 노출해야 한다.
 
 ## 활성 웹 계약
 - `GET /api/v1/projects/:projectId/bootstrap`
@@ -93,12 +96,48 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `npm --workspace apps/web run verify:public-scene`
 - `npm --workspace apps/web run verify:showcase-scene`
 - `npm --workspace apps/web run verify:showcase-activity`
+- `npm --workspace apps/web run verify:interaction-engine`
+- `npm --workspace apps/web run verify:asset-compiler`
+- `npm --workspace apps/web run verify:commercial-qa`
 
 ## 필수 참조 문서
 - `docs/implementation-plan.md`
 - `docs/3d-visual-engine.md`
 - `docs/user-action-guide.md`
 - `docs/deployment.md`
+
+## 2026-05-02 변경 동기화 (Interaction Engine Foundation)
+Added:
+- `packages/interaction-engine`를 runtime foundation에 추가하고, React/R3F/Zustand에 독립적인 focus placement state machine 계약을 도입한다.
+- `docs/interaction-engine-contract.md`를 preview/commit, blocked reason, candidate ranking, adapter 책임의 canonical 문서로 추가한다.
+- `verify:interaction-engine`를 품질 게이트에 추가해 preview 중 document patch 0건, commit 시 patch intent 1건을 검증한다.
+- `FocusPlacementController`가 start/switch/nudge/rotate/numeric/commit/cancel 이벤트를 `FocusPlacementMachine`에 전달하는 첫 adapter가 된다.
+- focus placement entry 생성은 interaction-engine ranking helper를 사용해 `score`, `rank`, `blockedReasons`, `visualAffordance`를 session candidate에 보존한다.
+
+Updated:
+- walk placement와 desk precision 조작은 UI component 내부 판단이 아니라 interaction engine event/result/command를 따라야 한다.
+- surface candidate는 단순 hidden/visible이 아니라 score와 blocked reason을 가진 explainable candidate로 관리한다.
+- HUD/inspector는 candidate score/order/block reason을 표시만 하고 별도 정렬/판단 로직을 만들지 않는다.
+- 현재 runtime transaction side effect는 adapter에 남기되, 상태 전이 결정은 interaction engine 결과를 기준으로 한다.
+
+Removed/Deprecated:
+- `FocusPlacementController`가 장기적으로 keyboard, pointer, candidate ranking, preview lifecycle, commit/cancel 판단을 모두 직접 소유하는 구조.
+
+## 2026-05-01 변경 동기화 (Commercial Quality Gates Foundation)
+Added:
+- `RuntimeAsset`와 asset compiler package descriptor는 `sku`, `manufacturer`, `referencePack`, `visualFidelityScore`, `dimensionToleranceMm`, `materialQaStatus`, `releaseEligible`를 포함한 `commercialReadiness` 계약을 유지한다.
+- 실제 SKU hero catalog는 `referencePack`과 slot-level material QA가 통과된 asset만 paid-beta release eligible로 승격한다.
+- `/labs/qa` commercial snapshot은 actual SKU hero catalog gate, wall/floor texture library gate, SKU/reference/material QA row를 보여주는 운영 release dashboard 역할을 한다.
+- walkthrough/focus placement 기본 snap은 `5mm / 1deg`, fine override는 `1mm / 0.1deg`로 고정하며 HUD/저장 좌표는 placement kernel snap 결과를 따른다.
+
+Updated:
+- 상용 판단 기준을 “예뻐 보이는 GLB”에서 “검증된 제품 패키지(referencePack + mm tolerance + material QA + release eligibility)”로 확장한다.
+- room shell wall/floor texture set은 12개 이하의 PBR preset, source resolution, KTX2 runtime target, AI 후보 여부를 함께 관리한다.
+- 조명 preset은 `neutral-studio`, `home-reference`, `soft-evening`별 QA profile(HDRI/exposure/white balance/contact shadow)을 가진다.
+
+Removed/Deprecated:
+- 이미지 생성 모델 결과를 실제 브랜드/SKU 최종 운영 asset으로 바로 승격하는 가정.
+- mounted/wall placement가 기본 10mm/5deg coarse snap만 지원해도 충분하다는 가정.
 
 ## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing Phase 1)
 Added:
@@ -1118,3 +1157,52 @@ Updated:
 
 Removed/Deprecated:
 - Top-view room mode / desk precision mode as the primary asset placement surface.
+
+## 2026-05-02 변경 동기화 (Interaction Engine PR7 Attachment Guard)
+Added:
+- `wall_screw`와 `grommet_hole`은 schema-only attachment가 아니라 focus placement candidate, placement kernel transaction, commit guard까지 이어지는 상용 attachment type으로 취급한다.
+- placement kernel은 mounted point가 support surface 밖으로 나가거나 normal offset이 음수이면 commit 전에 차단해야 한다.
+- wall/grommet footprint-bearing attachment는 same-surface collision validation을 통과해야 저장될 수 있다.
+
+Updated:
+- advanced attachment 검증 범위를 `edge_clamp / underside_screw / vesa_mount / cable_route`에서 `wall_screw / grommet_hole / same-surface mounted overlap`까지 확장한다.
+- commercial QA placement regression evidence는 wall screw, grommet hole, mounted overlap blocked를 포함해야 한다.
+
+Removed/Deprecated:
+- `wall_screw`와 `grommet_hole`이 실제 제품 경로에 연결되기 전까지 누락되어도 된다는 가정.
+
+## 2026-05-02 변경 동기화 (Interaction Engine PR8 Asset Metadata Gate)
+Added:
+- Published runtime package는 상용 catalog 노출 전 `asset-metadata-gate`를 통과해야 한다.
+- metadata gate는 mm 치수, descriptor/runtime 치수 parity, `scaleLocked`, bounds-box collider, support surface bounds/frame, attachment point vector/compatibility, `productId`, source provenance, SKU/manufacturer를 필수 계약으로 본다.
+- `/labs/qa`와 `verify:commercial-qa`는 metadata gate 통과 수를 release dashboard에 포함해야 한다.
+
+Updated:
+- asset compiler verification은 file/sidecar parity 검증에서 runtime placement에 필요한 metadata 값의 유효성 검증까지 책임진다.
+- 상용 release readiness는 asset QA status와 파일 존재뿐 아니라 metadata gate 통과를 포함한다.
+
+Removed/Deprecated:
+- catalog asset metadata 검증을 UI 표시용 coverage summary 수준으로만 다뤄도 된다는 가정.
+
+## 2026-05-02 변경 동기화 (Interaction Engine PR9 Viewer Parity Gate)
+Added:
+- public scene payload는 editor 저장 document를 `sceneSnapshot.documentHash`로 고정하고, runtime asset ids와 per-node asset refs를 함께 발행해야 한다.
+- `verify:viewer-parity`는 public scene payload, shared/showcase token parity, version badge, thumbnail source, scene snapshot refs를 하나의 release gate로 확인한다.
+- commercial QA dashboard는 viewer parity suite status와 evidence를 표시해야 한다.
+
+Updated:
+- shared viewer parity 기준을 “route가 열리는가”에서 “pinned version + document hash + runtime asset refs + showcase/community thumbnail source가 일치하는가”로 강화한다.
+
+Removed/Deprecated:
+- shared viewer와 community card가 같은 token만 쓰면 scene parity가 충분히 보장된다는 가정.
+
+## 2026-05-02 변경 동기화 (Interaction Engine PR10 Commercial QA Dashboard)
+Added:
+- Commercial QA snapshot은 release gates를 `readinessScore`로 요약해 pass/warning/fail 상태와 blocker/warning 목록을 제공해야 한다.
+- `/labs/qa`는 readiness score를 첫 화면에 노출해 asset, placement, viewer parity, performance, recovery diagnostics를 하나의 상용 시연 판단으로 연결한다.
+
+Updated:
+- 상용 QA 기준은 개별 verify script 나열에서 readiness score 기반 release 판단으로 확장한다.
+
+Removed/Deprecated:
+- 상용 데모 가능 여부를 dashboard 카드 상태를 사람이 임의로 종합해 판단하는 방식.

@@ -99,6 +99,83 @@ export type MaterialVariant = {
   finishColor?: string | null;
   finishMaterial?: string | null;
   detailNotes?: string | null;
+  slotMaterials?: Array<{
+    slot: string;
+    materialType:
+      | "wood"
+      | "metal"
+      | "plastic"
+      | "fabric"
+      | "ceramic"
+      | "glass"
+      | "paper"
+      | "foliage"
+      | "emissive"
+      | "mixed"
+      | "unknown";
+    textureScaleMm?: [number, number];
+    roughness?: number;
+    metalness?: number;
+    normalIntensity?: number;
+    qaStatus?: "pending" | "passed" | "failed" | "waived";
+    referenceNote?: string;
+  }>;
+};
+
+export type ReferenceImageView =
+  | "front"
+  | "back"
+  | "left"
+  | "right"
+  | "top"
+  | "bottom"
+  | "detail"
+  | "material"
+  | "scale";
+
+export type ProductReferencePack = {
+  sku: string;
+  manufacturer: string;
+  canonicalProductUrl: string | null;
+  dimensionSourceUrl: string | null;
+  referenceImages: Array<{
+    view: ReferenceImageView;
+    url: string;
+    required: boolean;
+    license: string;
+  }>;
+  finishReferences: Array<{
+    finishId: string;
+    label: string;
+    sourceUrl: string | null;
+    materialType: NonNullable<MaterialVariant["slotMaterials"]>[number]["materialType"];
+  }>;
+  license: {
+    spdx: string;
+    label: string;
+    requiresAttribution: boolean;
+  };
+  status:
+    | "candidate"
+    | "reference_collected"
+    | "dimension_verified"
+    | "visual_verified"
+    | "release_ready";
+  notes?: string;
+};
+
+export type RuntimeCommercialReadiness = {
+  tier: "hero_sku" | "generic_catalog" | "draft";
+  sku: string;
+  manufacturer: string;
+  referencePack: ProductReferencePack;
+  visualFidelityScore: number;
+  dimensionToleranceMm: number;
+  dimensionTolerancePercent: number;
+  supportSurfaceToleranceMm?: number;
+  footprintToleranceMm?: number;
+  materialQaStatus: "pending" | "passed" | "failed" | "waived";
+  releaseEligible: boolean;
 };
 
 export type ArticulationDefinition = {
@@ -128,6 +205,16 @@ export type AssetQaReport = {
   measuredBoundsMm: DimensionsMm;
   dimensionErrorMm: DimensionsMm;
   validatorVersion: string;
+  commercialFidelity?: {
+    referencePackStatus: ProductReferencePack["status"];
+    visualFidelityScore: number;
+    dimensionToleranceMm: number;
+    dimensionTolerancePercent: number;
+    supportSurfaceToleranceMm?: number;
+    footprintToleranceMm?: number;
+    materialQaStatus: RuntimeCommercialReadiness["materialQaStatus"];
+    releaseEligible: boolean;
+  };
   issues?: Array<{
     code: string;
     severity: "error" | "warning";
@@ -161,5 +248,6 @@ export type RuntimeAsset = {
   attachmentPoints: AttachmentPoint[];
   materialVariants: MaterialVariant[];
   articulation?: ArticulationDefinition;
+  commercialReadiness?: RuntimeCommercialReadiness;
   qaStatus: AssetQaReport;
 };

@@ -17,6 +17,9 @@
 - 생성 실패는 `retrying -> failed/dead_letter` 상태로 명확히 노출한다.
 - 생성형 결과는 운영 카탈로그를 대체하지 않고 보조 입력으로 취급한다.
 - 운영 카탈로그로 승격할 때는 물리 메타데이터(`dimensionsMm`, `finishColor`, `finishMaterial`, `detailNotes`, `scaleLocked`)를 채운다.
+- 실제 브랜드/SKU 제품 최종본에는 이미지 생성 모델 산출물을 사용하지 않는다. 실제 SKU는 제조사 URL, 공식 치수, 정면/측면/상면/디테일 reference, 마감 출처, 라이선스가 있는 `referencePack`을 통과해야 한다.
+- 이미지 생성 모델은 비브랜드 generic texture 후보, wall/floor mood exploration, 내부 draft asset 탐색에만 사용한다.
+- AI 생성 1K wall/floor texture는 `generic_ai_candidate`로 분류하고, 상용 preset은 2K source + runtime KTX2 + constrained 1K fallback 구조로 승격한다.
 
 ## 향후 확장(연구 트랙)
 - 텍스트/무드 기반 데스크 배치 추천
@@ -33,3 +36,14 @@ Updated:
 Removed/Deprecated:
 - semantic parsing -> 2D correction -> procedural 3D floorplan 파이프라인.
 - floorplan provider rollout/eval/blind gate 운영 기준.
+
+## 2026-05-01 변경 동기화 (Commercial AI Boundary)
+Added:
+- 실제 SKU asset 승격 조건을 `referencePack + commercialReadiness + material QA`로 고정한다.
+- 생성형 이미지는 운영 카탈로그 확정본이 아니라 candidate texture/draft exploration으로만 기록한다.
+
+Updated:
+- 운영 카탈로그 승격 기준을 기본 물리 메타데이터에서 visual fidelity score, dimension tolerance, material QA, release eligibility까지 확장한다.
+
+Removed/Deprecated:
+- AI 생성 이미지/텍스처가 실제 제품 동일성의 증거가 될 수 있다는 가정.

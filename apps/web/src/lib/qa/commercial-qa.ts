@@ -2,9 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import type { SceneDocument } from "../domain/scene-document";
 import { inspectSceneDocumentIntegrity } from "../domain/scene-integrity";
+import { summarizeRoomShellTextureQuality } from "../textures/room-shell-textures";
 import {
   compatibilityVerificationLedger,
   placementRegressionEvidenceLedger,
+  viewerParityEvidenceLedger,
   type QaVerificationStatus
 } from "./verification-ledger";
 
@@ -17,6 +19,10 @@ type RuntimePackageIndexEntry = {
   surfaceCount: number;
   attachmentPointCount: number;
   materialVariantCount: number;
+  commercialTier?: "hero_sku" | "generic_catalog" | "draft";
+  sku?: string;
+  manufacturer?: string;
+  releaseEligible?: boolean;
 };
 
 type RuntimePackageIndex = {
@@ -28,12 +34,40 @@ type RuntimePackageIndex = {
 type RuntimePackageDescriptor = {
   key: string;
   label: string;
+  dimensionsMm: {
+    width: number;
+    depth: number;
+    height: number;
+  };
   scaleLocked: boolean;
   files: Record<string, { path: string; required: boolean; exists: boolean }>;
   runtimeAsset: {
+    units: "mm";
+    dimensionsMm: {
+      width: number;
+      depth: number;
+      height: number;
+    };
+    scaleLocked: boolean;
+    productId?: string;
+    sourceProvenance?: {
+      manufacturer?: string;
+      license?: string;
+    };
+    colliders: unknown[];
     supportSurfaces: unknown[];
     attachmentPoints: unknown[];
+    materialVariants?: Array<{
+      slotMaterials?: Array<{
+        qaStatus?: "pending" | "passed" | "failed" | "waived";
+      }>;
+    }>;
+    commercialReadiness?: RuntimeCommercialReadiness;
+    qaStatus?: {
+      commercialFidelity?: RuntimeCommercialFidelity;
+    };
   };
+  commercialReadiness?: RuntimeCommercialReadiness;
   qa: {
     status: "passed" | "failed" | "warning";
     warnings: unknown[];
@@ -42,6 +76,36 @@ type RuntimePackageDescriptor = {
 
 type CommercialQaStatus = "pass" | "warning" | "fail";
 type CompatibilityProfileStatus = "target" | "verify" | "fallback";
+
+type RuntimeCommercialFidelity = {
+  referencePackStatus: "candidate" | "reference_collected" | "dimension_verified" | "visual_verified" | "release_ready";
+  visualFidelityScore: number;
+  dimensionToleranceMm: number;
+  dimensionTolerancePercent: number;
+  supportSurfaceToleranceMm?: number;
+  footprintToleranceMm?: number;
+  materialQaStatus: "pending" | "passed" | "failed" | "waived";
+  releaseEligible: boolean;
+};
+
+type RuntimeCommercialReadiness = {
+  tier: "hero_sku" | "generic_catalog" | "draft";
+  sku: string;
+  manufacturer: string;
+  referencePack: {
+    status: RuntimeCommercialFidelity["referencePackStatus"];
+    referenceImages: Array<{
+      required: boolean;
+    }>;
+  };
+  visualFidelityScore: number;
+  dimensionToleranceMm: number;
+  dimensionTolerancePercent: number;
+  supportSurfaceToleranceMm?: number;
+  footprintToleranceMm?: number;
+  materialQaStatus: RuntimeCommercialFidelity["materialQaStatus"];
+  releaseEligible: boolean;
+};
 
 type BenchmarkBaselineEntry = {
   scenario: string;
@@ -83,6 +147,16 @@ export type CommercialReleaseGate = {
 
 export type CommercialQaSnapshot = {
   generatedAt: string;
+  readinessScore: {
+    score: number;
+    status: CommercialQaStatus;
+    passedGates: number;
+    warningGates: number;
+    failedGates: number;
+    blockers: string[];
+    warnings: string[];
+    summary: string;
+  };
   releaseGates: CommercialReleaseGate[];
   assetStatus: {
     totalAssets: number;
@@ -92,7 +166,14 @@ export type CommercialQaSnapshot = {
     missingRequiredFiles: number;
     assetsWithSupportSurfaces: number;
     assetsWithAttachmentPoints: number;
+    metadataGatePassedAssets: number;
+    metadataGateFailedAssets: number;
     releaseReadyAssets: number;
+    heroSkuAssets: number;
+    releaseEligibleHeroAssets: number;
+    referenceReadyAssets: number;
+    materialQaPassedAssets: number;
+    visualFidelityAverage: number;
     atRiskAssets: number;
     qaCoveragePercent: number;
     supportCoveragePercent: number;
@@ -109,23 +190,50 @@ export type CommercialQaSnapshot = {
       scaleLocked: boolean;
       qaStatus: RuntimePackageIndexEntry["qaStatus"];
       warningCount: number;
+      commercialTier: RuntimeCommercialReadiness["tier"] | "unclassified";
+      sku: string | null;
+      manufacturer: string | null;
+      releaseEligible: boolean;
+      visualFidelityScore: number | null;
+      referencePackStatus: RuntimeCommercialFidelity["referencePackStatus"] | "missing";
+      materialQaStatus: RuntimeCommercialFidelity["materialQaStatus"] | "missing";
       supportSurfaceCount: number;
       attachmentPointCount: number;
       materialVariantCount: number;
       missingRequiredFiles: number;
       missingRequiredFileNames: string[];
+      metadataGatePassed: boolean;
+      metadataGateFailureReasons: string[];
     }>;
   };
   performanceBaseline: {
     generatedAt: string;
     scenarios: BenchmarkBaselineEntry[];
   };
+  textureQuality: ReturnType<typeof summarizeRoomShellTextureQuality>;
   focusPlacementTasks: Array<{
     task: string;
     metric: string;
     target: string;
   }>;
   placementRegression: {
+    registeredScripts: string[];
+    verifiedSuites: number;
+    requiredSuites: number;
+    suites: Array<{
+      id: string;
+      label: string;
+      script: string;
+      status: CommercialQaStatus;
+      target: string;
+      coverage: string[];
+      detail: string;
+      lastVerifiedAt: string | null;
+      verificationMethod: string;
+      evidence: string[];
+    }>;
+  };
+  viewerParity: {
     registeredScripts: string[];
     verifiedSuites: number;
     requiredSuites: number;
@@ -201,6 +309,51 @@ function resolveWorkspaceRoot() {
 
 function readJsonFile<T>(filePath: string) {
   return JSON.parse(fs.readFileSync(filePath, "utf8")) as T;
+}
+
+function isPositiveFiniteNumber(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value > 0;
+}
+
+function dimensionsArePositive(dimensions: RuntimePackageDescriptor["dimensionsMm"]) {
+  return (
+    isPositiveFiniteNumber(dimensions.width) &&
+    isPositiveFiniteNumber(dimensions.depth) &&
+    isPositiveFiniteNumber(dimensions.height)
+  );
+}
+
+function dimensionsEqual(left: RuntimePackageDescriptor["dimensionsMm"], right: RuntimePackageDescriptor["dimensionsMm"]) {
+  return left.width === right.width && left.depth === right.depth && left.height === right.height;
+}
+
+function buildReadinessScore(releaseGates: CommercialReleaseGate[]): CommercialQaSnapshot["readinessScore"] {
+  const passedGates = releaseGates.filter((gate) => gate.status === "pass");
+  const warningGates = releaseGates.filter((gate) => gate.status === "warning");
+  const failedGates = releaseGates.filter((gate) => gate.status === "fail");
+  const rawScore =
+    releaseGates.length > 0
+      ? ((passedGates.length + warningGates.length * 0.5) / releaseGates.length) * 100
+      : 0;
+  const score = Math.round(rawScore);
+  const status: CommercialQaStatus =
+    failedGates.length > 0 ? "fail" : warningGates.length > 0 || score < 90 ? "warning" : "pass";
+
+  return {
+    score,
+    status,
+    passedGates: passedGates.length,
+    warningGates: warningGates.length,
+    failedGates: failedGates.length,
+    blockers: failedGates.map((gate) => gate.label),
+    warnings: warningGates.map((gate) => gate.label),
+    summary:
+      status === "pass"
+        ? "All commercial release gates are green."
+        : failedGates.length > 0
+          ? `${failedGates.length} release blockers must be resolved before commercial demo.`
+          : `${warningGates.length} warning gates remain before paid-beta readiness.`
+  };
 }
 
 function loadVerifyScripts(workspaceRoot: string) {
@@ -313,6 +466,7 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
   const packageIndex = readJsonFile<RuntimePackageIndex>(packageIndexPath);
   const baseline = readJsonFile<BenchmarkBaseline>(baselinePath);
   const verifyScripts = loadVerifyScripts(workspaceRoot);
+  const textureQuality = summarizeRoomShellTextureQuality();
 
   const packageRows = packageIndex.assets.map((asset) => {
     const descriptorPath = path.join(workspaceRoot, "apps/web/public", asset.packagePath.replace(/^\//, ""));
@@ -320,6 +474,51 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
     const missingRequiredFileEntries = Object.entries(descriptor.files).filter(
       ([, file]) => file.required && !file.exists
     );
+    const commercial = descriptor.runtimeAsset.commercialReadiness ?? descriptor.commercialReadiness ?? null;
+    const commercialFidelity = descriptor.runtimeAsset.qaStatus?.commercialFidelity ?? null;
+    const slotMaterialQaStatuses = descriptor.runtimeAsset.materialVariants
+      ?.flatMap((variant) => variant.slotMaterials ?? [])
+      .map((slot) => slot.qaStatus ?? "pending") ?? [];
+    const materialQaStatus: RuntimeCommercialFidelity["materialQaStatus"] | "missing" =
+      commercialFidelity?.materialQaStatus ??
+      commercial?.materialQaStatus ??
+      (slotMaterialQaStatuses.length > 0 && slotMaterialQaStatuses.every((status) => status === "passed")
+        ? "passed"
+        : slotMaterialQaStatuses.length > 0
+          ? "pending"
+          : "missing");
+    const referencePackStatus: RuntimeCommercialFidelity["referencePackStatus"] | "missing" =
+      commercialFidelity?.referencePackStatus ?? commercial?.referencePack.status ?? "missing";
+    const commercialTier: RuntimeCommercialReadiness["tier"] | "unclassified" =
+      commercial?.tier ?? asset.commercialTier ?? "unclassified";
+    const metadataGateFailureReasons: string[] = [];
+
+    if (!descriptor.scaleLocked || !descriptor.runtimeAsset.scaleLocked) {
+      metadataGateFailureReasons.push("scale lock missing");
+    }
+    if (descriptor.runtimeAsset.units !== "mm") {
+      metadataGateFailureReasons.push("runtime units are not mm");
+    }
+    if (!dimensionsArePositive(descriptor.dimensionsMm) || !dimensionsArePositive(descriptor.runtimeAsset.dimensionsMm)) {
+      metadataGateFailureReasons.push("dimensionsMm is not positive finite");
+    } else if (!dimensionsEqual(descriptor.dimensionsMm, descriptor.runtimeAsset.dimensionsMm)) {
+      metadataGateFailureReasons.push("descriptor/runtime dimensions drift");
+    }
+    if (descriptor.runtimeAsset.colliders.length === 0) {
+      metadataGateFailureReasons.push("collider sidecar is empty");
+    }
+    if (!descriptor.runtimeAsset.productId) {
+      metadataGateFailureReasons.push("productId missing");
+    }
+    if (!descriptor.runtimeAsset.sourceProvenance?.manufacturer || !descriptor.runtimeAsset.sourceProvenance.license) {
+      metadataGateFailureReasons.push("source provenance incomplete");
+    }
+    if (!commercial?.sku || !commercial.manufacturer) {
+      metadataGateFailureReasons.push("sku/manufacturer missing");
+    }
+    if (missingRequiredFileEntries.length > 0) {
+      metadataGateFailureReasons.push("required runtime sidecar missing");
+    }
 
     return {
       key: asset.key,
@@ -327,11 +526,20 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       scaleLocked: descriptor.scaleLocked,
       qaStatus: descriptor.qa.status,
       warningCount: asset.warningCount,
+      commercialTier,
+      sku: commercial?.sku ?? asset.sku ?? null,
+      manufacturer: commercial?.manufacturer ?? asset.manufacturer ?? null,
+      releaseEligible: commercial?.releaseEligible ?? asset.releaseEligible ?? false,
+      visualFidelityScore: commercialFidelity?.visualFidelityScore ?? commercial?.visualFidelityScore ?? null,
+      referencePackStatus,
+      materialQaStatus,
       supportSurfaceCount: descriptor.runtimeAsset.supportSurfaces.length,
       attachmentPointCount: descriptor.runtimeAsset.attachmentPoints.length,
       materialVariantCount: asset.materialVariantCount,
       missingRequiredFiles: missingRequiredFileEntries.length,
-      missingRequiredFileNames: missingRequiredFileEntries.map(([key]) => key)
+      missingRequiredFileNames: missingRequiredFileEntries.map(([key]) => key),
+      metadataGatePassed: metadataGateFailureReasons.length === 0,
+      metadataGateFailureReasons
     };
   });
   const packageRiskRows = packageRows
@@ -352,11 +560,33 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
         reasons.push(`missing files: ${row.missingRequiredFileNames.join(", ")}`);
       }
 
+      if (!row.metadataGatePassed) {
+        severity = "fail";
+        reasons.push(`metadata gate failed: ${row.metadataGateFailureReasons.join(", ")}`);
+      }
+
       if (row.warningCount > 0 && !reasons.includes("asset QA warnings remain")) {
         if (severity !== "fail") {
           severity = "warning";
         }
         reasons.push(`${row.warningCount} package warnings`);
+      }
+
+      if (row.commercialTier === "hero_sku" && !row.releaseEligible) {
+        severity = "fail";
+        reasons.push("hero SKU is not release eligible");
+      } else if (row.referencePackStatus === "candidate" || row.referencePackStatus === "missing") {
+        if (severity !== "fail") {
+          severity = "warning";
+        }
+        reasons.push("reference pack not ready");
+      }
+
+      if (row.materialQaStatus !== "passed" && row.materialQaStatus !== "waived") {
+        if (severity !== "fail") {
+          severity = "warning";
+        }
+        reasons.push("slot material QA pending");
       }
 
       return {
@@ -394,8 +624,8 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       id: "advanced-attachments",
       label: "Advanced Attachment Flow",
       script: "verify:advanced-attachments",
-      target: "VESA / monitor-arm / articulation reachability",
-      coverage: ["edge_clamp", "vesa_mount", "monitor_arm", "wizard target pose"]
+      target: "VESA / monitor-arm / wall screw / grommet / articulation reachability",
+      coverage: ["edge_clamp", "vesa_mount", "monitor_arm", "wall_screw", "grommet_hole", "same-surface overlap", "wizard target pose"]
     }
   ].map((suite) => {
     const isRegistered = verifyScripts.includes(suite.script);
@@ -415,9 +645,64 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       evidence: evidenceRecord?.evidence ?? []
     };
   });
+  const viewerParitySuites = [
+    {
+      id: "viewer-parity",
+      label: "Consolidated Viewer Parity Gate",
+      script: "verify:viewer-parity",
+      target: "shared payload / showcase card / community thumbnail parity",
+      coverage: ["public scene payload", "showcase scene consistency", "community thumbnail parity"]
+    },
+    {
+      id: "public-scene-payload",
+      label: "Public Scene Payload Parity",
+      script: "verify:public-scene",
+      target: "pinned project version / scene document hash / runtime asset refs",
+      coverage: ["scene document snapshot", "project version pin", "runtime asset refs", "product metadata snapshots"]
+    },
+    {
+      id: "showcase-scene-consistency",
+      label: "Shared / Showcase / Community Parity",
+      script: "verify:showcase-scene",
+      target: "shared payload / showcase card / community thumbnail source",
+      coverage: ["shared token", "version badge", "thumbnail source", "scene snapshot refs"]
+    }
+  ].map((suite) => {
+    const isRegistered = verifyScripts.includes(suite.script);
+    const evidenceRecord =
+      viewerParityEvidenceLedger.find((record) => record.id === suite.id || record.script === suite.script) ?? null;
+    const isVerified = Boolean(isRegistered && evidenceRecord && evidenceRecord.status === "verified");
+    return {
+      ...suite,
+      status: (isVerified ? "pass" : isRegistered ? "warning" : "fail") as CommercialQaStatus,
+      detail: !isRegistered
+        ? `${suite.script} is missing from apps/web/package.json.`
+        : evidenceRecord
+          ? `${suite.script} is registered and has a verification ledger entry.`
+          : `${suite.script} is registered but missing verification evidence.`,
+      lastVerifiedAt: evidenceRecord?.lastVerifiedAt ?? null,
+      verificationMethod: evidenceRecord?.verificationMethod ?? "untracked",
+      evidence: evidenceRecord?.evidence ?? []
+    };
+  });
   const requiredCompatibilityProfiles = compatibilityVerificationLedger.filter((entry) => entry.requiredForRelease);
   const verifiedCompatibilityProfiles = requiredCompatibilityProfiles.filter((entry) => entry.status === "verified");
   const pendingCompatibilityProfiles = requiredCompatibilityProfiles.filter((entry) => entry.status !== "verified");
+  const heroSkuAssets = packageRows.filter((row) => row.commercialTier === "hero_sku");
+  const releaseEligibleHeroAssets = heroSkuAssets.filter((row) => row.releaseEligible);
+  const referenceReadyAssets = packageRows.filter((row) =>
+    row.referencePackStatus === "dimension_verified" ||
+    row.referencePackStatus === "visual_verified" ||
+    row.referencePackStatus === "release_ready"
+  );
+  const materialQaPassedAssets = packageRows.filter((row) => row.materialQaStatus === "passed");
+  const visualScores = packageRows
+    .map((row) => row.visualFidelityScore)
+    .filter((score): score is number => typeof score === "number" && Number.isFinite(score));
+  const visualFidelityAverage =
+    visualScores.length > 0
+      ? Math.round((visualScores.reduce((sum, score) => sum + score, 0) / visualScores.length) * 100) / 100
+      : 0;
 
   const releaseGates: CommercialReleaseGate[] = [
     {
@@ -435,6 +720,29 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
           ? "fail"
           : "warning",
       detail: `${packageRows.filter((row) => row.qaStatus === "passed").length}/${packageRows.length} assets passed QA.`
+    },
+    {
+      id: "asset-metadata-gate",
+      label: "Runtime asset metadata gate",
+      status: packageRows.every((row) => row.metadataGatePassed) ? "pass" : "fail",
+      detail: `${packageRows.filter((row) => row.metadataGatePassed).length}/${packageRows.length} assets include dimensions, scale lock, colliders, provenance, and SKU metadata.`
+    },
+    {
+      id: "actual-sku-hero-catalog",
+      label: "Actual SKU hero catalog",
+      status: releaseEligibleHeroAssets.length >= 20 ? "pass" : "warning",
+      detail: `${releaseEligibleHeroAssets.length}/20 paid-beta hero SKUs are release eligible; ${heroSkuAssets.length} hero SKU packages are registered.`
+    },
+    {
+      id: "texture-material-library",
+      label: "Wall/floor PBR texture library",
+      status:
+        textureQuality.commercialReady && textureQuality.candidateAiTextureCount === 0
+          ? "pass"
+          : textureQuality.commercialReady
+            ? "warning"
+            : "fail",
+      detail: `${textureQuality.wallPresetCount}/${textureQuality.wallPresetLimit} wall presets, ${textureQuality.floorPresetCount}/${textureQuality.floorPresetLimit} floor presets, ${textureQuality.candidateAiTextureCount} AI candidate textures.`
     },
     {
       id: "benchmark-baseline",
@@ -459,6 +767,12 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       label: "Scene corruption detector",
       status: corruptSceneReport.status === "corrupt" ? "pass" : "fail",
       detail: `Sample corrupt scene resolves to ${corruptSceneReport.status} with ${corruptSceneReport.issues.length} detected issues and ${corruptSceneReport.recoverySnapshot.mismatchedSupportReferenceCount} support mismatches.`
+    },
+    {
+      id: "viewer-parity",
+      label: "Shared viewer parity",
+      status: viewerParitySuites.every((suite) => suite.status === "pass") ? "pass" : "fail",
+      detail: `${viewerParitySuites.filter((suite) => suite.status === "pass").length}/${viewerParitySuites.length} viewer parity scripts are registered with evidence.`
     }
   ];
   const integritySeveritySummary = corruptSceneReport.issues.reduce(
@@ -495,6 +809,7 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
 
   return {
     generatedAt: new Date().toISOString(),
+    readinessScore: buildReadinessScore(releaseGates),
     releaseGates,
     assetStatus: {
       totalAssets: packageRows.length,
@@ -504,7 +819,16 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       missingRequiredFiles: packageRows.reduce((sum, row) => sum + row.missingRequiredFiles, 0),
       assetsWithSupportSurfaces: packageRows.filter((row) => row.supportSurfaceCount > 0).length,
       assetsWithAttachmentPoints: packageRows.filter((row) => row.attachmentPointCount > 0).length,
-      releaseReadyAssets: packageRows.filter((row) => row.qaStatus === "passed" && row.missingRequiredFiles === 0).length,
+      metadataGatePassedAssets: packageRows.filter((row) => row.metadataGatePassed).length,
+      metadataGateFailedAssets: packageRows.filter((row) => !row.metadataGatePassed).length,
+      releaseReadyAssets: packageRows.filter(
+        (row) => row.qaStatus === "passed" && row.missingRequiredFiles === 0 && row.metadataGatePassed
+      ).length,
+      heroSkuAssets: heroSkuAssets.length,
+      releaseEligibleHeroAssets: releaseEligibleHeroAssets.length,
+      referenceReadyAssets: referenceReadyAssets.length,
+      materialQaPassedAssets: materialQaPassedAssets.length,
+      visualFidelityAverage,
       atRiskAssets: packageRiskRows.length,
       qaCoveragePercent: packageRows.length > 0 ? Math.round((packageRows.filter((row) => row.qaStatus === "passed").length / packageRows.length) * 100) : 0,
       supportCoveragePercent: packageRows.length > 0 ? Math.round((packageRows.filter((row) => row.supportSurfaceCount > 0).length / packageRows.length) * 100) : 0,
@@ -516,11 +840,12 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       generatedAt: baseline.generatedAt,
       scenarios: baseline.entries
     },
+    textureQuality,
     focusPlacementTasks: [
       {
         task: "desk top keyboard / mouse / speaker placement",
         metric: "completion time / adjustment count",
-        target: "stable walkthrough-only placement"
+        target: "5mm / 1deg default, 1mm / 0.1deg fine-mode walkthrough placement"
       },
       {
         task: "monitor arm edge clamp install",
@@ -543,6 +868,12 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
       verifiedSuites: placementRegressionSuites.filter((suite) => suite.status === "pass").length,
       requiredSuites: placementRegressionSuites.length,
       suites: placementRegressionSuites
+    },
+    viewerParity: {
+      registeredScripts: verifyScripts,
+      verifiedSuites: viewerParitySuites.filter((suite) => suite.status === "pass").length,
+      requiredSuites: viewerParitySuites.length,
+      suites: viewerParitySuites
     },
     compatibilitySummary: {
       requiredProfiles: requiredCompatibilityProfiles.length,
@@ -587,8 +918,10 @@ export function loadCommercialQaSnapshot(): CommercialQaSnapshot {
         "assetId must exist for every persisted node",
         "scene node scale vectors must stay finite and positive",
         "surface-local placements require supportObjectId + surfaceId",
-        "support asset references must resolve to an existing scene node",
-        "supportAssetId and placement.supportObjectId must not drift apart"
+      "support asset references must resolve to an existing scene node",
+        "supportAssetId and placement.supportObjectId must not drift apart",
+        "runtime assets require mm dimensions, scale lock, colliders, provenance, and SKU/manufacturer metadata",
+        "commercial hero SKU assets require referencePack, material QA, and releaseEligible=true before paid beta"
       ]
     }
   };

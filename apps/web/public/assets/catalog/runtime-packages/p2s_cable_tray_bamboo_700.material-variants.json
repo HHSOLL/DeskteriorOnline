@@ -4,6 +4,14 @@
     "label": "P2S 밤부 케이블 트레이 700",
     "finishColor": "Black",
     "finishMaterial": "Steel or reinforced felt",
-    "detailNotes": "Mounted cable tray with inferred underside_screw metadata."
+    "detailNotes": "Mounted cable tray with inferred underside_screw metadata.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

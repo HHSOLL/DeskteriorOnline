@@ -4,6 +4,14 @@
     "label": "P2S 오크 리턴 데스크",
     "finishColor": "Natural oak",
     "finishMaterial": "Oak veneer with black metal support",
-    "detailNotes": "Large surface variant for multiple monitors, speaker pair, desk mat, and decor composition."
+    "detailNotes": "Large surface variant for multiple monitors, speaker pair, desk mat, and decor composition.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "wood",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

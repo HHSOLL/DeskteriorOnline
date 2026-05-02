@@ -4,6 +4,14 @@
     "label": "P2S 모니터 라이트바",
     "finishColor": "Black",
     "finishMaterial": "Anodized aluminum with diffuser",
-    "detailNotes": "Light bar catalog item for desk ambience testing."
+    "detailNotes": "Light bar catalog item for desk ambience testing.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "mixed",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

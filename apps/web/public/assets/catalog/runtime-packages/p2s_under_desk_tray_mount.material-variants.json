@@ -4,6 +4,14 @@
     "label": "P2S 언더데스크 케이블 트레이",
     "finishColor": "Powder coated black",
     "finishMaterial": "Steel basket with screw rails",
-    "detailNotes": "Under-desk cable tray with authored underside_screw attachment point compatible with desk_underside support surfaces."
+    "detailNotes": "Under-desk cable tray with authored underside_screw attachment point compatible with desk_underside support surfaces.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]
