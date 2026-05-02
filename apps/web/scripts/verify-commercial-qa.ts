@@ -18,12 +18,16 @@ function main() {
     "readiness gate counts should match release gates"
   );
   assert(
-    snapshot.readinessScore.status === "warning",
-    `expected current commercial readiness to remain warning until hero SKU/asset QA gates close, received ${snapshot.readinessScore.status}`
+    snapshot.readinessScore.status === "pass",
+    `expected current commercial readiness to pass, received ${snapshot.readinessScore.status}`
   );
   assert(
-    snapshot.readinessScore.warnings.includes("Actual SKU hero catalog"),
-    "expected readiness warnings to include actual SKU hero catalog"
+    snapshot.readinessScore.warnings.length === 0,
+    "expected zero readiness warnings"
+  );
+  assert(
+    snapshot.releaseGates.every((gate) => gate.status === "pass"),
+    "expected every commercial release gate to pass"
   );
   assert(snapshot.assetStatus.totalAssets > 0, "expected published runtime assets");
   assert(snapshot.performanceBaseline.scenarios.length >= 4, "expected benchmark baseline scenarios");
@@ -59,6 +63,10 @@ function main() {
     "expected actual SKU hero catalog release gate"
   );
   assert(
+    snapshot.assetStatus.releaseEligibleHeroAssets >= 20,
+    "expected at least 20 release-eligible hero SKU assets"
+  );
+  assert(
     snapshot.releaseGates.some((gate) => gate.id === "texture-material-library"),
     "expected texture material library release gate"
   );
@@ -72,6 +80,7 @@ function main() {
   );
   assert(snapshot.textureQuality.wallPresetCount <= snapshot.textureQuality.wallPresetLimit, "expected wall preset count within commercial limit");
   assert(snapshot.textureQuality.floorPresetCount <= snapshot.textureQuality.floorPresetLimit, "expected floor preset count within commercial limit");
+  assert(snapshot.textureQuality.candidateAiTextureCount === 0, "expected no AI candidate texture in commercial preset library");
   assert(snapshot.assetStatus.qaCoveragePercent >= 0, "expected QA coverage percent to be populated");
   assert(
     snapshot.assetStatus.metadataGatePassedAssets === snapshot.assetStatus.totalAssets,

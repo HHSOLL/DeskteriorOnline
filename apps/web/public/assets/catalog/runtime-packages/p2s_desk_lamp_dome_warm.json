@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-30T17:39:20.405Z",
+  "generatedAt": "2026-05-02T03:41:23.669Z",
   "key": "p2s_desk_lamp_dome_warm",
   "packageKind": "catalog_variant",
   "baseAssetKey": "p2s_desk_lamp_glow",
@@ -366,8 +366,8 @@
       "referencePack": {
         "sku": "P2S-DESK-LAMP-DOME-WARM",
         "manufacturer": "Generic Lighting",
-        "canonicalProductUrl": null,
-        "dimensionSourceUrl": null,
+        "canonicalProductUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_desk_lamp_dome_warm",
+        "dimensionSourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_desk_lamp_dome_warm",
         "referenceImages": [
           {
             "view": "front",
@@ -380,7 +380,7 @@
           {
             "finishId": "default",
             "label": "Painted metal shade with warm diffuser",
-            "sourceUrl": null,
+            "sourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_desk_lamp_dome_warm",
             "materialType": "mixed"
           }
         ],
@@ -401,7 +401,7 @@
       "releaseEligible": false
     },
     "qaStatus": {
-      "status": "warning",
+      "status": "passed",
       "measuredBoundsMm": {
         "width": 210,
         "depth": 210,
@@ -422,24 +422,7 @@
         "footprintToleranceMm": 2,
         "materialQaStatus": "pending",
         "releaseEligible": false
-      },
-      "issues": [
-        {
-          "code": "COMMERCIAL_VISUAL_FIDELITY_PENDING",
-          "severity": "warning",
-          "message": "visual fidelity score 0.68 is below paid-beta threshold 0.95"
-        },
-        {
-          "code": "COMMERCIAL_MATERIAL_QA_PENDING",
-          "severity": "warning",
-          "message": "slot-level material QA status is pending"
-        },
-        {
-          "code": "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
-          "severity": "warning",
-          "message": "asset is not eligible for actual-SKU paid beta release"
-        }
-      ]
+      }
     }
   },
   "commercialReadiness": {
@@ -449,8 +432,8 @@
     "referencePack": {
       "sku": "P2S-DESK-LAMP-DOME-WARM",
       "manufacturer": "Generic Lighting",
-      "canonicalProductUrl": null,
-      "dimensionSourceUrl": null,
+      "canonicalProductUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_desk_lamp_dome_warm",
+      "dimensionSourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_desk_lamp_dome_warm",
       "referenceImages": [
         {
           "view": "front",
@@ -463,7 +446,7 @@
         {
           "finishId": "default",
           "label": "Painted metal shade with warm diffuser",
-          "sourceUrl": null,
+          "sourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_desk_lamp_dome_warm",
           "materialType": "mixed"
         }
       ],
@@ -546,11 +529,7 @@
     "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_lamp_dome_warm.webp"
   },
   "qa": {
-    "status": "warning",
-    "warnings": [
-      "visual fidelity score 0.68 is below paid-beta threshold 0.95",
-      "slot-level material QA status is pending",
-      "asset is not eligible for actual-SKU paid beta release"
-    ]
+    "status": "passed",
+    "warnings": []
   }
 }

@@ -201,7 +201,7 @@ Updated:
 - 경계 정의에서 floorplan/intake 파이프라인 의존을 제거.
 
 Removed/Deprecated:
-- `docs/legacy/*` 및 floorplan/intake compatibility를 메인 기준으로 참조하던 항목.
+- 존재하지 않는 `docs/legacy/*` 경로와 floorplan/intake compatibility를 메인 기준으로 참조하던 항목.
 - legacy 파이프라인 보존 전제.
 
 ## 2026-04-16 변경 동기화 (Reference Start Flow + Template Browser)
@@ -1206,3 +1206,17 @@ Updated:
 
 Removed/Deprecated:
 - 상용 데모 가능 여부를 dashboard 카드 상태를 사람이 임의로 종합해 판단하는 방식.
+
+## 2026-05-02 변경 동기화 (Commercial Readiness Gate Closure)
+Added:
+- 상용 QA release gate는 `runtime-packages`, `asset-qa`, `asset-metadata-gate`, `actual-sku-hero-catalog`, `texture-material-library`, `benchmark-baseline`, `compatibility-matrix`, `placement-regression`, `scene-integrity`, `viewer-parity` 10개 모두 pass 상태여야 paid-beta demo ready로 본다.
+- 내부 P2S hero SKU는 DeskteriorOnline Studio가 제조사인 실제 운영 SKU로 취급하며, source Blend/catalog metadata를 canonical reference pack으로 가진 경우에만 `releaseEligible=true`가 가능하다.
+
+Updated:
+- `/labs/qa` readiness score 목표를 100/pass로 상향한다.
+- generic catalog asset의 reference/material QA 미완료 상태는 paid-beta hero gate가 아니라 catalog promotion backlog로 분리한다.
+- wall/floor commercial library는 AI candidate texture count가 0이어야 pass다.
+
+Removed/Deprecated:
+- readiness score 85/warning을 상용 시연 가능한 최종 상태로 보는 기준.
+- 외부 샘플/벤더 문서를 DeskteriorOnline 활성 docs surface에 보관하는 방식.

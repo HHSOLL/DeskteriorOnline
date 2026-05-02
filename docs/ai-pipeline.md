@@ -47,3 +47,13 @@ Updated:
 
 Removed/Deprecated:
 - AI 생성 이미지/텍스처가 실제 제품 동일성의 증거가 될 수 있다는 가정.
+
+## 2026-05-02 변경 동기화 (Commercial Texture Boundary Closure)
+Added:
+- `verify:commercial-qa`는 commercial wall/floor preset에 AI candidate texture가 0개인지 확인한다.
+
+Updated:
+- AI 생성 wall/floor texture는 내부 탐색 후보로만 남고, 기본 commercial preset에는 연결하지 않는다.
+
+Removed/Deprecated:
+- AI 1K texture 후보를 paid-beta commercial PBR library에 포함하는 방식.

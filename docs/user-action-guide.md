@@ -1132,3 +1132,14 @@ Updated:
 
 Removed/Deprecated:
 - release dashboard에 숫자형 readiness 판단이 없어도 충분하다는 절차.
+
+## 2026-05-02 변경 동기화 (Commercial Readiness Pass)
+Added:
+- `verify:commercial-qa`는 readiness score `100/pass`, warning gate 0개, release-eligible hero SKU 20개 이상, AI candidate texture 0개를 배포 전 기준으로 확인한다.
+
+Updated:
+- `/labs/qa`에서 warning이 남아 있는 상태는 paid-beta demo ready가 아니라 backlog 상태로 본다.
+- 상용 texture 확인은 preset 수만 보지 않고 2K PBR source/KTX2/fallback metadata와 AI candidate exclusion까지 확인한다.
+
+Removed/Deprecated:
+- `verify:commercial-qa`가 hero SKU/asset QA warning을 의도된 현 상태로 허용하던 기준.

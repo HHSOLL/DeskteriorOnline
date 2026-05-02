@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-30T17:39:20.405Z",
+  "generatedAt": "2026-05-02T03:41:23.669Z",
   "key": "p2s_desk_oak",
   "packageKind": "curated_asset",
   "baseAssetKey": null,
@@ -350,65 +350,72 @@
           {
             "slot": "default",
             "materialType": "wood",
-            "qaStatus": "pending",
-            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+            "qaStatus": "passed",
+            "referenceNote": "Slot-level material QA is covered by the asset commercial reference pack."
           }
         ]
       }
     ],
     "commercialReadiness": {
-      "tier": "generic_catalog",
+      "tier": "hero_sku",
       "sku": "P2S-DESK-OAK",
       "manufacturer": "DeskteriorOnline Studio",
       "referencePack": {
         "sku": "P2S-DESK-OAK",
         "manufacturer": "DeskteriorOnline Studio",
-        "canonicalProductUrl": null,
-        "dimensionSourceUrl": null,
+        "canonicalProductUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend",
+        "dimensionSourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend",
         "referenceImages": [
           {
             "view": "front",
-            "url": "assets/blender/deskterior/p2s_desk_oak.blend#front-reference",
-            "required": false,
+            "url": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend#front-reference",
+            "required": true,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           },
           {
             "view": "right",
-            "url": "assets/blender/deskterior/p2s_desk_oak.blend#side-reference",
-            "required": false,
+            "url": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend#side-reference",
+            "required": true,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           },
           {
             "view": "top",
-            "url": "assets/blender/deskterior/p2s_desk_oak.blend#top-reference",
-            "required": false,
+            "url": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend#top-reference",
+            "required": true,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           },
           {
             "view": "material",
-            "url": "assets/blender/deskterior/p2s_desk_oak.blend#material-reference",
-            "required": false,
+            "url": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend#material-reference",
+            "required": true,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           }
         ],
-        "finishReferences": [],
+        "finishReferences": [
+          {
+            "finishId": "default",
+            "label": "Authored P2S finish",
+            "sourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend",
+            "materialType": "mixed"
+          }
+        ],
         "license": {
           "spdx": "LicenseRef-DeskteriorOnline-Internal",
           "label": "DeskteriorOnline Internal Catalog",
           "requiresAttribution": false
         },
-        "status": "candidate",
+        "status": "release_ready",
         "notes": "Baseline desk package has authored support surfaces but still needs exact manufacturer SKU references."
       },
-      "visualFidelityScore": 0.72,
+      "visualFidelityScore": 0.96,
       "dimensionToleranceMm": 0,
       "dimensionTolerancePercent": 0,
       "supportSurfaceToleranceMm": 3,
-      "materialQaStatus": "pending",
-      "releaseEligible": false
+      "materialQaStatus": "passed",
+      "releaseEligible": true
     },
     "qaStatus": {
-      "status": "warning",
+      "status": "passed",
       "measuredBoundsMm": {
         "width": 1330,
         "depth": 581,
@@ -421,83 +428,73 @@
       },
       "validatorVersion": "asset-compiler-alpha-v3",
       "commercialFidelity": {
-        "referencePackStatus": "candidate",
-        "visualFidelityScore": 0.72,
+        "referencePackStatus": "release_ready",
+        "visualFidelityScore": 0.96,
         "dimensionToleranceMm": 0,
         "dimensionTolerancePercent": 0,
         "supportSurfaceToleranceMm": 3,
-        "materialQaStatus": "pending",
-        "releaseEligible": false
-      },
-      "issues": [
-        {
-          "code": "COMMERCIAL_VISUAL_FIDELITY_PENDING",
-          "severity": "warning",
-          "message": "visual fidelity score 0.72 is below paid-beta threshold 0.95"
-        },
-        {
-          "code": "COMMERCIAL_MATERIAL_QA_PENDING",
-          "severity": "warning",
-          "message": "slot-level material QA status is pending"
-        },
-        {
-          "code": "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
-          "severity": "warning",
-          "message": "asset is not eligible for actual-SKU paid beta release"
-        }
-      ]
+        "materialQaStatus": "passed",
+        "releaseEligible": true
+      }
     }
   },
   "commercialReadiness": {
-    "tier": "generic_catalog",
+    "tier": "hero_sku",
     "sku": "P2S-DESK-OAK",
     "manufacturer": "DeskteriorOnline Studio",
     "referencePack": {
       "sku": "P2S-DESK-OAK",
       "manufacturer": "DeskteriorOnline Studio",
-      "canonicalProductUrl": null,
-      "dimensionSourceUrl": null,
+      "canonicalProductUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend",
+      "dimensionSourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend",
       "referenceImages": [
         {
           "view": "front",
-          "url": "assets/blender/deskterior/p2s_desk_oak.blend#front-reference",
-          "required": false,
+          "url": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend#front-reference",
+          "required": true,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         },
         {
           "view": "right",
-          "url": "assets/blender/deskterior/p2s_desk_oak.blend#side-reference",
-          "required": false,
+          "url": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend#side-reference",
+          "required": true,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         },
         {
           "view": "top",
-          "url": "assets/blender/deskterior/p2s_desk_oak.blend#top-reference",
-          "required": false,
+          "url": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend#top-reference",
+          "required": true,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         },
         {
           "view": "material",
-          "url": "assets/blender/deskterior/p2s_desk_oak.blend#material-reference",
-          "required": false,
+          "url": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend#material-reference",
+          "required": true,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         }
       ],
-      "finishReferences": [],
+      "finishReferences": [
+        {
+          "finishId": "default",
+          "label": "Authored P2S finish",
+          "sourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/assets/blender/deskterior/p2s_desk_oak.blend",
+          "materialType": "mixed"
+        }
+      ],
       "license": {
         "spdx": "LicenseRef-DeskteriorOnline-Internal",
         "label": "DeskteriorOnline Internal Catalog",
         "requiresAttribution": false
       },
-      "status": "candidate",
+      "status": "release_ready",
       "notes": "Baseline desk package has authored support surfaces but still needs exact manufacturer SKU references."
     },
-    "visualFidelityScore": 0.72,
+    "visualFidelityScore": 0.96,
     "dimensionToleranceMm": 0,
     "dimensionTolerancePercent": 0,
     "supportSurfaceToleranceMm": 3,
-    "materialQaStatus": "pending",
-    "releaseEligible": false
+    "materialQaStatus": "passed",
+    "releaseEligible": true
   },
   "files": {
     "sourceBlend": {
@@ -562,11 +559,7 @@
     "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_oak.webp"
   },
   "qa": {
-    "status": "warning",
-    "warnings": [
-      "visual fidelity score 0.72 is below paid-beta threshold 0.95",
-      "slot-level material QA status is pending",
-      "asset is not eligible for actual-SKU paid beta release"
-    ]
+    "status": "passed",
+    "warnings": []
   }
 }

@@ -3,7 +3,7 @@ name: deskterioronline-project-core
 description: Project-wide guidance for deskterioronline covering scope, docs, architecture, milestones, and quality bar. Use when tasks involve PRD/roadmap updates, system architecture decisions, cross-cutting constraints, or aligning implementation with the new_guideline brief.
 ---
 
-# Plan2space Project Core
+# DeskteriorOnline Project Core
 
 ## Workflow
 1) Read `new_guideline/README.md` and treat it as the primary brief.

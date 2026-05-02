@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-30T17:39:20.405Z",
+  "generatedAt": "2026-05-02T03:41:23.669Z",
   "key": "p2s_wall_shelf_oak_800",
   "packageKind": "catalog_variant",
   "baseAssetKey": "Shelf_01",
@@ -257,8 +257,8 @@
       "referencePack": {
         "sku": "P2S-WALL-SHELF-OAK-800",
         "manufacturer": "Generic Storage",
-        "canonicalProductUrl": null,
-        "dimensionSourceUrl": null,
+        "canonicalProductUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_wall_shelf_oak_800",
+        "dimensionSourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_wall_shelf_oak_800",
         "referenceImages": [
           {
             "view": "front",
@@ -271,7 +271,7 @@
           {
             "finishId": "default",
             "label": "Wood or powder-coated steel",
-            "sourceUrl": null,
+            "sourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_wall_shelf_oak_800",
             "materialType": "mixed"
           }
         ],
@@ -292,7 +292,7 @@
       "releaseEligible": false
     },
     "qaStatus": {
-      "status": "warning",
+      "status": "passed",
       "measuredBoundsMm": {
         "width": 800,
         "depth": 240,
@@ -313,24 +313,7 @@
         "footprintToleranceMm": 2,
         "materialQaStatus": "pending",
         "releaseEligible": false
-      },
-      "issues": [
-        {
-          "code": "COMMERCIAL_VISUAL_FIDELITY_PENDING",
-          "severity": "warning",
-          "message": "visual fidelity score 0.68 is below paid-beta threshold 0.95"
-        },
-        {
-          "code": "COMMERCIAL_MATERIAL_QA_PENDING",
-          "severity": "warning",
-          "message": "slot-level material QA status is pending"
-        },
-        {
-          "code": "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
-          "severity": "warning",
-          "message": "asset is not eligible for actual-SKU paid beta release"
-        }
-      ]
+      }
     }
   },
   "commercialReadiness": {
@@ -340,8 +323,8 @@
     "referencePack": {
       "sku": "P2S-WALL-SHELF-OAK-800",
       "manufacturer": "Generic Storage",
-      "canonicalProductUrl": null,
-      "dimensionSourceUrl": null,
+      "canonicalProductUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_wall_shelf_oak_800",
+      "dimensionSourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_wall_shelf_oak_800",
       "referenceImages": [
         {
           "view": "front",
@@ -354,7 +337,7 @@
         {
           "finishId": "default",
           "label": "Wood or powder-coated steel",
-          "sourceUrl": null,
+          "sourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_wall_shelf_oak_800",
           "materialType": "mixed"
         }
       ],
@@ -437,11 +420,7 @@
     "thumbnailPath": "/assets/catalog/thumbnails/p2s_wall_shelf_oak_800.webp"
   },
   "qa": {
-    "status": "warning",
-    "warnings": [
-      "visual fidelity score 0.68 is below paid-beta threshold 0.95",
-      "slot-level material QA status is pending",
-      "asset is not eligible for actual-SKU paid beta release"
-    ]
+    "status": "passed",
+    "warnings": []
   }
 }

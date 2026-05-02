@@ -3,7 +3,7 @@ name: deskterioronline-blueprint-ai
 description: Deskterior AI guidance for deskterioronline, including asset-generation contracts, prompt design, and recommendation metadata validation. Use when working on `assets/generate` flow or recommendation/ranking contracts.
 ---
 
-# Plan2space Deskterior AI
+# DeskteriorOnline Deskterior AI
 
 ## Workflow
 1) Read `docs/ai-pipeline.md` and use its schema as the contract.

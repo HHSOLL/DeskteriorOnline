@@ -632,7 +632,7 @@ Updated:
 - 품질 게이트에 api/worker 타입체크를 병행하도록 추가.
 
 Removed/Deprecated:
-- legacy 트랙 및 `docs/legacy/*` 아카이브 참조.
+- legacy 트랙 및 존재하지 않는 `docs/legacy/*` 아카이브 경로 의존.
 - floorplan eval/blind gate/intake e2e 기반 완료 조건.
 
 ## 2026-04-16 변경 동기화 (Reference Start Flow + Template Browser)
@@ -1373,3 +1373,18 @@ Updated:
 
 Removed/Deprecated:
 - release gate 카드들을 사람이 수동으로 훑어야만 현재 빌드의 상용 시연 가능성을 판단할 수 있다는 가정.
+
+## 2026-05-02 변경 동기화 (Commercial Gate Closure + Docs Cleanup)
+Added:
+- 20개 내부 P2S hero SKU를 `hero_sku + release_ready + materialQaStatus=passed + releaseEligible=true` 기준으로 paid-beta demo catalog에 등록한다.
+- `verify:commercial-qa`는 모든 release gate가 pass이고 readiness score가 100인지 확인한다.
+- `docs/specs/README.md`는 DeskteriorOnline 활성 제품 스펙만 보관하고 외부 샘플/벤더 템플릿 문서는 배제한다는 기준을 명시한다.
+
+Updated:
+- `asset-qa`, `actual-sku-hero-catalog`, `texture-material-library` warning gate를 모두 pass 상태로 닫는다.
+- generic catalog asset은 paid-beta hero SKU 미충족만으로 asset QA warning을 만들지 않고, hero SKU 승격 여부는 별도 release gate에서 판단한다.
+- wall/floor commercial texture preset은 AI 1K 후보를 제외하고 2K PBR source + KTX2 target + 1K fallback metadata 기준만 commercial library로 본다.
+
+Removed/Deprecated:
+- AI 후보 텍스처가 commercial preset library에 섞여 있어도 paid-beta readiness를 pass로 볼 수 있다는 가정.
+- 존재하지 않는 legacy docs path나 외부 샘플 프로젝트 문서를 활성 프로젝트 문서처럼 유지하는 방식.

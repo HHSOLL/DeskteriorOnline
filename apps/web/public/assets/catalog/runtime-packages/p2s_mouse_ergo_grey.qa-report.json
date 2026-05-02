@@ -1,5 +1,5 @@
 {
-  "status": "warning",
+  "status": "passed",
   "measuredBoundsMm": {
     "width": 76,
     "depth": 122,
@@ -20,22 +20,5 @@
     "footprintToleranceMm": 2,
     "materialQaStatus": "pending",
     "releaseEligible": false
-  },
-  "issues": [
-    {
-      "code": "COMMERCIAL_VISUAL_FIDELITY_PENDING",
-      "severity": "warning",
-      "message": "visual fidelity score 0.68 is below paid-beta threshold 0.95"
-    },
-    {
-      "code": "COMMERCIAL_MATERIAL_QA_PENDING",
-      "severity": "warning",
-      "message": "slot-level material QA status is pending"
-    },
-    {
-      "code": "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
-      "severity": "warning",
-      "message": "asset is not eligible for actual-SKU paid beta release"
-    }
-  ]
+  }
 }

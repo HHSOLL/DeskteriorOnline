@@ -932,3 +932,14 @@ Updated:
 
 Removed/Deprecated:
 - 공유 뷰어와 커뮤니티 카드가 시각적으로 비슷하게 보이면 같은 scene state로 간주해도 된다는 가정.
+
+## 2026-05-02 변경 동기화 (Commercial Texture Library Closure)
+Added:
+- commercial wall/floor preset library는 2K PBR source, KTX2 runtime target, preview thumbnail, real-scale repeat metadata를 가진 preset만 포함한다.
+
+Updated:
+- AI 생성 1K limewash/oak 후보는 commercial preset slot에서 제거하고, white plaster 2K와 wood floor 2K PBR preset을 기본 상용 후보로 사용한다.
+- commercial texture gate는 wall/floor preset 수 제한뿐 아니라 `candidateAiTextureCount=0`을 통과 조건으로 본다.
+
+Removed/Deprecated:
+- AI candidate texture가 기본 wall/floor preset에 직접 연결된 상태.

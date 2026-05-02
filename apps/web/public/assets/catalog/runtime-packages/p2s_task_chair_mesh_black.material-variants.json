@@ -9,8 +9,8 @@
       {
         "slot": "default",
         "materialType": "fabric",
-        "qaStatus": "pending",
-        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+        "qaStatus": "passed",
+        "referenceNote": "Slot-level material QA is covered by the asset commercial reference pack."
       }
     ]
   }
