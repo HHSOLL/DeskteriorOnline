@@ -559,15 +559,46 @@ const ATTACHMENT_LABELS: Record<string, string> = {
 
 async function selectPlacementAttachmentMode(page: Page, hud: Locator, attachmentType: string) {
   const desiredLabel = ATTACHMENT_LABELS[attachmentType] ?? attachmentType.replaceAll("_", " ");
+  const activeAttachment = hud.getByTestId("focus-placement-active-attachment");
+
   for (let attempt = 0; attempt < 6; attempt += 1) {
-    const hudText = await hud.textContent({ timeout: 5_000 }).catch(() => "");
-    if (hudText?.toLowerCase().includes(desiredLabel.toLowerCase())) {
+    const activeLabel = await activeAttachment.textContent({ timeout: 5_000 }).catch(() => "");
+    if (activeLabel?.toLowerCase().includes(desiredLabel.toLowerCase())) {
       return;
     }
-    await page.keyboard.press("Tab");
+
+    const candidate = hud
+      .getByTestId("focus-placement-candidate")
+      .filter({ hasText: desiredLabel })
+      .first();
+    if (await candidate.isVisible().catch(() => false)) {
+      await candidate.evaluate((button) => {
+        (button as HTMLButtonElement).click();
+      });
+    } else {
+      await page.keyboard.press("Tab");
+    }
     await page.waitForTimeout(350);
   }
   throw new Error(`placement mode not reachable: ${desiredLabel}`);
+}
+
+async function openWalkInventory(page: Page) {
+  const searchInput = page.getByPlaceholder("무엇을 찾으시나요?");
+  if (await searchInput.isVisible().catch(() => false)) {
+    return searchInput;
+  }
+
+  await page.keyboard.press("i");
+  await page.waitForTimeout(350);
+  if (await searchInput.isVisible().catch(() => false)) {
+    return searchInput;
+  }
+
+  const inventoryButton = page.getByRole("button", { name: /인벤토리|추가/ }).last();
+  await inventoryButton.click({ force: true });
+  await searchInput.waitFor({ state: "visible", timeout: 25_000 });
+  return searchInput;
 }
 
 async function addAndCommitWalkPlacement(
@@ -584,8 +615,8 @@ async function addAndCommitWalkPlacement(
   }
 ) {
   console.log(`[e2e] placement:start ${input.catalogItemId}`);
-  await page.keyboard.press("i");
-  await page.getByPlaceholder("무엇을 찾으시나요?").fill(input.search ?? input.label);
+  const searchInput = await openWalkInventory(page);
+  await searchInput.fill(input.search ?? input.label);
   await page.getByRole("button", { name: `${input.label} 선택` }).click();
   const hud = page.getByTestId("focus-placement-hud");
   const canvas = page.locator("canvas").first();

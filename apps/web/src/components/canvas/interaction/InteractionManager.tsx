@@ -7,6 +7,11 @@ import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
 import { useInteractionStore, type InteractionHint } from "../../../lib/stores/useInteractionStore";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
+import {
+  dispatchWalkFocusPlacementAim,
+  resolveFocusPlacementAimRequest,
+  resolveWalkFocusPlacementAimKey
+} from "../../../lib/runtime/walk-focus-aim";
 
 type InteractionManagerProps = {
   children: React.ReactNode;
@@ -30,8 +35,10 @@ export default function InteractionManager({ children }: InteractionManagerProps
   const viewMode = useEditorStore((state) => state.viewMode);
   const readOnly = useEditorStore((state) => state.readOnly);
   const hasActiveFocusPlacement = useFocusPlacementStore((state) => Boolean(state.activeSession));
+  const hasPendingFocusPlacement = useFocusPlacementStore((state) => Boolean(state.pendingRequest));
   const setHint = useInteractionStore((state) => state.setHint);
   const hoveredRef = useRef<THREE.Object3D | null>(null);
+  const lastAimKeyRef = useRef<string | null>(null);
   const targetsRef = useRef<THREE.Object3D[]>([]);
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
@@ -95,6 +102,12 @@ export default function InteractionManager({ children }: InteractionManagerProps
     }
   }, [readOnly, setHint, setHover]);
 
+  useEffect(() => {
+    if (hasActiveFocusPlacement || hasPendingFocusPlacement) {
+      lastAimKeyRef.current = null;
+    }
+  }, [hasActiveFocusPlacement, hasPendingFocusPlacement]);
+
   const register = useCallback((object: THREE.Object3D) => {
     if (!targetsRef.current.includes(object)) {
       targetsRef.current.push(object);
@@ -114,6 +127,36 @@ export default function InteractionManager({ children }: InteractionManagerProps
     return null;
   }, []);
 
+  const dispatchCrosshairAim = useCallback((target: THREE.Object3D | null, hit: THREE.Intersection | null) => {
+    if (!target || hasActiveFocusPlacement || hasPendingFocusPlacement) {
+      if (!target) {
+        lastAimKeyRef.current = null;
+      }
+      return;
+    }
+
+    const request = resolveFocusPlacementAimRequest(target);
+    if (!request) {
+      lastAimKeyRef.current = null;
+      return;
+    }
+
+    const aimKey = resolveWalkFocusPlacementAimKey(request);
+    if (lastAimKeyRef.current === aimKey) {
+      return;
+    }
+
+    lastAimKeyRef.current = aimKey;
+    const hitDistance = typeof hit?.distance === "number" ? hit.distance : INTERACTION_DISTANCE;
+    const rayHitConfidence = Math.max(0.6, Math.min(1, 1 - (hitDistance / INTERACTION_DISTANCE) * 0.4));
+    dispatchWalkFocusPlacementAim({
+      request,
+      rayHitConfidence,
+      source: "crosshair",
+      targetName: target.name || null
+    });
+  }, [hasActiveFocusPlacement, hasPendingFocusPlacement]);
+
   useFrame(() => {
     if (viewMode !== "walk" || readOnly) {
       if (hoveredRef.current) setHover(null);
@@ -127,7 +170,8 @@ export default function InteractionManager({ children }: InteractionManagerProps
     raycaster.setFromCamera(screenCenter, camera);
     raycaster.far = INTERACTION_DISTANCE;
     const hits = raycaster.intersectObjects(targetsRef.current, true);
-    const interactive = hits.length > 0 ? findInteractiveTarget(hits[0].object) : null;
+    const firstHit = hits[0] ?? null;
+    const interactive = firstHit ? findInteractiveTarget(firstHit.object) : null;
     if (hoveredRef.current !== interactive) {
       scheduleInteractionLatency("hover", startedAt, {
         viewMode,
@@ -135,6 +179,7 @@ export default function InteractionManager({ children }: InteractionManagerProps
       });
     }
     setHover(interactive);
+    dispatchCrosshairAim(interactive, firstHit);
   });
 
   useEffect(() => {
@@ -147,13 +192,13 @@ export default function InteractionManager({ children }: InteractionManagerProps
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (viewMode !== "walk" || readOnly || hasActiveFocusPlacement) return;
+      if (viewMode !== "walk" || readOnly || hasActiveFocusPlacement || hasPendingFocusPlacement) return;
       if (event.key.toLowerCase() !== "e") return;
       triggerFocusedInteraction(event);
     };
 
     const handleMouseDown = (event: MouseEvent) => {
-      if (viewMode !== "walk" || readOnly || hasActiveFocusPlacement) return;
+      if (viewMode !== "walk" || readOnly || hasActiveFocusPlacement || hasPendingFocusPlacement) return;
       if (event.button !== 0) return;
       triggerFocusedInteraction(event);
     };
@@ -164,7 +209,7 @@ export default function InteractionManager({ children }: InteractionManagerProps
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("mousedown", handleMouseDown);
     };
-  }, [hasActiveFocusPlacement, readOnly, viewMode]);
+  }, [hasActiveFocusPlacement, hasPendingFocusPlacement, readOnly, viewMode]);
 
   return (
     <InteractionRegistryContext.Provider value={{ register, unregister }}>

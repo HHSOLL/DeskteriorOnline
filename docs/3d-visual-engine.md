@@ -943,3 +943,14 @@ Updated:
 
 Removed/Deprecated:
 - AI candidate texture가 기본 wall/floor preset에 직접 연결된 상태.
+
+## 2026-05-02 변경 동기화 (Walk Aim Preview Rendering)
+Added:
+- editor walk에서 crosshair가 focus placement 가능한 support object를 조준하면 renderer는 즉시 ghost preview를 갱신해야 하며, 이 조준 단계는 scene document patch를 만들지 않는다.
+- desk precision keyboard nudge/rotate는 transform gizmo처럼 renderer preview를 먼저 갱신하고, idle batch commit 시점에만 store/document를 갱신한다.
+
+Updated:
+- demand frame loop 모드에서는 crosshair aim, ghost preview, keyboard nudge, batched commit 모두 명시적으로 `invalidate()`를 호출해야 한다.
+
+Removed/Deprecated:
+- keyboard nudge가 renderer preview 없이 저장 좌표를 먼저 바꾸고 후속 render sync에 의존하는 방식.

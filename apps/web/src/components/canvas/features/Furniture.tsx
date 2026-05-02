@@ -36,8 +36,10 @@ import {
   commitRuntimeAssetUpdateToStore,
   previewRuntimeAssetTransform
 } from "../../../lib/runtime/runtime-asset-bridge";
+import { buildFocusPlacementRequest } from "../../../lib/runtime/focus-placement-launch";
 import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
+import { useWalkInventoryStore } from "../../../lib/stores/useWalkInventoryStore";
 import {
   useAssetSelector,
   usePublishSelector,
@@ -923,6 +925,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   const requestFocusPlacement = useFocusPlacementStore((state) => state.requestFocusPlacement);
   const pendingFocusPlacementRequest = useFocusPlacementStore((state) => state.pendingRequest);
   const activeFocusPlacementSession = useFocusPlacementStore((state) => state.activeSession);
+  const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const setSelectedAssetId = useSelectionSelector((slice) => slice.setSelectedAssetId);
   const walls = useShellSelector((slice) => slice.walls);
@@ -971,6 +974,18 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   );
   const focusSurfaceCandidate =
     focusPlacementEntry.candidates[focusPlacementEntry.preferredCandidateIndex] ?? null;
+  const focusPlacementRequest = useMemo(() => {
+    if (!selectedAsset || !focusSurfaceCandidate) {
+      return null;
+    }
+
+    return buildFocusPlacementRequest({
+      selectedAsset,
+      supportAsset: asset,
+      entry: focusPlacementEntry,
+      candidate: focusSurfaceCandidate
+    });
+  }, [asset, focusPlacementEntry, focusSurfaceCandidate, selectedAsset]);
   const canRegisterFocusPlacement =
     !readOnly &&
     viewMode === "walk" &&
@@ -978,6 +993,9 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     focusPlacementEntry.candidates.length > 0;
   const canOfferFocusPlacement =
     canRegisterFocusPlacement && focusPlacementEntry.availability.enabled;
+  const canAutoAimFocusPlacement =
+    canOfferFocusPlacement &&
+    Boolean(placementDraft && selectedAsset && placementDraft.objectId === selectedAsset.id);
   const topViewPolicy = useMemo(
     () => resolveTopViewInteractionPolicy(topMode),
     [topMode]
@@ -1169,25 +1187,12 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       actionable: focusPlacementEntry.availability.enabled,
       tone: focusPlacementEntry.availability.tone
     };
+    group.userData.focusPlacementAimRequest = canAutoAimFocusPlacement
+      ? focusPlacementRequest
+      : undefined;
     group.userData.onInteract =
-      canOfferFocusPlacement && selectedAsset
-        ? () =>
-            requestFocusPlacement({
-              objectId: selectedAsset.id,
-              supportObjectId: asset.id,
-              surfaceId: focusSurfaceCandidate.surfaceId,
-              attachmentType: focusSurfaceCandidate.attachmentType,
-              objectLabel: selectedAsset.product?.name ?? selectedAsset.assetId,
-              supportLabel: asset.product?.name ?? asset.assetId,
-              surfaceLabel: focusSurfaceCandidate.surfaceLabel,
-              surfaceType: focusSurfaceCandidate.surfaceType,
-              surfaceBoundsMm: focusSurfaceCandidate.surfaceBoundsMm,
-              noPlaceZones: focusSurfaceCandidate.noPlaceZones,
-              preferredZones: focusSurfaceCandidate.preferredZones,
-              objectDimensionsMm: selectedAsset.product?.dimensionsMm ?? null,
-              surfaceCandidates: focusPlacementEntry.candidates,
-              preferredCandidateIndex: focusPlacementEntry.preferredCandidateIndex
-            })
+      canOfferFocusPlacement && focusPlacementRequest
+        ? () => requestFocusPlacement(focusPlacementRequest)
         : undefined;
     if (highlightMesh) {
       group.userData.highlightMesh = highlightMesh;
@@ -1200,6 +1205,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       delete group.userData.interactionLabel;
       delete group.userData.interactionHint;
       delete group.userData.onInteract;
+      delete group.userData.focusPlacementAimRequest;
       delete group.userData.highlightMesh;
     };
   }, [
@@ -1208,11 +1214,13 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     asset.product?.name,
     canRegisterFocusPlacement,
     canOfferFocusPlacement,
+    canAutoAimFocusPlacement,
     focusPlacementEntry.availability.enabled,
     focusPlacementEntry.availability.hint,
     focusPlacementEntry.availability.tone,
     focusPlacementEntry.candidates,
     focusPlacementEntry.preferredCandidateIndex,
+    focusPlacementRequest,
     focusSurfaceCandidate,
     interactionRegistry,
     requestFocusPlacement,

@@ -1388,3 +1388,18 @@ Updated:
 Removed/Deprecated:
 - AI 후보 텍스처가 commercial preset library에 섞여 있어도 paid-beta readiness를 pass로 볼 수 있다는 가정.
 - 존재하지 않는 legacy docs path나 외부 샘플 프로젝트 문서를 활성 프로젝트 문서처럼 유지하는 방식.
+
+## 2026-05-02 변경 동기화 (Walk Aim + Desk Preview Closure)
+Added:
+- PR 11 완료: `InteractionManager` crosshair raycast가 focus placement 가능한 support object를 조준하면 `deskterioronline:focus-placement:aim`을 발행하고 `FocusPlacementController`가 이를 `AIM_AT_SURFACE` + pending request로 연결한다.
+- PR 11 완료: `walk-focus-aim` helper를 추가해 focus placement request -> interaction candidate 변환과 crosshair aim de-dup key를 공유한다.
+- PR 11 완료: `desk-precision-hotkeys` helper와 batched preview commit을 추가해 keyboard nudge/rotate가 preview-only 상태를 거친 뒤 idle batch로 한 번만 commit한다.
+
+Updated:
+- `verify:walk-placement-ux`는 선택 제품 + crosshair target + candidate ranking + preview command + valid commit patch intent를 확인한다.
+- `verify:desk-precision`은 5mm/1deg 정책뿐 아니라 keyboard hotkey가 `preview-batched` commit mode인지 확인한다.
+- Focus placement의 목록 launcher는 보조 fallback이고, walk mode의 핵심 흐름은 crosshair aim driven preview로 격상한다.
+
+Removed/Deprecated:
+- `AIM_AT_SURFACE`가 타입/테스트에만 있고 앱 adapter에 연결되지 않은 상태.
+- desk precision keyboard path가 `commitRuntimeAssetUpdateToStore`와 `recordSnapshot`을 keydown마다 직접 호출하는 상태.

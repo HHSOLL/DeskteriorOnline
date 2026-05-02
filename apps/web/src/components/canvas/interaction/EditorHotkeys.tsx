@@ -1,33 +1,41 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useThree } from "@react-three/fiber";
+import {
+  DESK_PRECISION_HOTKEY_COMMIT_DELAY_MS,
+  resolveDeskPrecisionHotkeyPreview
+} from "../../../lib/editor/desk-precision-hotkeys";
 import { resolveTopViewInteractionPolicy } from "../../../lib/editor/top-view-policy";
-import { commitRuntimeAssetUpdateToStore } from "../../../lib/runtime/runtime-asset-bridge";
+import {
+  cancelRuntimeAssetPreview,
+  commitRuntimeAssetUpdateToStore,
+  previewRuntimeAssetTransform
+} from "../../../lib/runtime/runtime-asset-bridge";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
   useAssetSelector,
   usePublishSelector,
   useSelectionSelector
 } from "../../../lib/stores/scene-slices";
+import type { SceneAsset } from "../../../lib/stores/useSceneStore";
 
-function resolvePrecisionMoveStep(event: KeyboardEvent, defaultStep: number) {
-  if (event.altKey) return 0.001;
-  if (event.shiftKey) return 0.01;
-  return defaultStep;
-}
-
-function resolvePrecisionRotateStep(event: KeyboardEvent, defaultStep: number) {
-  if (event.altKey) return Math.PI / 1800;
-  if (event.shiftKey) return Math.PI / 12;
-  return defaultStep;
-}
+type PrecisionPreviewDraft = {
+  objectId: string;
+  position: SceneAsset["position"];
+  rotation: SceneAsset["rotation"];
+  label: "Nudge asset" | "Rotate asset";
+  timer: ReturnType<typeof setTimeout> | null;
+};
 
 export default function EditorHotkeys() {
+  const invalidate = useThree((state) => state.invalidate);
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
   const setTransformMode = useEditorStore((state) => state.setTransformMode);
   const transformSpace = useEditorStore((state) => state.transformSpace);
   const setTransformSpace = useEditorStore((state) => state.setTransformSpace);
+  const setIsTransforming = useEditorStore((state) => state.setIsTransforming);
   const readOnly = useEditorStore((state) => state.readOnly);
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const assets = useAssetSelector((slice) => slice.assets);
@@ -35,8 +43,77 @@ export default function EditorHotkeys() {
   const undo = usePublishSelector((slice) => slice.undo);
   const redo = usePublishSelector((slice) => slice.redo);
   const topViewPolicy = resolveTopViewInteractionPolicy(topMode);
+  const precisionPreviewRef = useRef<PrecisionPreviewDraft | null>(null);
 
   useEffect(() => {
+    return () => {
+      const draft = precisionPreviewRef.current;
+      if (draft?.timer) {
+        clearTimeout(draft.timer);
+      }
+      if (draft) {
+        cancelRuntimeAssetPreview(draft.objectId);
+      }
+      precisionPreviewRef.current = null;
+      setIsTransforming(false);
+    };
+  }, [setIsTransforming]);
+
+  useEffect(() => {
+    const commitPrecisionPreview = () => {
+      const draft = precisionPreviewRef.current;
+      if (!draft) return;
+
+      if (draft.timer) {
+        clearTimeout(draft.timer);
+      }
+      precisionPreviewRef.current = null;
+      commitRuntimeAssetUpdateToStore({
+        objectId: draft.objectId,
+        updates: {
+          position: draft.position,
+          rotation: draft.rotation
+        }
+      });
+      recordSnapshot(draft.label);
+      setIsTransforming(false);
+      invalidate();
+    };
+
+    const schedulePrecisionPreviewCommit = (
+      objectId: string,
+      updates: {
+        position?: SceneAsset["position"];
+        rotation?: SceneAsset["rotation"];
+      },
+      label: PrecisionPreviewDraft["label"],
+      asset: SceneAsset
+    ) => {
+      const previousDraft =
+        precisionPreviewRef.current?.objectId === objectId ? precisionPreviewRef.current : null;
+      if (previousDraft?.timer) {
+        clearTimeout(previousDraft.timer);
+      }
+
+      const position = updates.position ?? previousDraft?.position ?? asset.position;
+      const rotation = updates.rotation ?? previousDraft?.rotation ?? asset.rotation;
+      previewRuntimeAssetTransform(objectId, {
+        position,
+        rotation,
+        scale: asset.scale
+      });
+      setIsTransforming(true);
+      invalidate();
+
+      precisionPreviewRef.current = {
+        objectId,
+        position,
+        rotation,
+        label,
+        timer: setTimeout(commitPrecisionPreview, DESK_PRECISION_HOTKEY_COMMIT_DELAY_MS)
+      };
+    };
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (readOnly) return;
 
@@ -90,51 +167,46 @@ export default function EditorHotkeys() {
       };
 
       if (topMode === "desk-precision" && selectedAssetId && asset) {
-        const moveStep = resolvePrecisionMoveStep(event, topViewPolicy.translationSnap);
-        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+        const previousDraft =
+          precisionPreviewRef.current?.objectId === selectedAssetId
+            ? precisionPreviewRef.current
+            : null;
+        const preview = resolveDeskPrecisionHotkeyPreview({
+          event,
+          asset: {
+            position: previousDraft?.position ?? asset.position,
+            rotation: previousDraft?.rotation ?? asset.rotation
+          },
+          policy: topViewPolicy
+        });
+        if (preview) {
           event.preventDefault();
-          const direction = event.key === "ArrowLeft" ? -1 : 1;
-          commitSelectedAssetUpdate(
-            {
-              position: [
-                asset.position[0] + direction * moveStep,
-                asset.position[1],
-                asset.position[2]
-              ]
-            },
-            "Nudge asset"
+          schedulePrecisionPreviewCommit(
+            selectedAssetId,
+            preview.updates,
+            preview.label,
+            asset
           );
+          if (preview.transformMode) {
+            setTransformMode(preview.transformMode);
+          }
           return;
         }
-        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+        if (key === "enter") {
           event.preventDefault();
-          const direction = event.key === "ArrowUp" ? -1 : 1;
-          commitSelectedAssetUpdate(
-            {
-              position: [
-                asset.position[0],
-                asset.position[1],
-                asset.position[2] + direction * moveStep
-              ]
-            },
-            "Nudge asset"
-          );
+          commitPrecisionPreview();
           return;
         }
-        if (key === "q" || key === "e") {
+        if (key === "escape" && precisionPreviewRef.current) {
           event.preventDefault();
-          const direction = key === "q" ? -1 : 1;
-          commitSelectedAssetUpdate(
-            {
-              rotation: [
-                asset.rotation[0],
-                asset.rotation[1] + direction * resolvePrecisionRotateStep(event, topViewPolicy.rotateStep),
-                asset.rotation[2]
-              ]
-            },
-            "Rotate asset"
-          );
-          setTransformMode("rotate");
+          const draft = precisionPreviewRef.current;
+          if (draft.timer) {
+            clearTimeout(draft.timer);
+          }
+          cancelRuntimeAssetPreview(draft.objectId);
+          precisionPreviewRef.current = null;
+          setIsTransforming(false);
+          invalidate();
           return;
         }
       }
@@ -166,9 +238,11 @@ export default function EditorHotkeys() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
     assets,
+    invalidate,
     readOnly,
     recordSnapshot,
     selectedAssetId,
+    setIsTransforming,
     setTransformMode,
     setTransformSpace,
     transformSpace,

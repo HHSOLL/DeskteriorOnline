@@ -1143,3 +1143,18 @@ Updated:
 
 Removed/Deprecated:
 - `verify:commercial-qa`가 hero SKU/asset QA warning을 의도된 현 상태로 허용하던 기준.
+
+## 2026-05-02 변경 동기화 (Walk Aim + Desk Preview QA)
+Added:
+- 워크뷰 QA는 제품 선택 후 support object를 crosshair로 바라보면 후보 목록 버튼을 누르지 않아도 ghost preview가 뜨는지 확인한다.
+- 워크뷰 배치 중 `Tab` 후보 전환, `Arrow`/`Q`/`E` 보정, click/`Enter` commit, `Escape` cancel이 같은 active focus placement session에서 동작하는지 확인한다.
+- `npm --workspace apps/web run verify:walk-placement-ux`는 crosshair aim event, candidate ranking, ghost preview command, valid commit patch intent를 함께 검증한다.
+- `npm --workspace apps/web run verify:desk-precision`은 keyboard nudge/rotate가 preview-batched 계약인지 확인한다.
+
+Updated:
+- `FocusPlacementLauncher` 버튼 목록은 사용자가 명시적으로 후보를 고르고 싶을 때 쓰는 fallback으로 취급한다.
+- desk precision QA는 방향키/QE 입력 직후 즉시 저장 snapshot이 쌓이는지보다 preview가 먼저 움직이고 idle 후 한 번만 commit되는지를 본다.
+
+Removed/Deprecated:
+- walk placement QA를 pointer lock 상태와 launcher 버튼 클릭만으로 완료 처리하는 절차.
+- desk precision keyboard 조작을 keydown마다 개별 commit/snapshot으로 검증하는 절차.

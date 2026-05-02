@@ -176,7 +176,10 @@ export default function FocusPlacementHud() {
       </div>
 
       <div className="mb-3 flex flex-wrap gap-2 text-[10px] uppercase tracking-[0.22em]">
-        <span className="rounded-full border border-white/12 bg-white/7 px-2.5 py-1 text-white/70">
+        <span
+          className="rounded-full border border-white/12 bg-white/7 px-2.5 py-1 text-white/70"
+          data-testid="focus-placement-active-attachment"
+        >
           {attachmentLabel}
         </span>
         {candidateCount > 1 ? (
@@ -307,6 +310,8 @@ export default function FocusPlacementHud() {
                   key={`${candidate.surfaceId}-${candidate.attachmentType}-${index}`}
                   type="button"
                   onClick={() => dispatchCandidateSelect(index)}
+                  data-attachment-type={candidate.attachmentType}
+                  data-testid="focus-placement-candidate"
                   className={`rounded-xl border px-3 py-2 text-left transition hover:bg-white/12 ${resolveCandidateClassName(
                     candidate.tone,
                     isActive
