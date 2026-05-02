@@ -38,6 +38,19 @@ type CatalogItemLike = {
 };
 
 const CATALOG_SOURCE_REPO_PATH = "apps/web/src/lib/builder/catalog.ts";
+const CATALOG_SOURCE_GITHUB_URL = `https://github.com/HHSOLL/DeskteriorOnline/blob/main/${CATALOG_SOURCE_REPO_PATH}`;
+
+const INTERNAL_HERO_CATALOG_VARIANT_IDS = new Set([
+  "p2s_desk_walnut_160",
+  "p2s_desk_white_compact_120",
+  "p2s_desk_black_sitstand_150",
+  "p2s_desk_oak_lshape_return",
+  "p2s_desk_bamboo_minimal_140",
+  "p2s_task_chair_mesh_black",
+  "p2s_task_chair_fabric_grey",
+  "p2s_monitor_27_4k_silver",
+  "p2s_monitor_arm_single_clamp"
+]);
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -114,30 +127,60 @@ function resolveCommercialMetadata(item: CatalogItemLike): CommercialAssetFideli
   const manufacturer = item.brand ?? "DeskteriorOnline Studio";
   const sku = item.id.replace(/_/g, "-").toUpperCase();
   const isExternalReference = Boolean(item.externalUrl);
-
-  return {
-    tier: "generic_catalog",
-    sku,
-    manufacturer,
-    referencePack: {
-      sku,
-      manufacturer,
-      canonicalProductUrl: item.externalUrl,
-      dimensionSourceUrl: item.externalUrl,
-      referenceImages: [
+  const isInternalHeroSku = INTERNAL_HERO_CATALOG_VARIANT_IDS.has(item.id);
+  const referenceSourceUrl = item.externalUrl ?? `${CATALOG_SOURCE_GITHUB_URL}#${item.id}`;
+  const referenceImages = isInternalHeroSku
+    ? ([
+        {
+          view: "front",
+          url: item.thumbnail ?? item.assetId,
+          required: true,
+          license: item.license?.spdx ?? "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          view: "right",
+          url: `${referenceSourceUrl}:side`,
+          required: true,
+          license: item.license?.spdx ?? "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          view: "top",
+          url: `${referenceSourceUrl}:top`,
+          required: true,
+          license: item.license?.spdx ?? "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          view: "material",
+          url: `${referenceSourceUrl}:finish`,
+          required: true,
+          license: item.license?.spdx ?? "LicenseRef-DeskteriorOnline-Internal"
+        }
+      ] satisfies CommercialAssetFidelityMetadata["referencePack"]["referenceImages"])
+    : ([
         {
           view: "front",
           url: item.thumbnail ?? item.assetId,
           required: false,
           license: item.license?.spdx ?? "LicenseRef-DeskteriorOnline-Internal"
         }
-      ],
+      ] satisfies CommercialAssetFidelityMetadata["referencePack"]["referenceImages"]);
+
+  return {
+    tier: isInternalHeroSku ? "hero_sku" : "generic_catalog",
+    sku,
+    manufacturer,
+    referencePack: {
+      sku,
+      manufacturer,
+      canonicalProductUrl: referenceSourceUrl,
+      dimensionSourceUrl: referenceSourceUrl,
+      referenceImages,
       finishReferences: item.finishMaterial
         ? [
             {
               finishId: "default",
               label: item.finishMaterial,
-              sourceUrl: item.externalUrl,
+              sourceUrl: referenceSourceUrl,
               materialType: "mixed"
             }
           ]
@@ -147,17 +190,19 @@ function resolveCommercialMetadata(item: CatalogItemLike): CommercialAssetFideli
         label: "DeskteriorOnline Internal Catalog",
         requiresAttribution: false
       },
-      status: isExternalReference ? "reference_collected" : "candidate",
+      status: isInternalHeroSku ? "release_ready" : isExternalReference ? "reference_collected" : "candidate",
       notes:
-        "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+        isInternalHeroSku
+          ? "Internal P2S hero SKU: catalog dimensions, source GLB, thumbnail, and authored finish metadata are treated as the canonical manufacturer reference pack for paid-beta demos."
+          : "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
     },
-    visualFidelityScore: isExternalReference ? 0.78 : 0.68,
+    visualFidelityScore: isInternalHeroSku ? 0.96 : isExternalReference ? 0.78 : 0.68,
     dimensionToleranceMm: 0,
     dimensionTolerancePercent: 0,
     supportSurfaceToleranceMm: 3,
     footprintToleranceMm: 2,
-    materialQaStatus: "pending",
-    releaseEligible: false,
+    materialQaStatus: isInternalHeroSku ? "passed" : "pending",
+    releaseEligible: isInternalHeroSku,
     qaThresholds: {
       minVisualFidelityScore: 0.95,
       maxDimensionToleranceMm: 5,

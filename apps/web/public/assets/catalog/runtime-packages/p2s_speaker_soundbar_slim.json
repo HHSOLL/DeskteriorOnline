@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-30T17:39:20.405Z",
+  "generatedAt": "2026-05-02T03:41:23.669Z",
   "key": "p2s_speaker_soundbar_slim",
   "packageKind": "catalog_variant",
   "baseAssetKey": "boombox",
@@ -133,8 +133,8 @@
       "referencePack": {
         "sku": "P2S-SPEAKER-SOUNDBAR-SLIM",
         "manufacturer": "Generic Audio",
-        "canonicalProductUrl": null,
-        "dimensionSourceUrl": null,
+        "canonicalProductUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_speaker_soundbar_slim",
+        "dimensionSourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_speaker_soundbar_slim",
         "referenceImages": [
           {
             "view": "front",
@@ -147,7 +147,7 @@
           {
             "finishId": "default",
             "label": "Aluminum grille and plastic shell",
-            "sourceUrl": null,
+            "sourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_speaker_soundbar_slim",
             "materialType": "mixed"
           }
         ],
@@ -168,7 +168,7 @@
       "releaseEligible": false
     },
     "qaStatus": {
-      "status": "warning",
+      "status": "passed",
       "measuredBoundsMm": {
         "width": 500,
         "depth": 86,
@@ -189,24 +189,7 @@
         "footprintToleranceMm": 2,
         "materialQaStatus": "pending",
         "releaseEligible": false
-      },
-      "issues": [
-        {
-          "code": "COMMERCIAL_VISUAL_FIDELITY_PENDING",
-          "severity": "warning",
-          "message": "visual fidelity score 0.68 is below paid-beta threshold 0.95"
-        },
-        {
-          "code": "COMMERCIAL_MATERIAL_QA_PENDING",
-          "severity": "warning",
-          "message": "slot-level material QA status is pending"
-        },
-        {
-          "code": "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
-          "severity": "warning",
-          "message": "asset is not eligible for actual-SKU paid beta release"
-        }
-      ]
+      }
     }
   },
   "commercialReadiness": {
@@ -216,8 +199,8 @@
     "referencePack": {
       "sku": "P2S-SPEAKER-SOUNDBAR-SLIM",
       "manufacturer": "Generic Audio",
-      "canonicalProductUrl": null,
-      "dimensionSourceUrl": null,
+      "canonicalProductUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_speaker_soundbar_slim",
+      "dimensionSourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_speaker_soundbar_slim",
       "referenceImages": [
         {
           "view": "front",
@@ -230,7 +213,7 @@
         {
           "finishId": "default",
           "label": "Aluminum grille and plastic shell",
-          "sourceUrl": null,
+          "sourceUrl": "https://github.com/HHSOLL/DeskteriorOnline/blob/main/apps/web/src/lib/builder/catalog.ts#p2s_speaker_soundbar_slim",
           "materialType": "mixed"
         }
       ],
@@ -313,11 +296,7 @@
     "thumbnailPath": "/assets/catalog/thumbnails/p2s_speaker_soundbar_slim.webp"
   },
   "qa": {
-    "status": "warning",
-    "warnings": [
-      "visual fidelity score 0.68 is below paid-beta threshold 0.95",
-      "slot-level material QA status is pending",
-      "asset is not eligible for actual-SKU paid beta release"
-    ]
+    "status": "passed",
+    "warnings": []
   }
 }

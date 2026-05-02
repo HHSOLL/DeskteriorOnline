@@ -104,18 +104,18 @@ export const MAX_COMMERCIAL_FLOOR_TEXTURE_PRESETS = 12;
 
 export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
   defineRoomShellTexturePreset({
-    topColor: "#dedbd3",
-    map: "/assets/textures/ai_limewash_wall/ai_limewash_wall_diff_1k.jpg",
+    topColor: "#f1eee8",
+    map: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_diff_2k.jpg",
     roughnessMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_rough_2k.jpg",
     normalMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_disp_2k.png",
     bumpMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_disp_2k.png",
-    color: "#ebe7df",
-    roughness: 0.88,
-    bumpScale: 0.009,
-    normalScale: 0.2,
+    color: "#f2efe8",
+    roughness: 0.9,
+    bumpScale: 0.008,
+    normalScale: 0.18,
     envMapIntensity: 0.42,
-    previewThumbnail: "/assets/textures/ai_limewash_wall/ai_limewash_wall_diff_1k.jpg",
-    repeatScaleMeters: [2.8, 2.8]
+    previewThumbnail: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_diff_2k.jpg",
+    repeatScaleMeters: [2.4, 2.4]
   }),
   defineRoomShellTexturePreset({
     topColor: "#babcc0",
@@ -241,16 +241,16 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
 
 export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
   defineRoomShellTexturePreset({
-    topColor: "#d7bd96",
-    map: "/assets/textures/ai_light_oak_floor/ai_light_oak_floor_diff_1k.jpg",
+    topColor: "#9f7b58",
+    map: "/assets/textures/wood_floor/wood_floor_diff_2k.jpg",
     roughnessMap: "/assets/textures/wood_floor/wood_floor_rough_2k.jpg",
     normalMap: "/assets/textures/wood_floor/wood_floor_disp_2k.jpg",
     bumpMap: "/assets/textures/wood_floor/wood_floor_disp_2k.jpg",
-    roughness: 0.66,
-    bumpScale: 0.01,
-    normalScale: 0.24,
-    previewThumbnail: "/assets/textures/ai_light_oak_floor/ai_light_oak_floor_diff_1k.jpg",
-    repeatScaleMeters: [3.4, 3.4]
+    roughness: 0.64,
+    bumpScale: 0.012,
+    normalScale: 0.3,
+    previewThumbnail: "/assets/textures/wood_floor/wood_floor_diff_2k.jpg",
+    repeatScaleMeters: [2.4, 2.4]
   }),
   defineRoomShellTexturePreset({
     topColor: "#8f8479",

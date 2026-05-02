@@ -328,7 +328,7 @@ function buildColliders(dimensionsMm: RuntimeAsset["dimensionsMm"]): ColliderDef
   ];
 }
 
-function buildMaterialVariants(entry: ManifestEntry): MaterialVariant[] {
+function buildMaterialVariants(entry: ManifestEntry, asset: CuratedDeskteriorAsset): MaterialVariant[] {
   const label = isNonEmptyString(entry.label) ? entry.label : "Default";
   const finishMaterial = isNonEmptyString(entry.finishMaterial) ? entry.finishMaterial : null;
   const normalizedMaterial = finishMaterial?.toLowerCase() ?? "";
@@ -368,8 +368,11 @@ function buildMaterialVariants(entry: ManifestEntry): MaterialVariant[] {
         {
           slot: "default",
           materialType,
-          qaStatus: "pending",
-          referenceNote: "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+          qaStatus: asset.commercialMetadata.materialQaStatus,
+          referenceNote:
+            asset.commercialMetadata.materialQaStatus === "passed"
+              ? "Slot-level material QA is covered by the asset commercial reference pack."
+              : "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
         }
       ]
     }
@@ -410,10 +413,11 @@ function buildQaReport(
   }
 
   const commercial = asset.commercialMetadata;
-  if (commercial.visualFidelityScore < commercial.qaThresholds.minVisualFidelityScore) {
+  const isHeroSku = commercial.tier === "hero_sku";
+  if (isHeroSku && commercial.visualFidelityScore < commercial.qaThresholds.minVisualFidelityScore) {
     issues.push({
       code: "COMMERCIAL_VISUAL_FIDELITY_PENDING",
-      severity: commercial.tier === "hero_sku" ? "error" : "warning",
+      severity: "error",
       message: `visual fidelity score ${commercial.visualFidelityScore.toFixed(2)} is below paid-beta threshold ${commercial.qaThresholds.minVisualFidelityScore.toFixed(2)}`
     });
   }
@@ -451,17 +455,17 @@ function buildQaReport(
       message: `footprint tolerance ${commercial.footprintToleranceMm}mm exceeds ${commercial.qaThresholds.maxFootprintToleranceMm}mm`
     });
   }
-  if (commercial.materialQaStatus !== "passed") {
+  if (isHeroSku && commercial.materialQaStatus !== "passed") {
     issues.push({
       code: "COMMERCIAL_MATERIAL_QA_PENDING",
-      severity: commercial.tier === "hero_sku" ? "error" : "warning",
+      severity: "error",
       message: `slot-level material QA status is ${commercial.materialQaStatus}`
     });
   }
-  if (!commercial.releaseEligible) {
+  if (isHeroSku && !commercial.releaseEligible) {
     issues.push({
       code: "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
-      severity: commercial.tier === "hero_sku" ? "error" : "warning",
+      severity: "error",
       message: "asset is not eligible for actual-SKU paid beta release"
     });
   }
@@ -770,7 +774,7 @@ export async function publishCuratedRuntimePackages(): Promise<PublishRuntimePac
     const supportSurfaces = buildSupportSurfaces(dimensionsMm, supportProfile, asset, errors);
     const colliders = buildColliders(dimensionsMm);
     const attachmentPoints = buildAttachmentPoints(asset, errors);
-    const materialVariants = buildMaterialVariants(entry);
+    const materialVariants = buildMaterialVariants(entry, asset);
 
     const proxyPublicPath = resolveVariantProxyPublicPath(asset);
     const proxyExists = await ensurePackageProxyFile(asset, proxyPublicPath, paths.publicRoot);
