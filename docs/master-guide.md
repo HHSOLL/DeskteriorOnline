@@ -1220,3 +1220,17 @@ Updated:
 Removed/Deprecated:
 - readiness score 85/warning을 상용 시연 가능한 최종 상태로 보는 기준.
 - 외부 샘플/벤더 문서를 DeskteriorOnline 활성 docs surface에 보관하는 방식.
+
+## 2026-05-02 변경 동기화 (Walk Aim + Desk Preview Closure)
+Added:
+- walk placement의 기본 시작 경로는 선택 제품을 든 상태에서 crosshair가 바라본 support object의 focus placement request를 `AIM_AT_SURFACE`로 전달하고 즉시 ghost preview session을 시작하는 방식이다.
+- `desk precision` keyboard nudge/rotate는 renderer preview를 먼저 갱신하고 짧은 idle batch 뒤 한 번만 scene store/document patch와 history snapshot을 만든다.
+- `verify:walk-placement-ux`는 pointer lock뿐 아니라 crosshair aim candidate ranking, ghost preview command, commit patch intent까지 검증해야 한다.
+
+Updated:
+- `FocusPlacementLauncher`의 후보 목록은 fallback/명시 선택 UI로 유지하고, walkthrough의 주 UX는 바라본 표면 기반 immediate candidate preview로 본다.
+- desk precision hotkey는 transform gizmo와 같은 preview -> commit 원칙을 따라야 하며 방향키 한 번마다 즉시 snapshot을 만들면 안 된다.
+
+Removed/Deprecated:
+- click/`E`로 launcher action을 호출해야만 walk placement가 시작되는 UX.
+- desk precision keyboard nudge가 preview 없이 즉시 store commit을 만드는 방식.

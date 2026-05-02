@@ -131,6 +131,7 @@ HUD, inspector, and renderer affordances consume these fields. They may format t
 `apps/web` adapters own:
 
 - DOM keyboard/pointer/touch event mapping.
+- crosshair raycast -> `AIM_AT_SURFACE` dispatch and focus placement request creation.
 - pointer lock and panel open/close policy.
 - renderer invalidation.
 - ghost preview mutation through engine-core/renderer-three.
@@ -183,16 +184,19 @@ It must route interaction decisions through `FocusPlacementMachine`:
 ## Phase 3 Acceptance
 
 - Walk crosshair shows target hint, active focus placement validity, and pointer-lock status.
+- Walk crosshair aiming dispatches `AIM_AT_SURFACE` through the app adapter before focus placement starts.
+- Selecting a product and looking at a compatible support object starts a ghost preview without requiring the fallback launcher button.
 - Pointer lock release caused by panel focus is visible to the user instead of failing silently.
 - Valid/warning/blocked placement feedback uses `resolveFocusPlacementFeedback`.
-- `verify:walk-placement-ux` covers the pointer-lock HUD state contract.
+- `verify:walk-placement-ux` covers pointer-lock HUD state, crosshair aim candidate ranking, ghost preview command, and commit patch intent.
 
 ## Phase 4 Acceptance
 
 - Desk precision top policy uses `5mm / 1deg` default nudge/rotate and `1mm / 0.1deg` fine hotkeys.
 - Transform controls and keyboard nudges are enabled only for desk precision, while room/top view remains layout/view oriented.
+- Desk precision keyboard nudge/rotate mutates renderer preview first and commits scene store/document state once per idle batch.
 - Numeric inspector, surface micro-view, and saved surface-local placement must describe the same mm pose.
-- `verify:desk-precision` covers the policy contract.
+- `verify:desk-precision` covers the policy contract and preview-batched keyboard commit mode.
 
 ## Phase 5 Acceptance
 

@@ -10,7 +10,6 @@ import {
   type FocusPlacementMachine,
   type FocusPlacementMachineState,
   type InteractionResult,
-  type InteractionSurfaceCandidate,
   type RankedInteractionSurfaceCandidate
 } from "@deskterioronline/interaction-engine";
 import {
@@ -30,6 +29,11 @@ import {
 } from "../../../lib/runtime/focus-placement-session";
 import { commitRuntimePlacementToStore } from "../../../lib/runtime/runtime-asset-bridge";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
+import {
+  focusPlacementRequestToInteractionCandidates,
+  WALK_FOCUS_PLACEMENT_AIM_EVENT,
+  type WalkFocusPlacementAimDetail
+} from "../../../lib/runtime/walk-focus-aim";
 import { useAssetSelector, usePublishSelector, useSelectionSelector } from "../../../lib/stores/scene-slices";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import {
@@ -123,45 +127,6 @@ function resolveFocusCandidateTone(candidate: RankedInteractionSurfaceCandidate)
   return "info" as const;
 }
 
-function toInteractionCandidate(
-  request: FocusPlacementRequest,
-  candidate: FocusPlacementSurfaceCandidate,
-  index: number
-): InteractionSurfaceCandidate {
-  return {
-    supportObjectId: request.supportObjectId,
-    surfaceId: candidate.surfaceId,
-    surfaceLabel: candidate.surfaceLabel,
-    surfaceType: candidate.surfaceType,
-    attachmentType: candidate.attachmentType,
-    enabled: candidate.enabled,
-    reason: candidate.reason,
-    blockedReasons: candidate.blockedReasons,
-    surfaceBoundsMm: candidate.surfaceBoundsMm,
-    noPlaceZones: candidate.noPlaceZones,
-    preferredZones: candidate.preferredZones,
-    visualAffordance: candidate.visualAffordance,
-    ranking: {
-      ...candidate.ranking,
-      rayHitConfidence: 0.8,
-      attachmentCompatibility: candidate.enabled ? 1 : 0,
-      surfaceVisibility: candidate.ranking.surfaceVisibility ?? 0.75,
-      distancePriority: Math.max(candidate.ranking.distancePriority ?? 0, 1 - index * 0.05),
-      userSelectedSupportBonus: (candidate.ranking.userSelectedSupportBonus ?? 0) + 0.5,
-      preferredSurfaceBonus:
-        (candidate.ranking.preferredSurfaceBonus ?? 0) +
-        (index === request.preferredCandidateIndex ? 0.5 : 0),
-      outOfBoundsPenalty: candidate.enabled ? 0 : 1
-    }
-  };
-}
-
-function toInteractionCandidates(request: FocusPlacementRequest | FocusPlacementSession) {
-  return request.surfaceCandidates.map((candidate, index) =>
-    toInteractionCandidate(request, candidate, index)
-  );
-}
-
 function toFocusCandidate(candidate: RankedInteractionSurfaceCandidate): FocusPlacementSurfaceCandidate {
   return {
     surfaceId: candidate.surfaceId,
@@ -239,6 +204,7 @@ export default function FocusPlacementController() {
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
   const pendingRequest = useFocusPlacementStore((state) => state.pendingRequest);
   const activeSession = useFocusPlacementStore((state) => state.activeSession);
+  const requestFocusPlacement = useFocusPlacementStore((state) => state.requestFocusPlacement);
   const clearPendingRequest = useFocusPlacementStore((state) => state.clearPendingRequest);
   const startSession = useFocusPlacementStore((state) => state.startSession);
   const updateSession = useFocusPlacementStore((state) => state.updateSession);
@@ -273,20 +239,29 @@ export default function FocusPlacementController() {
       }
 
       let machine = machineRef.current;
-      if (input.mode === "start" || !machine) {
+      if (!machine) {
         machine = createFocusPlacementMachine({ mode: "walk", readOnly });
         machineRef.current = machine;
+      }
+
+      if (input.mode === "start") {
         const startResult = machine.dispatch({
+          type: "AIM_AT_SURFACE",
+          payload: {
+            objectId: input.request.objectId,
+            supportObjectId: input.request.supportObjectId,
+            surfaceId: input.request.surfaceId,
+            candidates: focusPlacementRequestToInteractionCandidates(input.request)
+          }
+        });
+        machine.dispatch({
           type: "START_PLACEMENT",
           objectId: input.request.objectId,
           supportObjectId: input.request.supportObjectId,
-          candidates: toInteractionCandidates(input.request),
+          candidates: startResult.state.candidates,
           preferredCandidateIndex: input.candidateIndex,
           readOnly
         });
-        if (startResult.state.status === "blocked" && startResult.state.blockedReasons.length > 0) {
-          throw new Error(startResult.state.blockedReasons.map(formatBlockedReason).join(", "));
-        }
       } else {
         machine.dispatch({
           type: "SELECT_CANDIDATE",
@@ -372,6 +347,45 @@ export default function FocusPlacementController() {
     },
     [assetsById, engine, kernel, readOnly, setIsTransforming, startSession, updateSession]
   );
+
+  useEffect(() => {
+    if (viewMode !== "walk" || readOnly || activeSession || pendingRequest) {
+      return;
+    }
+
+    const handleAimAtSurface = (event: Event) => {
+      const detail = (event as CustomEvent<WalkFocusPlacementAimDetail>).detail;
+      if (!detail?.request || activeSession || pendingRequest) {
+        return;
+      }
+
+      let machine = machineRef.current;
+      if (!machine) {
+        machine = createFocusPlacementMachine({ mode: "walk", readOnly });
+        machineRef.current = machine;
+      }
+
+      machine.dispatch({
+        type: "AIM_AT_SURFACE",
+        payload: {
+          objectId: detail.request.objectId,
+          supportObjectId: detail.request.supportObjectId,
+          surfaceId: detail.request.surfaceId,
+          candidates: focusPlacementRequestToInteractionCandidates(
+            detail.request,
+            detail.rayHitConfidence
+          ),
+          rayHitConfidence: detail.rayHitConfidence
+        }
+      });
+      requestFocusPlacement(detail.request);
+    };
+
+    window.addEventListener(WALK_FOCUS_PLACEMENT_AIM_EVENT, handleAimAtSurface);
+    return () => {
+      window.removeEventListener(WALK_FOCUS_PLACEMENT_AIM_EVENT, handleAimAtSurface);
+    };
+  }, [activeSession, pendingRequest, readOnly, requestFocusPlacement, viewMode]);
 
   useEffect(() => {
     if (!pendingRequest || !kernel || !engine || viewMode !== "walk" || readOnly) {

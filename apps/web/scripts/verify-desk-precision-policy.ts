@@ -1,4 +1,8 @@
 import assert from "node:assert/strict";
+import {
+  DESK_PRECISION_HOTKEY_COMMIT_DELAY_MS,
+  resolveDeskPrecisionHotkeyPreview
+} from "../src/lib/editor/desk-precision-hotkeys";
 import { resolveTopViewInteractionPolicy } from "../src/lib/editor/top-view-policy";
 
 function main() {
@@ -32,6 +36,58 @@ function main() {
     "local",
     "desk precision should default to local transform space"
   );
+  assert.equal(
+    DESK_PRECISION_HOTKEY_COMMIT_DELAY_MS,
+    280,
+    "desk precision hotkeys should batch preview commits after a short idle window"
+  );
+
+  const baseAsset = {
+    position: [1, 0.75, 2] as [number, number, number],
+    rotation: [0, 0, 0] as [number, number, number]
+  };
+  const nudgePreview = resolveDeskPrecisionHotkeyPreview({
+    event: { key: "ArrowRight" },
+    asset: baseAsset,
+    policy: precisionPolicy
+  });
+  assert.equal(
+    nudgePreview?.commitMode,
+    "preview-batched",
+    "desk precision keyboard nudge should preview first and commit as a batch"
+  );
+  assert.equal(
+    nudgePreview?.updates.position?.[0],
+    1.005,
+    "desk precision keyboard nudge should use 5mm default movement"
+  );
+
+  const fineNudgePreview = resolveDeskPrecisionHotkeyPreview({
+    event: { key: "ArrowLeft", altKey: true },
+    asset: baseAsset,
+    policy: precisionPolicy
+  });
+  assert.equal(
+    fineNudgePreview?.updates.position?.[0],
+    0.999,
+    "desk precision Alt+Arrow should use 1mm fine movement"
+  );
+
+  const rotatePreview = resolveDeskPrecisionHotkeyPreview({
+    event: { key: "e" },
+    asset: baseAsset,
+    policy: precisionPolicy
+  });
+  assert.equal(
+    rotatePreview?.commitMode,
+    "preview-batched",
+    "desk precision keyboard rotate should preview first and commit as a batch"
+  );
+  assert.equal(
+    rotatePreview?.transformMode,
+    "rotate",
+    "desk precision Q/E should keep transform mode aligned with rotation"
+  );
 
   console.log(
     JSON.stringify(
@@ -43,7 +99,9 @@ function main() {
           transformControls: precisionPolicy.allowTransformControls,
           transformHotkeys: precisionPolicy.allowTransformHotkeys,
           translationSnapMm: precisionPolicy.translationSnap * 1000,
-          rotationSnapDeg: precisionPolicy.rotationSnap * (180 / Math.PI)
+          rotationSnapDeg: precisionPolicy.rotationSnap * (180 / Math.PI),
+          hotkeyCommitMode: nudgePreview?.commitMode,
+          hotkeyCommitDelayMs: DESK_PRECISION_HOTKEY_COMMIT_DELAY_MS
         }
       },
       null,
