@@ -4,6 +4,7 @@ import type {
   ColliderDefinition,
   DimensionsMm,
   MaterialVariant,
+  RuntimeCommercialReadiness,
   RuntimeAsset,
   SupportSurface
 } from "@deskterioronline/scene-schema";
@@ -73,6 +74,16 @@ export type CuratedAttachmentAuthoring = {
   points?: AttachmentPoint[];
 };
 
+export type CommercialAssetFidelityMetadata = RuntimeCommercialReadiness & {
+  qaThresholds: {
+    minVisualFidelityScore: number;
+    maxDimensionToleranceMm: number;
+    maxDimensionTolerancePercent: number;
+    maxSupportSurfaceToleranceMm: number;
+    maxFootprintToleranceMm: number;
+  };
+};
+
 export type CuratedDeskteriorAsset = {
   key: string;
   packageKind?: "curated_asset" | "catalog_variant";
@@ -91,6 +102,7 @@ export type CuratedDeskteriorAsset = {
   };
   supportProfileExpectation?: CuratedSupportProfileExpectation;
   attachmentAuthoring: CuratedAttachmentAuthoring;
+  commercialMetadata: CommercialAssetFidelityMetadata;
   contractMetadata: {
     source: AssetSourceMetadata;
     license: AssetLicenseMetadata;
@@ -128,6 +140,10 @@ export type RuntimePackageIndexEntry = {
   surfaceCount: number;
   attachmentPointCount: number;
   materialVariantCount: number;
+  commercialTier?: RuntimeCommercialReadiness["tier"];
+  sku?: string;
+  manufacturer?: string;
+  releaseEligible?: boolean;
 };
 
 export type RuntimePackageFileRef = {
@@ -155,6 +171,7 @@ export type RuntimePackageDescriptor = {
     attachmentPoints: CuratedAttachmentAuthoring;
   };
   runtimeAsset: RuntimeAsset;
+  commercialReadiness: RuntimeCommercialReadiness;
   files: {
     sourceBlend: RuntimePackageFileRef;
     runtimeModel: RuntimePackageFileRef;

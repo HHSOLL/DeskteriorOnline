@@ -4,6 +4,14 @@
     "label": "P2S 필레아 데스크 플랜터",
     "finishColor": "Clay pot / fresh green",
     "finishMaterial": "Unglazed ceramic pot with plant foliage",
-    "detailNotes": "Compact pilea planter with terracotta pot, soil insert, and layered leaves sized for desk corners and shelf styling."
+    "detailNotes": "Compact pilea planter with terracotta pot, soil insert, and layered leaves sized for desk corners and shelf styling.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "ceramic",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

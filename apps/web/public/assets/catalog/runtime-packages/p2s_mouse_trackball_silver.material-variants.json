@@ -4,6 +4,14 @@
     "label": "P2S 트랙볼 마우스",
     "finishColor": "Silver",
     "finishMaterial": "Soft-touch plastic and rubber feet",
-    "detailNotes": "Surface-placeable mouse with scale-locked real dimensions."
+    "detailNotes": "Surface-placeable mouse with scale-locked real dimensions.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "plastic",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

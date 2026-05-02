@@ -4,6 +4,14 @@
     "label": "P2S 로우 프로파일 키보드",
     "finishColor": "Warm charcoal",
     "finishMaterial": "Matte plastic chassis with low-profile keycaps",
-    "detailNotes": "Low-profile keyboard authored as a shipping runtime package for golden-flow desk-top placement."
+    "detailNotes": "Low-profile keyboard authored as a shipping runtime package for golden-flow desk-top placement.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "plastic",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

@@ -14,6 +14,16 @@ function assert(condition: unknown, message: string): asserts condition {
   }
 }
 
+function assertThrows(callback: () => unknown, message: string) {
+  let threw = false;
+  try {
+    callback();
+  } catch {
+    threw = true;
+  }
+  assert(threw, message);
+}
+
 function loadPublishedRuntimeAsset(assetKey: string): RuntimeAsset {
   const descriptorPath = path.resolve(
     process.cwd(),
@@ -103,6 +113,38 @@ const state: LegacySceneStoreStateLike = {
       position: [0, 0, 0],
       rotation: [0, 0, 0],
       scale: [1, 1, 1]
+    },
+    {
+      id: "wall-1",
+      assetId: "p2s_wall_panel_test",
+      catalogItemId: "p2s_wall_panel_test",
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
+    },
+    {
+      id: "wall-shelf-1",
+      assetId: "p2s_wall_shelf_test",
+      catalogItemId: "p2s_wall_shelf_test",
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
+    },
+    {
+      id: "wall-shelf-2",
+      assetId: "p2s_wall_shelf_test",
+      catalogItemId: "p2s_wall_shelf_test",
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
+    },
+    {
+      id: "grommet-1",
+      assetId: "p2s_grommet_cover_test",
+      catalogItemId: "p2s_grommet_cover_test",
+      position: [0, 0, 0],
+      rotation: [0, 0, 0],
+      scale: [1, 1, 1]
     }
   ],
   wallMaterialIndex: 0,
@@ -145,7 +187,7 @@ const runtimeAssets: RuntimeAsset[] = [
           normal: [0, 1000, 0]
         },
         boundsMm: { min: [-650, -300], max: [650, 300] },
-        allowedAttachments: ["place_on_surface", "cable_route"]
+        allowedAttachments: ["place_on_surface", "grommet_hole", "cable_route"]
       },
       {
         id: "back_edge",
@@ -343,6 +385,133 @@ const runtimeAssets: RuntimeAsset[] = [
     qaStatus: {
       status: "passed",
       measuredBoundsMm: { width: 20, depth: 20, height: 12 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
+  },
+  {
+    assetId: "p2s_wall_panel_test",
+    units: "mm",
+    dimensionsMm: { width: 1100, depth: 80, height: 1400 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "wall-panel.glb", triangleCount: 500, drawCallBudget: 1 }],
+      proxy: "wall-panel.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 500,
+      textureBudgetMb: 1
+    },
+    colliders: [],
+    supportSurfaces: [
+      {
+        id: "wall_panel",
+        type: "wall",
+        localFrame: {
+          originMm: [0, 0, 0],
+          tangentU: [1000, 0, 0],
+          tangentV: [0, 1000, 0],
+          normal: [0, 0, 1000]
+        },
+        boundsMm: { min: [-500, 0], max: [500, 1200] },
+        thicknessMm: 18,
+        allowedAttachments: ["wall_attach", "wall_screw"]
+      }
+    ],
+    attachmentPoints: [],
+    materialVariants: [{ id: "default", label: "Default" }],
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 1100, depth: 80, height: 1400 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
+  },
+  {
+    assetId: "p2s_wall_shelf_test",
+    units: "mm",
+    dimensionsMm: { width: 360, depth: 180, height: 120 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "wall-shelf.glb", triangleCount: 2000, drawCallBudget: 2 }],
+      proxy: "wall-shelf.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 2000,
+      textureBudgetMb: 4
+    },
+    colliders: [],
+    supportSurfaces: [],
+    attachmentPoints: [
+      {
+        id: "wall-keyhole",
+        type: "wall_screw",
+        localPositionMm: [0, 60, -20],
+        localNormal: [0, 0, 1000],
+        localTangent: [1000, 0, 0],
+        compatibleWith: ["wall_panel", "wall"],
+        constraints: {
+          minClearanceMm: 20,
+          requiredThicknessMm: [10, 40]
+        }
+      },
+      {
+        id: "wall-plate",
+        type: "wall_attach",
+        localPositionMm: [0, 60, -20],
+        localNormal: [0, 0, 1000],
+        localTangent: [1000, 0, 0],
+        compatibleWith: ["wall_panel", "wall"],
+        constraints: {
+          minClearanceMm: 20,
+          requiredThicknessMm: [10, 40]
+        }
+      }
+    ],
+    materialVariants: [{ id: "default", label: "Default" }],
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 360, depth: 180, height: 120 },
+      dimensionErrorMm: { width: 0, depth: 0, height: 0 },
+      validatorVersion: "alpha"
+    }
+  },
+  {
+    assetId: "p2s_grommet_cover_test",
+    units: "mm",
+    dimensionsMm: { width: 70, depth: 70, height: 18 },
+    scaleLocked: true,
+    pivot: { x: "center", y: "floor", z: "center" },
+    sourceProvenance: { method: "manual", license: "internal", attributionRequired: false },
+    runtime: {
+      lods: [{ id: "lod0", level: 0, model: "grommet.glb", triangleCount: 800, drawCallBudget: 1 }],
+      proxy: "grommet.proxy.glb",
+      defaultLod: 0,
+      triangleBudget: 800,
+      textureBudgetMb: 2
+    },
+    colliders: [],
+    supportSurfaces: [],
+    attachmentPoints: [
+      {
+        id: "desktop-grommet",
+        type: "grommet_hole",
+        localPositionMm: [0, 0, 0],
+        localNormal: [0, 1000, 0],
+        localTangent: [1000, 0, 0],
+        compatibleWith: ["desktop_top"],
+        constraints: {
+          holeDiameterMm: 60,
+          minClearanceMm: 20
+        }
+      }
+    ],
+    materialVariants: [{ id: "default", label: "Default" }],
+    qaStatus: {
+      status: "passed",
+      measuredBoundsMm: { width: 70, depth: 70, height: 18 },
       dimensionErrorMm: { width: 0, depth: 0, height: 0 },
       validatorVersion: "alpha"
     }
@@ -685,6 +854,129 @@ try {
     "invalid cable route geometry should be rejected before commit"
   );
 
+  const wallScrewTransaction = kernel.begin({
+    objectId: "wall-shelf-1",
+    supportObjectId: "wall-1",
+    surfaceId: "wall_panel",
+    attachmentType: "wall_screw"
+  });
+  const wallScrewState = wallScrewTransaction.update({
+    uMm: 0,
+    vMm: 650,
+    normalOffsetMm: 24,
+    rotationMilliDeg: 0
+  });
+  assert(
+    wallScrewState.constraintReport?.valid === true,
+    "wall screw attachment should pass point, footprint, thickness, and clearance validation"
+  );
+  const wallScrewCommitted = wallScrewTransaction.commit();
+  assert(
+    wallScrewCommitted.mode === "surface_local" &&
+      wallScrewCommitted.attachmentType === "wall_screw" &&
+      wallScrewCommitted.supportObjectId === "wall-1" &&
+      wallScrewCommitted.surfaceId === "wall_panel",
+    "wall screw commit should persist the wall support relation"
+  );
+
+  const overlappingWallScrewTransaction = kernel.begin({
+    objectId: "wall-shelf-2",
+    supportObjectId: "wall-1",
+    surfaceId: "wall_panel",
+    attachmentType: "wall_screw"
+  });
+  const overlappingWallScrewState = overlappingWallScrewTransaction.update({
+    uMm: 0,
+    vMm: 650,
+    normalOffsetMm: 24,
+    rotationMilliDeg: 0
+  });
+  assert(
+    overlappingWallScrewState.collisionReport?.collided === true &&
+      overlappingWallScrewState.collisionReport.collisions.some(
+        (collision) => collision.code === "SAME_SURFACE_OVERLAP"
+      ),
+    "wall mounted products should use same-surface footprint collision before commit"
+  );
+  assertThrows(
+    () => overlappingWallScrewTransaction.commit(),
+    "overlapping wall mounted products must be blocked at commit"
+  );
+
+  const outOfBoundsWallScrewTransaction = kernel.begin({
+    objectId: "wall-shelf-2",
+    supportObjectId: "wall-1",
+    surfaceId: "wall_panel",
+    attachmentType: "wall_screw"
+  });
+  const outOfBoundsWallScrewState = outOfBoundsWallScrewTransaction.update({
+    uMm: 560,
+    vMm: 650,
+    normalOffsetMm: 24,
+    rotationMilliDeg: 0
+  });
+  assert(
+    outOfBoundsWallScrewState.constraintReport?.errors.some(
+      (issue) =>
+        issue.code === "MOUNTED_POINT_OUTSIDE_SURFACE" ||
+        issue.code === "SURFACE_FOOTPRINT_EXCEEDED"
+    ),
+    "wall screw attachments should explain when their point or footprint leaves the wall surface"
+  );
+  assertThrows(
+    () => outOfBoundsWallScrewTransaction.commit(),
+    "out-of-bounds wall screw placements must be blocked at commit"
+  );
+
+  const grommetTransaction = kernel.begin({
+    objectId: "grommet-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "grommet_hole"
+  });
+  const grommetState = grommetTransaction.update({
+    uMm: -320,
+    vMm: 220,
+    normalOffsetMm: 8,
+    rotationMilliDeg: 0
+  });
+  assert(
+    grommetState.constraintReport?.valid === true,
+    "grommet-hole attachment should pass authored hole diameter and footprint validation"
+  );
+  const grommetCommitted = grommetTransaction.commit();
+  assert(
+    grommetCommitted.mode === "surface_local" &&
+      grommetCommitted.attachmentType === "grommet_hole" &&
+      grommetCommitted.surfaceId === "desktop_top",
+    "grommet-hole commit should persist the surface-local hole relation"
+  );
+
+  const invalidGrommetTransaction = kernel.begin({
+    objectId: "grommet-1",
+    supportObjectId: "desk-1",
+    surfaceId: "desktop_top",
+    attachmentType: "grommet_hole"
+  });
+  const invalidGrommetState = invalidGrommetTransaction.update({
+    uMm: 620,
+    vMm: 290,
+    normalOffsetMm: -5,
+    rotationMilliDeg: 0
+  });
+  assert(
+    invalidGrommetState.constraintReport?.errors.some(
+      (issue) =>
+        issue.code === "SURFACE_FOOTPRINT_EXCEEDED" ||
+        issue.code === "MOUNTED_NORMAL_OFFSET_INVALID"
+    ),
+    "grommet-hole attachments should explain footprint or normal-offset violations before commit"
+  );
+  assertThrows(
+    () => invalidGrommetTransaction.commit(),
+    "invalid grommet-hole placements must be blocked at commit"
+  );
+
   const articulationReachable = monitorArmSolver.solve(
     runtimeAssets[1]!.articulation!,
     {
@@ -795,6 +1087,9 @@ try {
         localUnderDeskTrayPlacement: trayCommitted,
         movedRotatedDeskPlacement: movedTrayCommitted,
         cableRoutePlacement: cableCommitted,
+        wallScrewPlacement: wallScrewCommitted,
+        wallOverlapBlocked: overlappingWallScrewState.collisionReport?.collided ?? false,
+        grommetPlacement: grommetCommitted,
         publishedUnderDeskTrayValid: publishedTrayState.constraintReport?.valid ?? false,
         publishedUnderDeskTrayPlacement: publishedTrayCommitted,
         articulationReachableJoints: articulationReachable.joints,

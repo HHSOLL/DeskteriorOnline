@@ -1,5 +1,5 @@
 {
-  "status": "passed",
+  "status": "warning",
   "measuredBoundsMm": {
     "width": 95,
     "depth": 130,
@@ -10,5 +10,32 @@
     "depth": 0,
     "height": 0
   },
-  "validatorVersion": "asset-compiler-alpha-v3"
+  "validatorVersion": "asset-compiler-alpha-v3",
+  "commercialFidelity": {
+    "referencePackStatus": "candidate",
+    "visualFidelityScore": 0.68,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
+  },
+  "issues": [
+    {
+      "code": "COMMERCIAL_VISUAL_FIDELITY_PENDING",
+      "severity": "warning",
+      "message": "visual fidelity score 0.68 is below paid-beta threshold 0.95"
+    },
+    {
+      "code": "COMMERCIAL_MATERIAL_QA_PENDING",
+      "severity": "warning",
+      "message": "slot-level material QA status is pending"
+    },
+    {
+      "code": "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
+      "severity": "warning",
+      "message": "asset is not eligible for actual-SKU paid beta release"
+    }
+  ]
 }

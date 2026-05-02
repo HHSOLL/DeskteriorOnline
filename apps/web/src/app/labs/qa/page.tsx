@@ -33,6 +33,32 @@ export default function CommercialQaPage() {
           <p className="mt-3 text-xs uppercase tracking-[0.18em] text-[#8a8177]">
             generated {new Date(snapshot.generatedAt).toLocaleString("ko-KR")}
           </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)]">
+            <div className="rounded-[18px] border border-black/10 bg-[#171411] p-4 text-white">
+              <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ccb59b]">Readiness Score</div>
+              <div className="mt-2 text-4xl font-semibold">{snapshot.readinessScore.score}</div>
+              <div className={`mt-3 inline-flex rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${gateClasses(snapshot.readinessScore.status)}`}>
+                {snapshot.readinessScore.status}
+              </div>
+            </div>
+            <div className="rounded-[18px] border border-black/10 bg-[#faf7f1] p-4">
+              <div className="text-sm font-semibold text-[#171411]">{snapshot.readinessScore.summary}</div>
+              <p className="mt-2 text-sm leading-6 text-[#625a51]">
+                pass {snapshot.readinessScore.passedGates} / warning {snapshot.readinessScore.warningGates} / fail{" "}
+                {snapshot.readinessScore.failedGates}
+              </p>
+              {snapshot.readinessScore.warnings.length > 0 ? (
+                <p className="mt-2 text-sm leading-6 text-[#7a4d17]">
+                  warning: {snapshot.readinessScore.warnings.join(" / ")}
+                </p>
+              ) : null}
+              {snapshot.readinessScore.blockers.length > 0 ? (
+                <p className="mt-2 text-sm leading-6 text-rose-800">
+                  blocker: {snapshot.readinessScore.blockers.join(" / ")}
+                </p>
+              ) : null}
+            </div>
+          </div>
         </header>
 
         <section className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_320px]">
@@ -92,6 +118,16 @@ export default function CommercialQaPage() {
                   <dd>
                     {snapshot.assetStatus.releaseReadyAssets}/{snapshot.assetStatus.totalAssets}
                   </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt>Paid beta hero SKUs</dt>
+                  <dd>
+                    {snapshot.assetStatus.releaseEligibleHeroAssets}/{snapshot.assetStatus.heroSkuAssets || 20}
+                  </dd>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <dt>Texture candidates</dt>
+                  <dd>{snapshot.textureQuality.candidateAiTextureCount}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <dt>At-risk assets</dt>
@@ -254,6 +290,34 @@ export default function CommercialQaPage() {
 
             <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
               <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
+                <BadgeCheck className="h-4 w-4" />
+                <span>Viewer Parity Suites</span>
+              </div>
+              <div className="mt-5 space-y-3">
+                {snapshot.viewerParity.suites.map((suite) => (
+                  <div key={suite.id} className="rounded-[18px] border border-black/8 bg-[#faf7f1] p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <h2 className="text-sm font-semibold text-[#171411]">{suite.label}</h2>
+                      <span className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${gateClasses(suite.status)}`}>
+                        {suite.status}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm text-[#5a5148]">{suite.script}</p>
+                    <p className="mt-2 text-sm leading-6 text-[#5a5148]">{suite.detail}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">target: {suite.target}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">coverage: {suite.coverage.join(" / ")}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">
+                      verified: {suite.lastVerifiedAt ? new Date(suite.lastVerifiedAt).toLocaleString("ko-KR") : "untracked"}
+                    </p>
+                    <p className="mt-2 text-sm text-[#5a5148]">method: {suite.verificationMethod}</p>
+                    <p className="mt-2 text-sm text-[#5a5148]">evidence: {suite.evidence.join(" / ") || "none"}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[24px] border border-black/10 bg-white/82 p-6 shadow-[0_18px_46px_rgba(68,52,34,0.07)]">
+              <div className="flex items-center gap-2 text-[10px] font-semibold tracking-[0.22em] text-[#8a8177]">
                 <TableProperties className="h-4 w-4" />
                 <span>Compatibility Matrix</span>
               </div>
@@ -312,6 +376,7 @@ export default function CommercialQaPage() {
                 <thead className="bg-[#f4efe7] text-[#625a51]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Asset</th>
+                    <th className="px-4 py-3 font-medium">SKU</th>
                     <th className="px-4 py-3 font-medium">QA</th>
                     <th className="px-4 py-3 font-medium">Surface / Attach</th>
                     <th className="px-4 py-3 font-medium">Variants</th>
@@ -325,6 +390,15 @@ export default function CommercialQaPage() {
                         <div className="font-medium">{row.label}</div>
                         <div className="mt-1 text-xs uppercase tracking-[0.12em] text-[#8a8177]">
                           {row.key} / {row.scaleLocked ? "scale-locked" : "flex"}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-[#5a5148]">
+                        <div>{row.sku ?? "missing"}</div>
+                        <div className="mt-1 text-xs text-[#8a8177]">
+                          {row.commercialTier} / {row.referencePackStatus}
+                        </div>
+                        <div className="mt-1 text-xs text-[#8a8177]">
+                          material: {row.materialQaStatus}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-[#5a5148]">

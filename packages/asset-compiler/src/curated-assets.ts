@@ -1,5 +1,9 @@
 import path from "node:path";
-import type { AssetCompilerPaths, CuratedDeskteriorAsset } from "./types";
+import type {
+  AssetCompilerPaths,
+  CommercialAssetFidelityMetadata,
+  CuratedDeskteriorAsset
+} from "./types";
 
 function runtimeAssetPath(publicRoot: string, assetKey: string) {
   return path.join(publicRoot, "assets", "models", assetKey, `${assetKey}.glb`);
@@ -56,6 +60,97 @@ function createCuratedContractMetadata(
   };
 }
 
+function createCommercialMetadata(
+  assetKey: string,
+  input: {
+    sku?: string;
+    manufacturer?: string;
+    tier?: CommercialAssetFidelityMetadata["tier"];
+    visualFidelityScore?: number;
+    dimensionToleranceMm?: number;
+    dimensionTolerancePercent?: number;
+    supportSurfaceToleranceMm?: number;
+    footprintToleranceMm?: number;
+    materialQaStatus?: CommercialAssetFidelityMetadata["materialQaStatus"];
+    referenceStatus?: CommercialAssetFidelityMetadata["referencePack"]["status"];
+    releaseEligible?: boolean;
+    notes?: string;
+  } = {}
+): CommercialAssetFidelityMetadata {
+  const sku = input.sku ?? `P2S-${assetKey.replace(/^p2s_/, "").replace(/_/g, "-").toUpperCase()}`;
+  const manufacturer = input.manufacturer ?? "DeskteriorOnline Studio";
+  const tier = input.tier ?? "generic_catalog";
+  const referenceStatus = input.referenceStatus ?? "candidate";
+  const releaseEligible = input.releaseEligible ?? false;
+  const materialQaStatus = input.materialQaStatus ?? "pending";
+
+  return {
+    tier,
+    sku,
+    manufacturer,
+    referencePack: {
+      sku,
+      manufacturer,
+      canonicalProductUrl: null,
+      dimensionSourceUrl: null,
+      referenceImages: [
+        {
+          view: "front",
+          url: `${sourceBlendRepoPath(assetKey)}#front-reference`,
+          required: tier === "hero_sku",
+          license: "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          view: "right",
+          url: `${sourceBlendRepoPath(assetKey)}#side-reference`,
+          required: tier === "hero_sku",
+          license: "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          view: "top",
+          url: `${sourceBlendRepoPath(assetKey)}#top-reference`,
+          required: tier === "hero_sku",
+          license: "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          view: "material",
+          url: `${sourceBlendRepoPath(assetKey)}#material-reference`,
+          required: tier === "hero_sku",
+          license: "LicenseRef-DeskteriorOnline-Internal"
+        }
+      ],
+      finishReferences: [],
+      license: {
+        spdx: "LicenseRef-DeskteriorOnline-Internal",
+        label: "DeskteriorOnline Internal Catalog",
+        requiresAttribution: false
+      },
+      status: referenceStatus,
+      notes:
+        input.notes ??
+        "Current curated P2S asset is treated as an internal catalog candidate until manufacturer SKU references are attached."
+    },
+    visualFidelityScore: input.visualFidelityScore ?? 0.72,
+    dimensionToleranceMm: input.dimensionToleranceMm ?? 0,
+    dimensionTolerancePercent: input.dimensionTolerancePercent ?? 0,
+    ...(input.supportSurfaceToleranceMm !== undefined
+      ? { supportSurfaceToleranceMm: input.supportSurfaceToleranceMm }
+      : {}),
+    ...(input.footprintToleranceMm !== undefined
+      ? { footprintToleranceMm: input.footprintToleranceMm }
+      : {}),
+    materialQaStatus,
+    releaseEligible,
+    qaThresholds: {
+      minVisualFidelityScore: 0.95,
+      maxDimensionToleranceMm: 5,
+      maxDimensionTolerancePercent: 1,
+      maxSupportSurfaceToleranceMm: 3,
+      maxFootprintToleranceMm: 2
+    }
+  };
+}
+
 export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDeskteriorAsset[] {
   return [
     {
@@ -70,6 +165,10 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 16,
         maxTriangleCount: 2_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_desk_oak", {
+        supportSurfaceToleranceMm: 3,
+        notes: "Baseline desk package has authored support surfaces but still needs exact manufacturer SKU references."
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_desk_oak", {
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 16,
@@ -136,6 +235,9 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 8,
         maxTriangleCount: 2_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_monitor_stand", {
+        supportSurfaceToleranceMm: 3
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_monitor_stand", {
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 8,
@@ -170,6 +272,7 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 12,
         maxTriangleCount: 6_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_desk_lamp_glow"),
       contractMetadata: createCuratedContractMetadata("p2s_desk_lamp_glow", {
         maxFileSizeBytes: 2_000_000,
         maxDrawCalls: 12,
@@ -193,6 +296,9 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 4,
         maxTriangleCount: 4_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_ceramic_mug", {
+        footprintToleranceMm: 2
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_ceramic_mug", {
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 4,
@@ -215,6 +321,9 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 6,
         maxTriangleCount: 2_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_book_stack_warm", {
+        footprintToleranceMm: 2
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_book_stack_warm", {
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 6,
@@ -237,6 +346,10 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 8,
         maxTriangleCount: 2_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_desk_tray_oak", {
+        supportSurfaceToleranceMm: 3,
+        footprintToleranceMm: 2
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_desk_tray_oak", {
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 8,
@@ -271,6 +384,9 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 8,
         maxTriangleCount: 2_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_compact_speaker", {
+        footprintToleranceMm: 2
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_compact_speaker", {
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 8,
@@ -293,6 +409,9 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 8,
         maxTriangleCount: 4_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_wireless_mouse", {
+        footprintToleranceMm: 2
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_wireless_mouse", {
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 8,
@@ -315,6 +434,9 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 80,
         maxTriangleCount: 20_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_low_profile_keyboard", {
+        footprintToleranceMm: 2
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_low_profile_keyboard", {
         maxFileSizeBytes: 2_000_000,
         maxDrawCalls: 80,
@@ -337,6 +459,10 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 24,
         maxTriangleCount: 8_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_under_desk_tray_mount", {
+        supportSurfaceToleranceMm: 3,
+        footprintToleranceMm: 2
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_under_desk_tray_mount", {
         maxFileSizeBytes: 1_000_000,
         maxDrawCalls: 24,
@@ -374,6 +500,9 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
         maxDrawCalls: 10,
         maxTriangleCount: 6_000
       },
+      commercialMetadata: createCommercialMetadata("p2s_desk_planter_pilea", {
+        footprintToleranceMm: 2
+      }),
       contractMetadata: createCuratedContractMetadata("p2s_desk_planter_pilea", {
         maxFileSizeBytes: 2_000_000,
         maxDrawCalls: 10,

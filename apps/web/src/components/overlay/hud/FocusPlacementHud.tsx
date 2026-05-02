@@ -29,6 +29,30 @@ function dispatchPlacementAction(action: "commit" | "cancel") {
   window.dispatchEvent(new Event(`deskterioronline:focus-placement:${action}`));
 }
 
+function dispatchCandidateSelect(candidateIndex: number) {
+  window.dispatchEvent(
+    new CustomEvent("deskterioronline:focus-placement:select-candidate", {
+      detail: { candidateIndex }
+    })
+  );
+}
+
+function resolveCandidateClassName(
+  tone: "ready" | "blocked" | "info",
+  isActive: boolean
+) {
+  const activeRing = isActive ? "ring-1 ring-white/45" : "";
+  switch (tone) {
+    case "ready":
+      return `border-emerald-300/25 bg-emerald-400/10 text-emerald-100 ${activeRing}`;
+    case "blocked":
+      return `border-rose-300/25 bg-rose-500/10 text-rose-100 ${activeRing}`;
+    case "info":
+    default:
+      return `border-white/12 bg-white/7 text-white/75 ${activeRing}`;
+  }
+}
+
 function NumericPoseInput({
   label,
   value,
@@ -264,6 +288,46 @@ export default function FocusPlacementHud() {
             </div>
           ) : null}
         </>
+      ) : null}
+
+      {candidateCount > 1 ? (
+        <div className="mt-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <div className="text-[10px] uppercase tracking-[0.24em] text-white/45">Candidates</div>
+            <div className="text-[10px] font-medium text-white/65">
+              #{(session.surfaceCandidates[session.activeCandidateIndex]?.rank ?? session.activeCandidateIndex) + 1}
+            </div>
+          </div>
+          <div className="grid gap-2">
+            {session.surfaceCandidates.map((candidate, index) => {
+              const isActive = index === session.activeCandidateIndex;
+              const reason = candidate.blockedReasons[0]?.message ?? candidate.reason;
+              return (
+                <button
+                  key={`${candidate.surfaceId}-${candidate.attachmentType}-${index}`}
+                  type="button"
+                  onClick={() => dispatchCandidateSelect(index)}
+                  className={`rounded-xl border px-3 py-2 text-left transition hover:bg-white/12 ${resolveCandidateClassName(
+                    candidate.tone,
+                    isActive
+                  )}`}
+                  aria-pressed={isActive}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs font-semibold">{candidate.surfaceLabel}</span>
+                    <span className="text-[10px] uppercase tracking-[0.18em] opacity-70">
+                      {candidate.score.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="mt-1 text-[10px] uppercase tracking-[0.18em] opacity-65">
+                    {resolveFocusPlacementAttachmentLabel(candidate.attachmentType)}
+                  </div>
+                  {reason ? <div className="mt-1 text-xs opacity-80">{reason}</div> : null}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       ) : null}
 
       {requirements.length > 0 ? (

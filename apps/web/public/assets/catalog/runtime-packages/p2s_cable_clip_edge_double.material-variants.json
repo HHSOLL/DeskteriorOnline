@@ -4,6 +4,14 @@
     "label": "P2S 엣지 케이블 클립 더블",
     "finishColor": "Black",
     "finishMaterial": "Flexible silicone or ABS plastic",
-    "detailNotes": "Mounted cable clip with inferred clamp/screw metadata for focus placement."
+    "detailNotes": "Mounted cable clip with inferred clamp/screw metadata for focus placement.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "plastic",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

@@ -20,6 +20,9 @@
 - builder/editor lighting은 `direct`/`indirect` mood를 모두 지원하고, direct mode는 fixture emissive + beam/floor glow shader를 포함한다.
 - indirect mode는 천장 가장자리 확산광 위주의 additive glow를 사용하고 광원 본체 노출을 최소화한다.
 - direct mode는 최대 3개 fixture + spotlight/fill + beam/floor glow 조합으로 제한해 자연스러운 falloff와 성능 균형을 함께 맞춘다.
+- QA 조명 preset은 `neutral-studio`, `home-reference`, `soft-evening`으로 유지하고, 각 preset은 HDRI/exposure/white balance/contact shadow QA profile을 가져야 한다.
+- 제품 조명이 실제 point/spot light를 만들 수 있는 경우는 catalog/runtime metadata가 조명 제품임을 명시할 때뿐이며, 장면당 dynamic emitter 예산은 `<= 6`이다.
+- SSR/contact shadow/bloom은 editor walk와 viewer showcase의 non-constrained profile에서만 허용하고, shared viewer/top-view/builder preview에는 비용을 전파하지 않는다.
 
 ## 재질/텍스처
 - `apps/web/src/components/canvas/features/ProceduralWall.tsx`
@@ -34,6 +37,9 @@
 - builder-preview/walk만 active finish texture set을 1종씩 로드한다. 선택되지 않은 texture set preload를 기본값으로 두지 않는다.
 - GLB runtime loader는 `KTX2Loader`를 기본 연결하고, basis transcoder는 `/assets/transcoders/basis/` 또는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`에서 읽는다.
 - room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 없으면 JPG/PNG 원본으로 fallback 한다.
+- wall/floor preset은 각각 12개 이하의 고품질 PBR set으로 관리하고, baseColor/roughness/normal/bump, real-scale repeat, source resolution, KTX2 runtime target, preview thumbnail을 가진다.
+- AI 생성 wall/floor 1K texture는 `generic_ai_candidate`로 남기고, 상용 texture preset은 2K source + runtime KTX2 + constrained 1K fallback 기준을 통과해야 한다.
+- 제품 material variant는 단순 tint가 아니라 slot-level material metadata(`wood/metal/plastic/fabric/...`, roughness/normal intensity, QA status)를 가진다.
 - 알려진 Blender 슬롯(`DeskWood`, `DeskMetal`, `StandWood`, `StandPad`, `LampBody`, `LampAccent`, `LampBulb`)은 slot-aware finish를 우선 적용한다.
 
 ## 카메라/모드
@@ -49,6 +55,7 @@
 - editor top-view의 room shell은 floor 위 footprint strip과 full-height wall mesh를 함께 사용해 shell 형태가 즉시 읽혀야 한다.
 - desk precision mode는 선택 제품의 위치/회전 값을 `mm/deg` measurement overlay로 함께 노출해 미세 배치 확인을 보조한다.
 - desk precision mode는 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 surface lock 상태로 함께 노출한다.
+- desk precision top-view는 5mm / 1deg 기본 snap의 transform gizmo와 keyboard nudge/rotate를 허용하고, inspector numeric input은 1mm 보정 경로로 유지한다.
 - desk precision mode는 support surface 내부 상대 위치를 보여주는 surface-local micro-view를 inspector/overlay에 함께 노출한다.
 - desk precision mode는 support surface 기준 `front(X/H)` / `side(Z/H)` helper view를 inspector/overlay에 함께 노출해 projected span과 vertical reach를 동시에 확인할 수 있어야 한다.
 - desk precision mode는 support surface 위 제품 footprint, projected footprint, edge clearance, relative yaw를 함께 노출해 usable area 침범 여부를 즉시 판단할 수 있어야 한다.
@@ -235,6 +242,21 @@ Removed/Deprecated:
 - 뷰어 제품 정보 drawer는 규격(W/D/H mm), 마감 색상/재질, 디테일 노트를 표시한다.
 - support surface 배치는 `dimensionsMm`가 있을 때 해당 실측값을 우선 사용해 surface size/top을 계산한다.
 - floor/surface 배치는 active asset footprint를 반영해 wall clearance + inter-asset separation을 수행한다.
+- focus placement 기본 snap은 `5mm / 1deg`, fine override는 `1mm / 0.1deg`이며, UI/HUD/저장 좌표는 모두 placement kernel의 snapped local pose를 source of truth로 사용한다.
+- focus/walk/desk precision preview lifecycle은 `interaction-engine` event/result/command를 기준으로 한다. `aiming`, `candidate_preview`, `manipulating`, `blocked` 동안에는 renderer ghost preview만 갱신하고, canonical document patch는 만들지 않는다.
+- blocked preview도 ghost affordance는 보여줄 수 있지만 commit은 막아야 하며, HUD/overlay는 interaction engine의 blocked reason을 표시해야 한다.
+- 제품 외형 치수 오차는 `<= 1%` 또는 `<= 5mm`, desk/대형 가구 support surface 오차는 `<= 3mm`, 소품 footprint 오차는 `<= 2mm`를 paid-beta 기준으로 본다.
+
+## 2026-05-02 변경 동기화 (Interaction Preview Contract)
+Added:
+- `interaction-engine` 기반 preview/commit 분리 규칙을 시각 품질 기준에 추가한다.
+- surface candidate visual affordance는 `surface-ring`, `edge-band`, `mount-target`, `ghost-only` 같은 엔진 결과를 renderer/HUD가 표시하는 구조로 둔다. focus placement session candidate는 `score`, `rank`, `blockedReasons`, `visualAffordance`를 보존해야 한다.
+
+Updated:
+- focus placement visual polish 기준은 React component 내부 임시 상태가 아니라 interaction engine state machine의 `candidate_preview`, `manipulating`, `blocked` 상태를 따른다.
+
+Removed/Deprecated:
+- preview 중 store/document를 직접 갱신해 ghost 위치를 맞추는 방식.
 
 ## 2026-04-14 변경 동기화 (Deskterior Visual Baseline)
 Added:
@@ -257,6 +279,18 @@ Updated:
 
 Removed/Deprecated:
 - 규격 정확도 검증 없이 시각 유사성만으로 승인하던 기준.
+
+## 2026-05-01 변경 동기화 (Commercial Visual Fidelity Gate)
+Added:
+- `RuntimeAsset.commercialReadiness`와 `AssetQaReport.commercialFidelity`를 visual engine의 asset 승격 기준으로 사용한다.
+- room shell texture preset은 source resolution, quality tier, source kind, KTX2 requirement, 1K fallback limit을 metadata로 가진다.
+- lighting preset은 QA profile을 포함해 reference lighting 비교 기준을 고정한다.
+
+Updated:
+- 시각 품질 기준을 PBR 표시 품질에서 SKU reference fidelity, mm tolerance, slot material QA, texture source quality까지 확장한다.
+
+Removed/Deprecated:
+- generic/AI candidate texture와 paid-beta texture를 같은 품질 tier로 취급하는 가정.
 
 ## 2026-04-14 변경 동기화 (Physical Fidelity Stage-2)
 Added:
@@ -329,7 +363,7 @@ Added:
 - walk view 기본 시선은 room center anchor가 target과 겹칠 때 전방 오프셋 target을 사용해 첫 프레임 black view 가능성을 낮춘다.
 
 Updated:
-- editor top-view와 editor walk-view는 black flicker를 막기 위해 안정성 우선 프로필에서 post FX/SSR을 비활성화하고 `frameloop="always"`를 사용한다.
+- editor top-view는 room/desk precision 모두 `frameloop="demand"`를 기본으로 사용하고 orbit/hover/drag/preview/commit 이벤트에서 `invalidate()`를 호출한다. editor walk-view는 1인칭 이동과 pointer-lock 안정성을 위해 post FX/SSR을 비활성화한 `frameloop="always"` 프로필을 유지한다.
 - editor top orbit과 builder preview orbit은 벽 내부로 파고드는 저각도 회전을 막기 위해 polar angle 범위를 더 보수적으로 제한한다.
 
 Removed/Deprecated:
@@ -865,3 +899,36 @@ Updated:
 
 Removed/Deprecated:
 - integrity는 issue list와 단순 count만 보이면 충분하다는 가정.
+
+## 2026-05-02 변경 동기화 (Attachment Guard Visual Contract)
+Added:
+- `wall_screw`와 `grommet_hole` 후보는 focus placement HUD에서 mount-target affordance로 표시되어야 한다.
+- blocked wall/grommet preview는 ghost를 유지하되 point/footprint/normal-offset/collision 이유를 interaction-engine blocked reason으로 표시해야 한다.
+
+Updated:
+- mounted visual quality 기준을 `edge_clamp / underside_screw / wall_attach / vesa_mount`에서 `wall_screw / grommet_hole`까지 확장한다.
+
+Removed/Deprecated:
+- wall screw나 grommet hole 후보가 HUD에서 일반 surface candidate와 구분되지 않아도 된다는 가정.
+
+## 2026-05-02 변경 동기화 (Asset Metadata Visual Contract)
+Added:
+- runtime asset은 시각적으로 보이는 GLB만이 아니라 collider, support surface, attachment point, provenance, SKU/manufacturer가 함께 검증된 package여야 catalog에 노출될 수 있다.
+- `asset-metadata-gate` 실패 asset은 `/labs/qa`에서 release-blocking metadata issue로 보여야 하며, visual QA에서 누락된 collider/support/attachment metadata를 정상 package처럼 취급하지 않는다.
+
+Updated:
+- 3D asset 품질 기준을 mesh/proxy/thumbnail 중심에서 placement-ready metadata package 중심으로 확장한다.
+
+Removed/Deprecated:
+- 모델이 렌더링되면 collider/support/attachment metadata가 부실해도 visual asset으로 통과할 수 있다는 가정.
+
+## 2026-05-02 변경 동기화 (Viewer Parity Visual Contract)
+Added:
+- shared/showcase/community viewer는 editor가 저장한 scene document hash와 runtime asset refs를 같은 payload contract에서 받아야 한다.
+- showcase/community thumbnail source는 pinned version snapshot을 우선해야 하며, viewer parity gate에서 shared payload와 함께 검증되어야 한다.
+
+Updated:
+- visual QA 기준을 editor 화면 품질에서 shared viewer와 community card가 같은 장면 스냅샷을 가리키는지까지 확장한다.
+
+Removed/Deprecated:
+- 공유 뷰어와 커뮤니티 카드가 시각적으로 비슷하게 보이면 같은 scene state로 간주해도 된다는 가정.

@@ -1,0 +1,13 @@
+{
+  "name": "@deskterioronline/interaction-engine",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@deskterioronline/placement-kernel": "0.0.0",
+    "@deskterioronline/scene-schema": "0.0.0"
+  }
+}

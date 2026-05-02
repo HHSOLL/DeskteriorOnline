@@ -4,6 +4,14 @@
     "label": "P2S 75% 화이트 키보드",
     "finishColor": "Warm white",
     "finishMaterial": "Matte keycaps over low-profile chassis",
-    "detailNotes": "Surface-placeable keyboard with scale-locked real dimensions."
+    "detailNotes": "Surface-placeable keyboard with scale-locked real dimensions.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "mixed",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

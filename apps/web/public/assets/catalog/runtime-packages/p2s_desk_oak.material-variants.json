@@ -4,6 +4,14 @@
     "label": "P2S 오크 데스크 1400",
     "finishColor": "Natural oak",
     "finishMaterial": "Oak veneer over engineered wood",
-    "detailNotes": "Rectangular desk with a straight apron and slab top. Dimensions reflect Blender-measured envelope for runtime fidelity."
+    "detailNotes": "Rectangular desk with a straight apron and slab top. Dimensions reflect Blender-measured envelope for runtime fidelity.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "wood",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

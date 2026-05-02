@@ -4,6 +4,14 @@
     "label": "P2S 화이트 스피커 페어",
     "finishColor": "Matte white",
     "finishMaterial": "Painted cabinet with fabric grille",
-    "detailNotes": "Surface-placeable speaker sized for monitor-side composition."
+    "detailNotes": "Surface-placeable speaker sized for monitor-side composition.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "fabric",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

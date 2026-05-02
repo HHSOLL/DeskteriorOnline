@@ -42,11 +42,18 @@ export class ConstraintSolver {
 
     const errors: ConstraintReport["errors"] = [];
     const warnings: ConstraintReport["warnings"] = [];
-    const validatesSurfaceFootprint = candidate.attachmentType === "place_on_surface";
+    const validatesSurfaceFootprint =
+      candidate.attachmentType === "place_on_surface" ||
+      candidate.attachmentType === "grommet_hole" ||
+      candidate.attachmentType === "wall_screw" ||
+      candidate.attachmentType === "wall_attach";
     const validatesMountedPoint =
       candidate.attachmentType === "edge_clamp" ||
       candidate.attachmentType === "underside_screw" ||
       candidate.attachmentType === "vesa_mount" ||
+      candidate.attachmentType === "grommet_hole" ||
+      candidate.attachmentType === "wall_screw" ||
+      candidate.attachmentType === "wall_attach" ||
       candidate.attachmentType === "cable_route";
 
     if (!surface) {
@@ -201,6 +208,22 @@ export class ConstraintSolver {
           .map((point) => point.constraints.minClearanceMm)
           .filter((value): value is number => typeof value === "number");
         if (
+          candidate.attachmentType === "grommet_hole" &&
+          !compatiblePoints.some(
+            (point) =>
+              typeof point.constraints.holeDiameterMm === "number" &&
+              Number.isFinite(point.constraints.holeDiameterMm) &&
+              point.constraints.holeDiameterMm > 0
+          )
+        ) {
+          errors.push({
+            code: "GROMMET_HOLE_DIAMETER_MISSING",
+            message: "Grommet-hole attachments must declare an authored hole diameter.",
+            severity: "error"
+          });
+        }
+
+        if (
           candidate.attachmentType === "underside_screw" &&
           clearanceRequirements.length > 0 &&
           candidate.localPose.normalOffsetMm < Math.min(...clearanceRequirements)
@@ -228,6 +251,14 @@ export class ConstraintSolver {
             errors.push({
               code: "MOUNTED_POINT_OUTSIDE_SURFACE",
               message: "Mounted attachment point must remain inside the focused support surface.",
+              severity: "error"
+            });
+          }
+
+          if (candidate.localPose.normalOffsetMm < 0) {
+            errors.push({
+              code: "MOUNTED_NORMAL_OFFSET_INVALID",
+              message: "Mounted attachment normal offset must stay outside the support surface.",
               severity: "error"
             });
           }

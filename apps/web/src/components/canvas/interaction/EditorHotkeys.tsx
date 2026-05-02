@@ -10,6 +10,18 @@ import {
   useSelectionSelector
 } from "../../../lib/stores/scene-slices";
 
+function resolvePrecisionMoveStep(event: KeyboardEvent, defaultStep: number) {
+  if (event.altKey) return 0.001;
+  if (event.shiftKey) return 0.01;
+  return defaultStep;
+}
+
+function resolvePrecisionRotateStep(event: KeyboardEvent, defaultStep: number) {
+  if (event.altKey) return Math.PI / 1800;
+  if (event.shiftKey) return Math.PI / 12;
+  return defaultStep;
+}
+
 export default function EditorHotkeys() {
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
@@ -58,6 +70,75 @@ export default function EditorHotkeys() {
       }
 
       if (viewMode !== "top" || !topViewPolicy.allowTransformHotkeys) return;
+      const asset = selectedAssetId
+        ? assets.find((item) => item.id === selectedAssetId)
+        : null;
+      const commitSelectedAssetUpdate = (
+        updates: {
+          position?: [number, number, number];
+          rotation?: [number, number, number];
+        },
+        label: string
+      ) => {
+        if (!selectedAssetId || !asset) return false;
+        commitRuntimeAssetUpdateToStore({
+          objectId: selectedAssetId,
+          updates
+        });
+        recordSnapshot(label);
+        return true;
+      };
+
+      if (topMode === "desk-precision" && selectedAssetId && asset) {
+        const moveStep = resolvePrecisionMoveStep(event, topViewPolicy.translationSnap);
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+          event.preventDefault();
+          const direction = event.key === "ArrowLeft" ? -1 : 1;
+          commitSelectedAssetUpdate(
+            {
+              position: [
+                asset.position[0] + direction * moveStep,
+                asset.position[1],
+                asset.position[2]
+              ]
+            },
+            "Nudge asset"
+          );
+          return;
+        }
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+          event.preventDefault();
+          const direction = event.key === "ArrowUp" ? -1 : 1;
+          commitSelectedAssetUpdate(
+            {
+              position: [
+                asset.position[0],
+                asset.position[1],
+                asset.position[2] + direction * moveStep
+              ]
+            },
+            "Nudge asset"
+          );
+          return;
+        }
+        if (key === "q" || key === "e") {
+          event.preventDefault();
+          const direction = key === "q" ? -1 : 1;
+          commitSelectedAssetUpdate(
+            {
+              rotation: [
+                asset.rotation[0],
+                asset.rotation[1] + direction * resolvePrecisionRotateStep(event, topViewPolicy.rotateStep),
+                asset.rotation[2]
+              ]
+            },
+            "Rotate asset"
+          );
+          setTransformMode("rotate");
+          return;
+        }
+      }
+
       if (event.key.toLowerCase() === "g") {
         setTransformMode("translate");
         return;
@@ -67,21 +148,19 @@ export default function EditorHotkeys() {
         return;
       }
       if (event.key.toLowerCase() !== "r") return;
-      if (!selectedAssetId) return;
-      const asset = assets.find((item) => item.id === selectedAssetId);
       if (!asset) return;
-      commitRuntimeAssetUpdateToStore({
-        objectId: selectedAssetId,
-        updates: {
+      if (commitSelectedAssetUpdate(
+        {
           rotation: [
             asset.rotation[0],
             asset.rotation[1] + topViewPolicy.rotationSnap,
             asset.rotation[2]
           ]
-        }
-      });
-      recordSnapshot("Rotate asset");
-      setTransformMode("rotate");
+        },
+        "Rotate asset"
+      )) {
+        setTransformMode("rotate");
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -95,6 +174,7 @@ export default function EditorHotkeys() {
     transformSpace,
     undo,
     redo,
+    topMode,
     viewMode,
     topViewPolicy
   ]);

@@ -8,6 +8,7 @@ import type {
   AssetPivotMetadata,
   AssetSourceMetadata,
   AssetTextureSetMetadata,
+  CommercialAssetFidelityMetadata,
   CuratedDeskteriorAsset,
   CuratedSupportProfileExpectation,
   AssetCompilerPaths
@@ -105,6 +106,64 @@ function resolveContractMetadata(
       levelCount: 1,
       maxDrawCalls: budget.maxDrawCalls,
       maxTriangleCount: budget.maxTriangleCount
+    }
+  };
+}
+
+function resolveCommercialMetadata(item: CatalogItemLike): CommercialAssetFidelityMetadata {
+  const manufacturer = item.brand ?? "DeskteriorOnline Studio";
+  const sku = item.id.replace(/_/g, "-").toUpperCase();
+  const isExternalReference = Boolean(item.externalUrl);
+
+  return {
+    tier: "generic_catalog",
+    sku,
+    manufacturer,
+    referencePack: {
+      sku,
+      manufacturer,
+      canonicalProductUrl: item.externalUrl,
+      dimensionSourceUrl: item.externalUrl,
+      referenceImages: [
+        {
+          view: "front",
+          url: item.thumbnail ?? item.assetId,
+          required: false,
+          license: item.license?.spdx ?? "LicenseRef-DeskteriorOnline-Internal"
+        }
+      ],
+      finishReferences: item.finishMaterial
+        ? [
+            {
+              finishId: "default",
+              label: item.finishMaterial,
+              sourceUrl: item.externalUrl,
+              materialType: "mixed"
+            }
+          ]
+        : [],
+      license: item.license ?? {
+        spdx: "LicenseRef-DeskteriorOnline-Internal",
+        label: "DeskteriorOnline Internal Catalog",
+        requiresAttribution: false
+      },
+      status: isExternalReference ? "reference_collected" : "candidate",
+      notes:
+        "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+    },
+    visualFidelityScore: isExternalReference ? 0.78 : 0.68,
+    dimensionToleranceMm: 0,
+    dimensionTolerancePercent: 0,
+    supportSurfaceToleranceMm: 3,
+    footprintToleranceMm: 2,
+    materialQaStatus: "pending",
+    releaseEligible: false,
+    qaThresholds: {
+      minVisualFidelityScore: 0.95,
+      maxDimensionToleranceMm: 5,
+      maxDimensionTolerancePercent: 1,
+      maxSupportSurfaceToleranceMm: 3,
+      maxFootprintToleranceMm: 2
     }
   };
 }
@@ -486,6 +545,7 @@ export async function getPublishedCatalogVariantAssets(
         expectedAssetId: item.assetId,
         requiredMetadata: ["brand", "description", "category", "options"],
         budget,
+        commercialMetadata: resolveCommercialMetadata(item),
         contractMetadata: resolveContractMetadata(item, budget),
         supportProfileExpectation: resolveSupportProfile(item),
         attachmentAuthoring: resolveAttachmentPoints(item),

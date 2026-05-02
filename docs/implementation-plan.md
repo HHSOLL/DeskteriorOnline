@@ -80,6 +80,47 @@
 - 공유 씬 성능 예산(초기 로드, draw call, texture budget) 모니터링
 - 활동성 지표(조회/반응) 수집 및 피드 랭킹 개선
 
+## 2026-05-02 실행 계획 (Web-native Interaction Engine)
+
+목표:
+- “3D 뷰어”가 아니라 walk placement, desk precision, surface-local attachment, ghost preview, commit-only document patch를 하나의 제품 계약으로 잠근다.
+
+진행:
+- Phase 0 / PR 1 완료: `packages/interaction-engine` 생성, state/event/result/blocked reason/candidate ranking 타입 추가.
+- `FocusPlacementMachine`을 React 없이 테스트 가능한 순수 상태 머신으로 추가.
+- `docs/interaction-engine-contract.md` 작성.
+- `verify:interaction-engine` 추가로 preview 상태 document patch 0건, commit patch intent 1건을 검증.
+- PR 2 완료: `FocusPlacementController`가 keyboard/pointer/numeric/candidate/commit/cancel state transition을 `FocusPlacementMachine` event/result로 위임한다.
+- PR 3 완료: `resolveSceneRenderQuality`의 frameLoop 정책을 walk=`always`, top/desk/builder/shared top=`demand` 기준으로 정리하고 `verify:render-quality`로 고정한다.
+- PR 4 완료: surface candidate 생성이 interaction-engine ranking/blocked reason/visual affordance를 보존하고, HUD candidate list가 동일한 결과로 후보 상태와 직접 선택을 제공한다.
+- PR 5 완료: walk crosshair가 pointer-lock 상태와 focus placement valid/warning/blocked feedback을 표시하고, `verify:walk-placement-ux`로 pointer-lock HUD 상태 계약을 검증한다.
+- PR 6 완료: desk precision top policy를 확인 전용에서 5mm/1deg gizmo + hotkey 정밀 편집 모드로 승격하고 `verify:desk-precision`으로 고정한다.
+- PR 7 완료: `wall_screw`/`grommet_hole`을 kernel + focus candidate admission에 포함하고, mounted point/footprint/normal offset/동일 surface collision commit guard를 `verify:advanced-attachments`와 `verify:focus-placement`로 고정한다.
+
+다음 순서:
+- PR 8 이후: asset metadata gate, viewer parity gate, commercial QA dashboard 순서로 진행한다.
+
+Added:
+- `interaction-engine` Phase 0 foundation과 검증 스크립트.
+- `FocusPlacementController` adapter wiring.
+- focus placement candidate ranking metadata와 HUD candidate selector.
+- walk placement pointer-lock state HUD와 valid/blocked crosshair feedback.
+- desk precision gizmo/hotkey policy gate.
+- wall screw/grommet hole mounted candidate admission과 commit guard 회귀.
+
+Updated:
+- P2 데스크테리어 편집 경험 고도화의 핵심 경로를 React component 중심에서 interaction-engine 중심으로 재정렬한다.
+- Focus placement keyboard/numeric/candidate 전이는 machine event/result를 통해 처리한다.
+- Candidate score/order/block reason은 `interaction-engine` helper 결과를 source of truth로 사용한다.
+- Walk placement HUD는 target hint, active candidate feedback, pointer-lock status를 같은 overlay에서 표시한다.
+- Desk precision은 기존 surface lock inspector/micro-view를 유지하면서 transform controls와 keyboard nudge/rotate를 사용할 수 있어야 한다.
+- Attachment/collision hardening은 `edge_clamp`/`underside_screw`/`vesa_mount`에서 `wall_screw`/`grommet_hole`와 same-surface footprint collision까지 확장한다.
+
+Removed/Deprecated:
+- preview 중 scene document/store mutation이 발생해도 UI가 맞아 보이면 허용한다는 가정.
+- controller가 candidate switch와 commit 가능 여부를 독자 판단하는 구조.
+- wall/grommet attachment가 schema에만 존재하고 focus/kernel 제품 경로에서는 검증되지 않아도 된다는 가정.
+
 ## 2026-04-19 심층 분석 기반 실행 순서
 이 순서는 `/Users/sol/Downloads/DeskteriorOnline 정밀 공간 편집 시스템 심층 분석 보고서.docx`의 제안을 현재 room-first 제품 흐름에 맞게 재배열한 것이다. P0~P3의 큰 축은 유지하되, 실제 실행은 아래 Phase와 Slice 단위로 끊어서 진행한다.
 
@@ -1273,8 +1314,62 @@ Added:
 
 Updated:
 - 기능 완성도 평가는 P0 운영 gate와 분리하고, 실제 사용자 조작 기준으로 room quality / walk placement / catalog depth를 별도 판단한다.
-- builder-preview render quality는 visual E2E와 사용자 preview를 위해 always frameloop + post effect off + capture buffer on 조합을 사용한다.
+- builder-preview render quality는 visual E2E와 사용자 preview를 위해 demand frameloop + explicit camera invalidation + post effect off + capture buffer on 조합을 사용한다.
 
 Removed/Deprecated:
 - verify script 통과만으로 데스크테리어 기능 RC를 선언할 수 있다는 가정.
 - wall/floor만 재질 선택이 가능하면 room material system이 충분하다는 가정.
+
+## 2026-05-01 변경 동기화 (Commercial Quality Gates Foundation)
+Added:
+- Phase 10 후보 범위를 `Actual SKU Asset Fidelity + Texture Material + Precision Placement + Lighting Realism`으로 추가한다.
+- `packages/scene-schema/src/runtime-asset.ts`의 RuntimeAsset 계약에 `commercialReadiness`, `ProductReferencePack`, slot-level material metadata를 추가한다.
+- `packages/asset-compiler` publish/verify는 commercial metadata를 descriptor/index/runtimeAsset/qa-report에 발행하고, missing/mismatched commercial readiness를 asset compiler verify에서 차단한다.
+- `/labs/qa`는 actual SKU hero catalog gate와 wall/floor texture library gate를 포함한다.
+- focus placement는 기본 `5mm / 1deg`, fine `1mm / 0.1deg` kernel snap을 지원한다.
+
+Updated:
+- Phase 2 자산 파이프라인 목표를 `source/export/sync/verify`에서 `referencePack + commercialReadiness + material QA + published package verify`까지 확장한다.
+- Phase 3 정밀 편집 목표를 1~5mm 체감 오차에서 `5mm 기본 snap + 1mm fine snap + kernel/HUD/save 좌표 동기화`로 구체화한다.
+- Phase 4 렌더 품질 목표를 mode별 비용 분리에서 lighting QA profile과 wall/floor texture quality tier까지 확장한다.
+
+Removed/Deprecated:
+- 현재 generic catalog가 곧바로 paid-beta hero SKU로 간주될 수 있다는 가정.
+- AI 생성 texture baseline을 최종 상용 material로 보는 가정.
+
+## 2026-05-02 변경 동기화 (Interaction Engine PR8 Asset Metadata Gate)
+Added:
+- `verify:asset-compiler`는 published runtime package마다 positive finite `dimensionsMm`, `units: "mm"`, descriptor/runtime dimension parity, `scaleLocked=true`, bounds-box collider, support surface frame/bounds, attachment point vectors/compatibility, `productId`, source provenance, SKU/manufacturer metadata를 검증한다.
+- commercial QA snapshot은 `asset-metadata-gate` release gate와 `metadataGatePassedAssets` / `metadataGateFailedAssets` 집계를 포함한다.
+- `verify:commercial-qa`는 모든 catalog asset이 metadata gate를 통과하고 placement regression coverage에 `wall_screw` / `grommet_hole`이 포함되는지 확인한다.
+
+Updated:
+- Phase 7 asset/product metadata pipeline 목표를 “sidecar 존재”에서 “sidecar 존재 + 값 유효성 + catalog traceability + commercial identity”까지 확장한다.
+- release-ready asset 산정은 QA/file presence뿐 아니라 runtime metadata gate 통과를 전제로 한다.
+
+Removed/Deprecated:
+- runtime package descriptor와 sidecar가 존재하기만 하면 상용 catalog metadata로 충분하다는 가정.
+
+## 2026-05-02 변경 동기화 (Interaction Engine PR9 Viewer Parity Gate)
+Added:
+- public scene payload는 `sceneSnapshot` parity metadata를 포함한다: pinned project version, document hash, schema version, node count, placement snapshot count, preview asset count, runtime asset ids, per-node runtime asset refs.
+- `verify:viewer-parity`를 추가해 `verify:public-scene`과 `verify:showcase-scene`을 하나의 shared/showcase/community parity gate로 묶는다.
+- commercial QA snapshot은 `viewer-parity` release gate와 viewer parity suite evidence를 포함한다.
+
+Updated:
+- shared viewer / showcase / community card는 같은 token, pinned version, preview asset summary, thumbnail source, scene snapshot refs를 기준으로 검증한다.
+- shared scene payload 검증은 product metadata 보존뿐 아니라 scene document hash 안정성과 runtime asset ref parity를 확인한다.
+
+Removed/Deprecated:
+- shared viewer와 community/showcase card parity를 별도 smoke script 결과로만 보고 release gate에서 분리해도 된다는 가정.
+
+## 2026-05-02 변경 동기화 (Interaction Engine PR10 Commercial QA Dashboard)
+Added:
+- commercial QA snapshot은 release gate 상태를 `readinessScore`로 압축한다: 0~100 score, pass/warning/fail status, gate count, blockers, warnings, summary.
+- `/labs/qa` header는 readiness score와 warning/blocker 목록을 먼저 보여줘 기업 데모 가능성을 숫자로 판단할 수 있어야 한다.
+
+Updated:
+- commercial QA dashboard는 개별 카드 모음이 아니라 release readiness score를 가진 운영 판정 화면으로 취급한다.
+
+Removed/Deprecated:
+- release gate 카드들을 사람이 수동으로 훑어야만 현재 빌드의 상용 시연 가능성을 판단할 수 있다는 가정.

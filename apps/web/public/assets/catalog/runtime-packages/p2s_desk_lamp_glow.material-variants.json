@@ -4,6 +4,14 @@
     "label": "P2S 글로우 데스크 램프",
     "finishColor": "Matte ivory",
     "finishMaterial": "Powder-coated steel with frosted acrylic diffuser",
-    "detailNotes": "Adjustable desk lamp with integrated warm emitter. Dimensions reflect Blender-measured envelope for accurate placement."
+    "detailNotes": "Adjustable desk lamp with integrated warm emitter. Dimensions reflect Blender-measured envelope for accurate placement.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

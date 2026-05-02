@@ -5,6 +5,10 @@ export type RuntimeTextureSet = {
   bumpMap: string;
 };
 
+export type RoomShellTextureSourceResolution = "1k" | "2k" | "4k" | "unknown";
+export type RoomShellTextureQualityTier = "commercial_pbr" | "generic_candidate";
+export type RoomShellTextureSourceKind = "reference_pbr" | "generic_ai_candidate";
+
 export type RoomShellTexturePreset = RuntimeTextureSet & {
   topColor: string;
   color?: string;
@@ -15,6 +19,11 @@ export type RoomShellTexturePreset = RuntimeTextureSet & {
   previewThumbnail: string;
   repeatScaleMeters: readonly [number, number];
   rotationRadians: number;
+  sourceResolution: RoomShellTextureSourceResolution;
+  qualityTier: RoomShellTextureQualityTier;
+  sourceKind: RoomShellTextureSourceKind;
+  requiresKtx2Runtime: boolean;
+  fallbackMaxResolution: "1k";
 };
 
 type RoomShellTexturePresetDefinition = RuntimeTextureSet & {
@@ -27,6 +36,9 @@ type RoomShellTexturePresetDefinition = RuntimeTextureSet & {
   previewThumbnail?: string;
   repeatScaleMeters: readonly [number, number];
   rotationRadians?: number;
+  sourceResolution?: RoomShellTextureSourceResolution;
+  qualityTier?: RoomShellTextureQualityTier;
+  sourceKind?: RoomShellTextureSourceKind;
 };
 
 export type RuntimeTextureEncodeTarget = {
@@ -41,11 +53,34 @@ export type RuntimeTextureEncodeTarget = {
 };
 
 function defineRoomShellTexturePreset(preset: RoomShellTexturePresetDefinition): RoomShellTexturePreset {
+  const sourceKind = preset.sourceKind ?? (preset.map.includes("/ai_") ? "generic_ai_candidate" : "reference_pbr");
+  const sourceResolution = preset.sourceResolution ?? inferTextureSourceResolution(preset.map);
+  const qualityTier =
+    preset.qualityTier ?? (sourceKind === "generic_ai_candidate" ? "generic_candidate" : "commercial_pbr");
+
   return {
     ...preset,
     previewThumbnail: preset.previewThumbnail ?? preset.map,
-    rotationRadians: preset.rotationRadians ?? 0
+    rotationRadians: preset.rotationRadians ?? 0,
+    sourceResolution,
+    qualityTier,
+    sourceKind,
+    requiresKtx2Runtime: qualityTier === "commercial_pbr",
+    fallbackMaxResolution: "1k"
   };
+}
+
+function inferTextureSourceResolution(pathValue: string): RoomShellTextureSourceResolution {
+  if (/_4k\b/i.test(pathValue)) {
+    return "4k";
+  }
+  if (/_2k\b/i.test(pathValue)) {
+    return "2k";
+  }
+  if (/_1k\b/i.test(pathValue)) {
+    return "1k";
+  }
+  return "unknown";
 }
 
 function toKtx2Path(path: string) {
@@ -64,6 +99,8 @@ function dedupeTargets(targets: RuntimeTextureEncodeTarget[]) {
 }
 
 export const ROOM_SHELL_KTX2_ENABLED = process.env.NEXT_PUBLIC_ENABLE_KTX2_TEXTURES === "1";
+export const MAX_COMMERCIAL_WALL_TEXTURE_PRESETS = 12;
+export const MAX_COMMERCIAL_FLOOR_TEXTURE_PRESETS = 12;
 
 export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
   defineRoomShellTexturePreset({
@@ -431,4 +468,27 @@ export function getRoomShellTextureEncodeTargets() {
   });
 
   return dedupeTargets(targets);
+}
+
+export function summarizeRoomShellTextureQuality() {
+  const wallCommercialCount = WALL_TEXTURE_PRESETS.filter((preset) => preset.qualityTier === "commercial_pbr").length;
+  const floorCommercialCount = FLOOR_TEXTURE_PRESETS.filter((preset) => preset.qualityTier === "commercial_pbr").length;
+  const candidateAiTextureCount = [...WALL_TEXTURE_PRESETS, ...FLOOR_TEXTURE_PRESETS].filter(
+    (preset) => preset.sourceKind === "generic_ai_candidate"
+  ).length;
+
+  return {
+    wallPresetCount: WALL_TEXTURE_PRESETS.length,
+    floorPresetCount: FLOOR_TEXTURE_PRESETS.length,
+    wallCommercialCount,
+    floorCommercialCount,
+    candidateAiTextureCount,
+    wallPresetLimit: MAX_COMMERCIAL_WALL_TEXTURE_PRESETS,
+    floorPresetLimit: MAX_COMMERCIAL_FLOOR_TEXTURE_PRESETS,
+    commercialReady:
+      WALL_TEXTURE_PRESETS.length <= MAX_COMMERCIAL_WALL_TEXTURE_PRESETS &&
+      FLOOR_TEXTURE_PRESETS.length <= MAX_COMMERCIAL_FLOOR_TEXTURE_PRESETS &&
+      wallCommercialCount > 0 &&
+      floorCommercialCount > 0
+  };
 }

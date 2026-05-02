@@ -4,6 +4,14 @@
     "label": "P2S 오크 데스크 트레이",
     "finishColor": "Light oak",
     "finishMaterial": "Oiled oak",
-    "detailNotes": "Low organizer tray with shallow walls sized for stationery, earbuds, or keys. The inner base acts as a furniture support surface."
+    "detailNotes": "Low organizer tray with shallow walls sized for stationery, earbuds, or keys. The inner base acts as a furniture support surface.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "wood",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

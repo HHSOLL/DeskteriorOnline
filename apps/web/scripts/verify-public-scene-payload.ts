@@ -1,6 +1,6 @@
 import { buildSharePreviewMeta } from "../src/lib/share/preview";
 import { buildSceneDocumentBootstrapFromSavePayload } from "../src/lib/server/project-versions";
-import { buildPublicScenePayload } from "../src/lib/server/public-scenes";
+import { buildPublicScenePayload, buildPublicSceneSnapshot } from "../src/lib/server/public-scenes";
 import { serializeScenePlacement } from "../src/lib/domain/scene-placement";
 import { toSceneStorePatch } from "../src/lib/domain/scene-document";
 
@@ -261,6 +261,25 @@ try {
   assert(payload.linkPermission === "view", `link permission mismatch: ${payload.linkPermission}`);
   assert(payload.previewAssetSummary?.totalAssets === 2, "preview asset summary missing");
   assert(payload.sceneBootstrap, "sceneBootstrap missing from shared payload");
+  assert(payload.sceneSnapshot, "scene snapshot parity metadata missing");
+  assert(payload.sceneSnapshot.projectVersionId === "version-1", "scene snapshot version id mismatch");
+  assert(payload.sceneSnapshot.pinnedVersionNumber === 7, "scene snapshot version number mismatch");
+  assert(payload.sceneSnapshot.documentHash.startsWith("sha256:"), "scene snapshot hash missing");
+  assert(payload.sceneSnapshot.nodeCount === 2, "scene snapshot node count mismatch");
+  assert(payload.sceneSnapshot.productSnapshotCount === 2, "scene snapshot product count mismatch");
+  assert(payload.sceneSnapshot.placementSnapshotCount === 2, "scene snapshot placement count mismatch");
+  assert(payload.sceneSnapshot.previewAssetCount === 2, "scene snapshot preview asset count mismatch");
+  assert(
+    JSON.stringify(payload.sceneSnapshot.runtimeAssetIds) === JSON.stringify(["p2s_desk_lamp_glow", "p2s_desk_oak"]),
+    `scene snapshot runtime asset ids mismatch: ${JSON.stringify(payload.sceneSnapshot.runtimeAssetIds)}`
+  );
+  const rebuiltSnapshot = buildPublicSceneSnapshot({
+    sceneBootstrap: payload.sceneBootstrap,
+    projectVersionId: payload.projectVersionId,
+    pinnedVersionNumber: payload.pinnedVersionNumber,
+    previewAssetSummary: payload.previewAssetSummary
+  });
+  assert(rebuiltSnapshot?.documentHash === payload.sceneSnapshot.documentHash, "scene snapshot hash should be stable");
 
   const patch = toSceneStorePatch(payload.sceneBootstrap);
   const deskAsset = patch.assets.find((asset) => asset.id === "desk-1");
@@ -298,6 +317,8 @@ try {
         token: payload.token,
         projectName: payload.projectName,
         pinnedVersionNumber: payload.pinnedVersionNumber,
+        documentHash: payload.sceneSnapshot.documentHash,
+        runtimeAssetIds: payload.sceneSnapshot.runtimeAssetIds,
         assets: patch.assets.map((asset) => ({
           id: asset.id,
           anchorType: asset.anchorType,

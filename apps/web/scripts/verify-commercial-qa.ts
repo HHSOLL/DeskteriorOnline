@@ -11,6 +11,20 @@ function main() {
   const snapshot = loadCommercialQaSnapshot();
 
   assert(snapshot.releaseGates.length >= 5, "expected at least 5 commercial QA release gates");
+  assert(snapshot.readinessScore.score >= 0 && snapshot.readinessScore.score <= 100, "expected readiness score");
+  assert(
+    snapshot.readinessScore.passedGates + snapshot.readinessScore.warningGates + snapshot.readinessScore.failedGates ===
+      snapshot.releaseGates.length,
+    "readiness gate counts should match release gates"
+  );
+  assert(
+    snapshot.readinessScore.status === "warning",
+    `expected current commercial readiness to remain warning until hero SKU/asset QA gates close, received ${snapshot.readinessScore.status}`
+  );
+  assert(
+    snapshot.readinessScore.warnings.includes("Actual SKU hero catalog"),
+    "expected readiness warnings to include actual SKU hero catalog"
+  );
   assert(snapshot.assetStatus.totalAssets > 0, "expected published runtime assets");
   assert(snapshot.performanceBaseline.scenarios.length >= 4, "expected benchmark baseline scenarios");
   assert(snapshot.placementRegression.suites.length >= 3, "expected placement regression suites");
@@ -31,8 +45,78 @@ function main() {
     snapshot.compatibilityMatrix.some((row) => row.requiredForRelease && row.verificationStatus === "verified"),
     "expected release-required compatibility records with verification evidence"
   );
-  assert(snapshot.assetStatus.releaseReadyAssets >= 1, "expected at least one release-ready asset");
-  assert(snapshot.assetStatus.qaCoveragePercent > 0, "expected QA coverage percent to be populated");
+  assert(
+    snapshot.assetStatus.releaseReadyAssets <= snapshot.assetStatus.totalAssets,
+    "release-ready asset count cannot exceed total assets"
+  );
+  assert(snapshot.assetStatus.heroSkuAssets >= 0, "expected hero SKU count to be populated");
+  assert(
+    snapshot.assetStatus.releaseEligibleHeroAssets <= snapshot.assetStatus.heroSkuAssets,
+    "release-eligible hero SKU count cannot exceed registered hero SKU count"
+  );
+  assert(
+    snapshot.releaseGates.some((gate) => gate.id === "actual-sku-hero-catalog"),
+    "expected actual SKU hero catalog release gate"
+  );
+  assert(
+    snapshot.releaseGates.some((gate) => gate.id === "texture-material-library"),
+    "expected texture material library release gate"
+  );
+  assert(
+    snapshot.releaseGates.some((gate) => gate.id === "asset-metadata-gate" && gate.status === "pass"),
+    "expected runtime asset metadata gate to pass"
+  );
+  assert(
+    snapshot.releaseGates.some((gate) => gate.id === "viewer-parity" && gate.status === "pass"),
+    "expected shared viewer parity gate to pass"
+  );
+  assert(snapshot.textureQuality.wallPresetCount <= snapshot.textureQuality.wallPresetLimit, "expected wall preset count within commercial limit");
+  assert(snapshot.textureQuality.floorPresetCount <= snapshot.textureQuality.floorPresetLimit, "expected floor preset count within commercial limit");
+  assert(snapshot.assetStatus.qaCoveragePercent >= 0, "expected QA coverage percent to be populated");
+  assert(
+    snapshot.assetStatus.metadataGatePassedAssets === snapshot.assetStatus.totalAssets,
+    "expected all catalog assets to pass runtime metadata gate"
+  );
+  assert(snapshot.assetStatus.metadataGateFailedAssets === 0, "expected zero runtime metadata gate failures");
+  assert(
+    snapshot.assetStatus.rows.every((row) => row.metadataGatePassed),
+    "expected every asset row to carry passing metadata gate status"
+  );
+  assert(
+    snapshot.assetStatus.rows.every((row) => row.scaleLocked && row.sku && row.manufacturer),
+    "expected every asset row to expose scale lock, SKU, and manufacturer"
+  );
+  assert(snapshot.assetStatus.supportCoveragePercent >= 0, "expected support coverage percent to be populated");
+  assert(snapshot.assetStatus.attachmentCoveragePercent >= 0, "expected attachment coverage percent to be populated");
+  const advancedAttachmentSuite = snapshot.placementRegression.suites.find((suite) => suite.id === "advanced-attachments");
+  assert(advancedAttachmentSuite, "expected advanced attachment suite");
+  assert(
+    advancedAttachmentSuite.coverage.includes("wall_screw") && advancedAttachmentSuite.coverage.includes("grommet_hole"),
+    "expected advanced attachment suite to cover wall_screw and grommet_hole"
+  );
+  assert(snapshot.viewerParity.suites.length >= 2, "expected viewer parity suites");
+  assert(
+    snapshot.viewerParity.suites.every((suite) => suite.status === "pass"),
+    "expected all viewer parity suites to pass"
+  );
+  assert(
+    snapshot.viewerParity.suites.some(
+      (suite) => suite.script === "verify:viewer-parity" && suite.coverage.includes("community thumbnail parity")
+    ),
+    "expected consolidated viewer parity coverage"
+  );
+  assert(
+    snapshot.viewerParity.suites.some(
+      (suite) => suite.script === "verify:public-scene" && suite.coverage.includes("scene document snapshot")
+    ),
+    "expected public scene parity coverage"
+  );
+  assert(
+    snapshot.viewerParity.suites.some(
+      (suite) => suite.script === "verify:showcase-scene" && suite.coverage.includes("thumbnail source")
+    ),
+    "expected showcase/community parity coverage"
+  );
   assert(
     snapshot.sceneIntegrity.sampleStatus === "corrupt",
     `expected corrupt integrity sample, received ${snapshot.sceneIntegrity.sampleStatus}`
@@ -124,14 +208,20 @@ function main() {
     JSON.stringify(
       {
         releaseGates: snapshot.releaseGates.map((gate) => ({ id: gate.id, status: gate.status })),
+        readinessScore: snapshot.readinessScore,
         totalAssets: snapshot.assetStatus.totalAssets,
+        metadataGatePassedAssets: snapshot.assetStatus.metadataGatePassedAssets,
         releaseReadyAssets: snapshot.assetStatus.releaseReadyAssets,
+        heroSkuAssets: snapshot.assetStatus.heroSkuAssets,
+        releaseEligibleHeroAssets: snapshot.assetStatus.releaseEligibleHeroAssets,
+        textureQuality: snapshot.textureQuality,
         topRiskAssets: snapshot.assetStatus.topRiskRows.map((row) => ({
           key: row.key,
           severity: row.severity
         })),
         scenarios: snapshot.performanceBaseline.scenarios.map((entry) => entry.scenario),
         placementSuites: snapshot.placementRegression.suites.map((suite) => suite.script),
+        viewerParitySuites: snapshot.viewerParity.suites.map((suite) => suite.script),
         compatibilityProfiles: snapshot.compatibilityMatrix.map((row) => ({
           profile: row.profile,
           browser: row.browser,

@@ -550,8 +550,10 @@ async function enterWalkView(page: Page) {
 const ATTACHMENT_LABELS: Record<string, string> = {
   place_on_surface: "Place On Surface",
   underside_screw: "Under Desk",
+  grommet_hole: "Grommet Hole",
   edge_clamp: "Edge Clamp",
   vesa_mount: "VESA Mount",
+  wall_screw: "Wall Screw",
   wall_attach: "Wall Mount"
 };
 

@@ -412,6 +412,24 @@ try {
     snapped.uMm === 265 && snapped.vMm === 120 && snapped.normalOffsetMm === 5 && snapped.rotationMilliDeg === 17000,
     "snap generator should quantize place-on-surface local pose"
   );
+  const fineSnapped = snapCandidateGenerator.snapLocalPose(
+    {
+      uMm: 263,
+      vMm: 118,
+      normalOffsetMm: 3,
+      rotationMilliDeg: 17350
+    },
+    "place_on_surface",
+    null,
+    { moveStepMm: 1, rotateStepMilliDeg: 100 }
+  );
+  assert(
+    fineSnapped.uMm === 263 &&
+      fineSnapped.vMm === 118 &&
+      fineSnapped.normalOffsetMm === 3 &&
+      fineSnapped.rotationMilliDeg === 17400,
+    "snap generator should support 1mm / 0.1deg fine precision override"
+  );
 
   const kernel = new PlacementKernel(engine);
   const deskSurfaceMesh = new Mesh(
@@ -617,12 +635,12 @@ try {
   assert(mountedState.constraintReport?.valid === true, "mounted candidate should pass attachment validation on the desk edge");
   const mountedCommitted = mountedTransaction.commit();
   assert(
-    mountedCommitted.mode === "surface_local" &&
+      mountedCommitted.mode === "surface_local" &&
       mountedCommitted.surfaceId === "back_edge" &&
-      mountedCommitted.localPose.uMm === 260 &&
+      mountedCommitted.localPose.uMm === 265 &&
       mountedCommitted.localPose.vMm === 10 &&
       mountedCommitted.localPose.normalOffsetMm === 0 &&
-      mountedCommitted.localPose.rotationMilliDeg === 15000,
+      mountedCommitted.localPose.rotationMilliDeg === 17000,
     "mounted flow should persist snapped surface-local placement on the resolved edge"
   );
 

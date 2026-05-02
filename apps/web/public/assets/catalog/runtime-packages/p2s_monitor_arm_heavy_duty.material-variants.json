@@ -4,6 +4,14 @@
     "label": "P2S 헤비듀티 모니터암",
     "finishColor": "Matte black",
     "finishMaterial": "Powder-coated aluminum arm with steel clamp",
-    "detailNotes": "Mounted accessory with inferred edge clamp and VESA target metadata."
+    "detailNotes": "Mounted accessory with inferred edge clamp and VESA target metadata.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

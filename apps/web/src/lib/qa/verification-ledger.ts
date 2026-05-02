@@ -22,6 +22,16 @@ export type PlacementRegressionEvidenceRecord = {
   evidence: string[];
 };
 
+export type ViewerParityEvidenceRecord = {
+  id: string;
+  script: string;
+  requiredForRelease: boolean;
+  status: QaVerificationStatus;
+  lastVerifiedAt: string | null;
+  verificationMethod: string;
+  evidence: string[];
+};
+
 export const compatibilityVerificationLedger: CompatibilityVerificationRecord[] = [
   {
     profile: "Desktop Balanced",
@@ -86,26 +96,63 @@ export const placementRegressionEvidenceLedger: PlacementRegressionEvidenceRecor
     script: "verify:placement-kernel",
     requiredForRelease: true,
     status: "verified",
-    lastVerifiedAt: "2026-04-23T21:22:00+09:00",
+    lastVerifiedAt: "2026-05-02T11:20:00+09:00",
     verificationMethod: "local-smoke",
-    evidence: ["surface_local", "mounted compatibility", "collision guard"]
+    evidence: ["surface_local", "mounted compatibility", "collision guard", "same-surface overlap guard"]
   },
   {
     id: "focus-placement",
     script: "verify:focus-placement",
     requiredForRelease: true,
     status: "verified",
-    lastVerifiedAt: "2026-04-23T21:27:00+09:00",
+    lastVerifiedAt: "2026-05-02T11:20:00+09:00",
     verificationMethod: "local-smoke",
-    evidence: ["candidate cycle", "walkthrough session", "snapped HUD"]
+    evidence: ["candidate cycle", "walkthrough session", "snapped HUD", "wall_screw candidate", "grommet_hole candidate"]
   },
   {
     id: "advanced-attachments",
     script: "verify:advanced-attachments",
     requiredForRelease: true,
     status: "verified",
-    lastVerifiedAt: "2026-04-23T21:33:00+09:00",
+    lastVerifiedAt: "2026-05-02T11:20:00+09:00",
     verificationMethod: "local-smoke",
-    evidence: ["vesa mount", "monitor arm", "articulation reachability"]
+    evidence: [
+      "vesa mount",
+      "monitor arm",
+      "articulation reachability",
+      "wall_screw commit",
+      "wall overlap blocked",
+      "grommet_hole commit"
+    ]
+  }
+];
+
+export const viewerParityEvidenceLedger: ViewerParityEvidenceRecord[] = [
+  {
+    id: "viewer-parity",
+    script: "verify:viewer-parity",
+    requiredForRelease: true,
+    status: "verified",
+    lastVerifiedAt: "2026-05-02T11:55:00+09:00",
+    verificationMethod: "local-smoke",
+    evidence: ["public scene payload", "showcase scene consistency", "community thumbnail parity"]
+  },
+  {
+    id: "public-scene-payload",
+    script: "verify:public-scene",
+    requiredForRelease: true,
+    status: "verified",
+    lastVerifiedAt: "2026-05-02T11:55:00+09:00",
+    verificationMethod: "local-smoke",
+    evidence: ["pinned project version", "scene document hash", "runtime asset refs", "product snapshots"]
+  },
+  {
+    id: "showcase-scene-consistency",
+    script: "verify:showcase-scene",
+    requiredForRelease: true,
+    status: "verified",
+    lastVerifiedAt: "2026-05-02T11:55:00+09:00",
+    verificationMethod: "local-smoke",
+    evidence: ["shared/showcase token parity", "version badge parity", "thumbnail source", "scene snapshot refs"]
   }
 ];

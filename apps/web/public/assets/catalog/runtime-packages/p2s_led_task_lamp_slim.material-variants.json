@@ -4,6 +4,14 @@
     "label": "P2S 슬림 LED 태스크 램프",
     "finishColor": "Black",
     "finishMaterial": "Powder-coated metal with LED diffuser",
-    "detailNotes": "Desk lamp variant with real envelope for surface placement."
+    "detailNotes": "Desk lamp variant with real envelope for surface placement.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

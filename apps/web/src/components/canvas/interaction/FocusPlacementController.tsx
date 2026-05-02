@@ -3,15 +3,30 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { toast } from "sonner";
 import type { Engine } from "@deskterioronline/engine-core";
-import { PlacementKernel, type PlacementTransaction } from "@deskterioronline/placement-kernel";
+import {
+  createBlockedReason,
+  createFocusPlacementMachine,
+  type BlockedReason,
+  type FocusPlacementMachine,
+  type FocusPlacementMachineState,
+  type InteractionResult,
+  type InteractionSurfaceCandidate,
+  type RankedInteractionSurfaceCandidate
+} from "@deskterioronline/interaction-engine";
+import {
+  FINE_PRECISION_SNAP_RULE,
+  PlacementKernel,
+  type PlacementTransaction,
+  type SnapRule
+} from "@deskterioronline/placement-kernel";
 import type { RuntimeAsset, SurfaceLocalPose } from "@deskterioronline/scene-schema";
 import { isSurfacePlacementRecord } from "@deskterioronline/scene-schema";
 import {
   resolveFocusPlacementSessionUpdate,
   resolveFocusPlacementStepConfig,
-  resolveNextFocusPlacementCandidateIndex,
   resolveFocusPlacementWizardState,
-  type FocusPlacementAttachmentType
+  type FocusPlacementAttachmentType,
+  type FocusPlacementSurfaceCandidate
 } from "../../../lib/runtime/focus-placement-session";
 import { commitRuntimePlacementToStore } from "../../../lib/runtime/runtime-asset-bridge";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
@@ -98,12 +113,85 @@ function resolveRotateStep(event: KeyboardEvent, baseStep: number) {
   return baseStep;
 }
 
-function resolveCandidateFromRequest(request: FocusPlacementRequest, candidateIndex: number) {
-  return (
-    request.surfaceCandidates[candidateIndex] ??
-    request.surfaceCandidates[request.preferredCandidateIndex] ??
-    null
+function resolveFocusCandidateTone(candidate: RankedInteractionSurfaceCandidate) {
+  if (candidate.visualAffordance.tone === "valid") {
+    return "ready" as const;
+  }
+  if (candidate.visualAffordance.tone === "blocked" || candidate.blockedReasons.length > 0) {
+    return "blocked" as const;
+  }
+  return "info" as const;
+}
+
+function toInteractionCandidate(
+  request: FocusPlacementRequest,
+  candidate: FocusPlacementSurfaceCandidate,
+  index: number
+): InteractionSurfaceCandidate {
+  return {
+    supportObjectId: request.supportObjectId,
+    surfaceId: candidate.surfaceId,
+    surfaceLabel: candidate.surfaceLabel,
+    surfaceType: candidate.surfaceType,
+    attachmentType: candidate.attachmentType,
+    enabled: candidate.enabled,
+    reason: candidate.reason,
+    blockedReasons: candidate.blockedReasons,
+    surfaceBoundsMm: candidate.surfaceBoundsMm,
+    noPlaceZones: candidate.noPlaceZones,
+    preferredZones: candidate.preferredZones,
+    visualAffordance: candidate.visualAffordance,
+    ranking: {
+      ...candidate.ranking,
+      rayHitConfidence: 0.8,
+      attachmentCompatibility: candidate.enabled ? 1 : 0,
+      surfaceVisibility: candidate.ranking.surfaceVisibility ?? 0.75,
+      distancePriority: Math.max(candidate.ranking.distancePriority ?? 0, 1 - index * 0.05),
+      userSelectedSupportBonus: (candidate.ranking.userSelectedSupportBonus ?? 0) + 0.5,
+      preferredSurfaceBonus:
+        (candidate.ranking.preferredSurfaceBonus ?? 0) +
+        (index === request.preferredCandidateIndex ? 0.5 : 0),
+      outOfBoundsPenalty: candidate.enabled ? 0 : 1
+    }
+  };
+}
+
+function toInteractionCandidates(request: FocusPlacementRequest | FocusPlacementSession) {
+  return request.surfaceCandidates.map((candidate, index) =>
+    toInteractionCandidate(request, candidate, index)
   );
+}
+
+function toFocusCandidate(candidate: RankedInteractionSurfaceCandidate): FocusPlacementSurfaceCandidate {
+  return {
+    surfaceId: candidate.surfaceId,
+    surfaceLabel: candidate.surfaceLabel ?? candidate.surfaceId,
+    surfaceType: candidate.surfaceType,
+    attachmentType: candidate.attachmentType as FocusPlacementAttachmentType,
+    surfaceBoundsMm: candidate.surfaceBoundsMm ?? { min: [0, 0], max: [0, 0] },
+    noPlaceZones: candidate.noPlaceZones ?? [],
+    preferredZones: candidate.preferredZones ?? [],
+    enabled: candidate.enabled && candidate.blockedReasons.length === 0,
+    tone: resolveFocusCandidateTone(candidate),
+    reason: candidate.blockedReasons[0]?.message ?? candidate.reason ?? null,
+    ranking: candidate.ranking ?? {},
+    score: candidate.score,
+    rank: candidate.rank,
+    blockedReasons: candidate.blockedReasons,
+    visualAffordance: candidate.visualAffordance
+  };
+}
+
+function toFocusCandidates(state: FocusPlacementMachineState): FocusPlacementSurfaceCandidate[] {
+  return state.candidates.map(toFocusCandidate);
+}
+
+function resolveActiveMachineCandidate(state: FocusPlacementMachineState) {
+  return state.candidates[state.activeCandidateIndex] ?? null;
+}
+
+function formatBlockedReason(reason: BlockedReason) {
+  return `[${reason.code}] ${reason.message}`;
 }
 
 function isFinitePoseValue(value: unknown): value is number {
@@ -158,6 +246,7 @@ export default function FocusPlacementController() {
   const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
   const clearPlacementDraft = useWalkInventoryStore((state) => state.clearPlacementDraft);
   const transactionRef = useRef<PlacementTransaction | null>(null);
+  const machineRef = useRef<FocusPlacementMachine | null>(null);
   const kernel = useMemo(() => (engine ? new PlacementKernel(engine) : null), [engine]);
   const assetsById = useMemo(
     () => new Map(assets.map((asset) => [asset.id, asset])),
@@ -183,7 +272,31 @@ export default function FocusPlacementController() {
         throw new Error("Focus placement engine is unavailable.");
       }
 
-      const candidate = resolveCandidateFromRequest(input.request, input.candidateIndex);
+      let machine = machineRef.current;
+      if (input.mode === "start" || !machine) {
+        machine = createFocusPlacementMachine({ mode: "walk", readOnly });
+        machineRef.current = machine;
+        const startResult = machine.dispatch({
+          type: "START_PLACEMENT",
+          objectId: input.request.objectId,
+          supportObjectId: input.request.supportObjectId,
+          candidates: toInteractionCandidates(input.request),
+          preferredCandidateIndex: input.candidateIndex,
+          readOnly
+        });
+        if (startResult.state.status === "blocked" && startResult.state.blockedReasons.length > 0) {
+          throw new Error(startResult.state.blockedReasons.map(formatBlockedReason).join(", "));
+        }
+      } else {
+        machine.dispatch({
+          type: "SELECT_CANDIDATE",
+          candidateIndex: input.candidateIndex
+        });
+      }
+
+      const machineState = machine.getState();
+      const machineCandidate = resolveActiveMachineCandidate(machineState);
+      const candidate = machineCandidate ? toFocusCandidate(machineCandidate) : null;
       if (!candidate) {
         throw new Error("Focus placement candidate was not found.");
       }
@@ -194,7 +307,7 @@ export default function FocusPlacementController() {
       transactionRef.current?.cancel();
       const transaction = kernel.begin({
         objectId: input.request.objectId,
-        supportObjectId: input.request.supportObjectId,
+        supportObjectId: machineCandidate?.supportObjectId ?? input.request.supportObjectId,
         surfaceId: candidate.surfaceId,
         attachmentType: candidate.attachmentType
       });
@@ -210,14 +323,32 @@ export default function FocusPlacementController() {
         );
       const nextState = transaction.update(initialLocalPose);
       const sessionState = resolveFocusPlacementSessionUpdate(initialLocalPose, nextState);
+      machine.dispatch({
+        type: "APPLY_REPORTS",
+        localPose: sessionState.localPose,
+        constraintReport: sessionState.constraintReport,
+        collisionReport: sessionState.collisionReport
+      });
+      const syncedMachineState = machine.getState();
       const stepConfig = resolveFocusPlacementStepConfig(
         candidate.attachmentType,
         candidate.surfaceType
       );
+      const nextSurfaceCandidates = toFocusCandidates(syncedMachineState);
+      const preferredCandidateIndex = Math.max(
+        0,
+        syncedMachineState.candidates.findIndex(
+          (candidateOption) =>
+            candidateOption.enabled && candidateOption.blockedReasons.length === 0
+        )
+      );
       const nextSession = {
         ...input.request,
         ...candidate,
-        activeCandidateIndex: input.candidateIndex,
+        supportObjectId: machineCandidate?.supportObjectId ?? input.request.supportObjectId,
+        surfaceCandidates: nextSurfaceCandidates,
+        preferredCandidateIndex,
+        activeCandidateIndex: syncedMachineState.activeCandidateIndex,
         ...sessionState,
         wizardState: resolveFocusPlacementWizardState({
           attachmentType: candidate.attachmentType,
@@ -239,7 +370,7 @@ export default function FocusPlacementController() {
 
       setIsTransforming(true);
     },
-    [assetsById, engine, kernel, setIsTransforming, startSession, updateSession]
+    [assetsById, engine, kernel, readOnly, setIsTransforming, startSession, updateSession]
   );
 
   useEffect(() => {
@@ -294,6 +425,7 @@ export default function FocusPlacementController() {
 
     transactionRef.current?.cancel();
     transactionRef.current = null;
+    machineRef.current = null;
     clearSession();
     setIsTransforming(false);
   }, [activeSession, clearSession, engine, readOnly, selectedAssetId, setIsTransforming, viewMode]);
@@ -303,14 +435,33 @@ export default function FocusPlacementController() {
       return;
     }
 
-    const applyLocalPose = (nextLocalPose: SurfaceLocalPose) => {
+    const syncPreviewFromMachineResult = (result: InteractionResult) => {
       if (!transactionRef.current) {
         return;
       }
 
-      const nextState = transactionRef.current.update(nextLocalPose);
-      const sessionState = resolveFocusPlacementSessionUpdate(nextLocalPose, nextState);
+      const previewCommand = result.commands.find(
+        (command) => command.type === "UPDATE_PREVIEW_POSE"
+      );
+      if (!previewCommand || previewCommand.type !== "UPDATE_PREVIEW_POSE") {
+        return;
+      }
+
+      const nextState = transactionRef.current.update(
+        previewCommand.snapRule
+          ? { localPose: previewCommand.localPose, snapRule: previewCommand.snapRule }
+          : previewCommand.localPose
+      );
+      const sessionState = resolveFocusPlacementSessionUpdate(previewCommand.localPose, nextState);
+      const syncedResult = machineRef.current?.dispatch({
+        type: "APPLY_REPORTS",
+        localPose: sessionState.localPose,
+        constraintReport: sessionState.constraintReport,
+        collisionReport: sessionState.collisionReport
+      });
+      const syncedMachineState = syncedResult?.state ?? result.state;
       updateSession({
+        activeCandidateIndex: syncedMachineState.activeCandidateIndex,
         ...sessionState,
         wizardState: resolveFocusPlacementWizardState({
           attachmentType: activeSession.attachmentType,
@@ -324,8 +475,33 @@ export default function FocusPlacementController() {
       });
     };
 
+    const dispatchPreviewEvent = (
+      event:
+        | { type: "NUDGE"; axis: "u" | "v" | "normal"; deltaMm: number; snapRule?: SnapRule }
+        | { type: "ROTATE"; deltaMilliDeg: number; snapRule?: SnapRule }
+        | { type: "SET_NUMERIC_POSE"; pose: Partial<SurfaceLocalPose>; snapRule?: SnapRule }
+    ) => {
+      const machine = machineRef.current;
+      if (!machine) {
+        return;
+      }
+
+      syncPreviewFromMachineResult(machine.dispatch(event));
+    };
+
     const commitActivePlacement = () => {
       if (!transactionRef.current) {
+        return;
+      }
+
+      const commitResult = machineRef.current?.dispatch({ type: "COMMIT" });
+      if (commitResult && commitResult.documentPatchCount === 0) {
+        const detail =
+          commitResult.state.blockedReasons.map(formatBlockedReason).join(", ") ||
+          "충돌, 여유 공간, 표면 호환성을 확인한 뒤 다시 배치해 주세요.";
+        toast.error("배치할 수 없는 위치입니다.", {
+          description: detail
+        });
         return;
       }
 
@@ -335,15 +511,27 @@ export default function FocusPlacementController() {
           objectId: activeSession.objectId,
           engine
         });
+        machineRef.current?.dispatch({ type: "COMMIT_SUCCEEDED" });
         recordSnapshot("집중 배치");
         if (placementDraft?.objectId === activeSession.objectId) {
           clearPlacementDraft();
         }
         transactionRef.current = null;
+        machineRef.current = null;
         clearSession();
         setIsTransforming(false);
       } catch (error) {
         console.error("[FocusPlacementController] failed to commit focus placement", error);
+        machineRef.current?.dispatch({
+          type: "COMMIT_FAILED",
+          reasons: [
+            createBlockedReason(
+              "COLLISION",
+              error instanceof Error ? error.message : "Placement commit failed.",
+              "constraint"
+            )
+          ]
+        });
         toast.error("배치할 수 없는 위치입니다.", {
           description: "충돌, 여유 공간, 표면 호환성을 확인한 뒤 다시 배치해 주세요."
         });
@@ -351,6 +539,7 @@ export default function FocusPlacementController() {
     };
 
     const cancelActivePlacement = () => {
+      machineRef.current?.dispatch({ type: "CANCEL" });
       if (transactionRef.current) {
         transactionRef.current.cancel();
         transactionRef.current = null;
@@ -360,6 +549,7 @@ export default function FocusPlacementController() {
         setSelectedAssetId(null);
         clearPlacementDraft();
       }
+      machineRef.current = null;
       clearSession();
       setIsTransforming(false);
     };
@@ -369,77 +559,64 @@ export default function FocusPlacementController() {
         return;
       }
 
-      let nextLocalPose: SurfaceLocalPose | null = null;
       const moveStep = resolveMoveStep(event, activeSession.moveStepMm);
       const rotateStep = resolveRotateStep(event, activeSession.rotateStepMilliDeg);
+      const snapRule = event.altKey ? FINE_PRECISION_SNAP_RULE : undefined;
 
       switch (event.key) {
         case "ArrowLeft":
-          nextLocalPose = {
-            ...activeSession.localPose,
-            uMm: activeSession.localPose.uMm - moveStep
-          };
+          event.preventDefault();
+          dispatchPreviewEvent({ type: "NUDGE", axis: "u", deltaMm: -moveStep, snapRule });
           break;
         case "ArrowRight":
-          nextLocalPose = {
-            ...activeSession.localPose,
-            uMm: activeSession.localPose.uMm + moveStep
-          };
+          event.preventDefault();
+          dispatchPreviewEvent({ type: "NUDGE", axis: "u", deltaMm: moveStep, snapRule });
           break;
         case "ArrowUp":
-          nextLocalPose = {
-            ...activeSession.localPose,
-            vMm: activeSession.localPose.vMm - moveStep
-          };
+          event.preventDefault();
+          dispatchPreviewEvent({ type: "NUDGE", axis: "v", deltaMm: -moveStep, snapRule });
           break;
         case "ArrowDown":
-          nextLocalPose = {
-            ...activeSession.localPose,
-            vMm: activeSession.localPose.vMm + moveStep
-          };
+          event.preventDefault();
+          dispatchPreviewEvent({ type: "NUDGE", axis: "v", deltaMm: moveStep, snapRule });
           break;
         case "PageUp":
-          nextLocalPose = {
-            ...activeSession.localPose,
-            normalOffsetMm: activeSession.localPose.normalOffsetMm + moveStep
-          };
+          event.preventDefault();
+          dispatchPreviewEvent({ type: "NUDGE", axis: "normal", deltaMm: moveStep, snapRule });
           break;
         case "PageDown":
-          nextLocalPose = {
-            ...activeSession.localPose,
-            normalOffsetMm: activeSession.localPose.normalOffsetMm - moveStep
-          };
+          event.preventDefault();
+          dispatchPreviewEvent({ type: "NUDGE", axis: "normal", deltaMm: -moveStep, snapRule });
           break;
         case "q":
         case "Q":
-          nextLocalPose = {
-            ...activeSession.localPose,
-            rotationMilliDeg: activeSession.localPose.rotationMilliDeg - rotateStep
-          };
+          event.preventDefault();
+          dispatchPreviewEvent({ type: "ROTATE", deltaMilliDeg: -rotateStep, snapRule });
           break;
         case "e":
         case "E":
-          nextLocalPose = {
-            ...activeSession.localPose,
-            rotationMilliDeg: activeSession.localPose.rotationMilliDeg + rotateStep
-          };
+          event.preventDefault();
+          dispatchPreviewEvent({ type: "ROTATE", deltaMilliDeg: rotateStep, snapRule });
           break;
         case "Tab": {
           event.preventDefault();
-          const nextCandidateIndex = resolveNextFocusPlacementCandidateIndex(
-            activeSession.surfaceCandidates,
-            activeSession.activeCandidateIndex,
-            event.shiftKey ? -1 : 1
-          );
+          const switchResult = machineRef.current?.dispatch({
+            type: "SWITCH_CANDIDATE",
+            direction: event.shiftKey ? -1 : 1
+          });
+          const nextCandidateIndex = switchResult?.state.activeCandidateIndex ?? -1;
           if (nextCandidateIndex === -1 || nextCandidateIndex === activeSession.activeCandidateIndex) {
             return;
           }
 
           try {
             activateCandidate({
-              request: activeSession,
+              request: {
+                ...activeSession,
+                surfaceCandidates: switchResult ? toFocusCandidates(switchResult.state) : activeSession.surfaceCandidates
+              },
               candidateIndex: nextCandidateIndex,
-              baseLocalPose: activeSession.localPose,
+              baseLocalPose: switchResult?.state.localPose ?? activeSession.localPose,
               mode: "switch"
             });
           } catch (error) {
@@ -455,9 +632,17 @@ export default function FocusPlacementController() {
           }
 
           try {
+            const selectResult = machineRef.current?.dispatch({
+              type: "SELECT_CANDIDATE",
+              candidateIndex: activeSession.preferredCandidateIndex
+            });
             activateCandidate({
-              request: activeSession,
-              candidateIndex: activeSession.preferredCandidateIndex,
+              request: {
+                ...activeSession,
+                surfaceCandidates: selectResult ? toFocusCandidates(selectResult.state) : activeSession.surfaceCandidates
+              },
+              candidateIndex: selectResult?.state.activeCandidateIndex ?? activeSession.preferredCandidateIndex,
+              baseLocalPose: selectResult?.state.localPose ?? activeSession.localPose,
               mode: "switch"
             });
           } catch (error) {
@@ -477,13 +662,6 @@ export default function FocusPlacementController() {
         default:
           return;
       }
-
-      if (!nextLocalPose) {
-        return;
-      }
-
-      event.preventDefault();
-      applyLocalPose(nextLocalPose);
     };
 
     const handlePointerCommit = (event: MouseEvent) => {
@@ -505,21 +683,57 @@ export default function FocusPlacementController() {
         return;
       }
 
-      applyLocalPose({
-        ...activeSession.localPose,
-        ...(isFinitePoseValue(detail.uMm) ? { uMm: detail.uMm } : {}),
-        ...(isFinitePoseValue(detail.vMm) ? { vMm: detail.vMm } : {}),
-        ...(isFinitePoseValue(detail.normalOffsetMm) ? { normalOffsetMm: detail.normalOffsetMm } : {}),
-        ...(isFinitePoseValue(detail.rotationMilliDeg) ? { rotationMilliDeg: detail.rotationMilliDeg } : {})
+      dispatchPreviewEvent({
+        type: "SET_NUMERIC_POSE",
+        pose: {
+          ...(isFinitePoseValue(detail.uMm) ? { uMm: detail.uMm } : {}),
+          ...(isFinitePoseValue(detail.vMm) ? { vMm: detail.vMm } : {}),
+          ...(isFinitePoseValue(detail.normalOffsetMm) ? { normalOffsetMm: detail.normalOffsetMm } : {}),
+          ...(isFinitePoseValue(detail.rotationMilliDeg) ? { rotationMilliDeg: detail.rotationMilliDeg } : {})
+        },
+        snapRule: FINE_PRECISION_SNAP_RULE
       });
     };
+    const handleCandidateSelect = (event: Event) => {
+      const detail = (event as CustomEvent<{ candidateIndex?: number }>).detail;
+      const candidateIndex = detail?.candidateIndex;
+      if (
+        typeof candidateIndex !== "number" ||
+        !Number.isInteger(candidateIndex) ||
+        candidateIndex < 0 ||
+        candidateIndex >= activeSession.surfaceCandidates.length ||
+        candidateIndex === activeSession.activeCandidateIndex
+      ) {
+        return;
+      }
+
+      try {
+        const selectResult = machineRef.current?.dispatch({
+          type: "SELECT_CANDIDATE",
+          candidateIndex
+        });
+        activateCandidate({
+          request: {
+            ...activeSession,
+            surfaceCandidates: selectResult ? toFocusCandidates(selectResult.state) : activeSession.surfaceCandidates
+          },
+          candidateIndex: selectResult?.state.activeCandidateIndex ?? candidateIndex,
+          baseLocalPose: selectResult?.state.localPose ?? activeSession.localPose,
+          mode: "switch"
+        });
+      } catch (error) {
+        console.error("[FocusPlacementController] failed to select focus placement candidate", error);
+      }
+    };
     window.addEventListener("deskterioronline:focus-placement:set-local-pose", handleNumericPoseInput);
+    window.addEventListener("deskterioronline:focus-placement:select-candidate", handleCandidateSelect);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("mousedown", handlePointerCommit);
       window.removeEventListener("deskterioronline:focus-placement:commit", commitActivePlacement);
       window.removeEventListener("deskterioronline:focus-placement:cancel", cancelActivePlacement);
       window.removeEventListener("deskterioronline:focus-placement:set-local-pose", handleNumericPoseInput);
+      window.removeEventListener("deskterioronline:focus-placement:select-candidate", handleCandidateSelect);
     };
   }, [
     activateCandidate,
@@ -539,6 +753,7 @@ export default function FocusPlacementController() {
     return () => {
       transactionRef.current?.cancel();
       transactionRef.current = null;
+      machineRef.current = null;
       clearSession();
       setIsTransforming(false);
     };

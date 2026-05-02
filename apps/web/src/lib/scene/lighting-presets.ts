@@ -7,11 +7,22 @@ export type LightingSettingsSnapshot = {
 
 export type LightingPresetId = "home-reference" | "neutral-studio" | "soft-evening";
 
+export type LightingQaProfile = {
+  hdri: "studio-softbox-2k" | "residential-window-2k" | "warm-interior-2k";
+  exposureStops: number;
+  whiteBalanceKelvin: number;
+  contactShadowOpacity: number;
+  toneMapping: "aces";
+  dynamicLightBudget: 6;
+  postFxScope: "walk-showcase-only";
+};
+
 export type LightingPreset = {
   id: LightingPresetId;
   label: string;
   description: string;
   settings: LightingSettingsSnapshot;
+  qaProfile: LightingQaProfile;
 };
 
 export const HOME_REFERENCE_LIGHTING: LightingSettingsSnapshot = {
@@ -26,7 +37,16 @@ export const LIGHTING_PRESETS: LightingPreset[] = [
     id: "home-reference",
     label: "Home Reference",
     description: "홈 레퍼런스 이미지 톤에 맞춘 기본 프리셋",
-    settings: HOME_REFERENCE_LIGHTING
+    settings: HOME_REFERENCE_LIGHTING,
+    qaProfile: {
+      hdri: "residential-window-2k",
+      exposureStops: 0,
+      whiteBalanceKelvin: 5000,
+      contactShadowOpacity: 0.38,
+      toneMapping: "aces",
+      dynamicLightBudget: 6,
+      postFxScope: "walk-showcase-only"
+    }
   },
   {
     id: "neutral-studio",
@@ -37,6 +57,15 @@ export const LIGHTING_PRESETS: LightingPreset[] = [
       hemisphereIntensity: 0.42,
       directionalIntensity: 1.02,
       environmentBlur: 0.1
+    },
+    qaProfile: {
+      hdri: "studio-softbox-2k",
+      exposureStops: -0.15,
+      whiteBalanceKelvin: 5600,
+      contactShadowOpacity: 0.32,
+      toneMapping: "aces",
+      dynamicLightBudget: 6,
+      postFxScope: "walk-showcase-only"
     }
   },
   {
@@ -48,6 +77,15 @@ export const LIGHTING_PRESETS: LightingPreset[] = [
       hemisphereIntensity: 0.6,
       directionalIntensity: 0.86,
       environmentBlur: 0.24
+    },
+    qaProfile: {
+      hdri: "warm-interior-2k",
+      exposureStops: -0.25,
+      whiteBalanceKelvin: 4200,
+      contactShadowOpacity: 0.44,
+      toneMapping: "aces",
+      dynamicLightBudget: 6,
+      postFxScope: "walk-showcase-only"
     }
   }
 ];

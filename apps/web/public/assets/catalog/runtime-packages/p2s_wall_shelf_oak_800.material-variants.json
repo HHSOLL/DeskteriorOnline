@@ -4,6 +4,14 @@
     "label": "P2S 오크 벽선반 800",
     "finishColor": "Neutral",
     "finishMaterial": "Wood or powder-coated steel",
-    "detailNotes": "Storage surface with inferred shelf/furniture support surface metadata."
+    "detailNotes": "Storage surface with inferred shelf/furniture support surface metadata.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "wood",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
   }
 ]

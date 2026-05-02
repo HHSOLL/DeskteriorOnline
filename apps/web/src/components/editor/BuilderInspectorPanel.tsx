@@ -157,7 +157,7 @@ export function BuilderInspectorPanel({
   const topModeDescription =
     topMode === "room"
       ? "제품 본체를 직접 드래그해 큰 위치를 옮깁니다. 250mm 그리드와 월드 기준 정렬만 유지합니다."
-      : "선택한 제품에 gizmo를 붙여 surface/anchor 기준 미세 위치와 회전을 조정합니다. 25mm / 15도 snap이 적용됩니다.";
+      : "선택한 제품에 gizmo를 붙여 surface/anchor 기준 미세 위치와 회전을 조정합니다. 5mm / 1도 snap과 1mm 숫자 입력을 사용합니다.";
   const containerClassName =
     layout === "inline"
       ? `flex h-full min-h-0 flex-col bg-white ${className ?? ""}`.trim()

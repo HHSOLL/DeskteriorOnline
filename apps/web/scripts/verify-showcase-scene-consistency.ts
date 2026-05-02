@@ -233,6 +233,14 @@ try {
     "showcase projectDescription mismatch"
   );
   assert(showcaseItem.previewMeta?.versionNumber === publicPayload.pinnedVersionNumber, "showcase version mismatch");
+  assert(publicPayload.sceneSnapshot, "public payload scene snapshot metadata missing");
+  assert(publicPayload.sceneSnapshot.projectVersionId === showcaseItem.project_version_id, "scene snapshot version id mismatch");
+  assert(publicPayload.sceneSnapshot.previewAssetCount === showcaseItem.previewMeta?.assetSummary?.totalAssets, "scene snapshot preview count mismatch");
+  assert(
+    publicPayload.sceneSnapshot.runtimeAssetIds.includes("p2s_desk_oak") &&
+      publicPayload.sceneSnapshot.runtimeAssetIds.includes("p2s_desk_lamp_glow"),
+    "scene snapshot runtime asset refs should match showcase document assets"
+  );
   assert(
     showcaseItem.previewMeta?.assetSummary?.totalAssets === publicPayload.previewAssetSummary?.totalAssets,
     "showcase asset total mismatch"
@@ -268,6 +276,7 @@ try {
         href: cardHref,
         projectName: cardModel.projectName,
         versionBadgeLabel: cardModel.versionBadgeLabel,
+        documentHash: publicPayload.sceneSnapshot.documentHash,
         walkFov: showcasePolish.walkFov,
         topZoomMultiplier: showcasePolish.topZoomMultiplier,
         thumbnailSource,

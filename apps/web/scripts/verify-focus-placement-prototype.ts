@@ -492,6 +492,11 @@ try {
     blockedEntry.availability.enabled === false && blockedEntry.availability.hint.includes("제품"),
     "focus placement should expose a blocked hint when no selected asset is available"
   );
+  assert(
+    (blockedEntry.candidates[0]?.blockedReasons.length ?? 0) > 0 &&
+      blockedEntry.candidates[0]?.visualAffordance.tone === "blocked",
+    "focus placement blocked candidates should carry engine blocked reasons and visual affordance"
+  );
 
   const readyEntry = resolveFocusPlacementEntry({
     selectedAsset: mouseAsset,
@@ -504,6 +509,12 @@ try {
       readyEntry.candidates[0]?.attachmentType === "place_on_surface" &&
       readyEntry.availability.hint.includes("정밀 배치"),
     "focus placement should expose a ready top-surface entry when the selected asset is compatible"
+  );
+  assert(
+    readyEntry.candidates.every((candidate, index) => candidate.rank === index) &&
+      typeof readyEntry.candidates[0]?.score === "number" &&
+      readyEntry.candidates[0]?.visualAffordance.tone === "valid",
+    "focus placement should expose ranked candidate score and visual affordance metadata"
   );
 
   const mountedEntry = resolveFocusPlacementEntry({
@@ -527,8 +538,8 @@ try {
     mountedEntry.candidates[0]!.surfaceType
   );
   assert(
-    mountedStep.moveStepMm === 10 && mountedStep.rotateStepMilliDeg === 5000,
-      "mounted focus placement should use the mounted snap rule budget"
+    mountedStep.moveStepMm === 5 && mountedStep.rotateStepMilliDeg === 1000,
+    "mounted focus placement should use the commercial default 5mm / 1deg snap budget"
   );
   const mountedWizardState = resolveFocusPlacementWizardState({
     attachmentType: "edge_clamp",
@@ -578,7 +589,11 @@ try {
       normal: [0, 0, 1000]
     },
     boundsMm: { min: [-400, -300], max: [400, 300] },
-    allowedAttachments: ["wall_attach"]
+    allowedAttachments: ["wall_attach", "wall_screw"]
+  };
+  const grommetFixture: SupportSurface = {
+    ...deskSurface,
+    allowedAttachments: ["grommet_hole"]
   };
   const hybridMountedEntry = resolveFocusPlacementEntry({
     selectedAsset: clampAsset,
@@ -611,6 +626,15 @@ try {
           localTangent: [1000, 0, 0],
           compatibleWith: ["wall", "wall_mount"],
           constraints: {}
+        },
+        {
+          id: "wall-keyhole",
+          type: "wall_screw",
+          localPositionMm: [0, 0, 0],
+          localNormal: [0, 0, 1000],
+          localTangent: [1000, 0, 0],
+          compatibleWith: ["wall", "wall_mount"],
+          constraints: {}
         }
       ]
     },
@@ -636,6 +660,42 @@ try {
     "focus placement should surface wall-mount candidates when runtime attachment metadata supports them"
   );
   assert(
+    hybridMountedEntry.candidates.some(
+      (candidate) =>
+        candidate.attachmentType === "wall_screw" &&
+        candidate.surfaceType === "wall" &&
+        candidate.enabled &&
+        candidate.visualAffordance.outline === "mount-target"
+    ),
+    "focus placement should surface wall-screw candidates as mount-target affordances"
+  );
+
+  const grommetEntry = resolveFocusPlacementEntry({
+    selectedAsset: clampAsset,
+    selectedRuntimeAsset: {
+      ...runtimeAssets.find((asset) => asset.assetId === "p2s_clamp_light")!,
+      attachmentPoints: [
+        {
+          id: "desktop-grommet",
+          type: "grommet_hole",
+          localPositionMm: [0, 0, 0],
+          localNormal: [0, 1000, 0],
+          localTangent: [1000, 0, 0],
+          compatibleWith: ["desktop_top"],
+          constraints: { holeDiameterMm: 60 }
+        }
+      ]
+    },
+    supportAsset: deskAsset,
+    supportSurfaces: [grommetFixture]
+  });
+  assert(
+    grommetEntry.availability.enabled === true &&
+      grommetEntry.candidates[0]?.attachmentType === "grommet_hole" &&
+      grommetEntry.candidates[0]?.visualAffordance.outline === "mount-target",
+    "focus placement should admit grommet-hole candidates with mount-target affordance metadata"
+  );
+  assert(
     resolveFocusPlacementAttachmentLabel("place_on_surface") === "Place On Surface",
     "focus placement should expose a stable attachment label for HUD rendering"
   );
@@ -646,6 +706,11 @@ try {
   assert(
     resolveFocusPlacementAttachmentLabel("vesa_mount") === "VESA Mount",
     "focus placement should expose VESA labels for monitor-arm HUD rendering"
+  );
+  assert(
+    resolveFocusPlacementAttachmentLabel("grommet_hole") === "Grommet Hole" &&
+      resolveFocusPlacementAttachmentLabel("wall_screw") === "Wall Screw",
+    "focus placement should expose grommet and wall-screw labels for HUD rendering"
   );
 
   const vesaEntry = resolveFocusPlacementEntry({
@@ -666,8 +731,8 @@ try {
     vesaEntry.candidates[0]!.surfaceType
   );
   assert(
-    vesaStep.moveStepMm === 10 && vesaStep.rotateStepMilliDeg === 1000,
-    "monitor-arm target pose should use the articulated step budget"
+    vesaStep.moveStepMm === 5 && vesaStep.rotateStepMilliDeg === 1000,
+    "monitor-arm target pose should use the commercial default 5mm / 1deg snap budget"
   );
   const monitorWizardState = resolveFocusPlacementWizardState({
     attachmentType: "vesa_mount",

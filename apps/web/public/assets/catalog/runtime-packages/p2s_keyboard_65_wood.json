@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "generatedAt": "2026-04-30T17:39:20.405Z",
   "key": "p2s_keyboard_65_wood",
   "packageKind": "catalog_variant",
   "baseAssetKey": "p2s_low_profile_keyboard",
@@ -115,11 +115,60 @@
         "label": "P2S 65% 우드 키보드",
         "finishColor": "Walnut",
         "finishMaterial": "Matte keycaps over low-profile chassis",
-        "detailNotes": "Surface-placeable keyboard with scale-locked real dimensions."
+        "detailNotes": "Surface-placeable keyboard with scale-locked real dimensions.",
+        "slotMaterials": [
+          {
+            "slot": "default",
+            "materialType": "mixed",
+            "qaStatus": "pending",
+            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+          }
+        ]
       }
     ],
+    "commercialReadiness": {
+      "tier": "generic_catalog",
+      "sku": "P2S-KEYBOARD-65-WOOD",
+      "manufacturer": "Generic Keyboard",
+      "referencePack": {
+        "sku": "P2S-KEYBOARD-65-WOOD",
+        "manufacturer": "Generic Keyboard",
+        "canonicalProductUrl": null,
+        "dimensionSourceUrl": null,
+        "referenceImages": [
+          {
+            "view": "front",
+            "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+            "required": false,
+            "license": "LicenseRef-DeskteriorOnline-Internal"
+          }
+        ],
+        "finishReferences": [
+          {
+            "finishId": "default",
+            "label": "Matte keycaps over low-profile chassis",
+            "sourceUrl": null,
+            "materialType": "mixed"
+          }
+        ],
+        "license": {
+          "spdx": "LicenseRef-DeskteriorOnline-Internal",
+          "label": "DeskteriorOnline Internal Catalog",
+          "requiresAttribution": false
+        },
+        "status": "candidate",
+        "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+      },
+      "visualFidelityScore": 0.68,
+      "dimensionToleranceMm": 0,
+      "dimensionTolerancePercent": 0,
+      "supportSurfaceToleranceMm": 3,
+      "footprintToleranceMm": 2,
+      "materialQaStatus": "pending",
+      "releaseEligible": false
+    },
     "qaStatus": {
-      "status": "passed",
+      "status": "warning",
       "measuredBoundsMm": {
         "width": 315,
         "depth": 120,
@@ -130,8 +179,76 @@
         "depth": 0,
         "height": 0
       },
-      "validatorVersion": "asset-compiler-alpha-v3"
+      "validatorVersion": "asset-compiler-alpha-v3",
+      "commercialFidelity": {
+        "referencePackStatus": "candidate",
+        "visualFidelityScore": 0.68,
+        "dimensionToleranceMm": 0,
+        "dimensionTolerancePercent": 0,
+        "supportSurfaceToleranceMm": 3,
+        "footprintToleranceMm": 2,
+        "materialQaStatus": "pending",
+        "releaseEligible": false
+      },
+      "issues": [
+        {
+          "code": "COMMERCIAL_VISUAL_FIDELITY_PENDING",
+          "severity": "warning",
+          "message": "visual fidelity score 0.68 is below paid-beta threshold 0.95"
+        },
+        {
+          "code": "COMMERCIAL_MATERIAL_QA_PENDING",
+          "severity": "warning",
+          "message": "slot-level material QA status is pending"
+        },
+        {
+          "code": "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
+          "severity": "warning",
+          "message": "asset is not eligible for actual-SKU paid beta release"
+        }
+      ]
     }
+  },
+  "commercialReadiness": {
+    "tier": "generic_catalog",
+    "sku": "P2S-KEYBOARD-65-WOOD",
+    "manufacturer": "Generic Keyboard",
+    "referencePack": {
+      "sku": "P2S-KEYBOARD-65-WOOD",
+      "manufacturer": "Generic Keyboard",
+      "canonicalProductUrl": null,
+      "dimensionSourceUrl": null,
+      "referenceImages": [
+        {
+          "view": "front",
+          "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+          "required": false,
+          "license": "LicenseRef-DeskteriorOnline-Internal"
+        }
+      ],
+      "finishReferences": [
+        {
+          "finishId": "default",
+          "label": "Matte keycaps over low-profile chassis",
+          "sourceUrl": null,
+          "materialType": "mixed"
+        }
+      ],
+      "license": {
+        "spdx": "LicenseRef-DeskteriorOnline-Internal",
+        "label": "DeskteriorOnline Internal Catalog",
+        "requiresAttribution": false
+      },
+      "status": "candidate",
+      "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+    },
+    "visualFidelityScore": 0.68,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
   },
   "files": {
     "sourceBlend": {
@@ -196,7 +313,11 @@
     "thumbnailPath": "/assets/catalog/thumbnails/p2s_keyboard_65_wood.webp"
   },
   "qa": {
-    "status": "passed",
-    "warnings": []
+    "status": "warning",
+    "warnings": [
+      "visual fidelity score 0.68 is below paid-beta threshold 0.95",
+      "slot-level material QA status is pending",
+      "asset is not eligible for actual-SKU paid beta release"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-04-24T06:58:20.832Z",
+  "generatedAt": "2026-04-30T17:39:20.405Z",
   "key": "p2s_desk_tray_oak",
   "packageKind": "curated_asset",
   "baseAssetKey": null,
@@ -180,11 +180,71 @@
         "label": "P2S 오크 데스크 트레이",
         "finishColor": "Light oak",
         "finishMaterial": "Oiled oak",
-        "detailNotes": "Low organizer tray with shallow walls sized for stationery, earbuds, or keys. The inner base acts as a furniture support surface."
+        "detailNotes": "Low organizer tray with shallow walls sized for stationery, earbuds, or keys. The inner base acts as a furniture support surface.",
+        "slotMaterials": [
+          {
+            "slot": "default",
+            "materialType": "wood",
+            "qaStatus": "pending",
+            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+          }
+        ]
       }
     ],
+    "commercialReadiness": {
+      "tier": "generic_catalog",
+      "sku": "P2S-DESK-TRAY-OAK",
+      "manufacturer": "DeskteriorOnline Studio",
+      "referencePack": {
+        "sku": "P2S-DESK-TRAY-OAK",
+        "manufacturer": "DeskteriorOnline Studio",
+        "canonicalProductUrl": null,
+        "dimensionSourceUrl": null,
+        "referenceImages": [
+          {
+            "view": "front",
+            "url": "assets/blender/deskterior/p2s_desk_tray_oak.blend#front-reference",
+            "required": false,
+            "license": "LicenseRef-DeskteriorOnline-Internal"
+          },
+          {
+            "view": "right",
+            "url": "assets/blender/deskterior/p2s_desk_tray_oak.blend#side-reference",
+            "required": false,
+            "license": "LicenseRef-DeskteriorOnline-Internal"
+          },
+          {
+            "view": "top",
+            "url": "assets/blender/deskterior/p2s_desk_tray_oak.blend#top-reference",
+            "required": false,
+            "license": "LicenseRef-DeskteriorOnline-Internal"
+          },
+          {
+            "view": "material",
+            "url": "assets/blender/deskterior/p2s_desk_tray_oak.blend#material-reference",
+            "required": false,
+            "license": "LicenseRef-DeskteriorOnline-Internal"
+          }
+        ],
+        "finishReferences": [],
+        "license": {
+          "spdx": "LicenseRef-DeskteriorOnline-Internal",
+          "label": "DeskteriorOnline Internal Catalog",
+          "requiresAttribution": false
+        },
+        "status": "candidate",
+        "notes": "Current curated P2S asset is treated as an internal catalog candidate until manufacturer SKU references are attached."
+      },
+      "visualFidelityScore": 0.72,
+      "dimensionToleranceMm": 0,
+      "dimensionTolerancePercent": 0,
+      "supportSurfaceToleranceMm": 3,
+      "footprintToleranceMm": 2,
+      "materialQaStatus": "pending",
+      "releaseEligible": false
+    },
     "qaStatus": {
-      "status": "passed",
+      "status": "warning",
       "measuredBoundsMm": {
         "width": 240,
         "depth": 160,
@@ -195,8 +255,87 @@
         "depth": 0,
         "height": 0
       },
-      "validatorVersion": "asset-compiler-alpha-v3"
+      "validatorVersion": "asset-compiler-alpha-v3",
+      "commercialFidelity": {
+        "referencePackStatus": "candidate",
+        "visualFidelityScore": 0.72,
+        "dimensionToleranceMm": 0,
+        "dimensionTolerancePercent": 0,
+        "supportSurfaceToleranceMm": 3,
+        "footprintToleranceMm": 2,
+        "materialQaStatus": "pending",
+        "releaseEligible": false
+      },
+      "issues": [
+        {
+          "code": "COMMERCIAL_VISUAL_FIDELITY_PENDING",
+          "severity": "warning",
+          "message": "visual fidelity score 0.72 is below paid-beta threshold 0.95"
+        },
+        {
+          "code": "COMMERCIAL_MATERIAL_QA_PENDING",
+          "severity": "warning",
+          "message": "slot-level material QA status is pending"
+        },
+        {
+          "code": "COMMERCIAL_RELEASE_NOT_ELIGIBLE",
+          "severity": "warning",
+          "message": "asset is not eligible for actual-SKU paid beta release"
+        }
+      ]
     }
+  },
+  "commercialReadiness": {
+    "tier": "generic_catalog",
+    "sku": "P2S-DESK-TRAY-OAK",
+    "manufacturer": "DeskteriorOnline Studio",
+    "referencePack": {
+      "sku": "P2S-DESK-TRAY-OAK",
+      "manufacturer": "DeskteriorOnline Studio",
+      "canonicalProductUrl": null,
+      "dimensionSourceUrl": null,
+      "referenceImages": [
+        {
+          "view": "front",
+          "url": "assets/blender/deskterior/p2s_desk_tray_oak.blend#front-reference",
+          "required": false,
+          "license": "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          "view": "right",
+          "url": "assets/blender/deskterior/p2s_desk_tray_oak.blend#side-reference",
+          "required": false,
+          "license": "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          "view": "top",
+          "url": "assets/blender/deskterior/p2s_desk_tray_oak.blend#top-reference",
+          "required": false,
+          "license": "LicenseRef-DeskteriorOnline-Internal"
+        },
+        {
+          "view": "material",
+          "url": "assets/blender/deskterior/p2s_desk_tray_oak.blend#material-reference",
+          "required": false,
+          "license": "LicenseRef-DeskteriorOnline-Internal"
+        }
+      ],
+      "finishReferences": [],
+      "license": {
+        "spdx": "LicenseRef-DeskteriorOnline-Internal",
+        "label": "DeskteriorOnline Internal Catalog",
+        "requiresAttribution": false
+      },
+      "status": "candidate",
+      "notes": "Current curated P2S asset is treated as an internal catalog candidate until manufacturer SKU references are attached."
+    },
+    "visualFidelityScore": 0.72,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
   },
   "files": {
     "sourceBlend": {
@@ -261,7 +400,11 @@
     "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp"
   },
   "qa": {
-    "status": "passed",
-    "warnings": []
+    "status": "warning",
+    "warnings": [
+      "visual fidelity score 0.72 is below paid-beta threshold 0.95",
+      "slot-level material QA status is pending",
+      "asset is not eligible for actual-SKU paid beta release"
+    ]
   }
 }

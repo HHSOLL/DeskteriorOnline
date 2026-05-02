@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { SceneInteractionMode } from "../../../lib/scene/render-quality";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
+import { useInteractionStore } from "../../../lib/stores/useInteractionStore";
 import {
   useAssetSelector,
   useCameraSelector,
@@ -110,10 +111,17 @@ function WalkRig({
   const moveState = useRef<MoveState>({ forward: false, backward: false, left: false, right: false });
   const { camera, gl } = useThree();
   const resetLookDelta = useMobileControlsStore((state) => state.resetLookDelta);
+  const setWalkPointerLockStatus = useInteractionStore((state) => state.setWalkPointerLockStatus);
   const panels = useEditorStore((state) => state.panels);
   const blockPointerLock = panels.assets || panels.properties;
   const yawRef = useRef(0);
   const pitchRef = useRef(0);
+
+  useEffect(() => {
+    if (isTouch) {
+      setWalkPointerLockStatus({ locked: false, blocked: false });
+    }
+  }, [isTouch, setWalkPointerLockStatus]);
 
   useEffect(() => {
     const eyePosition = new THREE.Vector3(initialPosition[0], initialPosition[1] + EYE_HEIGHT, initialPosition[2]);
@@ -142,11 +150,16 @@ function WalkRig({
     const isPointerLocked = () => ownerDocument.pointerLockElement === canvas;
 
     canvas.tabIndex = 0;
+    setWalkPointerLockStatus({
+      locked: isPointerLocked(),
+      blocked: blockPointerLock
+    });
 
     if (blockPointerLock && isPointerLocked()) {
       ownerDocument.exitPointerLock();
       pointerLockedRef.current = false;
       moveState.current = { forward: false, backward: false, left: false, right: false };
+      setWalkPointerLockStatus({ locked: false, blocked: true });
     }
 
     const handleCanvasPointerDown = (event: PointerEvent) => {
@@ -159,13 +172,19 @@ function WalkRig({
       pointerLockRequestInFlight = true;
       const lockResult = canvas.requestPointerLock();
       pointerLockedRef.current = true;
+      setWalkPointerLockStatus({ locked: true, blocked: false });
       if (lockResult && typeof lockResult.then === "function") {
         lockResult
           .then(() => {
             pointerLockedRef.current = isPointerLocked();
+            setWalkPointerLockStatus({
+              locked: pointerLockedRef.current,
+              blocked: false
+            });
           })
           .catch(() => {
             pointerLockedRef.current = false;
+            setWalkPointerLockStatus({ locked: false, blocked: false });
           })
           .finally(() => {
             pointerLockRequestInFlight = false;
@@ -177,6 +196,10 @@ function WalkRig({
 
     const handlePointerLockChange = () => {
       pointerLockedRef.current = isPointerLocked();
+      setWalkPointerLockStatus({
+        locked: pointerLockedRef.current,
+        blocked: blockPointerLock
+      });
       if (!pointerLockedRef.current) {
         moveState.current = { forward: false, backward: false, left: false, right: false };
       }
@@ -185,6 +208,7 @@ function WalkRig({
     const handlePointerLockError = () => {
       pointerLockRequestInFlight = false;
       pointerLockedRef.current = false;
+      setWalkPointerLockStatus({ locked: false, blocked: false });
     };
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -236,14 +260,16 @@ function WalkRig({
         canvas.setAttribute("tabindex", previousTabIndex);
       }
       pointerLockedRef.current = false;
+      setWalkPointerLockStatus({ locked: false, blocked: false });
     };
-  }, [blockPointerLock, camera, gl.domElement, isTouch]);
+  }, [blockPointerLock, camera, gl.domElement, isTouch, setWalkPointerLockStatus]);
 
   useFrame(() => {
     const isDesktopPointerLocked =
       !isTouch && gl.domElement.ownerDocument.pointerLockElement === gl.domElement;
-    if (isDesktopPointerLocked) {
+    if (isDesktopPointerLocked && !pointerLockedRef.current) {
       pointerLockedRef.current = true;
+      useInteractionStore.getState().setWalkPointerLockStatus({ locked: true, blocked: false });
     }
     if (!pointerLockedRef.current && !isTouch) return;
     const body = bodyRef.current;
@@ -570,6 +596,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
           enablePan={false}
           enableZoom
           enableDamping
+          onChange={() => invalidate()}
           dampingFactor={0.09}
           rotateSpeed={0.8}
           zoomSpeed={0.95}
@@ -600,6 +627,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
           enablePan={false}
           enableZoom
           enableDamping
+          onChange={() => invalidate()}
           dampingFactor={0.08}
           rotateSpeed={0.74}
           zoomSpeed={0.92}
