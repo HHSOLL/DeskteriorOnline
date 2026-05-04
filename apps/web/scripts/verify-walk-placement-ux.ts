@@ -12,6 +12,12 @@ import {
   withFocusPlacementAimMetadata,
   type WalkFocusPlacementAimDetail
 } from "../src/lib/runtime/walk-focus-aim";
+import {
+  isEditableWalkKeyboardTarget,
+  isWalkInteractShortcut,
+  isWalkInventoryShortcut,
+  resolveWalkMovementKey
+} from "../src/lib/runtime/walk-keyboard";
 import { useInteractionStore } from "../src/lib/stores/useInteractionStore";
 import type { FocusPlacementRequest } from "../src/lib/stores/useFocusPlacementStore";
 
@@ -133,6 +139,55 @@ function main() {
     useInteractionStore.getState().walkPointerLockBlocked,
     true,
     "walk UX should expose pointer lock blocked state for HUD guidance"
+  );
+
+  assert.equal(
+    resolveWalkMovementKey({ code: "KeyW", key: "ㅈ" }),
+    "forward",
+    "walk WASD should use physical KeyboardEvent.code so non-English layouts still move"
+  );
+  assert.equal(
+    resolveWalkMovementKey({ code: "KeyA", key: "ㅁ" }),
+    "left",
+    "walk strafe should survive IME/layout key labels"
+  );
+  assert.equal(
+    resolveWalkMovementKey({ code: "", key: "ArrowUp" }),
+    "forward",
+    "walk movement should keep arrow-key fallback for browsers without code"
+  );
+  assert.equal(
+    resolveWalkMovementKey({ code: "KeyW", key: "w", metaKey: true }),
+    null,
+    "walk movement should not hijack modified browser/system shortcuts"
+  );
+  assert.equal(
+    resolveWalkMovementKey({ code: "KeyW", key: "w", metaKey: true }, { allowModified: true }),
+    "forward",
+    "walk keyup cleanup should still clear movement state if a modifier becomes active"
+  );
+  assert.equal(
+    isWalkInventoryShortcut({ code: "KeyI", key: "ㅑ" }),
+    true,
+    "walk inventory shortcut should use physical KeyI, not only event.key"
+  );
+  assert.equal(
+    isWalkInteractShortcut({ code: "KeyE", key: "ㄷ" }),
+    true,
+    "walk interact shortcut should use physical KeyE, not only event.key"
+  );
+  assert.equal(
+    isWalkInventoryShortcut({ code: "KeyI", key: "i", ctrlKey: true }),
+    false,
+    "walk inventory shortcut should not hijack modified browser/system shortcuts"
+  );
+  assert.equal(
+    isEditableWalkKeyboardTarget({
+      tagName: "input",
+      isContentEditable: false
+    } as unknown as EventTarget),
+    true,
+    "walk keyboard should ignore editable fields"
   );
 
   const blockedFeedback = resolveFocusPlacementFeedback(

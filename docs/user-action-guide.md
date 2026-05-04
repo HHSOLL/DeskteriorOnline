@@ -1174,3 +1174,18 @@ Updated:
 Removed/Deprecated:
 - walk aim event의 confidence만 확인하고 pending request activation confidence 보존을 검증하지 않는 절차.
 - desk precision `R` 키를 즉시 commit 예외로 남겨 두는 QA 기준.
+
+## 2026-05-04 변경 동기화 (Walk Input + Deployment QA)
+Added:
+- 워크뷰 진입 후 canvas를 한 번 클릭하면 DevTools/F12 전환 없이 pointer lock을 요청하고, pointer lock이 browser 정책상 거절되어도 canvas focus 상태에서 `W/A/S/D` fallback 이동이 되는지 확인한다.
+- `I` inventory open과 `E` focus placement start는 physical `KeyI`/`KeyE` 기준으로 확인한다. 한글 입력 상태에서도 같은 키 위치로 동작해야 한다.
+- Vercel dashboard 안의 preview/thumbnail 카드가 `403: Forbidden`을 보여도 production alias 또는 deployment URL 직접 접속이 정상인지 별도로 확인한다. 직접 접속이 정상이라면 먼저 Deployment Protection/Vercel Authentication, shareable link, dashboard screenshot service 차단 여부를 본다.
+- 로그인 fresh-state QA는 새 배포에 의존하지 않고 로그아웃, 시크릿 창, site data clear, 또는 preview 전용 origin/Supabase 환경으로 수행한다.
+
+Updated:
+- 워크뷰 QA 기준은 `I -> asset select -> crosshair surface -> click/E placement start` 전 단계에 `click scene -> mouse-look/WASD`와 non-English layout shortcut 확인을 포함한다.
+- Vercel Preview OAuth QA는 Deployment Protection이 app route보다 앞에서 `/auth/signin`과 `/auth/callback`을 차단하지 않는 상태에서만 수행한다.
+
+Removed/Deprecated:
+- Vercel 새 배포가 기존 브라우저의 Supabase 로그인 세션을 자동 초기화한다는 기대.
+- Vercel dashboard preview panel 403만으로 production app 접속 장애로 판정하는 절차.
