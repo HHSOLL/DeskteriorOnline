@@ -16,6 +16,10 @@ import {
 } from "../../../lib/stores/scene-slices";
 import { useMobileControlsStore } from "../../../lib/stores/useMobileControlsStore";
 import { resolveSharedViewerPresentationPolish } from "../../../lib/viewer/presentation";
+import {
+  isEditableWalkKeyboardTarget,
+  resolveWalkMovementKey
+} from "../../../lib/runtime/walk-keyboard";
 
 type MoveState = {
   forward: boolean;
@@ -164,11 +168,11 @@ function WalkRig({
 
     const handleCanvasPointerDown = (event: PointerEvent) => {
       if (event.button !== 0) return;
+      canvas.focus({ preventScroll: true });
       if (pointerLockedRef.current || isPointerLocked()) return;
       if (pointerLockRequestInFlight || !canRequestPointerLock()) return;
 
       event.preventDefault();
-      canvas.focus({ preventScroll: true });
       pointerLockRequestInFlight = true;
       const lockResult = canvas.requestPointerLock();
       pointerLockedRef.current = true;
@@ -184,7 +188,8 @@ function WalkRig({
           })
           .catch(() => {
             pointerLockedRef.current = false;
-            setWalkPointerLockStatus({ locked: false, blocked: false });
+            moveState.current = { forward: false, backward: false, left: false, right: false };
+            setWalkPointerLockStatus({ locked: false, blocked: true });
           })
           .finally(() => {
             pointerLockRequestInFlight = false;
@@ -208,7 +213,8 @@ function WalkRig({
     const handlePointerLockError = () => {
       pointerLockRequestInFlight = false;
       pointerLockedRef.current = false;
-      setWalkPointerLockStatus({ locked: false, blocked: false });
+      moveState.current = { forward: false, backward: false, left: false, right: false };
+      setWalkPointerLockStatus({ locked: false, blocked: true });
     };
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -221,21 +227,27 @@ function WalkRig({
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!pointerLockedRef.current && !isPointerLocked()) return;
-      pointerLockedRef.current = true;
-      if (["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)) event.preventDefault();
-      if (event.code === "KeyW") moveState.current.forward = true;
-      if (event.code === "KeyS") moveState.current.backward = true;
-      if (event.code === "KeyA") moveState.current.left = true;
-      if (event.code === "KeyD") moveState.current.right = true;
+      const movementKey = resolveWalkMovementKey(event);
+      if (!movementKey || isEditableWalkKeyboardTarget(event.target)) return;
+
+      const pointerLocked = pointerLockedRef.current || isPointerLocked();
+      const canvasFocused = ownerDocument.activeElement === canvas;
+      if (!pointerLocked && (!canvasFocused || blockPointerLock)) return;
+
+      event.preventDefault();
+      pointerLockedRef.current = pointerLocked;
+      moveState.current[movementKey] = true;
     };
     const handleKeyUp = (event: KeyboardEvent) => {
-      if (!pointerLockedRef.current && !isPointerLocked()) return;
-      if (["KeyW", "KeyA", "KeyS", "KeyD"].includes(event.code)) event.preventDefault();
-      if (event.code === "KeyW") moveState.current.forward = false;
-      if (event.code === "KeyS") moveState.current.backward = false;
-      if (event.code === "KeyA") moveState.current.left = false;
-      if (event.code === "KeyD") moveState.current.right = false;
+      const movementKey = resolveWalkMovementKey(event, { allowModified: true });
+      if (!movementKey) return;
+
+      const pointerLocked = pointerLockedRef.current || isPointerLocked();
+      const canvasFocused = ownerDocument.activeElement === canvas;
+      if (pointerLocked || canvasFocused) {
+        event.preventDefault();
+      }
+      moveState.current[movementKey] = false;
     };
 
     canvas.addEventListener("pointerdown", handleCanvasPointerDown);
@@ -271,7 +283,9 @@ function WalkRig({
       pointerLockedRef.current = true;
       useInteractionStore.getState().setWalkPointerLockStatus({ locked: true, blocked: false });
     }
-    if (!pointerLockedRef.current && !isTouch) return;
+    const isDesktopCanvasFocused =
+      !isTouch && gl.domElement.ownerDocument.activeElement === gl.domElement;
+    if (!pointerLockedRef.current && !isTouch && !isDesktopCanvasFocused) return;
     const body = bodyRef.current;
     if (!body) return;
     if (isTouch) {

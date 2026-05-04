@@ -54,6 +54,10 @@ import {
 } from "../../../../lib/scene/support-profiles";
 import { useFocusPlacementStore } from "../../../../lib/stores/useFocusPlacementStore";
 import { useWalkInventoryStore } from "../../../../lib/stores/useWalkInventoryStore";
+import {
+  isEditableWalkKeyboardTarget,
+  isWalkInventoryShortcut
+} from "../../../../lib/runtime/walk-keyboard";
 
 const STARTER_SET_OFFSETS: Array<[number, number]> = [
   [-2.2, -1.2],
@@ -807,27 +811,21 @@ export default function ProjectEditorPage() {
   useEffect(() => {
     if (!isSceneVisible) return;
 
-    const shouldIgnoreShortcutTarget = (target: EventTarget | null) => {
-      if (!(target instanceof HTMLElement)) {
-        return false;
+    const releaseWalkPointerLock = () => {
+      const pointerLockElement = document.pointerLockElement;
+      if (pointerLockElement && typeof document.exitPointerLock === "function") {
+        document.exitPointerLock();
       }
-
-      const tagName = target.tagName.toLowerCase();
-      return (
-        target.isContentEditable ||
-        tagName === "input" ||
-        tagName === "textarea" ||
-        tagName === "select"
-      );
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() === "i" && viewMode === "walk") {
-        if (shouldIgnoreShortcutTarget(event.target)) return;
+      if (isWalkInventoryShortcut(event) && viewMode === "walk") {
+        if (isEditableWalkKeyboardTarget(event.target)) return;
         event.preventDefault();
         if (panels.assets) {
           closePanels();
         } else {
+          releaseWalkPointerLock();
           activateAssetPanel();
         }
         return;

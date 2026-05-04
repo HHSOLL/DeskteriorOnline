@@ -74,7 +74,7 @@ function main() {
   );
 
   const rotatePreview = resolveDeskPrecisionHotkeyPreview({
-    event: { key: "e" },
+    event: { key: "ㄷ", code: "KeyE" },
     asset: baseAsset,
     policy: precisionPolicy
   });
@@ -90,7 +90,7 @@ function main() {
   );
 
   const rotateRPreview = resolveDeskPrecisionHotkeyPreview({
-    event: { key: "r" },
+    event: { key: "ㄱ", code: "KeyR" },
     asset: baseAsset,
     policy: precisionPolicy
   });

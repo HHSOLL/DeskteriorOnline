@@ -12,6 +12,10 @@ import {
   resolveFocusPlacementAimRequest,
   resolveWalkFocusPlacementAimKey
 } from "../../../lib/runtime/walk-focus-aim";
+import {
+  isEditableWalkKeyboardTarget,
+  isWalkInteractShortcut
+} from "../../../lib/runtime/walk-keyboard";
 
 type InteractionManagerProps = {
   children: React.ReactNode;
@@ -193,7 +197,7 @@ export default function InteractionManager({ children }: InteractionManagerProps
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (viewMode !== "walk" || readOnly || hasActiveFocusPlacement || hasPendingFocusPlacement) return;
-      if (event.key.toLowerCase() !== "e") return;
+      if (!isWalkInteractShortcut(event) || isEditableWalkKeyboardTarget(event.target)) return;
       triggerFocusedInteraction(event);
     };
 

@@ -1419,3 +1419,19 @@ Updated:
 Removed/Deprecated:
 - walk aim confidence가 이벤트 처리 이후 pending request activation에서 손실되는 상태.
 - desk precision `R` 키가 keyboard transform preview/commit 계약에서 빠져 있는 상태.
+
+## 2026-05-04 변경 동기화 (Walk Input Layout + Pointer Lock Fallback)
+Added:
+- PR 13 범위: `walk-keyboard` helper를 추가해 walk movement, inventory, interact shortcut을 physical `KeyboardEvent.code` 기준으로 판정한다.
+- PR 13 범위: walk canvas는 pointer lock 요청 전에 focus를 먼저 확보하고, pointer lock이 실패한 경우에도 focused canvas에서는 WASD movement fallback을 허용한다.
+- PR 13 범위: `verify:walk-placement-ux`가 non-English key label에서도 `KeyW`/`KeyA`/`KeyI`/`KeyE`가 동작하고 editable field에서는 shortcut을 무시하는지 확인한다.
+- PR 13 범위: desk precision `Q/E/R` hotkey도 physical `KeyQ`/`KeyE`/`KeyR`를 우선해 preview-batched 계약을 유지한다.
+
+Updated:
+- P2 렌더/워크뷰 안정화 범위의 pointer lock 회귀 수정은 browser pointer lock 성공만이 아니라 focus fallback, layout-independent shortcuts, HUD recovery 안내까지 포함한다.
+- Vercel 운영 진단은 dashboard preview panel 403, Deployment Protection, 앱 직접 접속, Supabase browser session persistence를 분리해 판단한다.
+
+Removed/Deprecated:
+- pointer lock이 실패하면 WASD가 완전히 무반응이어도 되는 상태.
+- `event.key` label만으로 walk/desk precision shortcut을 판정하는 구현.
+- 새 배포가 기존 브라우저 로그인 세션을 자동으로 초기화해야 한다는 배포 기준.

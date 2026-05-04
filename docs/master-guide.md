@@ -1250,3 +1250,18 @@ Updated:
 Removed/Deprecated:
 - crosshair aim event의 confidence가 pending request activation에서 기본값 `0.8`로 되돌아가는 상태.
 - desk precision `R` 키만 즉시 rotate commit을 만드는 예외.
+
+## 2026-05-04 변경 동기화 (Walk Input + Vercel Session Diagnostics)
+Added:
+- walk mode keyboard contract는 `event.key`가 아니라 physical `event.code`를 우선한다. `W/A/S/D`, `I`, `E`, desk precision `Q/E/R`는 한글/비영문 키보드 레이아웃에서도 같은 physical key로 동작해야 한다.
+- walk canvas는 pointer lock 요청 전 항상 focus를 받아야 하며, browser/iframe 정책으로 pointer lock이 거절되어도 canvas focus 상태에서는 WASD fallback movement를 허용한다.
+- Vercel dashboard/preview panel의 `403: Forbidden` 화면은 앱 route가 열리는지와 분리해 진단한다. Deployment Protection/Vercel Authentication 또는 Vercel preview screenshot/thumbnail 차단이 원인일 수 있으며, canonical production alias가 정상 접속되면 app runtime failure로 단정하지 않는다.
+- Supabase auth session은 같은 origin의 browser cookie/storage에 남는 운영 세션으로 취급한다. 새 배포가 기존 사용자를 자동 로그아웃시키면 안 되며, fresh-login QA는 logout/incognito/site-data-clear 또는 별도 preview origin/Supabase project로 수행한다.
+
+Updated:
+- walk pointer lock QA는 DevTools/F12 focus workaround 없이 `click scene -> mouse look/WASD`, `I -> inventory`, `E/click -> focus placement`가 동작하는지 확인해야 한다.
+- pointer lock 실패/해제 HUD는 panel open뿐 아니라 browser-level lock pause에도 사용자가 다시 click scene 또는 panel close를 시도할 수 있게 안내해야 한다.
+
+Removed/Deprecated:
+- `event.key === "i"`처럼 layout-dependent key label만으로 walkthrough shortcut을 판정하는 방식.
+- 새 Vercel deployment마다 사용자 로그인 세션을 강제로 초기화해야 한다는 운영 가정.

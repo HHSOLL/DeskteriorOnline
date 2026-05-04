@@ -5,6 +5,7 @@ export const DESK_PRECISION_HOTKEY_COMMIT_DELAY_MS = 280;
 
 export type DeskPrecisionHotkeyEvent = {
   key: string;
+  code?: string;
   altKey?: boolean;
   shiftKey?: boolean;
 };
@@ -37,7 +38,14 @@ export function resolveDeskPrecisionHotkeyPreview(input: {
   policy: TopViewInteractionPolicy;
 }): DeskPrecisionHotkeyPreview | null {
   const { event, asset, policy } = input;
-  const key = event.key.toLowerCase();
+  const key =
+    event.code === "KeyQ"
+      ? "q"
+      : event.code === "KeyE"
+        ? "e"
+        : event.code === "KeyR"
+          ? "r"
+          : event.key.toLowerCase();
   const moveStep = resolvePrecisionMoveStep(event, policy.translationSnap);
 
   if (event.key === "ArrowLeft" || event.key === "ArrowRight") {

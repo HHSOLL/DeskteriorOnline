@@ -55,10 +55,10 @@ export default function Crosshair() {
         ? `${placementDraft.label} · 표면 조준`
         : "I — 인벤토리";
   const controlText = pointerLockBlocked
-    ? "Panel open · mouse look released"
+    ? "Mouse look paused · close panels or click scene"
     : pointerLocked
       ? "Mouse look active · WASD"
-      : "Click scene · mouse look";
+      : "Click scene · mouse look / WASD";
   const badgeClassName = activeSession
     ? activeFeedback?.tone === "blocked"
       ? "bg-rose-500/12 border-rose-300/30 text-rose-100"
