@@ -21,13 +21,19 @@ import {
 import type { RuntimeAsset, SurfaceLocalPose } from "@deskterioronline/scene-schema";
 import { isSurfacePlacementRecord } from "@deskterioronline/scene-schema";
 import {
+  resolveFocusPlacementEntry,
   resolveFocusPlacementSessionUpdate,
   resolveFocusPlacementStepConfig,
   resolveFocusPlacementWizardState,
   type FocusPlacementAttachmentType,
   type FocusPlacementSurfaceCandidate
 } from "../../../lib/runtime/focus-placement-session";
-import { commitRuntimePlacementToStore } from "../../../lib/runtime/runtime-asset-bridge";
+import {
+  cancelRuntimeAssetPreview,
+  commitRuntimeAssetUpdateToStore,
+  commitRuntimePlacementDraftToStore,
+  commitRuntimePlacementToStore
+} from "../../../lib/runtime/runtime-asset-bridge";
 import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
 import {
   focusPlacementRequestToInteractionCandidates,
@@ -42,6 +48,7 @@ import {
   type FocusPlacementRequest,
   type FocusPlacementSession
 } from "../../../lib/stores/useFocusPlacementStore";
+import type { SceneAsset } from "../../../lib/stores/useSceneStore";
 import { useWalkInventoryStore } from "../../../lib/stores/useWalkInventoryStore";
 
 function shouldIgnoreKeyboardTarget(target: EventTarget | null) {
@@ -164,14 +171,21 @@ function isFinitePoseValue(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-function resolveRuntimeAssetForObject(engine: Engine, objectId: string) {
+function resolveRuntimeAssetForObject(engine: Engine, objectId: string, assetFallback?: SceneAsset | null) {
   const runtimeObject = engine.runtimeScene.objectRegistry.get(objectId);
-  if (!runtimeObject) {
-    return null;
+  if (runtimeObject) {
+    const runtimeAssetId = runtimeObject.runtimeAssetId ?? runtimeObject.assetId;
+    return (
+      engine.runtimeScene.runtimeAssets.get(runtimeAssetId) ??
+      (assetFallback
+        ? engine.runtimeScene.runtimeAssets.get(assetFallback.catalogItemId ?? assetFallback.assetId) ?? null
+        : null)
+    );
   }
 
-  const runtimeAssetId = runtimeObject.runtimeAssetId ?? runtimeObject.assetId;
-  return engine.runtimeScene.runtimeAssets.get(runtimeAssetId) ?? null;
+  return assetFallback
+    ? engine.runtimeScene.runtimeAssets.get(assetFallback.catalogItemId ?? assetFallback.assetId) ?? null
+    : null;
 }
 
 function resolveSuggestedLocalPose(
@@ -216,8 +230,14 @@ export default function FocusPlacementController() {
   const machineRef = useRef<FocusPlacementMachine | null>(null);
   const kernel = useMemo(() => (engine ? new PlacementKernel(engine) : null), [engine]);
   const assetsById = useMemo(
-    () => new Map(assets.map((asset) => [asset.id, asset])),
-    [assets]
+    () => {
+      const entries = assets.map((asset) => [asset.id, asset] as const);
+      if (placementDraft?.asset && !assets.some((asset) => asset.id === placementDraft.objectId)) {
+        entries.push([placementDraft.objectId, placementDraft.asset]);
+      }
+      return new Map(entries);
+    },
+    [assets, placementDraft]
   );
 
   const activateCandidate = useCallback(
@@ -235,9 +255,63 @@ export default function FocusPlacementController() {
       if (!selectedAsset) {
         throw new Error(`Selected asset ${input.request.objectId} was not found.`);
       }
+      const supportAsset = assetsById.get(input.request.supportObjectId);
+      if (!supportAsset) {
+        throw new Error(`Support asset ${input.request.supportObjectId} was not found.`);
+      }
       if (!engine) {
         throw new Error("Focus placement engine is unavailable.");
       }
+      const selectedRuntimeAsset = resolveRuntimeAssetForObject(
+        engine,
+        input.request.objectId,
+        selectedAsset
+      );
+      const supportRuntimeAsset = resolveRuntimeAssetForObject(
+        engine,
+        input.request.supportObjectId,
+        supportAsset
+      );
+      const requestedCandidate =
+        input.request.surfaceCandidates[input.candidateIndex] ??
+        input.request.surfaceCandidates[input.request.preferredCandidateIndex] ??
+        null;
+      const refreshedEntry =
+        supportRuntimeAsset && supportRuntimeAsset.supportSurfaces.length > 0
+          ? resolveFocusPlacementEntry({
+              selectedAsset,
+              selectedRuntimeAsset,
+              supportAsset,
+              supportSurfaces: supportRuntimeAsset.supportSurfaces
+            })
+          : null;
+      const refreshedSurfaceCandidates =
+        refreshedEntry && refreshedEntry.candidates.length > 0
+          ? refreshedEntry.candidates
+          : input.request.surfaceCandidates;
+      const refreshedPreferredCandidateIndex =
+        refreshedEntry && refreshedEntry.candidates.length > 0
+          ? refreshedEntry.preferredCandidateIndex
+          : input.request.preferredCandidateIndex;
+      const requestedSurfaceId = requestedCandidate?.surfaceId ?? input.request.surfaceId;
+      const requestedAttachmentType =
+        requestedCandidate?.attachmentType ?? input.request.attachmentType;
+      const matchedCandidateIndex = refreshedSurfaceCandidates.findIndex(
+        (candidateOption) =>
+          candidateOption.surfaceId === requestedSurfaceId &&
+          candidateOption.attachmentType === requestedAttachmentType
+      );
+      const candidateIndex =
+        matchedCandidateIndex >= 0
+          ? matchedCandidateIndex
+          : input.mode === "start"
+            ? refreshedPreferredCandidateIndex
+            : input.candidateIndex;
+      const request = {
+        ...input.request,
+        surfaceCandidates: refreshedSurfaceCandidates,
+        preferredCandidateIndex: refreshedPreferredCandidateIndex
+      };
 
       let machine = machineRef.current;
       if (!machine) {
@@ -252,7 +326,7 @@ export default function FocusPlacementController() {
             objectId: input.request.objectId,
             supportObjectId: input.request.supportObjectId,
             surfaceId: input.request.surfaceId,
-            candidates: focusPlacementRequestToInteractionCandidates(input.request)
+            candidates: focusPlacementRequestToInteractionCandidates(request)
           }
         });
         machine.dispatch({
@@ -260,13 +334,13 @@ export default function FocusPlacementController() {
           objectId: input.request.objectId,
           supportObjectId: input.request.supportObjectId,
           candidates: startResult.state.candidates,
-          preferredCandidateIndex: input.candidateIndex,
+          preferredCandidateIndex: candidateIndex,
           readOnly
         });
       } else {
         machine.dispatch({
           type: "SELECT_CANDIDATE",
-          candidateIndex: input.candidateIndex
+          candidateIndex
         });
       }
 
@@ -276,9 +350,6 @@ export default function FocusPlacementController() {
       if (!candidate) {
         throw new Error("Focus placement candidate was not found.");
       }
-
-      const selectedRuntimeAsset = resolveRuntimeAssetForObject(engine, input.request.objectId);
-      const supportRuntimeAsset = resolveRuntimeAssetForObject(engine, input.request.supportObjectId);
 
       transactionRef.current?.cancel();
       const transaction = kernel.begin({
@@ -293,7 +364,7 @@ export default function FocusPlacementController() {
         input.baseLocalPose ??
         resolveInitialLocalPose(
           selectedAsset.placement,
-          input.request.supportObjectId,
+          request.supportObjectId,
           candidate.surfaceId,
           resolveSuggestedLocalPose(candidate.attachmentType, supportRuntimeAsset)
         );
@@ -319,7 +390,7 @@ export default function FocusPlacementController() {
         )
       );
       const nextSession = {
-        ...input.request,
+        ...request,
         ...candidate,
         supportObjectId: machineCandidate?.supportObjectId ?? input.request.supportObjectId,
         surfaceCandidates: nextSurfaceCandidates,
@@ -344,10 +415,37 @@ export default function FocusPlacementController() {
         updateSession(nextSession);
       }
 
+      if (selectedAssetId !== input.request.objectId) {
+        setSelectedAssetId(input.request.objectId);
+      }
       setIsTransforming(true);
     },
-    [assetsById, engine, kernel, readOnly, setIsTransforming, startSession, updateSession]
+    [
+      assetsById,
+      engine,
+      kernel,
+      readOnly,
+      selectedAssetId,
+      setIsTransforming,
+      setSelectedAssetId,
+      startSession,
+      updateSession
+    ]
   );
+
+  useEffect(() => {
+    (window as typeof window & {
+      __DESKTERIORONLINE_FOCUS_PLACEMENT_STATE__?: Record<string, unknown>;
+    }).__DESKTERIORONLINE_FOCUS_PLACEMENT_STATE__ = {
+      viewMode,
+      readOnly,
+      pendingObjectId: pendingRequest?.objectId ?? null,
+      activeObjectId: activeSession?.objectId ?? null,
+      draftObjectId: placementDraft?.objectId ?? null,
+      hasKernel: Boolean(kernel),
+      hasEngine: Boolean(engine)
+    };
+  }, [activeSession, engine, kernel, pendingRequest, placementDraft, readOnly, viewMode]);
 
   useEffect(() => {
     if (viewMode !== "walk" || readOnly || activeSession || pendingRequest) {
@@ -406,7 +504,10 @@ export default function FocusPlacementController() {
     } catch (error) {
       console.error("[FocusPlacementController] failed to start focus placement", error);
       if (placementDraft?.objectId === pendingRequest.objectId) {
-        removeFurniture(pendingRequest.objectId);
+        cancelRuntimeAssetPreview(pendingRequest.objectId, engine);
+        if (assets.some((asset) => asset.id === pendingRequest.objectId)) {
+          removeFurniture(pendingRequest.objectId);
+        }
         setSelectedAssetId(null);
         clearPlacementDraft();
         toast.error("배치를 시작하지 못했습니다.", {
@@ -419,6 +520,7 @@ export default function FocusPlacementController() {
     }
   }, [
     activateCandidate,
+    assets,
     clearPendingRequest,
     clearSession,
     engine,
@@ -434,11 +536,147 @@ export default function FocusPlacementController() {
   ]);
 
   useEffect(() => {
+    if (!placementDraft || activeSession || pendingRequest || viewMode !== "walk" || readOnly) {
+      return;
+    }
+
+    const cancelDraft = () => {
+      cancelRuntimeAssetPreview(placementDraft.objectId, engine);
+      if (assets.some((asset) => asset.id === placementDraft.objectId)) {
+        removeFurniture(placementDraft.objectId);
+      }
+      if (selectedAssetId === placementDraft.objectId) {
+        setSelectedAssetId(null);
+      }
+      clearPlacementDraft();
+      setIsTransforming(false);
+      toast.info("배치 preview를 취소했습니다.");
+    };
+
+    const commitWorldDraft = () => {
+      if (placementDraft.placementMode !== "world") {
+        return false;
+      }
+
+      const asset = assetsById.get(placementDraft.objectId);
+      const runtimeObject = engine?.runtimeScene.objectRegistry.get(placementDraft.objectId);
+      if (!asset || !runtimeObject) {
+        toast.error("배치를 확정할 수 없습니다.", {
+          description: "제품 메타데이터를 다시 불러온 뒤 시도해 주세요."
+        });
+        cancelDraft();
+        return true;
+      }
+
+      const transform = runtimeObject.previewTransform ?? runtimeObject.transform;
+      if (assets.some((candidate) => candidate.id === placementDraft.objectId)) {
+        commitRuntimeAssetUpdateToStore({
+          objectId: placementDraft.objectId,
+          updates: {
+            position: [...transform.position] as typeof asset.position,
+            rotation: [...transform.rotation] as typeof asset.rotation,
+            scale: [...transform.scale] as typeof asset.scale
+          },
+          engine
+        });
+      } else {
+        commitRuntimePlacementDraftToStore({
+          asset: placementDraft.asset,
+          engine,
+          commitPreview: true
+        });
+      }
+      recordSnapshot("워크뷰 제품 배치");
+      clearPlacementDraft();
+      setIsTransforming(false);
+      toast.success(`${placementDraft.label} 배치됨`, {
+        description: "commit 후 저장/공유 대상 scene document에 포함됩니다."
+      });
+      return true;
+    };
+
+    const showSurfaceBlockedMessage = () => {
+      window.setTimeout(() => {
+        const latestDraft = useWalkInventoryStore.getState().placementDraft;
+        const latestFocus = useFocusPlacementStore.getState();
+        if (
+          latestDraft?.objectId !== placementDraft.objectId ||
+          latestDraft.placementMode !== "surface" ||
+          latestFocus.pendingRequest ||
+          latestFocus.activeSession
+        ) {
+          return;
+        }
+        toast.error("여기는 배치할 수 없습니다.", {
+          description: "바닥, 책상, 벽처럼 호환되는 표면을 화면 중앙에 조준하세요."
+        });
+      }, 0);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (shouldIgnoreKeyboardTarget(event.target)) {
+        return;
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        cancelDraft();
+        return;
+      }
+
+      if (event.key === "Enter") {
+        event.preventDefault();
+        if (!commitWorldDraft()) {
+          showSurfaceBlockedMessage();
+        }
+      }
+    };
+
+    const handleMouseDown = (event: MouseEvent) => {
+      if (event.button !== 0 || shouldIgnorePointerCommitTarget(event.target)) {
+        return;
+      }
+      if (placementDraft.placementMode === "world") {
+        event.preventDefault();
+        commitWorldDraft();
+        return;
+      }
+      showSurfaceBlockedMessage();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("mousedown", handleMouseDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("mousedown", handleMouseDown);
+    };
+  }, [
+    activeSession,
+    assets,
+    assetsById,
+    clearPlacementDraft,
+    engine,
+    placementDraft,
+    pendingRequest,
+    readOnly,
+    recordSnapshot,
+    removeFurniture,
+    selectedAssetId,
+    setIsTransforming,
+    setSelectedAssetId,
+    viewMode
+  ]);
+
+  useEffect(() => {
     if (!activeSession || !engine) {
       return;
     }
 
-    if (viewMode === "walk" && !readOnly && selectedAssetId === activeSession.objectId) {
+    if (
+      viewMode === "walk" &&
+      !readOnly &&
+      (selectedAssetId === activeSession.objectId || placementDraft?.objectId === activeSession.objectId)
+    ) {
       return;
     }
 
@@ -447,7 +685,16 @@ export default function FocusPlacementController() {
     machineRef.current = null;
     clearSession();
     setIsTransforming(false);
-  }, [activeSession, clearSession, engine, readOnly, selectedAssetId, setIsTransforming, viewMode]);
+  }, [
+    activeSession,
+    clearSession,
+    engine,
+    placementDraft,
+    readOnly,
+    selectedAssetId,
+    setIsTransforming,
+    viewMode
+  ]);
 
   useEffect(() => {
     if (!activeSession || !engine) {
@@ -525,11 +772,27 @@ export default function FocusPlacementController() {
       }
 
       try {
-        transactionRef.current.commit();
-        commitRuntimePlacementToStore({
-          objectId: activeSession.objectId,
-          engine
-        });
+        const committedPlacement = transactionRef.current.commit();
+        (window as typeof window & {
+          __DESKTERIORONLINE_FOCUS_PLACEMENT_LAST_COMMIT__?: Record<string, unknown>;
+        }).__DESKTERIORONLINE_FOCUS_PLACEMENT_LAST_COMMIT__ = {
+          activeObjectId: activeSession.objectId,
+          draftObjectId: placementDraft?.objectId ?? null,
+          committedPlacementMode: committedPlacement.mode,
+          draftBranch: placementDraft?.objectId === activeSession.objectId && Boolean(placementDraft.asset)
+        };
+        if (placementDraft?.objectId === activeSession.objectId && placementDraft.asset) {
+          commitRuntimePlacementDraftToStore({
+            asset: placementDraft.asset,
+            engine,
+            placement: committedPlacement
+          });
+        } else {
+          commitRuntimePlacementToStore({
+            objectId: activeSession.objectId,
+            engine
+          });
+        }
         machineRef.current?.dispatch({ type: "COMMIT_SUCCEEDED" });
         recordSnapshot("집중 배치");
         if (placementDraft?.objectId === activeSession.objectId) {
@@ -564,7 +827,10 @@ export default function FocusPlacementController() {
         transactionRef.current = null;
       }
       if (placementDraft?.objectId === activeSession.objectId) {
-        removeFurniture(activeSession.objectId);
+        cancelRuntimeAssetPreview(activeSession.objectId, engine);
+        if (assets.some((asset) => asset.id === activeSession.objectId)) {
+          removeFurniture(activeSession.objectId);
+        }
         setSelectedAssetId(null);
         clearPlacementDraft();
       }
@@ -757,6 +1023,7 @@ export default function FocusPlacementController() {
   }, [
     activateCandidate,
     activeSession,
+    assets,
     clearPlacementDraft,
     clearSession,
     engine,

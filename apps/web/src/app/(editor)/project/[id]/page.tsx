@@ -58,6 +58,7 @@ import {
   isEditableWalkKeyboardTarget,
   isWalkInventoryShortcut
 } from "../../../../lib/runtime/walk-keyboard";
+import { cancelRuntimeAssetPreview } from "../../../../lib/runtime/runtime-asset-bridge";
 
 const STARTER_SET_OFFSETS: Array<[number, number]> = [
   [-2.2, -1.2],
@@ -417,17 +418,23 @@ export default function ProjectEditorPage() {
       return false;
     }
 
-    removeFurniture(placementDraft.objectId);
+    cancelRuntimeAssetPreview(placementDraft.objectId);
+    if (assets.some((asset) => asset.id === placementDraft.objectId)) {
+      removeFurniture(placementDraft.objectId);
+    }
     if (selectedAssetId === placementDraft.objectId) {
       setSelectedAssetId(null);
     }
     clearPlacementDraft();
+    setIsTransforming(false);
     return true;
   }, [
+    assets,
     clearPlacementDraft,
     placementDraft,
     removeFurniture,
     selectedAssetId,
+    setIsTransforming,
     setSelectedAssetId
   ]);
 
@@ -445,6 +452,7 @@ export default function ProjectEditorPage() {
       const productSnapshot = toCatalogProductSnapshot(item);
       const supportProfile = item.supportProfile ?? null;
       const inferredAnchorType = inferAnchorTypeForCatalogItem(item);
+      const placementMode = requiresSurfaceFocusPlacement(inferredAnchorType) ? "surface" : "world";
       const anchoredPlacement = constrainPlacementToAnchor(
         {
           position: [sceneCenter.x, 0, sceneCenter.z],
@@ -464,7 +472,7 @@ export default function ProjectEditorPage() {
           }
         }
       );
-      addFurniture({
+      const draftAsset = {
         id,
         assetId: item.assetId,
         catalogItemId: item.id,
@@ -476,33 +484,36 @@ export default function ProjectEditorPage() {
         rotation: anchoredPlacement.rotation,
         scale: item.scale,
         materialId: null
-      });
+      };
       setSelectedAssetId(id);
+      setIsTransforming(true);
       setPanels({ assets: false, properties: false });
-
-      if (requiresSurfaceFocusPlacement(anchoredPlacement.anchorType)) {
-        setPlacementDraft({ objectId: id, label: item.label });
-        toast.success(`${item.label} 선택됨`, {
-          description: "표면을 화면 중앙에 맞춘 뒤 클릭 또는 E 키로 배치를 시작하세요."
-        });
-        return;
-      }
-
-      recordSnapshot("워크뷰 제품 추가");
-      toast.success(`${item.label} 배치됨`, {
-        description: "현재 워크뷰 장면에 배치되어 저장 대상에 포함됩니다."
+      setPlacementDraft({
+        objectId: id,
+        label: item.label,
+        asset: draftAsset,
+        anchorType: anchoredPlacement.anchorType,
+        placementMode,
+        catalogItemId: item.id,
+        assetId: item.assetId,
+        createdAt: Date.now()
+      });
+      toast.success(`${item.label} 배치 모드`, {
+        description:
+          placementMode === "surface"
+            ? "호환되는 표면을 화면 중앙에 맞춘 뒤 클릭 또는 E 키로 ghost preview를 시작하세요."
+            : "위치를 조준한 뒤 클릭 또는 Enter로 확정하세요. Escape로 취소합니다."
       });
     },
     [
-      addFurniture,
       anchorContext,
       cancelWalkInventoryDraft,
       createAssetId,
-      recordSnapshot,
       sceneCenter.x,
       sceneCenter.z,
       setPanels,
       setPlacementDraft,
+      setIsTransforming,
       setSelectedAssetId,
       viewMode
     ]

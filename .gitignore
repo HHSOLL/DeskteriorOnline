@@ -8,6 +8,8 @@ dist
 coverage
 .codex
 .tools
+.playwright-cli
+output
 apps/web/.cache
 apps/web/.vercel
 apps/web/public/assets/transcoders

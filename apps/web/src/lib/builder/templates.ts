@@ -1,4 +1,5 @@
 import type { Floor, Opening, ScaleInfo, Wall } from "../stores/useSceneStore";
+import { FLOOR_TEXTURE_PRESETS, WALL_TEXTURE_PRESETS } from "../textures/room-shell-textures";
 
 export type BuilderTemplateId =
   | "rect-studio"
@@ -111,32 +112,19 @@ export const builderTemplates: BuilderTemplate[] = [
   }
 ];
 
-export const builderWallFinishes = [
-  { id: 0, name: "Soft Plaster", category: "Paint" },
-  { id: 1, name: "Gallery White", category: "Paint" },
-  { id: 2, name: "Dark Concrete", category: "Concrete" },
-  { id: 3, name: "Grey Plaster", category: "Paint" },
-  { id: 4, name: "Layered Concrete", category: "Concrete" },
-  { id: 5, name: "Oak Panel", category: "Wood Panel" },
-  { id: 6, name: "Walnut Panel", category: "Wood Panel" },
-  { id: 7, name: "Worn Wood Slat", category: "Acoustic Panel" },
-  { id: 8, name: "Textile Acoustic", category: "Acoustic Panel" },
-  { id: 9, name: "Terrazzo Wallpaper", category: "Wallpaper" }
-] as const;
+function texturePresetsToBuilderFinishes(
+  presets: readonly { name: string; category: string }[]
+) {
+  return presets.map((preset, index) => ({
+    id: index,
+    name: preset.name,
+    category: preset.category
+  }));
+}
 
-export const builderFloorFinishes = [
-  { id: 0, name: "Oak Boards", category: "Wood" },
-  { id: 1, name: "Worn Concrete", category: "Concrete" },
-  { id: 2, name: "Stone Marble", category: "Stone" },
-  { id: 3, name: "Warm Laminate", category: "Wood" },
-  { id: 4, name: "Classic Wood", category: "Wood" },
-  { id: 5, name: "Brown Linoleum", category: "Resilient" },
-  { id: 6, name: "Terrazzo Tile", category: "Tile" },
-  { id: 7, name: "Anti-Skid Tile", category: "Tile" },
-  { id: 8, name: "Soft Carpet", category: "Carpet" },
-  { id: 9, name: "Black Carpet", category: "Carpet" },
-  { id: 10, name: "Cork Desk Studio", category: "Resilient" }
-] as const;
+export const builderWallFinishes = texturePresetsToBuilderFinishes(WALL_TEXTURE_PRESETS);
+
+export const builderFloorFinishes = texturePresetsToBuilderFinishes(FLOOR_TEXTURE_PRESETS);
 
 export const builderCeilingFinishes = [
   { id: 0, name: "Matte Plaster", category: "Paint" },

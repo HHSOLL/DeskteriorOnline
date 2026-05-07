@@ -51,6 +51,13 @@ import {
   type TemplateSeedPreset
 } from "../../../lib/builder/template-browser";
 import { deriveBlankRoomShell } from "../../../lib/domain/room-shell";
+import {
+  DEFAULT_LIGHTING_LAYOUT_BOUNDS_MM,
+  computeLightingBoundsMm,
+  createDefaultDirectLightingFixtures,
+  resolveLightingFixtures,
+  type LightingFixture
+} from "../../../lib/scene/lighting-layout";
 import type { Opening } from "../../../lib/stores/useSceneStore";
 import { useAuthStore } from "../../../lib/stores/useAuthStore";
 import type { EditorViewMode } from "../../../lib/stores/useEditorStore";
@@ -86,6 +93,7 @@ type BuilderAuthDraft = {
   wallMaterialIndex: number;
   floorMaterialIndex: number;
   lightingMode: BuilderLightingMode;
+  lightingFixtures: LightingFixture[];
   projectName: string;
   projectDescription: string;
   doorStyle: DoorStyle;
@@ -158,6 +166,9 @@ function StudioBuilderPageContent() {
   const [wallMaterialIndex, setWallMaterialIndex] = useState(0);
   const [floorMaterialIndex, setFloorMaterialIndex] = useState(0);
   const [lightingMode, setLightingMode] = useState<BuilderLightingMode>("direct");
+  const [lightingFixtures, setLightingFixtures] = useState<LightingFixture[]>(() =>
+    createDefaultDirectLightingFixtures(DEFAULT_LIGHTING_LAYOUT_BOUNDS_MM, 3)
+  );
   const [doorStyle, setDoorStyle] = useState<DoorStyle>("single");
   const [windowStyle, setWindowStyle] = useState<WindowStyle>("single");
   const [addSecondaryWindow, setAddSecondaryWindow] = useState(false);
@@ -351,6 +362,8 @@ function StudioBuilderPageContent() {
     selectedOpening,
     selectedOpeningWall,
     selectedWallOpenings,
+    placementIssue,
+    hasInvalidOpenings,
     setSelectedOpeningId,
     setSelectedWallId,
     setOpeningPatch,
@@ -437,6 +450,9 @@ function StudioBuilderPageContent() {
       if (typeof draft.wallMaterialIndex === "number") setWallMaterialIndex(draft.wallMaterialIndex);
       if (typeof draft.floorMaterialIndex === "number") setFloorMaterialIndex(draft.floorMaterialIndex);
       if (draft.lightingMode) setLightingMode(parseLightingMode(draft.lightingMode));
+      if (Array.isArray(draft.lightingFixtures)) {
+        setLightingFixtures(draft.lightingFixtures);
+      }
       if (typeof draft.projectName === "string") setProjectName(draft.projectName);
       if (typeof draft.projectDescription === "string") setProjectDescription(draft.projectDescription);
       if (restoredDoorStyle) setDoorStyle(restoredDoorStyle);
@@ -495,7 +511,20 @@ function StudioBuilderPageContent() {
     () => buildPreviewDataUrl(scene.floors[0]?.outline ?? [], scene.openings.map(({ type, wallId }) => ({ type, wallId }))),
     [scene.floors, scene.openings]
   );
-  const builderLighting = useMemo(() => BUILDER_LIGHTING_SCENE[lightingMode], [lightingMode]);
+  const lightingBoundsMm = useMemo(
+    () => computeLightingBoundsMm(scene.walls, scene.scale),
+    [scene.scale, scene.walls]
+  );
+  const builderLighting = useMemo(
+    () => ({
+      ...BUILDER_LIGHTING_SCENE[lightingMode],
+      fixtures:
+        lightingMode === "direct"
+          ? resolveLightingFixtures(lightingFixtures, lightingBoundsMm, 3)
+          : []
+    }),
+    [lightingBoundsMm, lightingFixtures, lightingMode]
+  );
   const previewWallMaterialIndex = activeStep.id === "style" || activeStep.id === "lighting" ? wallMaterialIndex : -1;
   const previewFloorMaterialIndex = activeStep.id === "style" || activeStep.id === "lighting" ? floorMaterialIndex : -1;
 
@@ -692,6 +721,7 @@ function StudioBuilderPageContent() {
       wallMaterialIndex,
       floorMaterialIndex,
       lightingMode,
+      lightingFixtures,
       projectName,
       projectDescription,
       doorStyle,
@@ -708,6 +738,7 @@ function StudioBuilderPageContent() {
     doorStyle,
     floorMaterialIndex,
     lightingMode,
+    lightingFixtures,
     intent,
     nookDepth,
     nookWidth,
@@ -768,6 +799,12 @@ function StudioBuilderPageContent() {
   };
 
   const handleNext = () => {
+    if (activeStep.id === "opening" && hasInvalidOpenings) {
+      toast.error("문/창문 배치를 확인해 주세요.", {
+        description: placementIssue?.message ?? "겹침이나 벽 모서리 간격 문제가 남아 있습니다."
+      });
+      return;
+    }
     if (isFinalStep) {
       void handleCreate();
       return;
@@ -819,6 +856,7 @@ function StudioBuilderPageContent() {
                     selectedOpeningId={selectedOpeningId}
                     selectedOpening={selectedOpening}
                     selectedOpeningWall={selectedOpeningWall}
+                    placementIssue={placementIssue}
                     onDoorStyleChange={setDoorStyle}
                     onWindowStyleChange={setWindowStyle}
                     onAddSecondaryWindowChange={setAddSecondaryWindow}
@@ -848,7 +886,10 @@ function StudioBuilderPageContent() {
                 {stepIndex === 4 ? (
                   <BuilderLightingStep
                     lightingMode={lightingMode}
+                    fixtures={builderLighting.fixtures ?? []}
+                    roomBoundsMm={lightingBoundsMm}
                     onLightingModeChange={setLightingMode}
+                    onFixturesChange={setLightingFixtures}
                   />
                 ) : null}
               </div>
@@ -874,8 +915,14 @@ function StudioBuilderPageContent() {
             lightingModeLabel={LIGHTING_MODE_LABEL[lightingMode]}
             doorCount={scene.openings.filter((opening) => opening.type === "door").length}
             windowCount={scene.openings.filter((opening) => opening.type === "window").length}
+            openings={scene.openings}
+            selectedWallId={selectedWallId}
+            selectedOpeningId={selectedOpeningId}
             selectedWallLabel={wallEntries.find((wall) => wall.id === selectedWallId)?.label ?? null}
             selectedOpening={selectedOpening}
+            onSelectWall={setSelectedWallId}
+            onSelectOpening={setSelectedOpeningId}
+            onPatchOpening={setOpeningPatch}
           />
         </StudioWorkspaceShell>
       </div>

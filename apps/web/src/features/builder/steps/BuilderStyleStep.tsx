@@ -24,7 +24,7 @@ function buildWallPalette(
     name: finish.name,
     background: swatches[finish.id] ?? "#efe9df",
     previewImage:
-      WALL_TEXTURE_PRESETS[finish.id % WALL_TEXTURE_PRESETS.length]?.map ?? null
+      WALL_TEXTURE_PRESETS[finish.id % WALL_TEXTURE_PRESETS.length]?.previewThumbnail ?? null
   }));
 }
 
@@ -37,7 +37,7 @@ function buildFloorPalette(
     name: finish.name,
     background: swatches[finish.id] ?? "#b58f67",
     previewImage:
-      FLOOR_TEXTURE_PRESETS[finish.id % FLOOR_TEXTURE_PRESETS.length]?.map ?? null
+      FLOOR_TEXTURE_PRESETS[finish.id % FLOOR_TEXTURE_PRESETS.length]?.previewThumbnail ?? null
   }));
 }
 

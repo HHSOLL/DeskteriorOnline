@@ -1,6 +1,22 @@
 import type { Opening, Wall } from "../../../lib/stores/useSceneStore";
 import type { DoorStyle, WindowStyle } from "../types";
 
+export const OPENING_EDGE_MARGIN = 0.32;
+export const DOOR_EDGE_MARGIN = 0.38;
+export const OPENING_GAP = 0.08;
+
+export type OpeningPlacementIssueCode =
+  | "WALL_MISSING"
+  | "EDGE_CLEARANCE"
+  | "OPENING_OVERLAP";
+
+export type OpeningPlacementIssue = {
+  code: OpeningPlacementIssueCode;
+  openingId: string;
+  wallId: string | null;
+  message: string;
+};
+
 export function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
@@ -27,7 +43,7 @@ export function getWindowWidthByStyle(style: WindowStyle) {
 }
 
 function getOpeningMargin(opening: Pick<Opening, "type">) {
-  return opening.type === "door" ? 0.38 : 0.32;
+  return opening.type === "door" ? DOOR_EDGE_MARGIN : OPENING_EDGE_MARGIN;
 }
 
 function getOpeningMinWidth(opening: Pick<Opening, "type">) {
@@ -111,7 +127,6 @@ export function reassignOpeningToWall(opening: Opening, nextWallId: string, wall
 }
 
 export function resolveWallOpeningOverlaps(openings: Opening[], walls: Wall[]) {
-  const openingGap = 0.08;
   const byWall = new Map<string, Opening[]>();
 
   openings.forEach((opening) => {
@@ -134,7 +149,7 @@ export function resolveWallOpeningOverlaps(openings: Opening[], walls: Wall[]) {
         const margin = getOpeningMargin(opening);
         const minWidth = getOpeningMinWidth(opening);
         let width = clamp(opening.width, minWidth, Math.max(minWidth, wallLength - margin * 2));
-        const minStart = Math.max(margin, Number.isFinite(cursor) ? cursor + openingGap : margin);
+        const minStart = Math.max(margin, Number.isFinite(cursor) ? cursor + OPENING_GAP : margin);
         let maxStart = wallLength - width - margin;
 
         if (maxStart < minStart) {
@@ -157,6 +172,57 @@ export function resolveWallOpeningOverlaps(openings: Opening[], walls: Wall[]) {
   });
 
   return resolved;
+}
+
+export function getOpeningPlacementIssues(openings: Opening[], walls: Wall[]) {
+  const issues: OpeningPlacementIssue[] = [];
+  const byWall = new Map<string, Opening[]>();
+
+  openings.forEach((opening) => {
+    const wall = walls.find((candidate) => candidate.id === opening.wallId);
+    if (!wall) {
+      issues.push({
+        code: "WALL_MISSING",
+        openingId: opening.id,
+        wallId: opening.wallId,
+        message: "선택한 벽을 찾을 수 없습니다."
+      });
+      return;
+    }
+
+    const wallLength = getWallLength(wall);
+    const margin = getOpeningMargin(opening);
+    if (opening.offset < margin || opening.offset + opening.width > wallLength - margin) {
+      issues.push({
+        code: "EDGE_CLEARANCE",
+        openingId: opening.id,
+        wallId: opening.wallId,
+        message: "문/창문이 벽 모서리에 너무 가깝습니다."
+      });
+    }
+
+    const entries = byWall.get(opening.wallId) ?? [];
+    entries.push(opening);
+    byWall.set(opening.wallId, entries);
+  });
+
+  byWall.forEach((wallOpenings, wallId) => {
+    const sorted = [...wallOpenings].sort((a, b) => a.offset - b.offset);
+    sorted.forEach((opening, index) => {
+      const next = sorted[index + 1];
+      if (!next) return;
+      if (opening.offset + opening.width + OPENING_GAP > next.offset) {
+        issues.push({
+          code: "OPENING_OVERLAP",
+          openingId: next.id,
+          wallId,
+          message: "문/창문끼리 겹치거나 필요한 간격이 부족합니다."
+        });
+      }
+    });
+  });
+
+  return issues;
 }
 
 export function normalizeOpenings(openings: Opening[], walls: Wall[]) {

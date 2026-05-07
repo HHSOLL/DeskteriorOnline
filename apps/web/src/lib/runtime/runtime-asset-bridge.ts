@@ -1,7 +1,11 @@
 "use client";
 
 import type { Engine, RuntimeWorldTransform, SceneObjectPatch } from "@deskterioronline/engine-core";
-import { clonePlacementRecord, isSurfacePlacementRecord } from "@deskterioronline/scene-schema";
+import {
+  clonePlacementRecord,
+  isSurfacePlacementRecord,
+  type PlacementRecord
+} from "@deskterioronline/scene-schema";
 import { useSceneStore, type SceneAsset } from "../stores/useSceneStore";
 import type { SceneAnchorType } from "../scene/anchor-types";
 
@@ -16,6 +20,7 @@ declare global {
 export const PLAN2SPACE_RUNTIME_DOCUMENT_PATCH_EVENT = "deskterioronline:runtime-document-patch";
 
 type SceneStoreLike = Pick<ReturnType<typeof useSceneStore.getState>, "assets" | "updateFurniture">;
+type SceneStoreWithAdd = SceneStoreLike & Pick<ReturnType<typeof useSceneStore.getState>, "addFurniture">;
 
 type CommitRuntimeAssetUpdateParams = {
   objectId: string;
@@ -133,6 +138,22 @@ function buildRuntimeStoreUpdate(
   };
 }
 
+export function resolveRuntimeStoreUpdateFromObject({
+  objectId,
+  asset,
+  engine
+}: {
+  objectId: string;
+  asset: SceneAsset;
+  engine?: Engine | null;
+}) {
+  const runtimeEngine = resolveRuntimeEngine(engine);
+  if (!runtimeEngine) {
+    return null;
+  }
+  return buildRuntimeStoreUpdate(runtimeEngine, asset, objectId);
+}
+
 export function beginRuntimeAssetPreview(objectId: string, engine?: Engine | null) {
   return resolveRuntimeEngine(engine)?.beginObjectPreview(objectId) ?? null;
 }
@@ -229,5 +250,53 @@ export function commitRuntimePlacementToStore({
     engine: runtimeEngine
   });
   sceneStore.updateFurniture(objectId, runtimeStoreUpdate);
+  return patches;
+}
+
+export function commitRuntimePlacementDraftToStore({
+  asset,
+  engine,
+  store,
+  commitPreview = false,
+  placement
+}: {
+  asset: SceneAsset;
+  engine?: Engine | null;
+  store?: SceneStoreWithAdd;
+  commitPreview?: boolean;
+  placement?: PlacementRecord | null;
+}) {
+  const sceneStore = store ?? useSceneStore.getState();
+  const runtimeEngine = resolveRuntimeEngine(engine);
+  if (!runtimeEngine) {
+    sceneStore.addFurniture(asset);
+    return [];
+  }
+
+  if (commitPreview) {
+    runtimeEngine.commitObjectPreview(asset.id);
+  }
+
+  const committedPlacement = placement ? clonePlacementRecord(placement) : null;
+  const runtimeStoreUpdate = buildRuntimeStoreUpdate(runtimeEngine, asset, asset.id);
+  const placementUpdate = committedPlacement
+    ? {
+        placement: committedPlacement,
+        anchorType: resolveAnchorTypeFromRuntimePlacement(runtimeEngine, asset, committedPlacement),
+        supportAssetId: isSurfacePlacementRecord(committedPlacement)
+          ? committedPlacement.supportObjectId
+          : asset.supportAssetId ?? null
+      }
+    : null;
+  const patches = runtimeEngine.buildDocumentPatch();
+  publishRuntimeDocumentPatches(patches, {
+    objectId: asset.id,
+    engine: runtimeEngine
+  });
+  sceneStore.addFurniture(
+    runtimeStoreUpdate || placementUpdate
+      ? { ...asset, ...runtimeStoreUpdate, ...placementUpdate }
+      : asset
+  );
   return patches;
 }

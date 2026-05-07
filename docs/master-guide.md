@@ -97,6 +97,14 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `npm --workspace apps/web run verify:showcase-scene`
 - `npm --workspace apps/web run verify:showcase-activity`
 - `npm --workspace apps/web run verify:interaction-engine`
+- `npm --workspace apps/web run verify:focus-placement`
+- `npm --workspace apps/web run verify:placement-kernel`
+- `npm --workspace apps/web run verify:render-quality`
+- `npm --workspace apps/web run verify:viewer-parity`
+- `npm --workspace apps/web run verify:inventory-ghost-placement`
+- `npm --workspace apps/web run verify:room-openings`
+- `npm --workspace apps/web run verify:material-presets`
+- `npm --workspace apps/web run verify:lighting-layout`
 - `npm --workspace apps/web run verify:asset-compiler`
 - `npm --workspace apps/web run verify:commercial-qa`
 
@@ -1265,3 +1273,35 @@ Updated:
 Removed/Deprecated:
 - `event.key === "i"`처럼 layout-dependent key label만으로 walkthrough shortcut을 판정하는 방식.
 - 새 Vercel deployment마다 사용자 로그인 세션을 강제로 초기화해야 한다는 운영 가정.
+
+## 2026-05-04 변경 동기화 (Inventory Thumbnail Contract)
+Added:
+- editor library/inventory card는 catalog `thumbnail`이 있으면 실제 asset thumbnail image를 먼저 렌더링해야 한다. 이름만 보고 asset을 추측하게 만드는 text-only inventory는 상용 UX 기준을 통과하지 못한다.
+- catalog API/import normalization은 `http(s)` 이미지 URL뿐 아니라 app-relative `/assets/...` thumbnail path도 보존해야 한다.
+- `verify:inventory-thumbnails`는 inventory thumbnail coverage와 public thumbnail file 존재, relative thumbnail normalization을 검증한다.
+
+Updated:
+- thumbnail이 없는 legacy/generic item은 같은 카드 크기 안에서 fallback visual preview를 보여주고, 카드 레이아웃은 thumbnail 유무로 흔들리면 안 된다.
+
+Removed/Deprecated:
+- inventory/library preview를 tone gradient와 제품명 텍스트만으로 충분하다고 보는 기준.
+
+## 2026-05-06 변경 동기화 (Commercial Builder Interaction Pass)
+Added:
+- inventory item click은 더 이상 즉시 scene store/document commit을 만들지 않고, `WalkInventoryPlacementDraft`와 renderer ghost preview를 시작한다.
+- floor/world draft는 valid 위치에서 click/`Enter`일 때만 `commitRuntimePlacementDraftToStore`를 통해 최소 patch로 저장되고, `Escape`는 preview를 폐기한다.
+- builder opening step은 3D/top preview에서 벽과 opening segment를 직접 선택/드래그할 수 있어야 하며, edge clearance와 opening overlap은 다음 단계 진행 전에 차단된다.
+- room shell material preset은 clean commercial default와 special/industrial option을 metadata로 구분하고, builder finish 목록은 texture preset 계약에서 파생한다.
+- builder direct lighting은 `fixtures[]` payload를 가진다. 각 fixture는 id/type/positionMm/intensity/colorTemperature/beamRadiusMm/spread/enabled를 저장하고 renderer/shared viewer가 같은 배열을 소비한다.
+- 신규 release-adjacent gates로 `verify:inventory-ghost-placement`, `verify:room-openings`, `verify:material-presets`, `verify:lighting-layout`를 사용한다.
+
+Updated:
+- room builder 완료 기준은 “보이는 preview”가 아니라 조작 가능성, validation, save/reload/share parity를 포함한다.
+- direct lighting은 고정 3개가 아니라 사용자가 1/2/3/4/6개 layout을 선택하고 위치를 조정하는 상용 builder 기능으로 본다.
+- wall/floor 기본 preset은 matte/warm white, beige/grey plaster, oak/laminate/tile 같은 실사용 가능한 clean interior 재질을 우선 노출한다.
+
+Removed/Deprecated:
+- inventory click이 사용자 정면에 asset을 자동 확정 배치하는 방식.
+- 문/창문 위치가 UI 선택 상태로만 존재하고 opening payload validation 없이 다음 단계로 진행되는 방식.
+- direct lighting을 항상 3개 자동 배치로만 저장하는 방식.
+- 얼룩/낡은/industrial texture를 default wall preset으로 취급하는 방식.

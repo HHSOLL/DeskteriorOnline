@@ -10,9 +10,21 @@ import { requireAuthenticatedUserId } from "../../../../../lib/server/shares";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+function resolveErrorStatus(error: unknown) {
+  if (!error || typeof error !== "object" || !("status" in error)) {
+    return null;
+  }
+  const status = (error as { status?: unknown }).status;
+  return typeof status === "number" ? status : null;
+}
+
 function toErrorResponse(error: unknown) {
   if (error instanceof ProjectApiError) {
     return NextResponse.json({ error: error.message }, { status: error.status });
+  }
+  const status = resolveErrorStatus(error);
+  if (error instanceof Error && status !== null) {
+    return NextResponse.json({ error: error.message }, { status });
   }
   const message = error instanceof Error ? error.message : "Unexpected server error.";
   return NextResponse.json({ error: message }, { status: 500 });

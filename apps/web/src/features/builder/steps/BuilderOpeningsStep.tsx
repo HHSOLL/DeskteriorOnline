@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import type { Opening, Wall } from "../../../lib/stores/useSceneStore";
+import type { OpeningPlacementIssue } from "../logic/openings";
 import type { BuilderWallEntry, DoorStyle, WindowStyle } from "../types";
 
 type BuilderOpeningsStepProps = {
@@ -15,6 +16,7 @@ type BuilderOpeningsStepProps = {
   selectedOpeningId: string | null;
   selectedOpening: Opening | null;
   selectedOpeningWall: Wall | null;
+  placementIssue: OpeningPlacementIssue | null;
   onDoorStyleChange: (style: DoorStyle) => void;
   onWindowStyleChange: (style: WindowStyle) => void;
   onAddSecondaryWindowChange: (value: boolean) => void;
@@ -155,6 +157,7 @@ export function BuilderOpeningsStep({
   selectedOpeningId,
   selectedOpening,
   selectedOpeningWall,
+  placementIssue,
   onDoorStyleChange,
   onWindowStyleChange,
   onAddSecondaryWindowChange,
@@ -251,6 +254,12 @@ export function BuilderOpeningsStep({
             </button>
           ))}
         </div>
+
+        {placementIssue ? (
+          <div className="rounded-[18px] border border-red-900/15 bg-red-50 px-4 py-3 text-sm font-semibold text-red-900">
+            {placementIssue.message}
+          </div>
+        ) : null}
 
         <div className="grid gap-2">
           {selectedWallOpenings.length > 0 ? (

@@ -12,6 +12,7 @@ import { useRuntimeEngine } from "../../../lib/runtime/runtime-engine-context";
 import { useAssetSelector, useSelectionSelector } from "../../../lib/stores/scene-slices";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
+import { useWalkInventoryStore } from "../../../lib/stores/useWalkInventoryStore";
 
 export default function FocusPlacementLauncher() {
   const engine = useRuntimeEngine();
@@ -19,36 +20,46 @@ export default function FocusPlacementLauncher() {
   const readOnly = useEditorStore((state) => state.readOnly);
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
   const assets = useAssetSelector((slice) => slice.assets);
+  const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
   const activeSession = useFocusPlacementStore((state) => state.activeSession);
   const pendingRequest = useFocusPlacementStore((state) => state.pendingRequest);
   const requestFocusPlacement = useFocusPlacementStore((state) => state.requestFocusPlacement);
 
+  const effectiveAssets = useMemo(() => {
+    if (!placementDraft?.asset || assets.some((asset) => asset.id === placementDraft.objectId)) {
+      return assets;
+    }
+    return [...assets, placementDraft.asset];
+  }, [assets, placementDraft]);
+
   const selectedAsset = useMemo(
-    () => assets.find((asset) => asset.id === selectedAssetId) ?? null,
-    [assets, selectedAssetId]
+    () => effectiveAssets.find((asset) => asset.id === selectedAssetId) ?? null,
+    [effectiveAssets, selectedAssetId]
   );
   const selectedRuntimeAsset = selectedAsset
-    ? resolveRuntimeAssetForObject(engine, selectedAsset.id)
+    ? (resolveRuntimeAssetForObject(engine, selectedAsset.id) ??
+      engine?.runtimeScene.runtimeAssets.get(selectedAsset.catalogItemId ?? selectedAsset.assetId) ??
+      null)
     : null;
 
   const launchOptions = useMemo(() => {
     return resolveFocusPlacementLaunchOptions({
       engine,
-      assets,
+      assets: effectiveAssets,
       selectedAsset,
       selectedRuntimeAsset
     });
-  }, [assets, engine, selectedAsset, selectedRuntimeAsset]);
+  }, [effectiveAssets, engine, selectedAsset, selectedRuntimeAsset]);
 
   const unavailableReason = useMemo(
     () =>
       resolveFocusPlacementUnavailableReason({
         engine,
-        assets,
+        assets: effectiveAssets,
         selectedAsset,
         selectedRuntimeAsset
       }),
-    [assets, engine, selectedAsset, selectedRuntimeAsset]
+    [effectiveAssets, engine, selectedAsset, selectedRuntimeAsset]
   );
 
   if (

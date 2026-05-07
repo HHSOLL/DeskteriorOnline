@@ -49,6 +49,12 @@ import {
 import { useInteractionRegistry } from "../interaction/InteractionManager";
 import type { SceneAsset } from "../../../lib/stores/useSceneStore";
 
+declare global {
+  interface Window {
+    __DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?: Record<string, unknown>;
+  }
+}
+
 const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 const relativePreviewEuler = new THREE.Euler();
 const MAX_DYNAMIC_EMITTERS = 6;
@@ -931,8 +937,14 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
   const walls = useShellSelector((slice) => slice.walls);
   const ceilings = useShellSelector((slice) => slice.ceilings);
   const scale = useShellSelector((slice) => slice.scale);
-  const sceneAssets = useAssetSelector((slice) => slice.assets);
+  const storeSceneAssets = useAssetSelector((slice) => slice.assets);
   const recordSnapshot = usePublishSelector((slice) => slice.recordSnapshot);
+  const sceneAssets = useMemo(() => {
+    if (!placementDraft?.asset || storeSceneAssets.some((candidate) => candidate.id === placementDraft.objectId)) {
+      return storeSceneAssets;
+    }
+    return [...storeSceneAssets, placementDraft.asset];
+  }, [placementDraft, storeSceneAssets]);
   const [isDragging, setIsDragging] = useState(false);
   const groupRef = useRef<THREE.Group | null>(null);
   const pendingPlacementRef = useRef<{
@@ -1044,19 +1056,25 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
           activeFocusPlacementSession.collisionReport
         )
       : null;
+  const isInventoryDraft = placementDraft?.objectId === asset.id;
   const ghostDimensions = asset.product?.dimensionsMm
     ? {
         width: Math.max(asset.product.dimensionsMm.width / 1000, 0.04),
         depth: Math.max(asset.product.dimensionsMm.depth / 1000, 0.04),
         height: Math.max(asset.product.dimensionsMm.height / 1000, 0.02)
       }
-    : null;
+    : {
+        width: Math.max(asset.scale[0], 0.3),
+        depth: Math.max(asset.scale[2], 0.3),
+        height: Math.max(asset.scale[1], 0.3)
+      };
   const focusGhostColor =
     activeFocusFeedback?.tone === "blocked"
       ? "#fb7185"
       : activeFocusFeedback?.tone === "warning"
         ? "#fbbf24"
         : "#34d399";
+  const shouldShowPlacementGhost = Boolean(activeFocusFeedback || isInventoryDraft);
 
   const handleReadOnlySelect = (event: ThreeEvent<PointerEvent>) => {
     if (!readOnly) return;
@@ -1190,6 +1208,10 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
     group.userData.focusPlacementAimRequest = canAutoAimFocusPlacement
       ? focusPlacementRequest
       : undefined;
+    if (canAutoAimFocusPlacement && focusPlacementRequest && typeof window !== "undefined") {
+      window.__DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__ ??= {};
+      window.__DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__[asset.id] = focusPlacementRequest;
+    }
     group.userData.onInteract =
       canOfferFocusPlacement && focusPlacementRequest
         ? () => requestFocusPlacement(focusPlacementRequest)
@@ -1207,6 +1229,9 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
       delete group.userData.onInteract;
       delete group.userData.focusPlacementAimRequest;
       delete group.userData.highlightMesh;
+      if (typeof window !== "undefined") {
+        delete window.__DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?.[asset.id];
+      }
     };
   }, [
     asset.assetId,
@@ -1291,10 +1316,15 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
   if (viewMode === "walk") {
     return (
-      <RigidBody type="fixed" colliders="cuboid" position={asset.position} rotation={asset.rotation}>
+      <RigidBody
+        type="fixed"
+        colliders={isInventoryDraft ? false : "cuboid"}
+        position={asset.position}
+        rotation={asset.rotation}
+      >
         <group ref={groupRef} name={`furniture:${asset.id}`} scale={asset.scale} {...groupProps}>
-          {content}
-          {activeFocusFeedback && ghostDimensions ? (
+          {isInventoryDraft ? null : content}
+          {shouldShowPlacementGhost ? (
             <mesh
               name={`focus-placement-ghost:${asset.id}`}
               position={[0, ghostDimensions.height / 2, 0]}
@@ -1304,12 +1334,12 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
               <meshBasicMaterial
                 color={focusGhostColor}
                 transparent
-                opacity={activeFocusFeedback.tone === "blocked" ? 0.22 : 0.16}
+                opacity={activeFocusFeedback?.tone === "blocked" ? 0.22 : 0.16}
                 depthWrite={false}
               />
             </mesh>
           ) : null}
-          {activeFocusFeedback && ghostDimensions ? (
+          {shouldShowPlacementGhost ? (
             <mesh
               name={`focus-placement-ghost-outline:${asset.id}`}
               position={[0, ghostDimensions.height / 2, 0]}
@@ -1370,6 +1400,7 @@ function FurnitureItem({ asset, enableDynamicLight }: { asset: SceneAsset; enabl
 
 export default function Furniture({ allowDynamicLights }: { allowDynamicLights: boolean }) {
   const assets = useAssetSelector((slice) => slice.assets);
+  const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
   const runtimeEngine = useRuntimeEngine();
   const runtimeRenderer = useRuntimeRendererAdapter();
   const selectedAssetId = useSelectionSelector((slice) => slice.selectedAssetId);
@@ -1377,10 +1408,16 @@ export default function Furniture({ allowDynamicLights }: { allowDynamicLights: 
   const topMode = useEditorStore((state) => state.topMode);
   const isTransforming = useEditorStore((state) => state.isTransforming);
   const readOnly = useEditorStore((state) => state.readOnly);
+  const renderAssets = useMemo(() => {
+    if (!placementDraft?.asset || assets.some((asset) => asset.id === placementDraft.objectId)) {
+      return assets;
+    }
+    return [...assets, placementDraft.asset];
+  }, [assets, placementDraft]);
   const visibleAssets = useMemo(
     () =>
-      assets.filter((asset) => resolveRuntimeAssetVisibility(runtimeRenderer, runtimeEngine, asset)),
-    [assets, runtimeEngine, runtimeRenderer]
+      renderAssets.filter((asset) => resolveRuntimeAssetVisibility(runtimeRenderer, runtimeEngine, asset)),
+    [renderAssets, runtimeEngine, runtimeRenderer]
   );
   const emitterAssetIds = useMemo(() => {
     if (!allowDynamicLights) {

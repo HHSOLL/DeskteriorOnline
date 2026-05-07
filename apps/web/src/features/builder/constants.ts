@@ -120,7 +120,8 @@ export const BUILDER_LIGHTING_SCENE: Record<BuilderLightingMode, LightingSetting
     directionalIntensity: 1.16,
     environmentBlur: 0.18,
     accentIntensity: 0.96,
-    beamOpacity: 0.24
+    beamOpacity: 0.24,
+    fixtures: []
   },
   indirect: {
     mode: "indirect",
@@ -129,6 +130,7 @@ export const BUILDER_LIGHTING_SCENE: Record<BuilderLightingMode, LightingSetting
     directionalIntensity: 0.74,
     environmentBlur: 0.3,
     accentIntensity: 0.68,
-    beamOpacity: 0.08
+    beamOpacity: 0.08,
+    fixtures: []
   }
 };
