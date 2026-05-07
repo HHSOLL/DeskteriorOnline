@@ -838,13 +838,15 @@ async function verifyBuilderLightingSnapSmoke(page: Page, results: StageResult[]
 async function readWalkKeyboardDebug(page: Page) {
   return page.evaluate(() => {
     return (window as typeof window & {
-      __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: {
-        active: boolean;
-        pointerLocked: boolean;
-        pointerLockBlocked: boolean;
-        canvasFocused: boolean;
-        movementBlockedByPanel: boolean;
-        bodyPosition: [number, number, number] | null;
+          __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: {
+            active: boolean;
+            pointerLocked: boolean;
+            pointerLockBlocked: boolean;
+            pointerLockUnavailable: boolean;
+            canvasFocusLookActive: boolean;
+            canvasFocused: boolean;
+            movementBlockedByPanel: boolean;
+            bodyPosition: [number, number, number] | null;
         lastMovementAt: number | null;
       };
     }).__DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__ ?? null;
@@ -881,6 +883,24 @@ async function verifyWalkKeyboardShortcuts(page: Page, results: StageResult[]) {
     null,
     { timeout: 15_000 }
   );
+  await page.mouse.move(260, 210);
+  await page.waitForFunction(
+    () => {
+      const debug = (window as typeof window & {
+        __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: {
+          pointerLockBlocked?: boolean;
+          canvasFocusLookActive?: boolean;
+        };
+      }).__DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__;
+      return Boolean(debug?.canvasFocusLookActive && !debug.pointerLockBlocked);
+    },
+    null,
+    { timeout: 15_000 }
+  );
+  const walkHudText = await page.locator("body").textContent();
+  if (walkHudText?.includes("Mouse lock unavailable")) {
+    throw new Error("walk HUD kept showing Mouse lock unavailable despite canvas-focus mouse look fallback");
+  }
 
   const before = await readWalkKeyboardDebug(page);
   await page.keyboard.down("w");
@@ -937,7 +957,7 @@ async function verifyWalkKeyboardShortcuts(page: Page, results: StageResult[]) {
   results.push({
     stage: "walk-keyboard-shortcuts",
     ok: true,
-    detail: `pointer-lock-denied fallback movement=${Boolean(moved?.lastMovementAt)}, inventory I toggled and blocked movement`
+    detail: `pointer-lock-denied fallback movement=${Boolean(moved?.lastMovementAt)}, mouse look fallback active, inventory I toggled and blocked movement`
   });
 }
 

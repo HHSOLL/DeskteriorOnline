@@ -1240,6 +1240,16 @@ Updated:
 Removed/Deprecated:
 - opening GLB 로드 실패 시 plain white placeholder나 무구조 box로 대체되는 fallback.
 
+## 2026-05-07 변경 동기화 (Walk Pointer Lock Fallback)
+Added:
+- walk view는 pointer lock 요청이 브라우저/iframe 정책으로 거부되어도 canvas focus 기반 WASD와 mouse-move look fallback을 유지해야 한다.
+
+Updated:
+- `walkPointerLockBlocked`는 패널이 열려 movement를 의도적으로 막는 상태에만 사용하고, pointer lock 요청 실패를 persistent blocked HUD로 표시하지 않는다.
+
+Removed/Deprecated:
+- pointer lock denied를 `Mouse lock unavailable` 경고로 계속 노출하는 UX.
+
 ## 2026-05-02 변경 동기화 (Walk Aim + Desk Preview Closure)
 Added:
 - walk placement의 기본 시작 경로는 선택 제품을 든 상태에서 crosshair가 바라본 support object의 focus placement request를 `AIM_AT_SURFACE`로 전달하고 즉시 ghost preview session을 시작하는 방식이다.

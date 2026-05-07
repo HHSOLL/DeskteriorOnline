@@ -1484,3 +1484,13 @@ Updated:
 
 Removed/Deprecated:
 - opening verify가 GLB 파일 존재 여부만 확인하는 상태.
+
+## 2026-05-07 변경 동기화 (Walk Pointer Lock HUD Fix)
+Added:
+- `verify:walk-keyboard`와 `functional:e2e:browser`는 pointer lock denied 상태에서 canvas-focus movement/mouse-look fallback과 HUD 문구 회귀를 같이 검증해야 한다.
+
+Updated:
+- walk shortcut 회귀 대응 범위는 WASD/I/E뿐 아니라 pointer lock 실패 후 crosshair control text가 unavailable에 고정되지 않는지까지 포함한다.
+
+Removed/Deprecated:
+- pointer lock 실패를 movement-blocked 상태로 저장해 사용 가능한 fallback UX 위에 경고를 계속 띄우는 상태.

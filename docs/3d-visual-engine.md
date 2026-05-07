@@ -925,6 +925,16 @@ Updated:
 Removed/Deprecated:
 - opening GLB 실패를 무구조 placeholder mesh로 감추는 방식.
 
+## 2026-05-07 변경 동기화 (Walk Mouse-Look Fallback)
+Added:
+- desktop walk camera는 pointer lock이 실제로 획득되지 않아도 canvas가 focus된 상태에서는 canvas 위 mouse movement를 yaw/pitch look fallback으로 사용해야 한다.
+
+Updated:
+- pointer lock 실패는 rendering/interaction failure가 아니라 degraded input mode로 취급하고, crosshair HUD는 패널 차단 상태와 pointer lock 거부 상태를 구분해야 한다.
+
+Removed/Deprecated:
+- pointer lock 요청 실패 후 view control HUD가 unavailable 상태에 고정되는 방식.
+
 ## 2026-05-02 변경 동기화 (Asset Metadata Visual Contract)
 Added:
 - runtime asset은 시각적으로 보이는 GLB만이 아니라 collider, support surface, attachment point, provenance, SKU/manufacturer가 함께 검증된 package여야 catalog에 노출될 수 있다.
