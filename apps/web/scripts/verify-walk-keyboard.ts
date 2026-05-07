@@ -156,10 +156,11 @@ function verifyWindowEvents() {
 }
 
 async function verifySourceWiring() {
-  const [cameraRigSource, projectPageSource, interactionManagerSource] = await Promise.all([
+  const [cameraRigSource, projectPageSource, interactionManagerSource, crosshairSource] = await Promise.all([
     readWebFile("src/components/canvas/core/CameraRig.tsx"),
     readWebFile("src/app/(editor)/project/[id]/page.tsx"),
-    readWebFile("src/components/canvas/interaction/InteractionManager.tsx")
+    readWebFile("src/components/canvas/interaction/InteractionManager.tsx"),
+    readWebFile("src/components/overlay/hud/Crosshair.tsx")
   ]);
 
   assertMatches(
@@ -176,6 +177,26 @@ async function verifySourceWiring() {
     cameraRigSource,
     /moveState\.current = createEmptyMoveState\(\);/s,
     "CameraRig should clear keyboard movement state when walk mode resets"
+  );
+  assertMatches(
+    cameraRigSource,
+    /const canvasFocusLook =[\s\S]*ownerDocument\.activeElement === canvas[\s\S]*eventPath\.includes\(canvas\)/,
+    "CameraRig should provide mouse-look fallback from canvas focus when pointer lock is denied"
+  );
+  assertMatches(
+    cameraRigSource,
+    /handlePointerLockError[\s\S]*setWalkPointerLockStatus\(\{\s*locked: false,\s*blocked: false\s*\}\)/,
+    "CameraRig should not keep the HUD in blocked/unavailable state after a pointer lock denial"
+  );
+  assert.doesNotMatch(
+    crosshairSource,
+    /Mouse lock unavailable/,
+    "walk HUD should not show a persistent unavailable warning when canvas-focus fallback is available"
+  );
+  assertMatches(
+    crosshairSource,
+    /Panel open · movement paused/,
+    "walk HUD should reserve blocked state for actual panel-driven movement pauses"
   );
   assertMatches(
     projectPageSource,
@@ -230,6 +251,7 @@ async function main() {
           "inventory/interact shortcuts",
           "editable target ignore rules",
           "pointer lock store state",
+          "pointer lock denied canvas-focus mouse-look fallback",
           "viewport focus/reset events",
           "CameraRig/page/interaction hotkey wiring"
         ]

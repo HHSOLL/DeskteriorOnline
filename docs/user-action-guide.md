@@ -1232,3 +1232,13 @@ Updated:
 
 Removed/Deprecated:
 - opening verify PASS를 “GLB 파일이 있다” 정도의 약한 증거로 해석하는 절차.
+
+## 2026-05-07 변경 동기화 (Walk Pointer Lock QA)
+Added:
+- walk QA에서 viewport 클릭 후 pointer lock이 거부되는 브라우저 조건에서도 WASD와 canvas-focus mouse-look fallback이 동작하고 `Mouse lock unavailable` 문구가 남지 않는지 확인한다.
+
+Updated:
+- `functional:e2e:browser`의 walk keyboard 단계는 pointer lock denied fallback movement, mouse look fallback, inventory `I` panel toggle과 panel-open movement block을 함께 검증한다.
+
+Removed/Deprecated:
+- WASD만 동작하면 walk input QA를 통과한 것으로 보는 절차.

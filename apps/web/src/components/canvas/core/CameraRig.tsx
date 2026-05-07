@@ -40,6 +40,8 @@ type WalkKeyboardDebugState = {
   active: boolean;
   pointerLocked: boolean;
   pointerLockBlocked: boolean;
+  pointerLockUnavailable: boolean;
+  canvasFocusLookActive: boolean;
   canvasFocused: boolean;
   movementBlockedByPanel: boolean;
   moveState: MoveState;
@@ -136,6 +138,7 @@ function WalkRig({
 }) {
   const bodyRef = useRef<RapierRigidBody | null>(null);
   const pointerLockedRef = useRef(false);
+  const pointerLockUnavailableRef = useRef(false);
   const moveState = useRef<MoveState>(createEmptyMoveState());
   const { camera, gl } = useThree();
   const resetLookDelta = useMobileControlsStore((state) => state.resetLookDelta);
@@ -153,6 +156,8 @@ function WalkRig({
       active: true,
       pointerLocked: false,
       pointerLockBlocked: false,
+      pointerLockUnavailable: false,
+      canvasFocusLookActive: false,
       canvasFocused: false,
       movementBlockedByPanel: false,
       moveState: { forward: false, backward: false, left: false, right: false },
@@ -213,6 +218,9 @@ function WalkRig({
       publishDebugState({
         pointerLocked: state?.pointerLocked ?? (pointerLockedRef.current || isPointerLocked()),
         pointerLockBlocked: state?.pointerLockBlocked ?? blockPointerLock,
+        pointerLockUnavailable: pointerLockUnavailableRef.current,
+        canvasFocusLookActive:
+          !pointerLockedRef.current && !isPointerLocked() && ownerDocument.activeElement === canvas,
         canvasFocused: state?.canvasFocused ?? ownerDocument.activeElement === canvas,
         movementBlockedByPanel: state?.pointerLockBlocked ?? blockPointerLock,
         moveState: { ...moveState.current }
@@ -260,6 +268,7 @@ function WalkRig({
       pointerLockRequestInFlight = true;
       const lockResult = canvas.requestPointerLock();
       pointerLockedRef.current = true;
+      pointerLockUnavailableRef.current = false;
       setWalkPointerLockStatus({ locked: true, blocked: false });
       if (lockResult && typeof lockResult.then === "function") {
         lockResult
@@ -272,15 +281,18 @@ function WalkRig({
             publishDebugState({
               pointerLocked: pointerLockedRef.current,
               pointerLockBlocked: false,
+              pointerLockUnavailable: false,
+              canvasFocusLookActive: false,
               canvasFocused: ownerDocument.activeElement === canvas
             });
           })
           .catch(() => {
             pointerLockedRef.current = false;
-            setWalkPointerLockStatus({ locked: false, blocked: true });
+            pointerLockUnavailableRef.current = true;
+            setWalkPointerLockStatus({ locked: false, blocked: false });
             resetMovementState({
               pointerLocked: false,
-              pointerLockBlocked: true,
+              pointerLockBlocked: false,
               focusViewport: true
             });
           })
@@ -294,6 +306,9 @@ function WalkRig({
 
     const handlePointerLockChange = () => {
       pointerLockedRef.current = isPointerLocked();
+      if (pointerLockedRef.current || blockPointerLock) {
+        pointerLockUnavailableRef.current = false;
+      }
       setWalkPointerLockStatus({
         locked: pointerLockedRef.current,
         blocked: blockPointerLock
@@ -301,6 +316,9 @@ function WalkRig({
       publishDebugState({
         pointerLocked: pointerLockedRef.current,
         pointerLockBlocked: blockPointerLock,
+        pointerLockUnavailable: pointerLockUnavailableRef.current && !pointerLockedRef.current,
+        canvasFocusLookActive:
+          !pointerLockedRef.current && !blockPointerLock && ownerDocument.activeElement === canvas,
         canvasFocused: ownerDocument.activeElement === canvas
       });
       if (!pointerLockedRef.current) {
@@ -314,21 +332,40 @@ function WalkRig({
     const handlePointerLockError = () => {
       pointerLockRequestInFlight = false;
       pointerLockedRef.current = false;
-      setWalkPointerLockStatus({ locked: false, blocked: true });
+      pointerLockUnavailableRef.current = true;
+      setWalkPointerLockStatus({ locked: false, blocked: false });
       resetMovementState({
         pointerLocked: false,
-        pointerLockBlocked: true,
+        pointerLockBlocked: false,
         focusViewport: true
       });
     };
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (!pointerLockedRef.current && !isPointerLocked()) return;
-      pointerLockedRef.current = true;
+      const pointerLocked = pointerLockedRef.current || isPointerLocked();
+      const eventPath = typeof event.composedPath === "function" ? event.composedPath() : [];
+      const canvasFocusLook =
+        !pointerLocked &&
+        !blockPointerLock &&
+        ownerDocument.activeElement === canvas &&
+        (event.target === canvas || eventPath.includes(canvas));
+      if (!pointerLocked && !canvasFocusLook) return;
+      pointerLockedRef.current = pointerLocked;
+      if (canvasFocusLook) {
+        pointerLockUnavailableRef.current = false;
+        setWalkPointerLockStatus({ locked: false, blocked: false });
+      }
       yawRef.current -= event.movementX * 0.002;
       pitchRef.current -= event.movementY * 0.002;
       pitchRef.current = Math.max(-1.2, Math.min(1.2, pitchRef.current));
       camera.rotation.set(pitchRef.current, yawRef.current, 0, "YXZ");
+      publishDebugState({
+        pointerLocked,
+        pointerLockBlocked: false,
+        pointerLockUnavailable: pointerLockUnavailableRef.current && !canvasFocusLook,
+        canvasFocusLookActive: canvasFocusLook,
+        canvasFocused: ownerDocument.activeElement === canvas
+      });
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -416,6 +453,7 @@ function WalkRig({
         canvas.setAttribute("tabindex", previousTabIndex);
       }
       pointerLockedRef.current = false;
+      pointerLockUnavailableRef.current = false;
       moveState.current = createEmptyMoveState();
       setWalkPointerLockStatus({ locked: false, blocked: false });
       if (typeof window !== "undefined") {
@@ -432,6 +470,8 @@ function WalkRig({
           active: false,
           pointerLocked: false,
           pointerLockBlocked: false,
+          pointerLockUnavailable: false,
+          canvasFocusLookActive: false,
           movementBlockedByPanel: false,
           moveState: { forward: false, backward: false, left: false, right: false }
         };
@@ -494,6 +534,8 @@ function WalkRig({
     publishDebugState({
       pointerLocked: pointerLockedRef.current || isDesktopPointerLocked,
       pointerLockBlocked: !isTouch && blockPointerLock,
+      pointerLockUnavailable: !isTouch && pointerLockUnavailableRef.current && !isDesktopPointerLocked,
+      canvasFocusLookActive: !isTouch && !isDesktopPointerLocked && isDesktopCanvasFocused,
       canvasFocused: isDesktopCanvasFocused,
       movementBlockedByPanel: !isTouch && blockPointerLock,
       moveState: { ...moveState.current },
