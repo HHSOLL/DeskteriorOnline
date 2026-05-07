@@ -4,12 +4,14 @@ import {
   clamp,
   createOpeningId,
   getDoorWidthByStyle,
+  getOpeningPlacementIssues,
   getWallLength,
   getWindowWidthByStyle,
   normalizeOpenings,
   reassignOpeningToWall,
   remapOpeningsToWalls,
-  tuneOpenings
+  tuneOpenings,
+  type OpeningPlacementIssue
 } from "../logic/openings";
 import type { DoorStyle, WindowStyle } from "../types";
 
@@ -31,6 +33,7 @@ export function useBuilderOpeningState({
   const [openingDrafts, setOpeningDrafts] = useState<Opening[]>([]);
   const [selectedOpeningId, setSelectedOpeningId] = useState<string | null>(null);
   const [selectedWallId, setSelectedWallId] = useState<string | null>(null);
+  const [placementIssue, setPlacementIssue] = useState<OpeningPlacementIssue | null>(null);
 
   const openingDraftsRef = useRef<Opening[]>([]);
   const previousWallSignatureRef = useRef<string | null>(null);
@@ -127,24 +130,29 @@ export function useBuilderOpeningState({
 
   const setOpeningPatch = useCallback(
     (openingId: string, patch: Partial<Opening>) => {
-      setOpeningDrafts((current) =>
-        normalizeOpenings(
-          current.map((opening) =>
-            opening.id === openingId
-              ? patch.wallId && patch.wallId !== opening.wallId
-                ? {
-                    ...reassignOpeningToWall(opening, patch.wallId, walls),
-                    ...patch
-                  }
-                : {
-                    ...opening,
-                    ...patch
-                  }
-              : opening
-          ),
-          walls
-        )
-      );
+      setOpeningDrafts((current) => {
+        const nextDrafts = current.map((opening) =>
+          opening.id === openingId
+            ? patch.wallId && patch.wallId !== opening.wallId
+              ? {
+                  ...reassignOpeningToWall(opening, patch.wallId, walls),
+                  ...patch
+                }
+              : {
+                  ...opening,
+                  ...patch
+                }
+            : opening
+        );
+        const blockingIssue =
+          getOpeningPlacementIssues(nextDrafts, walls).find((issue) => issue.openingId === openingId) ?? null;
+        if (blockingIssue) {
+          setPlacementIssue(blockingIssue);
+          return current;
+        }
+        setPlacementIssue(null);
+        return normalizeOpenings(nextDrafts, walls);
+      });
       setSelectedOpeningId(openingId);
       if (patch.wallId && walls.some((wall) => wall.id === patch.wallId)) {
         setSelectedWallId(patch.wallId);
@@ -175,6 +183,7 @@ export function useBuilderOpeningState({
           walls
         )
       );
+      setPlacementIssue(null);
       setSelectedOpeningId((current) => (current === openingId ? null : current));
     },
     [walls]
@@ -204,7 +213,16 @@ export function useBuilderOpeningState({
           : { sillHeight: 0.9 })
       };
 
-      setOpeningDrafts((current) => normalizeOpenings([...current, nextOpening], walls));
+      const nextDrafts = [...openings, nextOpening];
+      const blockingIssue =
+        getOpeningPlacementIssues(nextDrafts, walls).find((issue) => issue.openingId === nextOpening.id) ?? null;
+      if (blockingIssue) {
+        setPlacementIssue(blockingIssue);
+        return null;
+      }
+
+      setPlacementIssue(null);
+      setOpeningDrafts(() => normalizeOpenings(nextDrafts, walls));
       setSelectedWallId(targetWall.id);
       setSelectedOpeningId(nextOpening.id);
 
@@ -216,6 +234,7 @@ export function useBuilderOpeningState({
   const replaceOpenings = useCallback(
     (nextOpenings: Opening[]) => {
       setOpeningDrafts(normalizeOpenings(nextOpenings, walls));
+      setPlacementIssue(null);
       setSelectedOpeningId(nextOpenings[0]?.id ?? null);
       setSelectedWallId(nextOpenings[0]?.wallId ?? walls[0]?.id ?? null);
     },
@@ -229,6 +248,8 @@ export function useBuilderOpeningState({
     selectedOpening,
     selectedOpeningWall,
     selectedWallOpenings,
+    placementIssue,
+    hasInvalidOpenings: Boolean(placementIssue),
     setSelectedOpeningId,
     setSelectedWallId,
     setOpeningPatch,

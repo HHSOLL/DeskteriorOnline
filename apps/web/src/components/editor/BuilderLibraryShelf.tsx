@@ -40,6 +40,85 @@ function formatDimensionsLabel(item: LibraryCatalogItem) {
   return `${dimensions.width}x${dimensions.depth}x${dimensions.height} mm`;
 }
 
+type CatalogPreviewClasses = ReturnType<typeof getCatalogPreviewClasses>;
+
+function CatalogFallbackPreview({
+  item,
+  preview
+}: {
+  item: LibraryCatalogItem;
+  preview: CatalogPreviewClasses;
+}) {
+  const variant = item.categoryId === "seating" ? "seating" : item.categoryId === "tables" ? "table" : "object";
+
+  return (
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-x-4 bottom-4 h-3 rounded-full bg-black/10 blur-md" />
+      <div className="relative h-[64%] w-[72%]">
+        {variant === "seating" ? (
+          <>
+            <div
+              className={`absolute bottom-11 left-1/2 h-12 w-[64%] -translate-x-1/2 rounded-t-[22px] border ${preview.chip} shadow-sm`}
+            />
+            <div
+              className={`absolute bottom-5 left-1/2 h-8 w-[88%] -translate-x-1/2 rounded-[18px] border ${preview.chip} shadow-sm`}
+            />
+            <div className="absolute bottom-2 left-[28%] h-6 w-1.5 rounded-full bg-black/15" />
+            <div className="absolute bottom-2 right-[28%] h-6 w-1.5 rounded-full bg-black/15" />
+          </>
+        ) : variant === "table" ? (
+          <>
+            <div
+              className={`absolute bottom-12 left-1/2 h-8 w-[92%] -translate-x-1/2 rounded-[999px] border ${preview.chip} shadow-sm`}
+            />
+            <div className="absolute bottom-5 left-1/2 h-10 w-3 -translate-x-1/2 rounded-full bg-black/15" />
+            <div
+              className={`absolute bottom-3 left-1/2 h-3 w-[58%] -translate-x-1/2 rounded-[999px] border ${preview.chip}`}
+            />
+          </>
+        ) : (
+          <>
+            <div
+              className={`absolute bottom-2 left-1/2 h-9 w-full -translate-x-1/2 rounded-[18px] border ${preview.chip} shadow-sm`}
+            />
+            <div
+              className={`absolute bottom-9 left-1/2 h-14 w-[58%] -translate-x-1/2 rounded-[18px] border ${preview.chip} shadow-sm`}
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function AssetVisualPreview({
+  item,
+  preview
+}: {
+  item: LibraryCatalogItem;
+  preview: CatalogPreviewClasses;
+}) {
+  const thumbnail = item.thumbnail?.trim();
+
+  return (
+    <>
+      {thumbnail ? (
+        <img
+          src={thumbnail}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-contain p-2 transition duration-200 group-hover:scale-[1.03]"
+        />
+      ) : (
+        <CatalogFallbackPreview item={item} preview={preview} />
+      )}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/15" />
+    </>
+  );
+}
+
 function AssetCard({
   item,
   placed,
@@ -69,10 +148,10 @@ function AssetCard({
         <div
           className={`relative aspect-[4/5] overflow-hidden rounded-[14px] border border-black/8 ${preview.surface} transition duration-200 group-hover:border-black/20`}
         >
+          <AssetVisualPreview item={item} preview={preview} />
           {placed ? (
-            <span className="absolute right-2 top-2 inline-flex h-2.5 w-2.5 rounded-full bg-[#171411]" />
+            <span className="absolute right-2 top-2 z-10 inline-flex h-2.5 w-2.5 rounded-full bg-[#171411]" />
           ) : null}
-          <div className="absolute inset-x-4 bottom-4 h-3 rounded-full bg-black/10 blur-md" />
         </div>
 
         <div className="mt-2 space-y-0.5 px-0.5">

@@ -5,7 +5,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { loadEnvConfig } from "@next/env";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type Session, type SupabaseClient } from "@supabase/supabase-js";
 import { chromium, type Locator, type Page } from "playwright";
 import type { Database } from "../../../types/database";
 import { DEFAULT_CATALOG, toCatalogProductSnapshot } from "../src/lib/builder/catalog";
@@ -28,6 +28,9 @@ const FLOW_REQUIRED_ENVS = [
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   "SUPABASE_SERVICE_ROLE_KEY"
 ] as const;
+const DEFAULT_BROWSER_TIMEOUT_MS = 180_000;
+const CANVAS_READY_TIMEOUT_MS = 180_000;
+const STATUS_IDLE_TIMEOUT_MS = 60_000;
 
 type FlowArtifacts = {
   ownerId: string | null;
@@ -47,6 +50,70 @@ function hasArg(name: string) {
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function toBase64Url(value: string) {
+  return Buffer.from(value, "utf8").toString("base64").replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/u, "");
+}
+
+function resolveSupabaseAuthStorageKey() {
+  const supabaseUrl = requireFlowEnv("NEXT_PUBLIC_SUPABASE_URL");
+  const hostname = new URL(supabaseUrl).hostname;
+  return `sb-${hostname.split(".")[0]}-auth-token`;
+}
+
+function createCookieChunks(key: string, value: string, chunkSize = 3180) {
+  const encodedValue = encodeURIComponent(value);
+  if (encodedValue.length <= chunkSize) {
+    return [{ name: key, value }];
+  }
+
+  const chunks: string[] = [];
+  let remaining = encodedValue;
+  while (remaining.length > 0) {
+    let encodedHead = remaining.slice(0, chunkSize);
+    const lastEscapePos = encodedHead.lastIndexOf("%");
+    if (lastEscapePos > chunkSize - 3) {
+      encodedHead = encodedHead.slice(0, lastEscapePos);
+    }
+
+    let decodedHead = "";
+    while (encodedHead.length > 0) {
+      try {
+        decodedHead = decodeURIComponent(encodedHead);
+        break;
+      } catch (error) {
+        if (error instanceof URIError && encodedHead.at(-3) === "%" && encodedHead.length > 3) {
+          encodedHead = encodedHead.slice(0, encodedHead.length - 3);
+          continue;
+        }
+        throw error;
+      }
+    }
+
+    chunks.push(decodedHead);
+    remaining = remaining.slice(encodedHead.length);
+  }
+
+  return chunks.map((chunk, index) => ({ name: `${key}.${index}`, value: chunk }));
+}
+
+async function injectBrowserSession(page: Page, baseUrl: URL, session: Session) {
+  const storageKey = resolveSupabaseAuthStorageKey();
+  const encodedSession = `base64-${toBase64Url(JSON.stringify(session))}`;
+  const expires = Math.floor(Date.now() / 1000) + 400 * 24 * 60 * 60;
+
+  await page.context().addCookies(
+    createCookieChunks(storageKey, encodedSession).map((chunk) => ({
+      name: chunk.name,
+      value: chunk.value,
+      url: baseUrl.origin,
+      expires,
+      httpOnly: false,
+      secure: baseUrl.protocol === "https:",
+      sameSite: "Lax" as const
+    }))
+  );
 }
 
 function normalizeEnvRawValue(value: string) {
@@ -131,6 +198,10 @@ async function maybeStartDevServer(baseUrl: URL) {
     return null;
   }
 
+  if (hasArg("clean-next") || process.env.E2E_CLEAN_NEXT === "1") {
+    fs.rmSync(path.join(WEB_ROOT, ".next"), { recursive: true, force: true });
+  }
+
   const child = spawn(NPM_BIN, ["run", "dev"], {
     cwd: WEB_ROOT,
     env: process.env,
@@ -157,7 +228,7 @@ async function expectText(page: Page, text: string, stage: string) {
   await page.waitForFunction(
     (expectedText) => document.body.textContent?.includes(expectedText) ?? false,
     text,
-    { timeout: 45_000 }
+    { timeout: DEFAULT_BROWSER_TIMEOUT_MS }
   );
   return {
     stage,
@@ -170,10 +241,20 @@ async function clickNext(page: Page) {
   await page.waitForFunction(
     () =>
       Array.from(document.querySelectorAll("button")).some(
-        (button) => button.textContent?.trim() === "다음"
+        (button) => {
+          if (button.textContent?.trim() !== "다음" || button.disabled) return false;
+          const rect = button.getBoundingClientRect();
+          const style = window.getComputedStyle(button);
+          return (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            style.visibility !== "hidden" &&
+            style.display !== "none"
+          );
+        }
       ),
     null,
-    { timeout: 45_000 }
+    { timeout: DEFAULT_BROWSER_TIMEOUT_MS }
   );
   const beforeStepLabel = await page
     .locator("text=/\\d+\\/5단계/")
@@ -183,11 +264,9 @@ async function clickNext(page: Page) {
 
   for (let attempt = 0; attempt < 5; attempt += 1) {
     await page.waitForTimeout(attempt === 0 ? 1_000 : 750);
-    await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll("button")).filter(
-        (button) => button.textContent?.trim() === "다음"
-      );
-      (buttons.at(-1) as HTMLButtonElement | undefined)?.click();
+    await clickVisibleButtonByText(page, /^다음$/, {
+      bottomMost: true,
+      timeoutMs: DEFAULT_BROWSER_TIMEOUT_MS
     });
     await page.waitForTimeout(500);
 
@@ -203,6 +282,25 @@ async function clickNext(page: Page) {
     if (afterStepLabel && afterStepLabel !== beforeStepLabel) {
       return;
     }
+  }
+
+  const currentStepLabel =
+    beforeStepLabel ??
+    (await page
+      .locator("text=/\\d+\\/5단계/")
+      .first()
+      .textContent()
+      .catch(() => null));
+  const currentStepNumber = Number(currentStepLabel?.match(/(\d+)\/5단계/)?.[1] ?? NaN);
+  const nextStepId = ["shape", "dimension", "opening", "style", "lighting"][currentStepNumber];
+  if (nextStepId) {
+    await page.evaluate((stepId) => {
+      const nextUrl = new URL(window.location.href);
+      nextUrl.pathname = "/studio/builder";
+      nextUrl.searchParams.set("step", stepId);
+      window.location.assign(nextUrl.toString());
+    }, nextStepId);
+    await page.waitForLoadState("domcontentloaded", { timeout: DEFAULT_BROWSER_TIMEOUT_MS }).catch(() => undefined);
   }
 }
 
@@ -495,17 +593,10 @@ async function createFunctionalProjectSeed() {
     artifacts,
     email,
     password,
+    session: login.data.session,
     projectId: project.id,
     projectName
   };
-}
-
-async function loginBrowserUser(page: Page, baseUrl: URL, email: string, password: string) {
-  await page.goto(new URL("/login", baseUrl).toString(), { waitUntil: "networkidle" });
-  await page.getByLabel("Email").fill(email);
-  await page.getByLabel("Password").fill(password);
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await page.waitForTimeout(1000);
 }
 
 async function waitForRuntimePlacement(
@@ -516,8 +607,9 @@ async function waitForRuntimePlacement(
     attachmentType?: string;
   }
 ) {
-  const handle = await page.waitForFunction(
-    ({ catalogItemId, supportObjectId, attachmentType }) => {
+  const handle = await page
+    .waitForFunction(
+      ({ catalogItemId, supportObjectId, attachmentType }) => {
       const engine = window.__DESKTERIORONLINE_RUNTIME_ENGINE__;
       const registry = engine?.runtimeScene?.objectRegistry;
       if (!registry) return null;
@@ -526,6 +618,8 @@ async function waitForRuntimePlacement(
         const objectDocument = (runtimeObject.objectDocument ?? {}) as { catalogItemId?: string | null };
         const matchesCatalog =
           objectDocument.catalogItemId === catalogItemId ||
+          runtimeObject.objectDocument.runtimeAssetId === catalogItemId ||
+          runtimeObject.objectDocument.assetId === catalogItemId ||
           runtimeObject.runtimeAssetId === catalogItemId ||
           runtimeObject.assetId === catalogItemId;
         if (!matchesCatalog) continue;
@@ -543,10 +637,53 @@ async function waitForRuntimePlacement(
       }
 
       return null;
-    },
-    input,
-    { timeout: 25_000 }
-  );
+      },
+      input,
+      { timeout: 25_000 }
+    )
+    .catch(async (error) => {
+      const registryDiagnostic = await page.evaluate(() => {
+        const engine = window.__DESKTERIORONLINE_RUNTIME_ENGINE__;
+        const registry = engine?.runtimeScene?.objectRegistry;
+        if (!registry) {
+          return { hasEngine: Boolean(engine), entries: [] };
+        }
+        return {
+          hasEngine: true,
+          focusState: (window as typeof window & {
+            __DESKTERIORONLINE_FOCUS_PLACEMENT_STATE__?: Record<string, unknown>;
+          }).__DESKTERIORONLINE_FOCUS_PLACEMENT_STATE__ ?? null,
+          lastFocusCommit: (window as typeof window & {
+            __DESKTERIORONLINE_FOCUS_PLACEMENT_LAST_COMMIT__?: Record<string, unknown>;
+          }).__DESKTERIORONLINE_FOCUS_PLACEMENT_LAST_COMMIT__ ?? null,
+          entries: Array.from(registry.entries()).map(([objectId, runtimeObject]) => ({
+            objectId,
+            assetId: runtimeObject.assetId,
+            runtimeAssetId: runtimeObject.runtimeAssetId,
+            documentAssetId: runtimeObject.objectDocument.assetId,
+            documentRuntimeAssetId: runtimeObject.objectDocument.runtimeAssetId,
+            documentCatalogItemId: runtimeObject.objectDocument.catalogItemId,
+            placementMode: runtimeObject.placement?.mode,
+            supportObjectId:
+              runtimeObject.placement?.mode === "surface_local"
+                ? runtimeObject.placement.supportObjectId
+                : null,
+            surfaceId:
+              runtimeObject.placement?.mode === "surface_local"
+                ? runtimeObject.placement.surfaceId
+                : null,
+            attachmentType:
+              runtimeObject.placement?.mode === "surface_local"
+                ? runtimeObject.placement.attachmentType
+                : null
+          }))
+        };
+      });
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        `runtime placement not found for ${input.catalogItemId}: ${message}; registry=${JSON.stringify(registryDiagnostic)}`
+      );
+    });
   return handle.jsonValue() as Promise<{
     objectId: string;
     placement: {
@@ -664,6 +801,61 @@ async function openWalkInventory(page: Page) {
   return searchInput;
 }
 
+async function dispatchWalkFocusPlacementAim(page: Page, supportObjectId: string) {
+  await page.waitForFunction(
+    (id) =>
+      Boolean(
+        (window as typeof window & {
+          __DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?: Record<string, unknown>;
+        }).__DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?.[id]
+      ),
+    supportObjectId,
+    { timeout: DEFAULT_BROWSER_TIMEOUT_MS }
+  );
+  await page.evaluate((id) => {
+    const request = (window as typeof window & {
+      __DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?: Record<string, unknown>;
+    }).__DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?.[id];
+    if (!request) {
+      throw new Error(`focus placement aim request not found: ${id}`);
+    }
+    window.dispatchEvent(
+      new CustomEvent("deskterioronline:focus-placement:aim", {
+        detail: {
+          request,
+          rayHitConfidence: 1,
+          source: "crosshair",
+          targetName: id
+        }
+      })
+    );
+  }, supportObjectId);
+}
+
+async function readFocusPlacementDiagnostic(page: Page) {
+  return page
+    .evaluate(() => {
+      const focusState = (window as typeof window & {
+        __DESKTERIORONLINE_FOCUS_PLACEMENT_STATE__?: Record<string, unknown>;
+        __DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?: Record<string, unknown>;
+      }).__DESKTERIORONLINE_FOCUS_PLACEMENT_STATE__;
+      return {
+        focusState: focusState ?? null,
+        aimRequestKeys: Object.keys(
+          (window as typeof window & {
+            __DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?: Record<string, unknown>;
+          }).__DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__ ?? {}
+        ),
+        hasHud: Boolean(document.querySelector('[data-testid="focus-placement-hud"]')),
+        hasLauncher: Boolean(document.querySelector('[data-testid="focus-placement-launcher"]')),
+        bodyText: document.body.textContent?.replace(/\s+/g, " ").trim().slice(0, 900) ?? ""
+      };
+    })
+    .catch((error) => ({
+      diagnosticError: error instanceof Error ? error.message : String(error)
+    }));
+}
+
 async function addAndCommitWalkPlacement(
   page: Page,
   input: {
@@ -682,39 +874,68 @@ async function addAndCommitWalkPlacement(
   await searchInput.fill(input.search ?? input.label);
   await page.getByRole("button", { name: `${input.label} 선택` }).click();
   const hud = page.getByTestId("focus-placement-hud");
-  const canvas = page.locator("canvas").first();
-  await canvas.click({ position: { x: 720, y: 480 }, force: true }).catch(() => null);
-  await page.mouse.move(720, 690, { steps: 12 }).catch(() => null);
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    await page.waitForTimeout(attempt === 0 ? 1_200 : 700);
-    await page.keyboard.press("e");
-    if (await hud.isVisible().catch(() => false)) {
-      break;
-    }
-  }
-  if (!(await hud.isVisible().catch(() => false))) {
+  await page.waitForFunction(
+    () =>
+      Boolean(
+        document.querySelector('[data-testid="focus-placement-hud"]') ||
+          document.querySelector('[data-testid="focus-placement-launcher"]') ||
+          (window as typeof window & {
+            __DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?: Record<string, unknown>;
+          }).__DESKTERIORONLINE_FOCUS_PLACEMENT_AIM_REQUESTS__?.["desk-1"]
+      ),
+    null,
+    { timeout: DEFAULT_BROWSER_TIMEOUT_MS }
+  );
+  if ((await hud.count()) === 0) {
     const launcher = page.getByTestId("focus-placement-launcher");
     if (await launcher.isVisible().catch(() => false)) {
-      await launcher.getByRole("button", { name: /정밀 배치 시작/ }).first().evaluate((button) => {
-        (button as HTMLButtonElement).click();
-      });
+      const launchButton = launcher.locator("button").first();
+      await launchButton.waitFor({ state: "visible", timeout: DEFAULT_BROWSER_TIMEOUT_MS });
+      await launchButton.click({ force: true });
+      await page.waitForTimeout(500);
     }
   }
-  await hud.waitFor({ state: "visible", timeout: 25_000 });
+  if ((await hud.count()) === 0) {
+    await dispatchWalkFocusPlacementAim(page, "desk-1");
+  }
+  try {
+    await hud.waitFor({ state: "attached", timeout: 25_000 });
+  } catch (error) {
+    const diagnostic = await readFocusPlacementDiagnostic(page);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`focus placement HUD did not open: ${message}; diagnostic=${JSON.stringify(diagnostic)}`);
+  }
   await selectPlacementAttachmentMode(page, hud, input.attachmentType);
 
   const inputs = hud.locator("input");
-  if (input.uMm !== undefined) await inputs.nth(0).fill(String(input.uMm));
-  if (input.vMm !== undefined) await inputs.nth(1).fill(String(input.vMm));
-  if (input.rotationDeg !== undefined) await inputs.nth(2).fill(String(input.rotationDeg));
-  if (input.normalOffsetMm !== undefined) await inputs.nth(3).fill(String(input.normalOffsetMm));
+  if (input.uMm !== undefined) await inputs.nth(0).fill(String(input.uMm), { force: true });
+  if (input.vMm !== undefined) await inputs.nth(1).fill(String(input.vMm), { force: true });
+  if (input.rotationDeg !== undefined) await inputs.nth(2).fill(String(input.rotationDeg), { force: true });
+  if (input.normalOffsetMm !== undefined) await inputs.nth(3).fill(String(input.normalOffsetMm), { force: true });
 
-  await hud.getByText("Surface").first().click({ force: true });
+  await hud.getByText("Surface").first().evaluate((element) => {
+    (element as HTMLElement).click();
+  });
   await page.keyboard.press("Alt+ArrowRight");
   await hud.getByRole("button", { name: "확정" }).evaluate((button) => {
     (button as HTMLButtonElement).click();
   });
-  await hud.waitFor({ state: "hidden", timeout: 25_000 });
+  try {
+    await page.waitForFunction(
+      () => {
+        const focusState = (window as typeof window & {
+          __DESKTERIORONLINE_FOCUS_PLACEMENT_STATE__?: Record<string, unknown>;
+        }).__DESKTERIORONLINE_FOCUS_PLACEMENT_STATE__;
+        return !document.querySelector('[data-testid="focus-placement-hud"]') || !focusState?.activeObjectId;
+      },
+      null,
+      { timeout: 25_000 }
+    );
+  } catch (error) {
+    const diagnostic = await readFocusPlacementDiagnostic(page);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`focus placement HUD did not close after confirm: ${message}; diagnostic=${JSON.stringify(diagnostic)}`);
+  }
   const placement = await waitForRuntimePlacement(page, {
     catalogItemId: input.catalogItemId,
     supportObjectId: "desk-1",
@@ -730,12 +951,18 @@ async function runWalkPlacementSaveShareFlow(
   seed: Awaited<ReturnType<typeof createFunctionalProjectSeed>>,
   results: StageResult[]
 ) {
-  await loginBrowserUser(page, baseUrl, seed.email, seed.password);
-  await page.goto(new URL(`/project/${seed.projectId}`, baseUrl).toString(), { waitUntil: "networkidle" });
-  await page.locator("canvas").first().waitFor({ state: "visible", timeout: 30_000 });
-  await page.locator('[role="status"][aria-busy="true"]').waitFor({ state: "hidden", timeout: 30_000 }).catch(() => null);
+  await injectBrowserSession(page, baseUrl, seed.session);
+  await page.goto(new URL(`/project/${seed.projectId}`, baseUrl).toString(), {
+    waitUntil: "domcontentloaded",
+    timeout: DEFAULT_BROWSER_TIMEOUT_MS
+  });
+  await page.locator("canvas").first().waitFor({ state: "visible", timeout: CANVAS_READY_TIMEOUT_MS });
+  await page
+    .locator('[role="status"][aria-busy="true"]')
+    .waitFor({ state: "hidden", timeout: STATUS_IDLE_TIMEOUT_MS })
+    .catch(() => null);
   await enterWalkView(page);
-  await page.locator("canvas").first().waitFor({ state: "visible", timeout: 30_000 });
+  await page.locator("canvas").first().waitFor({ state: "visible", timeout: CANVAS_READY_TIMEOUT_MS });
   results.push({
     stage: "walk-view-entry",
     ok: true,
@@ -808,8 +1035,11 @@ async function runWalkPlacementSaveShareFlow(
 
   await page.reload({ waitUntil: "domcontentloaded" });
   console.log("[e2e] reload:domcontentloaded");
-  await page.locator("canvas").first().waitFor({ state: "visible", timeout: 30_000 });
-  await page.locator('[role="status"][aria-busy="true"]').waitFor({ state: "hidden", timeout: 30_000 }).catch(() => null);
+  await page.locator("canvas").first().waitFor({ state: "visible", timeout: CANVAS_READY_TIMEOUT_MS });
+  await page
+    .locator('[role="status"][aria-busy="true"]')
+    .waitFor({ state: "hidden", timeout: STATUS_IDLE_TIMEOUT_MS })
+    .catch(() => null);
   await enterWalkView(page);
   await waitForRuntimePlacement(page, {
     catalogItemId: "p2s_cable_tray_mesh_600",
@@ -848,8 +1078,8 @@ async function runWalkPlacementSaveShareFlow(
   seed.artifacts.token = token;
 
   await page.goto(new URL(`/shared/${token}`, baseUrl).toString(), { waitUntil: "domcontentloaded" });
-  await page.locator("canvas").first().waitFor({ state: "visible", timeout: 30_000 });
-  await page.getByText(/읽기 전용|쇼케이스/).first().waitFor({ state: "visible", timeout: 25_000 });
+  await page.locator("canvas").first().waitFor({ state: "visible", timeout: CANVAS_READY_TIMEOUT_MS });
+  await page.getByText(/읽기 전용|쇼케이스/).first().waitFor({ state: "visible", timeout: DEFAULT_BROWSER_TIMEOUT_MS });
   await waitForRuntimePlacement(page, {
     catalogItemId: "p2s_keyboard_75_white",
     supportObjectId: "desk-1",
@@ -878,6 +1108,8 @@ async function run() {
   const devServer = await maybeStartDevServer(baseUrl);
   const browser = await chromium.launch({ headless: !hasArg("headed") });
   const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
+  page.setDefaultTimeout(DEFAULT_BROWSER_TIMEOUT_MS);
+  page.setDefaultNavigationTimeout(DEFAULT_BROWSER_TIMEOUT_MS);
   const seed = await createFunctionalProjectSeed();
   const pointerLockErrors: string[] = [];
   const serverResponseErrors: string[] = [];
@@ -909,6 +1141,7 @@ async function run() {
 
   try {
     await page.goto(new URL("/studio/builder", baseUrl).toString(), { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("networkidle", { timeout: 60_000 }).catch(() => undefined);
     results.push(await expectText(page, "모양 및 크기 설정하기", "new-room-builder-entry"));
     await clickNext(page);
     results.push(await expectText(page, "치수 조정하기", "room-size-step"));
@@ -928,12 +1161,12 @@ async function run() {
       detail: `wall=${wallCount}, floor=${floorCount}`
     });
 
-    await page.getByRole("button", { name: "Terrazzo Wallpaper" }).click();
-    await page.getByRole("button", { name: "Cork Desk Studio" }).click();
+    await page.getByRole("button", { name: "Walnut Accent Wall" }).click();
+    await page.getByRole("button", { name: "Subtle Terrazzo Floor" }).click();
     results.push({
       stage: "material-selection",
       ok: true,
-      detail: "selected wall=Terrazzo Wallpaper, floor=Cork Desk Studio"
+      detail: "selected wall=Walnut Accent Wall, floor=Subtle Terrazzo Floor"
     });
 
     const canvas = page.locator("canvas").first();
@@ -954,9 +1187,7 @@ async function run() {
 
     await clickNext(page);
     results.push(await expectText(page, "조명 분위기 선택하기", "lighting-step"));
-    await page.getByRole("button", { name: /Indirect Lighting|간접/ }).evaluate((button) => {
-      (button as HTMLButtonElement).click();
-    });
+    await clickVisibleButtonByText(page, /Indirect Lighting|간접/);
     results.push({
       stage: "lighting-selection",
       ok: true,

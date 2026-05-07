@@ -10,6 +10,7 @@ import {
   type ScenePlacementSnapshot
 } from "./scene-placement";
 import type { PlacementRecord } from "@deskterioronline/scene-schema";
+import { normalizeLightingFixtures, type LightingFixture } from "../scene/lighting-layout";
 import type {
   ProductCollisionProxyMetadata,
   ProductContractMetadata,
@@ -180,6 +181,11 @@ function toRuntimePlacementRecord(value: unknown): PlacementRecord | null {
 function toSafeNumber(value: unknown, fallback: number) {
   const numeric = Number(value);
   return Number.isFinite(numeric) ? numeric : fallback;
+}
+
+function toLightingFixtures(value: unknown) {
+  if (!isArray(value)) return [];
+  return normalizeLightingFixtures(value.filter(isRecord) as Partial<LightingFixture>[]);
 }
 
 function toMetadataText(value: unknown) {
@@ -488,7 +494,8 @@ function parseSceneDocumentFromVersion(version: Record<string, unknown>): SceneD
       directionalIntensity: toSafeNumber(rawLighting?.directionalIntensity, 1.24),
       environmentBlur: toSafeNumber(rawLighting?.environmentBlur, 0.14),
       accentIntensity: toSafeNumber(rawLighting?.accentIntensity, 0.82),
-      beamOpacity: toSafeNumber(rawLighting?.beamOpacity, 0.18)
+      beamOpacity: toSafeNumber(rawLighting?.beamOpacity, 0.18),
+      fixtures: toLightingFixtures(rawLighting?.fixtures)
     }
   };
 

@@ -19,7 +19,7 @@
 - top-view는 HDRI/ContactShadows를 올리지 않고 평면 편집 가독성과 초기 진입 성능을 우선한다.
 - builder/editor lighting은 `direct`/`indirect` mood를 모두 지원하고, direct mode는 fixture emissive + beam/floor glow shader를 포함한다.
 - indirect mode는 천장 가장자리 확산광 위주의 additive glow를 사용하고 광원 본체 노출을 최소화한다.
-- direct mode는 최대 3개 fixture + spotlight/fill + beam/floor glow 조합으로 제한해 자연스러운 falloff와 성능 균형을 함께 맞춘다.
+- direct mode는 scene `lighting.fixtures[]`를 source of truth로 사용하고, 사용자 조작 가능한 최대 6개 fixture + spotlight/fill + beam/floor glow 조합으로 제한해 자연스러운 falloff와 성능 균형을 함께 맞춘다.
 - QA 조명 preset은 `neutral-studio`, `home-reference`, `soft-evening`으로 유지하고, 각 preset은 HDRI/exposure/white balance/contact shadow QA profile을 가져야 한다.
 - 제품 조명이 실제 point/spot light를 만들 수 있는 경우는 catalog/runtime metadata가 조명 제품임을 명시할 때뿐이며, 장면당 dynamic emitter 예산은 `<= 6`이다.
 - SSR/contact shadow/bloom은 editor walk와 viewer showcase의 non-constrained profile에서만 허용하고, shared viewer/top-view/builder preview에는 비용을 전파하지 않는다.
@@ -38,6 +38,8 @@
 - GLB runtime loader는 `KTX2Loader`를 기본 연결하고, basis transcoder는 `/assets/transcoders/basis/` 또는 `NEXT_PUBLIC_KTX2_TRANSCODER_PATH`에서 읽는다.
 - room shell floor/wall procedural texture set은 `NEXT_PUBLIC_ENABLE_KTX2_TEXTURES=1`일 때 `.ktx2`를 우선 읽고, 없으면 JPG/PNG 원본으로 fallback 한다.
 - wall/floor preset은 각각 12개 이하의 고품질 PBR set으로 관리하고, baseColor/roughness/normal/bump, real-scale repeat, source resolution, KTX2 runtime target, preview thumbnail을 가진다.
+- wall preset의 기본 노출은 clean commercial default(matte/warm white paint, beige/grey plaster 등)를 우선하고, damaged/industrial 계열은 special option으로 격리한다.
+- floor preset의 기본 노출은 light/natural oak, warm laminate, beige tile, subtle terrazzo 같은 실사용 재질을 우선한다.
 - AI 생성 wall/floor 1K texture는 `generic_ai_candidate`로 남기고, 상용 texture preset은 2K source + runtime KTX2 + constrained 1K fallback 기준을 통과해야 한다.
 - 제품 material variant는 단순 tint가 아니라 slot-level material metadata(`wood/metal/plastic/fabric/...`, roughness/normal intensity, QA status)를 가진다.
 - 알려진 Blender 슬롯(`DeskWood`, `DeskMetal`, `StandWood`, `StandPad`, `LampBody`, `LampAccent`, `LampBulb`)은 slot-aware finish를 우선 적용한다.
@@ -964,3 +966,20 @@ Updated:
 
 Removed/Deprecated:
 - `R` rotate만 renderer preview 없이 즉시 store/document commit을 만드는 예외.
+
+## 2026-05-06 변경 동기화 (Builder Commercial Visual Interaction Pass)
+Added:
+- inventory draft asset은 renderer ghost preview로만 보이며, active focus placement 또는 valid world placement commit 전에는 scene document에 저장되지 않는다.
+- builder opening preview는 door/window GLB와 wall opening cut을 유지하면서, top preview에서 wall/opening hit target과 draggable opening segment를 제공해야 한다.
+- material preset은 `id`, `name`, `category`, `useCategory`, `previewThumbnail`, `repeatScaleMeters` metadata를 가져 UI thumbnail, fallback color, QA gate가 같은 계약을 사용한다.
+- direct lighting fixture는 `positionMm`, `intensity`, `colorTemperature`, `beamRadiusMm`, `spread`, `enabled`를 renderer light/glow/shader에 반영한다.
+
+Updated:
+- lighting visual QA는 direct/indirect mood 선택만이 아니라 fixture count/position/color/spread 변경 후 floor glow와 spotlight 위치가 같이 바뀌는지 확인해야 한다.
+- wall/floor visual QA는 default preset cleanliness와 thumbnail/runtime parity를 `verify:material-presets`로 고정한다.
+- opening visual QA는 style asset visibility뿐 아니라 blocked edge/overlap state와 saved opening payload parity를 포함한다.
+
+Removed/Deprecated:
+- inventory ghost preview를 실제 store asset으로 먼저 추가한 뒤 실패 시 지우는 방식.
+- direct lighting renderer가 room bounds에서 매번 fixed 1/3 fixture를 암묵 계산하는 방식.
+- texture label/category가 실제 runtime texture와 별도로 drift되는 상태.

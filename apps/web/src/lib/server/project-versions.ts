@@ -78,6 +78,17 @@ const RoomShellSchema = z.object({
   entranceId: z.string().nullable().optional()
 });
 
+const LightingFixtureSchema = z.object({
+  id: z.string(),
+  type: z.enum(["downlight", "ceiling_light", "indirect_strip"]).default("downlight"),
+  positionMm: z.tuple([z.number(), z.number(), z.number()]),
+  intensity: z.number(),
+  colorTemperature: z.enum(["warm", "neutral", "cool"]).default("neutral"),
+  beamRadiusMm: z.number(),
+  spread: z.number(),
+  enabled: z.boolean().default(true)
+});
+
 export const SaveVersionSchema = z.object({
   message: z.string().optional(),
   roomShell: RoomShellSchema,
@@ -95,7 +106,8 @@ export const SaveVersionSchema = z.object({
       directionalIntensity: z.number(),
       environmentBlur: z.number(),
       accentIntensity: z.number().optional(),
-      beamOpacity: z.number().optional()
+      beamOpacity: z.number().optional(),
+      fixtures: z.array(LightingFixtureSchema).optional()
     })
     .optional(),
   thumbnailDataUrl: z.string().nullable().optional(),
@@ -568,7 +580,8 @@ function resolveLightingSettings(lighting?: Partial<LightingPayload>): LightingP
     directionalIntensity: 1.24,
     environmentBlur: 0.14,
     accentIntensity: 0.82,
-    beamOpacity: 0.18
+    beamOpacity: 0.18,
+    fixtures: []
   };
 
   return {
@@ -596,7 +609,8 @@ function resolveLightingSettings(lighting?: Partial<LightingPayload>): LightingP
     beamOpacity:
       typeof lighting?.beamOpacity === "number"
         ? lighting.beamOpacity
-        : fallbackLighting.beamOpacity
+        : fallbackLighting.beamOpacity,
+    fixtures: Array.isArray(lighting?.fixtures) ? lighting.fixtures.slice(0, 6) : fallbackLighting.fixtures
   };
 }
 

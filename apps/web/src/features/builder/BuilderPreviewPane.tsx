@@ -1,3 +1,4 @@
+import { useRef, type PointerEvent as ReactPointerEvent } from "react";
 import { motion } from "framer-motion";
 import type { Opening, Vector2 } from "../../lib/stores/useSceneStore";
 import { SceneViewport } from "../../components/editor/SceneViewport";
@@ -15,8 +16,14 @@ type BuilderPreviewPaneProps = {
   lightingModeLabel: string;
   doorCount: number;
   windowCount: number;
+  openings: Opening[];
+  selectedWallId: string | null;
+  selectedOpeningId: string | null;
   selectedWallLabel: string | null;
   selectedOpening: Opening | null;
+  onSelectWall: (wallId: string) => void;
+  onSelectOpening: (openingId: string) => void;
+  onPatchOpening: (openingId: string, patch: Partial<Opening>) => void;
 };
 
 function formatDimension(value: number, unit: "ft" | "cm") {
@@ -64,6 +71,10 @@ function buildScaledOutline(outline: Vector2[]) {
     path,
     points
   };
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
 }
 
 function DimensionOverlay({
@@ -125,14 +136,82 @@ function TopPlanBoard({
   stepId,
   outline,
   wallEntries,
-  unit
+  unit,
+  openings,
+  selectedWallId,
+  selectedOpeningId,
+  onSelectWall,
+  onSelectOpening,
+  onPatchOpening
 }: {
   stepId: BuilderStepId;
   outline: Vector2[];
   wallEntries: BuilderWallEntry[];
   unit: "ft" | "cm";
+  openings: Opening[];
+  selectedWallId: string | null;
+  selectedOpeningId: string | null;
+  onSelectWall: (wallId: string) => void;
+  onSelectOpening: (openingId: string) => void;
+  onPatchOpening: (openingId: string, patch: Partial<Opening>) => void;
 }) {
   const scaled = buildScaledOutline(outline);
+  const dragRef = useRef<{ openingId: string; wallIndex: number } | null>(null);
+
+  const getSvgPoint = (event: ReactPointerEvent<SVGElement | SVGLineElement>) => {
+    const svg =
+      event.currentTarget instanceof SVGSVGElement
+        ? event.currentTarget
+        : event.currentTarget.ownerSVGElement;
+    if (!svg) {
+      return { x: 0, y: 0 };
+    }
+    const rect = svg.getBoundingClientRect();
+    return {
+      x: ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 820,
+      y: ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 560
+    };
+  };
+
+  const moveOpeningFromPointer = (
+    event: ReactPointerEvent<SVGElement | SVGLineElement>,
+    openingId: string,
+    wallIndex: number
+  ) => {
+    const opening = openings.find((candidate) => candidate.id === openingId);
+    const wall = wallEntries[wallIndex];
+    const start = scaled.points[wallIndex];
+    const end = scaled.points[(wallIndex + 1) % scaled.points.length];
+    if (!opening || !wall || !start || !end) return;
+
+    const point = getSvgPoint(event);
+    const dx = end[0] - start[0];
+    const dy = end[1] - start[1];
+    const lenSq = Math.max(dx * dx + dy * dy, 1);
+    const t = clamp(((point.x - start[0]) * dx + (point.y - start[1]) * dy) / lenSq, 0, 1);
+    const offset = clamp(t * wall.length - opening.width / 2, 0, Math.max(0, wall.length - opening.width));
+    onPatchOpening(openingId, { wallId: wall.id, offset });
+  };
+
+  const planOpenings = openings.flatMap((opening) => {
+    const wallIndex = wallEntries.findIndex((entry) => entry.id === opening.wallId);
+    const wall = wallEntries[wallIndex];
+    const start = scaled.points[wallIndex];
+    const end = scaled.points[(wallIndex + 1) % scaled.points.length];
+    if (!wall || !start || !end) return [];
+    const startRatio = clamp(opening.offset / Math.max(wall.length, 0.01), 0, 1);
+    const endRatio = clamp((opening.offset + opening.width) / Math.max(wall.length, 0.01), 0, 1);
+    return [
+      {
+        opening,
+        wallIndex,
+        x1: start[0] + (end[0] - start[0]) * startRatio,
+        y1: start[1] + (end[1] - start[1]) * startRatio,
+        x2: start[0] + (end[0] - start[0]) * endRatio,
+        y2: start[1] + (end[1] - start[1]) * endRatio
+      }
+    ];
+  });
 
   return (
     <div className="relative flex h-full min-h-[320px] items-center justify-center overflow-hidden bg-[#d7d7d3]">
@@ -141,18 +220,93 @@ function TopPlanBoard({
       <div className="absolute inset-x-0 top-1/2 h-px bg-black/18" />
 
       <div className="relative w-full max-w-[960px] px-8 py-10">
-        <svg viewBox="0 0 820 560" className="mx-auto h-full max-h-[560px] w-full" aria-hidden>
+        <svg
+          viewBox="0 0 820 560"
+          className="mx-auto h-full max-h-[560px] w-full"
+          aria-label="문과 창문 배치 미리보기"
+          onPointerMove={(event) => {
+            if (!dragRef.current || event.buttons !== 1) return;
+            moveOpeningFromPointer(event, dragRef.current.openingId, dragRef.current.wallIndex);
+          }}
+          onPointerUp={() => {
+            dragRef.current = null;
+          }}
+          onPointerCancel={() => {
+            dragRef.current = null;
+          }}
+        >
           {stepId === "dimension" ? (
             <DimensionOverlay outline={outline} wallEntries={wallEntries} unit={unit} />
           ) : (
             <>
               <path d={scaled.path} fill="rgba(255,255,255,0.12)" stroke="#202020" strokeWidth="6" strokeLinejoin="round" />
+              {stepId === "opening"
+                ? scaled.points.map((point, index) => {
+                    const next = scaled.points[(index + 1) % scaled.points.length]!;
+                    const wall = wallEntries[index];
+                    if (!wall) return null;
+                    return (
+                      <line
+                        key={`wall-hit:${wall.id}`}
+                        x1={point[0]}
+                        y1={point[1]}
+                        x2={next[0]}
+                        y2={next[1]}
+                        stroke={selectedWallId === wall.id ? "rgba(52,211,153,0.28)" : "rgba(255,255,255,0.01)"}
+                        strokeWidth="34"
+                        strokeLinecap="round"
+                        className="cursor-pointer"
+                        onPointerDown={() => onSelectWall(wall.id)}
+                      />
+                    );
+                  })
+                : null}
               {scaled.points.map(([x, y]) => (
                 <g key={`${x}-${y}`}>
                   <circle cx={x} cy={y} r="10" fill="#ffffff" />
                   <circle cx={x} cy={y} r="7" fill="#ffffff" stroke="#202020" strokeWidth="3" />
                 </g>
               ))}
+              {stepId === "opening"
+                ? planOpenings.map(({ opening, wallIndex, x1, y1, x2, y2 }) => {
+                    const isSelected = selectedOpeningId === opening.id;
+                    return (
+                      <g key={opening.id}>
+                        <line
+                          x1={x1}
+                          y1={y1}
+                          x2={x2}
+                          y2={y2}
+                          stroke={opening.type === "door" ? "#9a6a38" : "#6fb7c7"}
+                          strokeWidth={opening.type === "door" ? 16 : 12}
+                          strokeLinecap="round"
+                          opacity={isSelected ? 1 : 0.84}
+                          className="cursor-grab active:cursor-grabbing"
+                          onPointerDown={(event) => {
+                            event.stopPropagation();
+                            event.currentTarget.setPointerCapture(event.pointerId);
+                            dragRef.current = { openingId: opening.id, wallIndex };
+                            onSelectWall(opening.wallId);
+                            onSelectOpening(opening.id);
+                            moveOpeningFromPointer(event, opening.id, wallIndex);
+                          }}
+                        />
+                        {isSelected ? (
+                          <line
+                            x1={x1}
+                            y1={y1}
+                            x2={x2}
+                            y2={y2}
+                            stroke="#ffffff"
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                            pointerEvents="none"
+                          />
+                        ) : null}
+                      </g>
+                    );
+                  })
+                : null}
             </>
           )}
         </svg>
@@ -237,8 +391,14 @@ export function BuilderPreviewPane({
   lightingModeLabel,
   doorCount,
   windowCount,
+  openings,
+  selectedWallId,
+  selectedOpeningId,
   selectedWallLabel,
-  selectedOpening
+  selectedOpening,
+  onSelectWall,
+  onSelectOpening,
+  onPatchOpening
 }: BuilderPreviewPaneProps) {
   if (previewMode === "top") {
     return (
@@ -247,7 +407,18 @@ export function BuilderPreviewPane({
         animate={{ opacity: 1, y: 0 }}
         className="relative min-h-[320px] overflow-hidden bg-[#d7d7d3] lg:h-full lg:min-h-0"
       >
-        <TopPlanBoard stepId={stepId} outline={outline} wallEntries={wallEntries} unit={unit} />
+        <TopPlanBoard
+          stepId={stepId}
+          outline={outline}
+          wallEntries={wallEntries}
+          unit={unit}
+          openings={openings}
+          selectedWallId={selectedWallId}
+          selectedOpeningId={selectedOpeningId}
+          onSelectWall={onSelectWall}
+          onSelectOpening={onSelectOpening}
+          onPatchOpening={onPatchOpening}
+        />
       </motion.section>
     );
   }

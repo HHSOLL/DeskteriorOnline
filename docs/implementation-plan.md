@@ -1435,3 +1435,42 @@ Removed/Deprecated:
 - pointer lock이 실패하면 WASD가 완전히 무반응이어도 되는 상태.
 - `event.key` label만으로 walk/desk precision shortcut을 판정하는 구현.
 - 새 배포가 기존 브라우저 로그인 세션을 자동으로 초기화해야 한다는 배포 기준.
+
+## 2026-05-04 변경 동기화 (Inventory Asset Thumbnails)
+Added:
+- Walk inventory/library slice는 asset 선택 카드에 catalog thumbnail image를 표시하는 것을 포함한다.
+- `verify:inventory-thumbnails`를 추가해 catalog thumbnail coverage, public asset file existence, relative `/assets/...` image path preservation을 release-adjacent check로 둔다.
+
+Updated:
+- P2 editor chrome 기준의 catalog/inventory rail은 compact text list가 아니라 visual asset picker로 취급한다. thumbnail이 없는 item도 fallback preview를 보여줘 selection affordance를 유지해야 한다.
+
+Removed/Deprecated:
+- inventory에서 asset 이름과 collection text만으로 제품 생김새를 유추하게 하는 구현.
+
+## 2026-05-06 변경 동기화 (Commercial Builder/Editor Acceptance Pass)
+목표:
+- room builder와 walk placement를 preview -> validate -> commit -> save/reload/share parity 계약으로 묶고, 임시 데모처럼 보이던 opening/material/lighting/inventory 흐름을 조작 가능한 상용 builder 기능으로 승격한다.
+
+진행:
+- PR 4 완료: inventory click은 canonical scene store를 오염시키지 않고 `placementDraft`와 renderer ghost preview만 시작한다. valid floor/world click 또는 active focus placement commit에서만 draft asset이 store/document에 추가된다.
+- PR 1 완료: builder opening step에서 벽 선택, opening 선택/드래그, offset/width/height/sill 조정, 삭제, edge clearance/overlap block을 지원하고 `verify:room-openings`로 payload persistence와 GLB 존재를 검증한다.
+- PR 2 완료: wall/floor preset을 clean commercial default 중심으로 재분류하고, builder finish 목록과 thumbnail preview를 texture preset metadata에서 파생한다. `verify:material-presets`로 preset 수, default cleanliness, asset existence, builder parity를 검증한다.
+- PR 3 완료: builder lighting step은 direct fixture count 1/2/3/4/6, 2D layout drag, intensity, color temperature, beam radius/spread 조정을 지원한다. `LightingSettings.fixtures[]`를 save/load/viewer payload에 보존하고 `verify:lighting-layout`로 검증한다.
+
+다음 순서:
+- 전체 gate(`type-check`, `lint`, `build`, interaction/focus/placement/render/viewer parity, 신규 4개 verify)를 통과시킨다.
+- 가능하면 local Supabase와 production Supabase evidence를 구분해 `functional:e2e:browser` 결과를 기록한다.
+
+Added:
+- `verify:inventory-ghost-placement`, `verify:room-openings`, `verify:material-presets`, `verify:lighting-layout`.
+- `LightingFixture` 저장 계약과 direct fixture layout builder UI.
+- opening placement issue contract(`EDGE_CLEARANCE`, `OPENING_OVERLAP`, `WALL_MISSING`).
+
+Updated:
+- P1 room builder 범위는 shape/dimension/style에서 opening 조작, clean material preset, persisted lighting fixture layout까지 확장한다.
+- P2 walk placement의 핵심 acceptance는 inventory ghost placement의 no-auto-commit 원칙을 포함한다.
+
+Removed/Deprecated:
+- inventory click 즉시 확정 배치.
+- direct lighting fixed 3 auto layout.
+- default material preset에 damaged/dirty/industrial wall을 노출하는 구성.

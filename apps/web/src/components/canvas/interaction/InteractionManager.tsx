@@ -6,7 +6,11 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useFocusPlacementStore } from "../../../lib/stores/useFocusPlacementStore";
 import { useInteractionStore, type InteractionHint } from "../../../lib/stores/useInteractionStore";
+import { useWalkInventoryStore } from "../../../lib/stores/useWalkInventoryStore";
+import { useAssetSelector, useShellSelector } from "../../../lib/stores/scene-slices";
 import { scheduleInteractionLatency } from "../../../lib/performance/scene-telemetry";
+import { constrainPlacementToAnchor } from "../../../lib/scene/anchors";
+import { previewRuntimeAssetTransform } from "../../../lib/runtime/runtime-asset-bridge";
 import {
   dispatchWalkFocusPlacementAim,
   resolveFocusPlacementAimRequest,
@@ -34,15 +38,23 @@ export function useInteractionRegistry() {
 }
 
 const INTERACTION_DISTANCE = 2.4;
+const INVENTORY_GHOST_DISTANCE = 2.1;
+const groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 
 export default function InteractionManager({ children }: InteractionManagerProps) {
   const viewMode = useEditorStore((state) => state.viewMode);
   const readOnly = useEditorStore((state) => state.readOnly);
   const hasActiveFocusPlacement = useFocusPlacementStore((state) => Boolean(state.activeSession));
   const hasPendingFocusPlacement = useFocusPlacementStore((state) => Boolean(state.pendingRequest));
+  const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
+  const sceneAssets = useAssetSelector((slice) => slice.assets);
+  const walls = useShellSelector((slice) => slice.walls);
+  const ceilings = useShellSelector((slice) => slice.ceilings);
+  const scale = useShellSelector((slice) => slice.scale);
   const setHint = useInteractionStore((state) => state.setHint);
   const hoveredRef = useRef<THREE.Object3D | null>(null);
   const lastAimKeyRef = useRef<string | null>(null);
+  const lastWorldDraftHintRef = useRef<string | null>(null);
   const targetsRef = useRef<THREE.Object3D[]>([]);
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
@@ -122,6 +134,58 @@ export default function InteractionManager({ children }: InteractionManagerProps
     targetsRef.current = targetsRef.current.filter((entry) => entry !== object);
   }, []);
 
+  const previewWorldInventoryDraft = useCallback(() => {
+    if (!placementDraft || placementDraft.placementMode !== "world") {
+      return false;
+    }
+
+    const draftAsset =
+      sceneAssets.find((asset) => asset.id === placementDraft.objectId) ?? placementDraft.asset;
+    if (!draftAsset) {
+      return false;
+    }
+
+    raycaster.setFromCamera(screenCenter, camera);
+    const intersection = new THREE.Vector3();
+    const hasGroundHit = raycaster.ray.intersectPlane(groundPlane, intersection);
+    const cameraForward = new THREE.Vector3();
+    camera.getWorldDirection(cameraForward);
+    const targetPosition = hasGroundHit
+      ? intersection
+      : camera.position.clone().add(cameraForward.multiplyScalar(INVENTORY_GHOST_DISTANCE));
+    const anchoredPlacement = constrainPlacementToAnchor(
+      {
+        position: [targetPosition.x, draftAsset.position[1], targetPosition.z],
+        rotation: draftAsset.rotation,
+        anchorType: draftAsset.anchorType,
+        supportAssetId: draftAsset.supportAssetId
+      },
+      {
+        walls,
+        ceilings,
+        scale,
+        sceneAssets,
+        activeAssetId: draftAsset.id
+      }
+    );
+
+    previewRuntimeAssetTransform(draftAsset.id, {
+      position: anchoredPlacement.position,
+      rotation: anchoredPlacement.rotation,
+      scale: draftAsset.scale
+    });
+    if (lastWorldDraftHintRef.current !== draftAsset.id) {
+      lastWorldDraftHintRef.current = draftAsset.id;
+      setHint({
+        label: "Click/Enter — 배치 확정 · Esc — 취소",
+        actionable: true,
+        tone: "ready"
+      });
+    }
+    invalidate();
+    return true;
+  }, [camera, ceilings, invalidate, placementDraft, raycaster, scale, sceneAssets, screenCenter, setHint, walls]);
+
   const findInteractiveTarget = useCallback((object: THREE.Object3D | null) => {
     let current = object;
     while (current) {
@@ -164,10 +228,18 @@ export default function InteractionManager({ children }: InteractionManagerProps
   useFrame(() => {
     if (viewMode !== "walk" || readOnly) {
       if (hoveredRef.current) setHover(null);
+      lastWorldDraftHintRef.current = null;
       return;
     }
+    const previewedDraft = previewWorldInventoryDraft();
+    if (!previewedDraft && lastWorldDraftHintRef.current) {
+      lastWorldDraftHintRef.current = null;
+      if (!hoveredRef.current) {
+        setHint(null);
+      }
+    }
     if (targetsRef.current.length === 0) {
-      if (hoveredRef.current) setHover(null);
+      if (!previewedDraft && hoveredRef.current) setHover(null);
       return;
     }
     const startedAt = performance.now();
@@ -182,7 +254,9 @@ export default function InteractionManager({ children }: InteractionManagerProps
         targetId: interactive?.name ?? null
       });
     }
-    setHover(interactive);
+    if (!previewedDraft) {
+      setHover(interactive);
+    }
     dispatchCrosshairAim(interactive, firstHit);
   });
 

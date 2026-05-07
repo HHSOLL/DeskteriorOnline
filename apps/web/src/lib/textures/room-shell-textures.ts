@@ -8,8 +8,13 @@ export type RuntimeTextureSet = {
 export type RoomShellTextureSourceResolution = "1k" | "2k" | "4k" | "unknown";
 export type RoomShellTextureQualityTier = "commercial_pbr" | "generic_candidate";
 export type RoomShellTextureSourceKind = "reference_pbr" | "generic_ai_candidate";
+export type RoomShellTextureUseCategory = "commercial_default" | "commercial_option" | "special_industrial";
 
 export type RoomShellTexturePreset = RuntimeTextureSet & {
+  id: string;
+  name: string;
+  category: string;
+  useCategory: RoomShellTextureUseCategory;
   topColor: string;
   color?: string;
   roughness: number;
@@ -27,6 +32,10 @@ export type RoomShellTexturePreset = RuntimeTextureSet & {
 };
 
 type RoomShellTexturePresetDefinition = RuntimeTextureSet & {
+  id?: string;
+  name?: string;
+  category?: string;
+  useCategory?: RoomShellTextureUseCategory;
   topColor: string;
   color?: string;
   roughness: number;
@@ -57,9 +66,14 @@ function defineRoomShellTexturePreset(preset: RoomShellTexturePresetDefinition):
   const sourceResolution = preset.sourceResolution ?? inferTextureSourceResolution(preset.map);
   const qualityTier =
     preset.qualityTier ?? (sourceKind === "generic_ai_candidate" ? "generic_candidate" : "commercial_pbr");
+  const id = preset.id ?? deriveTexturePresetId(preset.map);
 
   return {
     ...preset,
+    id,
+    name: preset.name ?? humanizeTexturePresetId(id),
+    category: preset.category ?? "Special",
+    useCategory: preset.useCategory ?? "commercial_option",
     previewThumbnail: preset.previewThumbnail ?? preset.map,
     rotationRadians: preset.rotationRadians ?? 0,
     sourceResolution,
@@ -68,6 +82,24 @@ function defineRoomShellTexturePreset(preset: RoomShellTexturePresetDefinition):
     requiresKtx2Runtime: qualityTier === "commercial_pbr",
     fallbackMaxResolution: "1k"
   };
+}
+
+function deriveTexturePresetId(pathValue: string) {
+  const filename = pathValue.split("/").pop() ?? "room-shell-texture";
+  return filename
+    .replace(/\.(png|jpg|jpeg|webp)$/i, "")
+    .replace(/_(diff|basecolor|base_color)_(1k|2k|4k)$/i, "")
+    .replace(/[^a-z0-9]+/gi, "-")
+    .replace(/^-+|-+$/g, "")
+    .toLowerCase();
+}
+
+function humanizeTexturePresetId(id: string) {
+  return id
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function inferTextureSourceResolution(pathValue: string): RoomShellTextureSourceResolution {
@@ -104,6 +136,10 @@ export const MAX_COMMERCIAL_FLOOR_TEXTURE_PRESETS = 12;
 
 export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
   defineRoomShellTexturePreset({
+    id: "matte-white-paint",
+    name: "Matte White Paint",
+    category: "Clean Paint",
+    useCategory: "commercial_default",
     topColor: "#f1eee8",
     map: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_diff_2k.jpg",
     roughnessMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_rough_2k.jpg",
@@ -118,32 +154,44 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2.4, 2.4]
   }),
   defineRoomShellTexturePreset({
-    topColor: "#babcc0",
+    id: "warm-white-paint",
+    name: "Warm White Paint",
+    category: "Clean Paint",
+    useCategory: "commercial_default",
+    topColor: "#dfddd7",
     map: "/assets/textures/painted_plaster_wall_2k.blend/textures/painted_plaster_wall_diff_2k.jpg",
     roughnessMap: "/assets/textures/painted_plaster_wall_2k.blend/textures/painted_plaster_wall_disp_2k.png",
     normalMap: "/assets/textures/painted_plaster_wall_2k.blend/textures/painted_plaster_wall_disp_2k.png",
     bumpMap: "/assets/textures/painted_plaster_wall_2k.blend/textures/painted_plaster_wall_disp_2k.png",
-    color: "#e0e0e0",
-    roughness: 0.7,
+    color: "#eee9df",
+    roughness: 0.82,
     bumpScale: 0.012,
     normalScale: 0.3,
     envMapIntensity: 0.4,
     repeatScaleMeters: [2.2, 2.2]
   }),
   defineRoomShellTexturePreset({
-    topColor: "#6a6865",
-    map: "/assets/textures/concrete_wall_007_2k.blend/textures/concrete_wall_007_diff_2k.jpg",
-    roughnessMap: "/assets/textures/concrete_wall_007_2k.blend/textures/concrete_wall_007_disp_2k.png",
-    normalMap: "/assets/textures/concrete_wall_007_2k.blend/textures/concrete_wall_007_disp_2k.png",
-    bumpMap: "/assets/textures/concrete_wall_007_2k.blend/textures/concrete_wall_007_disp_2k.png",
-    color: "#333333",
-    roughness: 0.92,
-    bumpScale: 0.015,
-    normalScale: 0.35,
-    envMapIntensity: 0.25,
-    repeatScaleMeters: [3, 3]
+    id: "beige-plaster",
+    name: "Beige Plaster",
+    category: "Clean Plaster",
+    useCategory: "commercial_default",
+    topColor: "#ded4c3",
+    map: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_diff_2k.jpg",
+    roughnessMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_rough_2k.jpg",
+    normalMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_disp_2k.png",
+    bumpMap: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_disp_2k.png",
+    color: "#e2d6c4",
+    roughness: 0.88,
+    bumpScale: 0.008,
+    normalScale: 0.18,
+    envMapIntensity: 0.38,
+    repeatScaleMeters: [2.4, 2.4]
   }),
   defineRoomShellTexturePreset({
+    id: "light-grey-plaster",
+    name: "Light Grey Plaster",
+    category: "Clean Paint",
+    useCategory: "commercial_default",
     topColor: "#c8c7c2",
     map: "/assets/textures/grey_plaster_02/grey_plaster_02_diff_2k.jpg",
     roughnessMap: "/assets/textures/grey_plaster_02/grey_plaster_02_rough_2k.jpg",
@@ -157,19 +205,27 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2.5, 2.5]
   }),
   defineRoomShellTexturePreset({
-    topColor: "#9d9892",
-    map: "/assets/textures/concrete_layers_02/concrete_layers_02_diff_2k.jpg",
-    roughnessMap: "/assets/textures/concrete_layers_02/concrete_layers_02_rough_2k.jpg",
-    normalMap: "/assets/textures/concrete_layers_02/concrete_layers_02_disp_2k.jpg",
-    bumpMap: "/assets/textures/concrete_layers_02/concrete_layers_02_disp_2k.jpg",
-    color: "#cbc6be",
-    roughness: 0.88,
-    bumpScale: 0.013,
-    normalScale: 0.3,
-    envMapIntensity: 0.34,
-    repeatScaleMeters: [2.8, 2.8]
+    id: "greige-clean-plaster",
+    name: "Greige Clean Plaster",
+    category: "Clean Plaster",
+    useCategory: "commercial_default",
+    topColor: "#d4d0c7",
+    map: "/assets/textures/grey_plaster_02/grey_plaster_02_diff_2k.jpg",
+    roughnessMap: "/assets/textures/grey_plaster_02/grey_plaster_02_rough_2k.jpg",
+    normalMap: "/assets/textures/grey_plaster_02/grey_plaster_02_disp_2k.jpg",
+    bumpMap: "/assets/textures/grey_plaster_02/grey_plaster_02_disp_2k.jpg",
+    color: "#d9d3c9",
+    roughness: 0.86,
+    bumpScale: 0.01,
+    normalScale: 0.22,
+    envMapIntensity: 0.38,
+    repeatScaleMeters: [2.5, 2.5]
   }),
   defineRoomShellTexturePreset({
+    id: "light-oak-wall-panel",
+    name: "Light Oak Wall Panel",
+    category: "Wood Panel",
+    useCategory: "commercial_option",
     topColor: "#b08a62",
     map: "/assets/textures/oak_veneer_01/oak_veneer_01_diff_2k.jpg",
     roughnessMap: "/assets/textures/oak_veneer_01/oak_veneer_01_rough_2k.jpg",
@@ -184,6 +240,10 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     rotationRadians: Math.PI / 2
   }),
   defineRoomShellTexturePreset({
+    id: "walnut-accent-wall",
+    name: "Walnut Accent Wall",
+    category: "Wood Panel",
+    useCategory: "commercial_option",
     topColor: "#8f6c52",
     map: "/assets/textures/kitchen_wood/kitchen_wood_diff_2k.jpg",
     roughnessMap: "/assets/textures/kitchen_wood/kitchen_wood_rough_2k.jpg",
@@ -198,6 +258,10 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     rotationRadians: Math.PI / 2
   }),
   defineRoomShellTexturePreset({
+    id: "warm-wood-slat-panel",
+    name: "Warm Wood Slat Panel",
+    category: "Acoustic Panel",
+    useCategory: "commercial_option",
     topColor: "#7d7268",
     map: "/assets/textures/wood_table_worn/wood_table_worn_diff_2k.jpg",
     roughnessMap: "/assets/textures/wood_table_worn/wood_table_worn_rough_2k.jpg",
@@ -212,6 +276,10 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     rotationRadians: Math.PI / 2
   }),
   defineRoomShellTexturePreset({
+    id: "acoustic-felt-panel",
+    name: "Acoustic Felt Panel",
+    category: "Acoustic Panel",
+    useCategory: "commercial_option",
     topColor: "#7f7770",
     map: "/assets/textures/fabric_leather_01/fabric_leather_01_diff_2k.jpg",
     roughnessMap: "/assets/textures/fabric_leather_01/fabric_leather_01_rough_2k.jpg",
@@ -225,6 +293,10 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [1.25, 1.25]
   }),
   defineRoomShellTexturePreset({
+    id: "subtle-terrazzo-wall-tile",
+    name: "Subtle Terrazzo Wall Tile",
+    category: "Special / Tile",
+    useCategory: "commercial_option",
     topColor: "#c6c2b7",
     map: "/assets/textures/terrazzo_tiles/terrazzo_tiles_diff_2k.jpg",
     roughnessMap: "/assets/textures/terrazzo_tiles/terrazzo_tiles_rough_2k.jpg",
@@ -241,6 +313,10 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
 
 export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
   defineRoomShellTexturePreset({
+    id: "light-oak-boards",
+    name: "Light Oak Boards",
+    category: "Wood",
+    useCategory: "commercial_default",
     topColor: "#9f7b58",
     map: "/assets/textures/wood_floor/wood_floor_diff_2k.jpg",
     roughnessMap: "/assets/textures/wood_floor/wood_floor_rough_2k.jpg",
@@ -253,6 +329,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2.4, 2.4]
   }),
   defineRoomShellTexturePreset({
+    id: "grey-concrete-floor",
+    name: "Grey Concrete Floor",
+    category: "Concrete",
+    useCategory: "commercial_option",
     topColor: "#8f8479",
     map: "/assets/textures/concrete_floor_worn_001_2k.blend/textures/concrete_floor_worn_001_diff_2k.jpg",
     roughnessMap: "/assets/textures/concrete_floor_worn_001_2k.blend/textures/concrete_floor_worn_001_rough_2k.jpg",
@@ -264,6 +344,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2.8, 2.8]
   }),
   defineRoomShellTexturePreset({
+    id: "beige-stone-tile",
+    name: "Beige Stone Tile",
+    category: "Tile",
+    useCategory: "commercial_default",
     topColor: "#cbc4ba",
     map: "/assets/textures/marble_01_2k.blend/textures/marble_01_diff_2k.jpg",
     roughnessMap: "/assets/textures/marble_01_2k.blend/textures/marble_01_rough_2k.jpg",
@@ -276,6 +360,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     rotationRadians: Math.PI / 2
   }),
   defineRoomShellTexturePreset({
+    id: "warm-laminate",
+    name: "Warm Laminate",
+    category: "Wood",
+    useCategory: "commercial_default",
     topColor: "#b89e7e",
     map: "/assets/textures/laminate_floor_02/laminate_floor_02_diff_2k.jpg",
     roughnessMap: "/assets/textures/laminate_floor_02/laminate_floor_02_rough_2k.jpg",
@@ -287,6 +375,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2.2, 2.2]
   }),
   defineRoomShellTexturePreset({
+    id: "natural-oak-boards",
+    name: "Natural Oak Boards",
+    category: "Wood",
+    useCategory: "commercial_default",
     topColor: "#9f7b58",
     map: "/assets/textures/wood_floor/wood_floor_diff_2k.jpg",
     roughnessMap: "/assets/textures/wood_floor/wood_floor_rough_2k.jpg",
@@ -298,6 +390,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2.4, 2.4]
   }),
   defineRoomShellTexturePreset({
+    id: "warm-resilient-floor",
+    name: "Warm Resilient Floor",
+    category: "Resilient",
+    useCategory: "commercial_option",
     topColor: "#8b6543",
     map: "/assets/textures/linoleum_brown/linoleum_brown_diff_2k.jpg",
     roughnessMap: "/assets/textures/linoleum_brown/linoleum_brown_rough_2k.jpg",
@@ -309,6 +405,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2, 2]
   }),
   defineRoomShellTexturePreset({
+    id: "subtle-terrazzo-floor",
+    name: "Subtle Terrazzo Floor",
+    category: "Tile",
+    useCategory: "commercial_default",
     topColor: "#d7d0c5",
     map: "/assets/textures/terrazzo_tiles/terrazzo_tiles_diff_2k.jpg",
     roughnessMap: "/assets/textures/terrazzo_tiles/terrazzo_tiles_rough_2k.jpg",
@@ -320,6 +420,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [1.8, 1.8]
   }),
   defineRoomShellTexturePreset({
+    id: "office-rubber-tile",
+    name: "Office Rubber Tile",
+    category: "Special / Office",
+    useCategory: "commercial_option",
     topColor: "#adb0b2",
     map: "/assets/textures/anti_skid_tiles/anti_skid_tiles_diff_2k.jpg",
     roughnessMap: "/assets/textures/anti_skid_tiles/anti_skid_tiles_rough_2k.jpg",
@@ -331,6 +435,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [1.4, 1.4]
   }),
   defineRoomShellTexturePreset({
+    id: "textured-dark-carpet",
+    name: "Textured Dark Carpet",
+    category: "Special / Carpet",
+    useCategory: "special_industrial",
     topColor: "#6f6258",
     map: "/assets/textures/dirty_carpet/dirty_carpet_diff_2k.jpg",
     roughnessMap: "/assets/textures/dirty_carpet/dirty_carpet_rough_2k.jpg",
@@ -342,6 +450,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2.1, 2.1]
   }),
   defineRoomShellTexturePreset({
+    id: "soft-polished-concrete",
+    name: "Soft Polished Concrete",
+    category: "Concrete",
+    useCategory: "commercial_option",
     topColor: "#8d8880",
     map: "/assets/textures/concrete_layers_02/concrete_layers_02_diff_2k.jpg",
     roughnessMap: "/assets/textures/concrete_layers_02/concrete_layers_02_rough_2k.jpg",
@@ -353,6 +465,10 @@ export const FLOOR_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     repeatScaleMeters: [2.8, 2.8]
   }),
   defineRoomShellTexturePreset({
+    id: "walnut-boards",
+    name: "Walnut Boards",
+    category: "Wood",
+    useCategory: "commercial_option",
     topColor: "#a27d5f",
     map: "/assets/textures/wood_table_worn/wood_table_worn_diff_2k.jpg",
     roughnessMap: "/assets/textures/wood_table_worn/wood_table_worn_rough_2k.jpg",

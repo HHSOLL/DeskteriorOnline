@@ -1189,3 +1189,35 @@ Updated:
 Removed/Deprecated:
 - Vercel 새 배포가 기존 브라우저의 Supabase 로그인 세션을 자동 초기화한다는 기대.
 - Vercel dashboard preview panel 403만으로 production app 접속 장애로 판정하는 절차.
+
+## 2026-05-04 변경 동기화 (Inventory Thumbnail QA)
+Added:
+- 워크뷰에서 `I`로 inventory를 열었을 때 각 asset 카드가 제품 thumbnail image 또는 fallback visual preview를 보여주는지 확인한다.
+- `npm --workspace apps/web run verify:inventory-thumbnails`로 catalog thumbnail coverage와 public thumbnail 파일 존재를 확인한다.
+
+Updated:
+- 워크뷰 asset 선택 QA는 제품명/collection text 확인에서 실제 생김새를 보고 선택할 수 있는 visual picker 확인까지 포함한다.
+
+Removed/Deprecated:
+- inventory card가 이름과 가격/치수 텍스트만 보여도 사용자가 충분히 asset을 식별할 수 있다는 QA 기준.
+
+## 2026-05-06 변경 동기화 (Commercial Builder/Placement QA)
+Added:
+- 워크뷰 inventory에서 item을 클릭했을 때 즉시 배치되지 않고 ghost preview만 나타나는지 확인한다. valid 위치 click/`Enter` 전에는 저장 payload에 draft asset이 없어야 한다.
+- invalid 위치 click은 commit 없이 blocked toast를 보여야 하며, `Escape`는 draft/preview를 폐기해야 한다.
+- builder 3단계에서 벽을 선택하고 문/창문 segment를 드래그해 wallId/offset이 바뀌는지 확인한다. opening overlap 또는 corner edge clearance 위반 상태에서는 다음 단계 진행을 막아야 한다.
+- builder 4단계에서 clean wall/floor preset thumbnail이 실제 texture와 유사하게 보이는지 확인한다. damaged/dirty wall texture는 default 선택지로 보이면 안 된다.
+- builder 5단계 direct lighting에서 1/3/6개 fixture count, 2D 위치 drag, 밝기, 색온도, beam radius/spread 변경이 preview와 저장 payload에 반영되는지 확인한다.
+- 신규 검증 명령:
+  `npm --workspace apps/web run verify:inventory-ghost-placement`
+  `npm --workspace apps/web run verify:room-openings`
+  `npm --workspace apps/web run verify:material-presets`
+  `npm --workspace apps/web run verify:lighting-layout`
+
+Updated:
+- room builder QA는 보기 좋은 preview만 확인하지 않고, 조작 가능성, validation, save/reload/share parity를 함께 확인한다.
+- walk placement QA는 inventory thumbnail 확인 이후 ghost preview, valid commit, invalid blocked, cancel까지 한 흐름으로 확인한다.
+
+Removed/Deprecated:
+- inventory click 직후 정면 자동 배치를 정상 UX로 보는 절차.
+- lighting step에서 direct/indirect 카드만 선택하면 충분하다고 보는 절차.

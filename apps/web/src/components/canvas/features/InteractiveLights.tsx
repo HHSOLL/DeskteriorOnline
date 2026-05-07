@@ -3,6 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
+import {
+  computeLightingBoundsMm,
+  resolveLightingFixtureColor,
+  resolveLightingFixtures
+} from "../../../lib/scene/lighting-layout";
 import { useShellSelector } from "../../../lib/stores/scene-slices";
 import { useInteractionRegistry } from "../interaction/InteractionManager";
 
@@ -11,9 +16,11 @@ type LightSpec = {
   position: [number, number, number];
   intensity: number;
   beamRadius: number;
+  spread: number;
+  color: string;
 };
 
-function createBeamMaterial(height: number, opacity: number) {
+function createBeamMaterial(height: number, opacity: number, color: string) {
   return new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -22,7 +29,7 @@ function createBeamMaterial(height: number, opacity: number) {
     uniforms: {
       uHeight: { value: height },
       uOpacity: { value: opacity },
-      uColor: { value: new THREE.Color("#ffe6af") }
+      uColor: { value: new THREE.Color(color) }
     },
     vertexShader: `
       varying vec3 vLocalPosition;
@@ -50,7 +57,7 @@ function createBeamMaterial(height: number, opacity: number) {
   });
 }
 
-function createFloorGlowMaterial(opacity: number) {
+function createFloorGlowMaterial(opacity: number, color: string) {
   return new THREE.ShaderMaterial({
     transparent: true,
     depthWrite: false,
@@ -58,7 +65,7 @@ function createFloorGlowMaterial(opacity: number) {
     blending: THREE.AdditiveBlending,
     uniforms: {
       uOpacity: { value: opacity },
-      uColor: { value: new THREE.Color("#ffde9a") }
+      uColor: { value: new THREE.Color(color) }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -134,8 +141,8 @@ function LightFixture({
   const targetRef = useRef<THREE.Object3D | null>(null);
   const [isOn, setIsOn] = useState(true);
   const beamHeight = Math.max(1.4, spec.position[1] - 0.04);
-  const beamMaterial = useMemo(() => createBeamMaterial(beamHeight, 0), [beamHeight]);
-  const floorGlowMaterial = useMemo(() => createFloorGlowMaterial(0), []);
+  const beamMaterial = useMemo(() => createBeamMaterial(beamHeight, 0, spec.color), [beamHeight, spec.color]);
+  const floorGlowMaterial = useMemo(() => createFloorGlowMaterial(0, spec.color), [spec.color]);
   const targetObject = useMemo(() => new THREE.Object3D(), []);
 
   useEffect(() => {
@@ -235,12 +242,12 @@ function LightFixture({
         position={[0, 0.02, 0]}
         intensity={0}
         distance={beamHeight * 2.35}
-        angle={0.58}
+        angle={spec.spread}
         penumbra={0.62}
         decay={1.7}
-        color="#ffe9bb"
+        color={spec.color}
       />
-      <pointLight ref={fillRef} position={[0, -0.12, 0]} intensity={0} distance={3.6} decay={2.2} color="#fff1d3" />
+      <pointLight ref={fillRef} position={[0, -0.12, 0]} intensity={0} distance={3.6} decay={2.2} color={spec.color} />
     </group>
   );
 }
@@ -318,84 +325,35 @@ function IndirectCeilingGlow({
   );
 }
 
-function computeBounds(walls: { start: [number, number]; end: [number, number]; height: number }[], scale: number) {
-  if (walls.length === 0) {
-    return { minX: -2, maxX: 2, minZ: -2, maxZ: 2, ceilingHeight: 2.35 };
-  }
-
-  let minX = Infinity;
-  let maxX = -Infinity;
-  let minZ = Infinity;
-  let maxZ = -Infinity;
-  let ceilingHeight = 2.35;
-
-  walls.forEach((wall) => {
-    [wall.start, wall.end].forEach(([x, z]) => {
-      const scaledX = x * scale;
-      const scaledZ = z * scale;
-      minX = Math.min(minX, scaledX);
-      maxX = Math.max(maxX, scaledX);
-      minZ = Math.min(minZ, scaledZ);
-      maxZ = Math.max(maxZ, scaledZ);
-    });
-    ceilingHeight = Math.max(ceilingHeight, wall.height * scale - 0.15);
-  });
-
-  return { minX, maxX, minZ, maxZ, ceilingHeight };
-}
-
 export default function InteractiveLights() {
   const walls = useShellSelector((slice) => slice.walls);
   const scale = useShellSelector((slice) => slice.scale);
   const lighting = useShellSelector((slice) => slice.lighting);
 
   const layout = useMemo(() => {
-    const bounds = computeBounds(walls, scale);
-    const centerX = (bounds.minX + bounds.maxX) / 2;
-    const centerZ = (bounds.minZ + bounds.maxZ) / 2;
-    const width = Math.max(2, bounds.maxX - bounds.minX);
-    const depth = Math.max(2, bounds.maxZ - bounds.minZ);
-    const height = bounds.ceilingHeight;
-
-    const fixtures: LightSpec[] = [
-      {
-        id: "light-center",
-        position: [centerX, height, centerZ],
-        intensity: 0.74,
-        beamRadius: Math.max(0.92, Math.min(width, depth) * 0.26)
-      }
-    ];
-
-    const shouldAddSideFixtures = Math.max(width, depth) > 5.6;
-    if (shouldAddSideFixtures) {
-      if (width >= depth) {
-        fixtures.push({
-          id: "light-west",
-          position: [centerX - width * 0.22, height, centerZ],
-          intensity: 0.54,
-          beamRadius: Math.max(0.86, depth * 0.22)
-        });
-        fixtures.push({
-          id: "light-east",
-          position: [centerX + width * 0.22, height, centerZ],
-          intensity: 0.54,
-          beamRadius: Math.max(0.86, depth * 0.22)
-        });
-      } else {
-        fixtures.push({
-          id: "light-north",
-          position: [centerX, height, centerZ - depth * 0.22],
-          intensity: 0.54,
-          beamRadius: Math.max(0.86, width * 0.22)
-        });
-        fixtures.push({
-          id: "light-south",
-          position: [centerX, height, centerZ + depth * 0.22],
-          intensity: 0.54,
-          beamRadius: Math.max(0.86, width * 0.22)
-        });
-      }
-    }
+    const bounds = computeLightingBoundsMm(walls, scale);
+    const centerX = (bounds.minXMm + bounds.maxXMm) / 2000;
+    const centerZ = (bounds.minZMm + bounds.maxZMm) / 2000;
+    const width = Math.max(2, (bounds.maxXMm - bounds.minXMm) / 1000);
+    const depth = Math.max(2, (bounds.maxZMm - bounds.minZMm) / 1000);
+    const height = bounds.ceilingHeightMm / 1000;
+    const fixtures: LightSpec[] =
+      lighting.mode === "direct"
+        ? resolveLightingFixtures(lighting.fixtures, bounds, 3)
+            .filter((fixture) => fixture.enabled)
+            .map((fixture) => ({
+              id: fixture.id,
+              position: [
+                fixture.positionMm[0] / 1000,
+                fixture.positionMm[1] / 1000,
+                fixture.positionMm[2] / 1000
+              ],
+              intensity: fixture.intensity,
+              beamRadius: fixture.beamRadiusMm / 1000,
+              spread: fixture.spread,
+              color: resolveLightingFixtureColor(fixture.colorTemperature)
+            }))
+        : [];
 
     return {
       centerX,
@@ -405,7 +363,7 @@ export default function InteractiveLights() {
       height,
       fixtures
     };
-  }, [scale, walls]);
+  }, [lighting.fixtures, lighting.mode, scale, walls]);
 
   if (lighting.mode === "indirect") {
     return (

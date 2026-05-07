@@ -12,6 +12,7 @@ import type {
 } from "../builder/catalog";
 import { normalizeSceneAnchorType, type SceneAnchorType } from "../scene/anchor-types";
 import { constrainPlacementToAnchor } from "../scene/anchors";
+import type { LightingFixture } from "../scene/lighting-layout";
 import {
   normalizeAssetSupportProfile,
   type AssetSupportProfile
@@ -184,6 +185,7 @@ export type LightingSettings = {
   environmentBlur: number;
   accentIntensity: number;
   beamOpacity: number;
+  fixtures?: LightingFixture[];
 };
 
 export type Comment = {
@@ -298,7 +300,8 @@ const DEFAULT_LIGHTING: LightingSettings = {
   directionalIntensity: 1.24,
   environmentBlur: 0.14,
   accentIntensity: 0.82,
-  beamOpacity: 0.18
+  beamOpacity: 0.18,
+  fixtures: []
 };
 
 const initialSceneState: SceneDataState = {
@@ -737,6 +740,7 @@ export const useSceneStore = create<SceneState>((set) => ({
           anchorType: normalizeSceneAnchorType(asset.anchorType),
           supportAssetId: normalizeSupportAssetId(asset.supportAssetId),
           supportProfile: normalizeAssetSupportProfile(asset.supportProfile),
+          placement: asset.placement ?? null,
           position: asset.position,
           rotation: asset.rotation,
           scale: asset.scale,

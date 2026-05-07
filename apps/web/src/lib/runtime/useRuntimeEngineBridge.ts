@@ -9,6 +9,7 @@ import {
   buildSceneDocumentV2FromStore,
   createEditorRuntimeEngine
 } from "./legacy-scene-runtime";
+import { useWalkInventoryStore } from "../stores/useWalkInventoryStore";
 
 declare global {
   interface Window {
@@ -34,7 +35,14 @@ export function useRuntimeEngineBridge() {
     lighting
   } = useShellStore();
   const { assets } = useAssetStore();
+  const placementDraft = useWalkInventoryStore((state) => state.placementDraft);
   const engineRef = useRef<Engine | null>(null);
+  const runtimeAssetsInput = useMemo(() => {
+    if (!placementDraft?.asset || assets.some((asset) => asset.id === placementDraft.objectId)) {
+      return assets;
+    }
+    return [...assets, placementDraft.asset];
+  }, [assets, placementDraft]);
 
   const runtimeInput = useMemo(
     () => ({
@@ -47,14 +55,13 @@ export function useRuntimeEngineBridge() {
       rooms,
       cameraAnchors,
       navGraph,
-      assets,
+      assets: runtimeAssetsInput,
       wallMaterialIndex,
       floorMaterialIndex,
       ceilingMaterialIndex,
       lighting
     }),
     [
-      assets,
       cameraAnchors,
       ceilingMaterialIndex,
       ceilings,
@@ -64,6 +71,7 @@ export function useRuntimeEngineBridge() {
       navGraph,
       openings,
       rooms,
+      runtimeAssetsInput,
       scale,
       scaleInfo,
       wallMaterialIndex,

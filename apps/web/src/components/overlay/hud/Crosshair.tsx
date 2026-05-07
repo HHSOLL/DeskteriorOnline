@@ -52,7 +52,9 @@ export default function Crosshair() {
         ? `Click/E — ${hint.label}`
         : hint.label
       : placementDraft
-        ? `${placementDraft.label} · 표면 조준`
+        ? placementDraft.placementMode === "surface"
+          ? `${placementDraft.label} · 호환 표면 조준`
+          : `${placementDraft.label} · ghost 배치`
         : "I — 인벤토리";
   const controlText = pointerLockBlocked
     ? "Mouse look paused · close panels or click scene"

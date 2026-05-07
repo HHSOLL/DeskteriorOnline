@@ -924,13 +924,26 @@ function normalizeCatalogUrl(value: unknown) {
   return null;
 }
 
+function normalizeCatalogImagePath(value: unknown) {
+  const normalized = normalizeCatalogText(value);
+  if (!normalized) return null;
+  if (
+    normalized.startsWith("http://") ||
+    normalized.startsWith("https://") ||
+    normalized.startsWith("/")
+  ) {
+    return normalized;
+  }
+  return null;
+}
+
 function normalizeCatalogImageUrl(record: Record<string, unknown>) {
   return (
-    normalizeCatalogUrl(record.thumbnail) ??
-    normalizeCatalogUrl(record.thumbnailUrl) ??
-    normalizeCatalogUrl(record.image) ??
-    normalizeCatalogUrl(record.imageUrl) ??
-    normalizeCatalogUrl(record.previewImageUrl)
+    normalizeCatalogImagePath(record.thumbnail) ??
+    normalizeCatalogImagePath(record.thumbnailUrl) ??
+    normalizeCatalogImagePath(record.image) ??
+    normalizeCatalogImagePath(record.imageUrl) ??
+    normalizeCatalogImagePath(record.previewImageUrl)
   );
 }
 
