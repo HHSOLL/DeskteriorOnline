@@ -21,12 +21,14 @@ export type LightingLayoutBoundsMm = {
 };
 
 export const DEFAULT_LIGHTING_LAYOUT_BOUNDS_MM: LightingLayoutBoundsMm = {
-  minXMm: -2200,
-  maxXMm: 2200,
-  minZMm: -1800,
-  maxZMm: 1800,
+  minXMm: -5000,
+  maxXMm: 5000,
+  minZMm: -4000,
+  maxZMm: 4000,
   ceilingHeightMm: 2550
 };
+
+export const DEFAULT_LIGHTING_GRID_SNAP_MM = 500;
 
 const DIRECT_LIGHT_COUNT_OPTIONS = [1, 2, 3, 4, 6] as const;
 
@@ -100,6 +102,61 @@ function resolveFixtureGrid(count: number) {
   return { columns: 3, rows: 2 };
 }
 
+function clampNormalizedRatio(value: number) {
+  return clamp(toFiniteNumber(value, 0.5), 0, 1);
+}
+
+function snapToGridWithinRange(value: number, min: number, max: number, snapMm = DEFAULT_LIGHTING_GRID_SNAP_MM) {
+  const safeMin = Math.min(min, max);
+  const safeMax = Math.max(min, max);
+  const clamped = clamp(value, safeMin, safeMax);
+  if (snapMm <= 1) {
+    return Math.round(clamped);
+  }
+
+  const snappedMin = Math.ceil(safeMin / snapMm) * snapMm;
+  const snappedMax = Math.floor(safeMax / snapMm) * snapMm;
+  if (snappedMin > snappedMax) {
+    return Math.round(clamped);
+  }
+
+  const snapped = Math.round(clamped / snapMm) * snapMm;
+  return clamp(snapped, snappedMin, snappedMax);
+}
+
+export function snapLightingPositionMm(
+  positionMm: [number, number, number],
+  boundsInput = DEFAULT_LIGHTING_LAYOUT_BOUNDS_MM,
+  snapMm = DEFAULT_LIGHTING_GRID_SNAP_MM
+): [number, number, number] {
+  const bounds = resolveSafeBounds(boundsInput);
+  const minX = bounds.minXMm + 250;
+  const maxX = bounds.maxXMm - 250;
+  const minZ = bounds.minZMm + 250;
+  const maxZ = bounds.maxZMm - 250;
+
+  return [
+    snapToGridWithinRange(positionMm[0], minX, maxX, snapMm),
+    Math.round(clamp(positionMm[1], 2100, bounds.ceilingHeightMm)),
+    snapToGridWithinRange(positionMm[2], minZ, maxZ, snapMm)
+  ];
+}
+
+export function resolveLightingPositionMmFromNormalized(
+  xRatioInput: number,
+  zRatioInput: number,
+  boundsInput = DEFAULT_LIGHTING_LAYOUT_BOUNDS_MM,
+  snapMm = DEFAULT_LIGHTING_GRID_SNAP_MM
+): [number, number, number] {
+  const bounds = resolveSafeBounds(boundsInput);
+  const xRatio = clampNormalizedRatio(xRatioInput);
+  const zRatio = clampNormalizedRatio(zRatioInput);
+  const nextX = bounds.minXMm + (bounds.maxXMm - bounds.minXMm) * xRatio;
+  const nextZ = bounds.minZMm + (bounds.maxZMm - bounds.minZMm) * zRatio;
+
+  return snapLightingPositionMm([nextX, bounds.ceilingHeightMm, nextZ], bounds, snapMm);
+}
+
 export function normalizeDirectLightCount(count: number) {
   const normalized = DIRECT_LIGHT_COUNT_OPTIONS.reduce((best, option) => {
     return Math.abs(option - count) < Math.abs(best - count) ? option : best;
@@ -131,13 +188,19 @@ export function createDefaultDirectLightingFixtures(
     const row = Math.floor(index / columns);
     const xRatio = columns === 1 ? 0.5 : column / (columns - 1);
     const zRatio = rows === 1 ? 0.5 : row / (rows - 1);
-    const x = Math.round(minX + (maxX - minX) * xRatio);
-    const z = Math.round(minZ + (maxZ - minZ) * zRatio);
+    const positionMm = snapLightingPositionMm(
+      [
+        minX + (maxX - minX) * xRatio,
+        bounds.ceilingHeightMm,
+        minZ + (maxZ - minZ) * zRatio
+      ],
+      bounds
+    );
 
     fixtures.push({
       id: `ceiling-downlight-${index + 1}`,
       type: "downlight",
-      positionMm: [x, bounds.ceilingHeightMm, z],
+      positionMm,
       intensity: templateFixture?.intensity ?? (count > 3 ? 0.62 : 0.74),
       colorTemperature: templateFixture?.colorTemperature ?? "neutral",
       beamRadiusMm: templateFixture?.beamRadiusMm ?? beamRadiusMm,
@@ -161,6 +224,7 @@ export function normalizeLightingFixture(
   const z = toFiniteNumber(fixture.positionMm?.[2], fallback.positionMm[2]);
   const colorTemperature =
     fixture.colorTemperature === "warm" || fixture.colorTemperature === "cool" ? fixture.colorTemperature : "neutral";
+  const positionMm = snapLightingPositionMm([x, y, z], bounds);
 
   return {
     id: typeof fixture.id === "string" && fixture.id.length > 0 ? fixture.id : `ceiling-downlight-${index + 1}`,
@@ -168,11 +232,7 @@ export function normalizeLightingFixture(
       fixture.type === "ceiling_light" || fixture.type === "indirect_strip" || fixture.type === "downlight"
         ? fixture.type
         : "downlight",
-    positionMm: [
-      Math.round(clamp(x, bounds.minXMm + 250, bounds.maxXMm - 250)),
-      Math.round(clamp(y, 2100, bounds.ceilingHeightMm)),
-      Math.round(clamp(z, bounds.minZMm + 250, bounds.maxZMm - 250))
-    ],
+    positionMm,
     intensity: clamp(toFiniteNumber(fixture.intensity, 0.72), 0.1, 2.4),
     colorTemperature,
     beamRadiusMm: Math.round(clamp(toFiniteNumber(fixture.beamRadiusMm, 1050), 450, 3200)),

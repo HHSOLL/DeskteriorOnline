@@ -56,7 +56,9 @@ import { useFocusPlacementStore } from "../../../../lib/stores/useFocusPlacement
 import { useWalkInventoryStore } from "../../../../lib/stores/useWalkInventoryStore";
 import {
   isEditableWalkKeyboardTarget,
-  isWalkInventoryShortcut
+  isWalkInventoryShortcut,
+  requestWalkKeyboardReset,
+  requestWalkViewportFocus
 } from "../../../../lib/runtime/walk-keyboard";
 import { cancelRuntimeAssetPreview } from "../../../../lib/runtime/runtime-asset-bridge";
 
@@ -303,6 +305,7 @@ export default function ProjectEditorPage() {
     }
     if (mode === "walk" && document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
+      requestAnimationFrame(() => requestWalkViewportFocus("mode-enter"));
     }
     setViewMode(mode);
   };
@@ -488,6 +491,7 @@ export default function ProjectEditorPage() {
       setSelectedAssetId(id);
       setIsTransforming(true);
       setPanels({ assets: false, properties: false });
+      requestAnimationFrame(() => requestWalkViewportFocus("inventory-item-selected"));
       setPlacementDraft({
         objectId: id,
         label: item.label,
@@ -788,15 +792,25 @@ export default function ProjectEditorPage() {
   }, [activeFocusPlacement, cancelWalkInventoryDraft, viewMode]);
 
   const closePanels = useCallback(() => {
+    if (viewMode === "walk") {
+      requestWalkKeyboardReset("close-panels", { focusViewport: true });
+      requestWalkViewportFocus("close-panels");
+    }
     setPanels({ assets: false, properties: false });
-  }, [setPanels]);
+  }, [setPanels, viewMode]);
   const activateAssetPanel = useCallback(() => {
     if (!isWalkInventoryAvailable) return;
+    if (viewMode === "walk") {
+      requestWalkKeyboardReset("open-assets-panel");
+    }
     setPanels({ assets: true, properties: false });
-  }, [isWalkInventoryAvailable, setPanels]);
+  }, [isWalkInventoryAvailable, setPanels, viewMode]);
   const activateInspectorPanel = useCallback(() => {
+    if (viewMode === "walk") {
+      requestWalkKeyboardReset("open-properties-panel");
+    }
     setPanels({ assets: false, properties: true });
-  }, [setPanels]);
+  }, [setPanels, viewMode]);
   const toggleAssetPanel = useCallback(() => {
     if (!isWalkInventoryAvailable) return;
     if (panels.assets && !panels.properties) {
@@ -986,6 +1000,7 @@ export default function ProjectEditorPage() {
                               exit={{ x: -28, opacity: 0 }}
                               transition={{ duration: 0.22, ease: "easeOut" }}
                               className="absolute inset-y-3 left-3 z-[30] flex w-[min(92vw,400px)] flex-col overflow-hidden rounded-[24px] border border-black/10 bg-white/96 shadow-[0_18px_44px_rgba(17,19,22,0.14)]"
+                              data-testid={visiblePanel === "assets" ? "walk-inventory-panel" : "editor-properties-panel"}
                               onClick={(event) => event.stopPropagation()}
                             >
                               {visiblePanel === "assets" ? (

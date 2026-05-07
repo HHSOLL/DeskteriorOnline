@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Component, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
 import { useGLBAsset } from "../../../lib/loaders/AssetLoader";
@@ -11,6 +11,16 @@ import {
   resolveWallInteriorSide
 } from "../../../lib/geometry/wall-finish";
 import { useInteractionRegistry } from "../interaction/InteractionManager";
+import {
+  createProceduralDoorAsset,
+  createProceduralWindowAsset,
+  DOOR_VISUALS,
+  OPENING_TRIM_NODE_NAMES,
+  resolveDoorVariant,
+  resolveWindowVariant,
+  WINDOW_VISUALS,
+  type DoorVariant
+} from "./opening-visuals";
 
 type DoorSpec = {
   id: string;
@@ -34,46 +44,6 @@ type WindowSpec = {
   interiorSide: number;
 };
 
-type DoorVariant = "single" | "double" | "french";
-type WindowVariant = "single" | "wide";
-
-type DoorAssetConfig = {
-  path: string;
-  pivotNames: string[];
-  openRotations: number[];
-};
-
-type WindowAssetConfig = {
-  path: string;
-};
-
-const DOOR_ASSETS: Record<DoorVariant, DoorAssetConfig> = {
-  single: {
-    path: "/assets/models/p2s_opening_door_single/p2s_opening_door_single.glb",
-    pivotNames: ["DoorLeafPivot"],
-    openRotations: [-Math.PI / 2.35]
-  },
-  double: {
-    path: "/assets/models/p2s_opening_door_double/p2s_opening_door_double.glb",
-    pivotNames: ["DoorLeafLeftPivot", "DoorLeafRightPivot"],
-    openRotations: [-Math.PI / 2.5, Math.PI / 2.5]
-  },
-  french: {
-    path: "/assets/models/p2s_opening_door_french/p2s_opening_door_french.glb",
-    pivotNames: ["DoorLeafLeftPivot", "DoorLeafRightPivot"],
-    openRotations: [-Math.PI / 2.7, Math.PI / 2.7]
-  }
-};
-
-const WINDOW_ASSETS: Record<WindowVariant, WindowAssetConfig> = {
-  single: {
-    path: "/assets/models/p2s_opening_window_single/p2s_opening_window_single.glb"
-  },
-  wide: {
-    path: "/assets/models/p2s_opening_window_wide/p2s_opening_window_wide.glb"
-  }
-};
-
 const FRAME_DEPTH = 0.038;
 const FRAME_OVERLAP = 0.005;
 const DOOR_CASING_WIDTH = 0.064;
@@ -84,14 +54,22 @@ const WINDOW_SILL_HEIGHT = 0.045;
 const WINDOW_SILL_DEPTH = 0.16;
 const WINDOW_SILL_OVERHANG = 0.12;
 
-function resolveDoorVariant(width: number): DoorVariant {
-  if (width >= 1.52) return "french";
-  if (width >= 1.16) return "double";
-  return "single";
-}
+class OpeningModelErrorBoundary extends Component<
+  { fallback: ReactNode; children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
 
-function resolveWindowVariant(width: number): WindowVariant {
-  return width >= 2.08 ? "wide" : "single";
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }
 
 function prepareRuntimeAsset(root: THREE.Object3D) {
@@ -102,11 +80,10 @@ function prepareRuntimeAsset(root: THREE.Object3D) {
     child.castShadow = true;
     child.receiveShadow = true;
 
-    const material = child.material;
-    const materials = Array.isArray(material) ? material : [material];
-    materials.forEach((entry) => {
-      if (entry instanceof THREE.MeshStandardMaterial && entry.transparent) {
-        entry.depthWrite = false;
+    const materials = Array.isArray(child.material) ? child.material : [child.material];
+    materials.forEach((material) => {
+      if (material instanceof THREE.MeshStandardMaterial && material.transparent) {
+        material.depthWrite = false;
       }
     });
 
@@ -138,7 +115,7 @@ function normalizeOpeningAsset(root: THREE.Object3D) {
   } as const;
 }
 
-function OpeningFrame({
+function OpeningTrim({
   id,
   type,
   position,
@@ -158,60 +135,116 @@ function OpeningFrame({
   interiorSide: number;
 }) {
   const casingWidth = type === "door" ? DOOR_CASING_WIDTH : WINDOW_CASING_WIDTH;
-  const color = type === "door" ? "#eadfd1" : "#eee4d8";
-  const localZ = interiorSide * (wallThickness / 2 + FRAME_DEPTH / 2 - FRAME_OVERLAP);
+  const casingColor = type === "door" ? "#d4c3ae" : "#cfc0ae";
+  const jambColor = type === "door" ? "#99826b" : "#786f64";
+  const jambDepth = Math.max(FRAME_DEPTH * 1.8, wallThickness - FRAME_OVERLAP * 2);
+  const faceOffset = Math.max(0, wallThickness / 2 - FRAME_DEPTH / 2);
+  const frontZ = faceOffset;
+  const backZ = -faceOffset;
   const thresholdZ = interiorSide * (wallThickness / 2 + DOOR_THRESHOLD_DEPTH / 2 - FRAME_OVERLAP);
   const sillZ = interiorSide * (wallThickness / 2 + WINDOW_SILL_DEPTH / 2 - FRAME_OVERLAP);
+  const nodeNames = type === "door" ? OPENING_TRIM_NODE_NAMES.door : OPENING_TRIM_NODE_NAMES.window;
 
   return (
-    <group name={`${type}-frame:${id}`} position={position} rotation={[0, angle, 0]}>
+    <group name={`${type}-trim:${id}`} position={position} rotation={[0, angle, 0]}>
       {[0, width].map((x, index) => (
-        <mesh key={`${id}-side-${index}`} position={[x, height / 2, localZ]} castShadow receiveShadow>
-          <boxGeometry args={[casingWidth, height + casingWidth * 0.6, FRAME_DEPTH]} />
-          <meshStandardMaterial color={color} roughness={0.68} metalness={0.01} envMapIntensity={0.34} />
+        <mesh
+          key={`${id}-jamb-side-${index}`}
+          name={nodeNames[index]}
+          position={[x, height / 2, 0]}
+          castShadow
+          receiveShadow
+        >
+          <boxGeometry args={[casingWidth * 0.82, height, jambDepth]} />
+          <meshStandardMaterial color={jambColor} roughness={0.74} metalness={0.06} envMapIntensity={0.28} />
         </mesh>
       ))}
-      <mesh position={[width / 2, height + casingWidth / 2, localZ]} castShadow receiveShadow>
-        <boxGeometry args={[width + casingWidth * 2, casingWidth, FRAME_DEPTH]} />
-        <meshStandardMaterial color={color} roughness={0.68} metalness={0.01} envMapIntensity={0.34} />
+      <mesh name={nodeNames[2]} position={[width / 2, height - casingWidth / 2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[width, casingWidth * 0.82, jambDepth]} />
+        <meshStandardMaterial color={jambColor} roughness={0.74} metalness={0.06} envMapIntensity={0.28} />
       </mesh>
+      {type === "window" ? (
+        <mesh name={nodeNames[3]} position={[width / 2, casingWidth / 2, 0]} castShadow receiveShadow>
+          <boxGeometry args={[width, casingWidth * 0.82, jambDepth]} />
+          <meshStandardMaterial color={jambColor} roughness={0.74} metalness={0.06} envMapIntensity={0.28} />
+        </mesh>
+      ) : null}
+      {[frontZ, backZ].map((z, faceIndex) => {
+        const baseIndex = type === "door" ? (faceIndex === 0 ? 3 : 6) : faceIndex === 0 ? 4 : 8;
+        return (
+          <group key={`${id}-casing-face-${faceIndex}`}>
+            {[0, width].map((x, index) => (
+              <mesh
+                key={`${id}-casing-side-${faceIndex}-${index}`}
+                name={nodeNames[baseIndex + index]}
+                position={[x, height / 2, z]}
+                castShadow
+                receiveShadow
+              >
+                <boxGeometry args={[casingWidth, height + casingWidth * 0.74, FRAME_DEPTH]} />
+                <meshStandardMaterial color={casingColor} roughness={0.66} metalness={0.03} envMapIntensity={0.34} />
+              </mesh>
+            ))}
+            <mesh
+              name={nodeNames[baseIndex + 2]}
+              position={[width / 2, height + casingWidth / 2, z]}
+              castShadow
+              receiveShadow
+            >
+              <boxGeometry args={[width + casingWidth * 2, casingWidth, FRAME_DEPTH]} />
+              <meshStandardMaterial color={casingColor} roughness={0.66} metalness={0.03} envMapIntensity={0.34} />
+            </mesh>
+            {type === "window" ? (
+              <mesh
+                name={nodeNames[baseIndex + 3]}
+                position={[width / 2, -casingWidth / 2, z]}
+                castShadow
+                receiveShadow
+              >
+                <boxGeometry args={[width + casingWidth * 2, casingWidth, FRAME_DEPTH]} />
+                <meshStandardMaterial color={casingColor} roughness={0.66} metalness={0.03} envMapIntensity={0.34} />
+              </mesh>
+            ) : null}
+          </group>
+        );
+      })}
       {type === "door" ? (
-        <mesh position={[width / 2, DOOR_THRESHOLD_HEIGHT / 2, thresholdZ]} castShadow receiveShadow>
+        <mesh name={nodeNames[9]} position={[width / 2, DOOR_THRESHOLD_HEIGHT / 2, thresholdZ]} castShadow receiveShadow>
           <boxGeometry args={[width + casingWidth, DOOR_THRESHOLD_HEIGHT, DOOR_THRESHOLD_DEPTH]} />
-          <meshStandardMaterial color="#d6cabd" roughness={0.62} metalness={0.02} envMapIntensity={0.28} />
+          <meshStandardMaterial color="#b79d7d" roughness={0.54} metalness={0.18} envMapIntensity={0.32} />
         </mesh>
       ) : (
-        <>
-          <mesh position={[width / 2, -casingWidth / 2, localZ]} castShadow receiveShadow>
-            <boxGeometry args={[width + casingWidth * 2, casingWidth, FRAME_DEPTH]} />
-            <meshStandardMaterial color={color} roughness={0.68} metalness={0.01} envMapIntensity={0.34} />
-          </mesh>
-          <mesh position={[width / 2, -casingWidth - WINDOW_SILL_HEIGHT / 2, sillZ]} castShadow receiveShadow>
-            <boxGeometry
-              args={[
-                width + WINDOW_SILL_OVERHANG * 2,
-                WINDOW_SILL_HEIGHT,
-                WINDOW_SILL_DEPTH
-              ]}
-            />
-            <meshStandardMaterial color="#ded2c4" roughness={0.66} metalness={0.01} envMapIntensity={0.3} />
-          </mesh>
-        </>
+        <mesh name={nodeNames[12]} position={[width / 2, -casingWidth - WINDOW_SILL_HEIGHT / 2, sillZ]} castShadow receiveShadow>
+          <boxGeometry
+            args={[
+              width + WINDOW_SILL_OVERHANG * 2,
+              WINDOW_SILL_HEIGHT,
+              WINDOW_SILL_DEPTH
+            ]}
+          />
+          <meshStandardMaterial color="#d7cab8" roughness={0.62} metalness={0.04} envMapIntensity={0.32} />
+        </mesh>
       )}
     </group>
   );
 }
 
-function DoorAssetModel({ door }: { door: DoorSpec }) {
+function DoorRuntimeModel({
+  door,
+  variant,
+  runtimeRoot
+}: {
+  door: DoorSpec;
+  variant: DoorVariant;
+  runtimeRoot: THREE.Object3D;
+}) {
   const registry = useInteractionRegistry();
   const rootRef = useRef<THREE.Group | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const variant = resolveDoorVariant(door.width);
-  const config = DOOR_ASSETS[variant];
-  const gltf = useGLBAsset(config.path);
+  const config = DOOR_VISUALS[variant];
 
   const runtimeAsset = useMemo(() => {
-    const clone = gltf.scene.clone(true);
+    const clone = runtimeRoot.clone(true);
     const highlightMesh = prepareRuntimeAsset(clone);
     const baseSize = normalizeOpeningAsset(clone);
     return {
@@ -219,7 +252,7 @@ function DoorAssetModel({ door }: { door: DoorSpec }) {
       highlightMesh,
       baseSize
     };
-  }, [gltf.scene]);
+  }, [runtimeRoot]);
 
   const leafPivots = useMemo(
     () =>
@@ -246,17 +279,23 @@ function DoorAssetModel({ door }: { door: DoorSpec }) {
     group.userData.interactive = true;
     group.userData.interactionLabel = "Door";
     group.userData.onInteract = () => setIsOpen((prev) => !prev);
+    group.userData.openingVisual = {
+      type: "door",
+      variant,
+      renderer: "InteractiveDoors",
+      source: runtimeRoot.name.startsWith("ProceduralDoor:") ? "procedural-fallback" : "glb"
+    };
     if (runtimeAsset.highlightMesh) {
       group.userData.highlightMesh = runtimeAsset.highlightMesh;
     }
 
     registry?.register(group);
     return () => registry?.unregister(group);
-  }, [registry, runtimeAsset.highlightMesh]);
+  }, [registry, runtimeAsset.highlightMesh, runtimeRoot.name, variant]);
 
   return (
     <>
-      <OpeningFrame
+      <OpeningTrim
         id={door.id}
         type="door"
         position={door.position}
@@ -283,24 +322,40 @@ function DoorAssetModel({ door }: { door: DoorSpec }) {
   );
 }
 
-function WindowAssetModel({ window }: { window: WindowSpec }) {
+function DoorGlbModel({ door }: { door: DoorSpec }) {
+  const variant = resolveDoorVariant(door.width);
+  const gltf = useGLBAsset(DOOR_VISUALS[variant].assetPath);
+  return <DoorRuntimeModel door={door} variant={variant} runtimeRoot={gltf.scene} />;
+}
+
+function DoorProceduralFallback({ door }: { door: DoorSpec }) {
+  const variant = resolveDoorVariant(door.width);
+  const runtimeRoot = useMemo(() => createProceduralDoorAsset(variant), [variant]);
+  return <DoorRuntimeModel door={door} variant={variant} runtimeRoot={runtimeRoot} />;
+}
+
+function WindowRuntimeModel({
+  window,
+  runtimeRoot
+}: {
+  window: WindowSpec;
+  runtimeRoot: THREE.Object3D;
+}) {
   const variant = resolveWindowVariant(window.width);
-  const config = WINDOW_ASSETS[variant];
-  const gltf = useGLBAsset(config.path);
 
   const runtimeAsset = useMemo(() => {
-    const clone = gltf.scene.clone(true);
+    const clone = runtimeRoot.clone(true);
     prepareRuntimeAsset(clone);
     const baseSize = normalizeOpeningAsset(clone);
     return {
       root: clone,
       baseSize
     };
-  }, [gltf.scene]);
+  }, [runtimeRoot]);
 
   return (
     <>
-      <OpeningFrame
+      <OpeningTrim
         id={window.id}
         type="window"
         position={window.position}
@@ -319,11 +374,31 @@ function WindowAssetModel({ window }: { window: WindowSpec }) {
           window.height / runtimeAsset.baseSize.height,
           window.thickness / runtimeAsset.baseSize.thickness
         ]}
+        userData={{
+          openingVisual: {
+            type: "window",
+            variant,
+            renderer: "InteractiveDoors",
+            source: runtimeRoot.name.startsWith("ProceduralWindow:") ? "procedural-fallback" : "glb"
+          }
+        }}
       >
         <primitive object={runtimeAsset.root} />
       </group>
     </>
   );
+}
+
+function WindowGlbModel({ window }: { window: WindowSpec }) {
+  const variant = resolveWindowVariant(window.width);
+  const gltf = useGLBAsset(WINDOW_VISUALS[variant].assetPath);
+  return <WindowRuntimeModel window={window} runtimeRoot={gltf.scene} />;
+}
+
+function WindowProceduralFallback({ window }: { window: WindowSpec }) {
+  const variant = resolveWindowVariant(window.width);
+  const runtimeRoot = useMemo(() => createProceduralWindowAsset(variant), [variant]);
+  return <WindowRuntimeModel window={window} runtimeRoot={runtimeRoot} />;
 }
 
 export default function InteractiveDoors() {
@@ -347,7 +422,10 @@ export default function InteractiveDoors() {
         const height = Math.max(1.95, opening.height * scale);
         const wallThickness = Math.max(0.02, wall.thickness * scale);
         const thickness = Math.max(0.06, wallThickness * 0.72);
-        const offset = Math.min(Math.max(0, opening.offset * scale + placement.startInset), Math.max(0, length - width));
+        const offset = Math.min(
+          Math.max(0, opening.offset * scale + placement.startInset),
+          Math.max(0, length - width)
+        );
         const startX = placement.start[0] + placement.direction[0] * offset;
         const startZ = placement.start[1] + placement.direction[1] * offset;
         const bottomOffset = resolveOpeningBottomOffset(opening, scale);
@@ -381,7 +459,10 @@ export default function InteractiveDoors() {
         const height = Math.max(0.88, opening.height * scale);
         const wallThickness = Math.max(0.02, wall.thickness * scale);
         const thickness = Math.max(0.08, wallThickness * 0.82);
-        const offset = Math.min(Math.max(0, opening.offset * scale + placement.startInset), Math.max(0, length - width));
+        const offset = Math.min(
+          Math.max(0, opening.offset * scale + placement.startInset),
+          Math.max(0, length - width)
+        );
         const startX = placement.start[0] + placement.direction[0] * offset;
         const startZ = placement.start[1] + placement.direction[1] * offset;
         const sillHeight = resolveOpeningBottomOffset(opening, scale);
@@ -405,10 +486,14 @@ export default function InteractiveDoors() {
   return (
     <group>
       {doorSpecs.map((door) => (
-        <DoorAssetModel key={door.id} door={door} />
+        <OpeningModelErrorBoundary key={door.id} fallback={<DoorProceduralFallback door={door} />}>
+          <DoorGlbModel door={door} />
+        </OpeningModelErrorBoundary>
       ))}
       {windowSpecs.map((window) => (
-        <WindowAssetModel key={window.id} window={window} />
+        <OpeningModelErrorBoundary key={window.id} fallback={<WindowProceduralFallback window={window} />}>
+          <WindowGlbModel window={window} />
+        </OpeningModelErrorBoundary>
       ))}
     </group>
   );

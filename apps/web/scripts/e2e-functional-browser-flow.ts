@@ -748,6 +748,199 @@ async function enterWalkView(page: Page) {
   );
 }
 
+async function verifyBuilderMaterialPreviewSmoke(page: Page, results: StageResult[]) {
+  const styleSectionText = await page
+    .locator("section")
+    .filter({ hasText: "벽 색상" })
+    .first()
+    .textContent({ timeout: 10_000 });
+  if (/Acoustic Felt Panel/i.test(styleSectionText ?? "")) {
+    throw new Error("Acoustic Felt Panel appeared in the default builder wall grid");
+  }
+
+  const defaultWallButtons = page.locator("section").filter({ hasText: "벽 색상" }).first().locator("button[aria-label]");
+  const clickCount = Math.min(7, await defaultWallButtons.count());
+  const canvas = page.locator("canvas").first();
+  await canvas.waitFor({ state: "visible", timeout: 20_000 });
+  const beforeBox = await canvas.boundingBox();
+  if (!beforeBox) {
+    throw new Error("builder material canvas was not measurable");
+  }
+
+  const emptySceneFrames: number[] = [];
+  for (let index = 0; index < 10; index += 1) {
+    await defaultWallButtons.nth(index % clickCount).click();
+    await page.waitForTimeout(140);
+    const box = await canvas.boundingBox();
+    if (!box || box.width <= 20 || box.height <= 20) {
+      emptySceneFrames.push(index);
+    }
+  }
+
+  if (emptySceneFrames.length > 0) {
+    throw new Error(`builder material preview flickered/blanked on clicks: ${emptySceneFrames.join(",")}`);
+  }
+
+  results.push({
+    stage: "material-preview-smoke",
+    ok: true,
+    detail: `default wall grid clean; ${clickCount} presets cycled without blank canvas`
+  });
+}
+
+async function verifyBuilderLightingSnapSmoke(page: Page, results: StageResult[]) {
+  await clickVisibleButtonByText(page, /Direct Lighting|직접/);
+  const grid = page.getByTestId("builder-lighting-grid");
+  await grid.waitFor({ state: "visible", timeout: 20_000 });
+  await page.getByRole("button", { name: "6개" }).click();
+  const marker = page.getByTestId("builder-lighting-fixture-marker").first();
+  const gridBox = await grid.boundingBox();
+  if (!gridBox) {
+    throw new Error("lighting grid was not measurable");
+  }
+
+  await marker.hover();
+  await page.mouse.down();
+  await page.mouse.move(gridBox.x + gridBox.width * 0.63, gridBox.y + gridBox.height * 0.27, { steps: 5 });
+  await page.mouse.up();
+  await page.waitForTimeout(350);
+
+  await page.waitForFunction(
+    () => document.querySelectorAll('[data-testid="builder-lighting-fixture-marker"]').length >= 6,
+    null,
+    { timeout: 20_000 }
+  );
+  const fixtureSnapshot = await page.evaluate(() =>
+    Array.from(document.querySelectorAll<HTMLElement>('[data-testid="builder-lighting-fixture-marker"]')).map(
+      (marker) => ({
+        xMm: Number(marker.dataset.positionXMm),
+        zMm: Number(marker.dataset.positionZMm)
+      })
+    )
+  );
+  if (fixtureSnapshot.length < 6) {
+    throw new Error(`lighting fixture coordinate list missing after 6-count selection: ${fixtureSnapshot.length}`);
+  }
+  const offGrid = fixtureSnapshot.filter(
+    (fixture) => fixture.xMm % 500 !== 0 || fixture.zMm % 500 !== 0
+  );
+  if (offGrid.length > 0) {
+    throw new Error(`lighting markers persisted off snap grid: ${JSON.stringify(offGrid)}`);
+  }
+
+  results.push({
+    stage: "lighting-snap-smoke",
+    ok: true,
+    detail: `dragged fixture and verified ${fixtureSnapshot.length} snapped positions`
+  });
+}
+
+async function readWalkKeyboardDebug(page: Page) {
+  return page.evaluate(() => {
+    return (window as typeof window & {
+      __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: {
+        active: boolean;
+        pointerLocked: boolean;
+        pointerLockBlocked: boolean;
+        canvasFocused: boolean;
+        movementBlockedByPanel: boolean;
+        bodyPosition: [number, number, number] | null;
+        lastMovementAt: number | null;
+      };
+    }).__DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__ ?? null;
+  });
+}
+
+async function verifyWalkKeyboardShortcuts(page: Page, results: StageResult[]) {
+  await page.evaluate(() => {
+    const canvas = document.querySelector("canvas") as HTMLCanvasElement | null;
+    if (!canvas) {
+      throw new Error("walk canvas not found for pointer lock fallback patch");
+    }
+    const prototype = Object.getPrototypeOf(canvas) as HTMLCanvasElement & {
+      __deskteriorOriginalRequestPointerLock?: HTMLCanvasElement["requestPointerLock"];
+    };
+    if (!prototype.__deskteriorOriginalRequestPointerLock) {
+      prototype.__deskteriorOriginalRequestPointerLock = prototype.requestPointerLock;
+    }
+    prototype.requestPointerLock = () => {
+      document.dispatchEvent(new Event("pointerlockerror"));
+      return Promise.reject(new DOMException("Denied for functional E2E", "SecurityError"));
+    };
+  });
+
+  const canvas = page.locator("canvas").first();
+  await canvas.click({ position: { x: 200, y: 180 } });
+  await page.waitForFunction(
+    () =>
+      Boolean(
+        (window as typeof window & {
+          __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: { canvasFocused?: boolean };
+        }).__DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?.canvasFocused
+      ),
+    null,
+    { timeout: 15_000 }
+  );
+
+  const before = await readWalkKeyboardDebug(page);
+  await page.keyboard.down("w");
+  await page.waitForFunction(
+    (previousMovementAt) => {
+      const debug = (window as typeof window & {
+        __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: {
+          lastMovementAt: number | null;
+          bodyPosition: [number, number, number] | null;
+        };
+      }).__DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__;
+      return Boolean(debug?.lastMovementAt && debug.lastMovementAt !== previousMovementAt && debug.bodyPosition);
+    },
+    before?.lastMovementAt ?? null,
+    { timeout: 15_000 }
+  );
+  await page.keyboard.up("w");
+  const moved = await readWalkKeyboardDebug(page);
+
+  await page.keyboard.press("i");
+  await page.getByTestId("walk-inventory-panel").waitFor({ state: "visible", timeout: 20_000 });
+  const movementAtPanelOpen = (await readWalkKeyboardDebug(page))?.lastMovementAt ?? null;
+  await page.keyboard.down("w");
+  await page.waitForTimeout(500);
+  await page.keyboard.up("w");
+  const movementAtPanelBlocked = (await readWalkKeyboardDebug(page))?.lastMovementAt ?? null;
+  if (movementAtPanelOpen !== movementAtPanelBlocked) {
+    throw new Error("walk movement changed while inventory panel was open");
+  }
+
+  await page.keyboard.press("i");
+  await page.getByTestId("walk-inventory-panel").waitFor({ state: "hidden", timeout: 20_000 });
+  await page.waitForFunction(
+    () =>
+      Boolean(
+        (window as typeof window & {
+          __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: { canvasFocused?: boolean };
+        }).__DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?.canvasFocused
+      ),
+    null,
+    { timeout: 15_000 }
+  );
+  await page.evaluate(() => {
+    const canvas = document.querySelector("canvas") as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const prototype = Object.getPrototypeOf(canvas) as HTMLCanvasElement & {
+      __deskteriorOriginalRequestPointerLock?: HTMLCanvasElement["requestPointerLock"];
+    };
+    if (prototype.__deskteriorOriginalRequestPointerLock) {
+      prototype.requestPointerLock = prototype.__deskteriorOriginalRequestPointerLock;
+    }
+  });
+
+  results.push({
+    stage: "walk-keyboard-shortcuts",
+    ok: true,
+    detail: `pointer-lock-denied fallback movement=${Boolean(moved?.lastMovementAt)}, inventory I toggled and blocked movement`
+  });
+}
+
 const ATTACHMENT_LABELS: Record<string, string> = {
   place_on_surface: "Place On Surface",
   underside_screw: "Under Desk",
@@ -968,6 +1161,7 @@ async function runWalkPlacementSaveShareFlow(
     ok: true,
     detail: `opened project ${seed.projectId} in walk view`
   });
+  await verifyWalkKeyboardShortcuts(page, results);
 
   const keyboardPlacement = await addAndCommitWalkPlacement(page, {
     label: "P2S 75% 화이트 키보드",
@@ -1150,9 +1344,14 @@ async function run() {
     await clickNext(page);
     results.push(await expectText(page, "방 스타일 선택하기", "material-step"));
 
-    const wallCount = await countButtonsInSection(page, "벽 색상");
+    const wallCount = await page
+      .locator("section")
+      .filter({ hasText: "벽 색상" })
+      .first()
+      .locator("button[aria-label]")
+      .count();
     const floorCount = await countButtonsInSection(page, "바닥 스타일");
-    if (wallCount < 10 || floorCount < 11) {
+    if (wallCount !== 7 || floorCount < 11) {
       throw new Error(`material options too shallow: wall=${wallCount}, floor=${floorCount}`);
     }
     results.push({
@@ -1161,6 +1360,9 @@ async function run() {
       detail: `wall=${wallCount}, floor=${floorCount}`
     });
 
+    await verifyBuilderMaterialPreviewSmoke(page, results);
+
+    await page.getByRole("button", { name: "추가 벽 옵션" }).click();
     await page.getByRole("button", { name: "Walnut Accent Wall" }).click();
     await page.getByRole("button", { name: "Subtle Terrazzo Floor" }).click();
     results.push({
@@ -1187,6 +1389,7 @@ async function run() {
 
     await clickNext(page);
     results.push(await expectText(page, "조명 분위기 선택하기", "lighting-step"));
+    await verifyBuilderLightingSnapSmoke(page, results);
     await clickVisibleButtonByText(page, /Indirect Lighting|간접/);
     results.push({
       stage: "lighting-selection",

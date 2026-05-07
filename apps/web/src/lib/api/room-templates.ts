@@ -11,6 +11,10 @@ import {
 export type BuilderFinishOption = {
   id: number;
   name: string;
+  category: string;
+  useCategory: "commercial_default" | "commercial_option" | "special_industrial";
+  defaultExposure: "default" | "advanced";
+  previewThumbnail: string;
 };
 
 export type RoomTemplateConfig = {
@@ -88,14 +92,38 @@ function normalizeFinishOverrides(input: unknown) {
     }
 
     const record = item as Record<string, unknown>;
+    const category = typeof record.category === "string" ? record.category.trim() : "";
+    const useCategory =
+      record.useCategory === "commercial_default" ||
+      record.useCategory === "commercial_option" ||
+      record.useCategory === "special_industrial"
+        ? record.useCategory
+        : null;
+    const defaultExposure =
+      record.defaultExposure === "default" || record.defaultExposure === "advanced"
+        ? record.defaultExposure
+        : null;
+    const previewThumbnail = typeof record.previewThumbnail === "string" ? record.previewThumbnail.trim() : "";
 
-    if (typeof record.id !== "number" || !Number.isFinite(record.id) || !isNonEmptyString(record.name)) {
+    if (
+      typeof record.id !== "number" ||
+      !Number.isFinite(record.id) ||
+      !isNonEmptyString(record.name) ||
+      !category ||
+      !useCategory ||
+      !defaultExposure ||
+      !previewThumbnail
+    ) {
       return accumulator;
     }
 
     accumulator.set(record.id, {
       id: record.id,
-      name: record.name.trim()
+      name: record.name.trim(),
+      category,
+      useCategory,
+      defaultExposure,
+      previewThumbnail
     });
 
     return accumulator;
@@ -110,10 +138,13 @@ function mergeTemplates(overrides: Map<BuilderTemplateId, Partial<BuilderTemplat
 }
 
 function mergeFinishes(
-  localFinishes: readonly { id: number; name: string }[],
+  localFinishes: readonly BuilderFinishOption[],
   overrides: Map<number, BuilderFinishOption>
 ) {
-  return localFinishes.map((finish) => overrides.get(finish.id) ?? { id: finish.id, name: finish.name });
+  return localFinishes.map((finish) => {
+    const override = overrides.get(finish.id);
+    return override ? { ...finish, ...override } : { ...finish };
+  });
 }
 
 export async function fetchRoomTemplateConfig(): Promise<RoomTemplateConfig> {

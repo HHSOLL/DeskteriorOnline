@@ -1,10 +1,12 @@
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { BUILDER_LIGHTING_OPTIONS } from "../constants";
 import type { BuilderLightingMode } from "../types";
 import {
+  DEFAULT_LIGHTING_GRID_SNAP_MM,
   createDefaultDirectLightingFixtures,
   normalizeDirectLightCount,
   normalizeLightingFixtures,
+  resolveLightingPositionMmFromNormalized,
   type LightingFixture,
   type LightingLayoutBoundsMm
 } from "../../../lib/scene/lighting-layout";
@@ -40,13 +42,16 @@ export function BuilderLightingStep({
   onFixturesChange
 }: BuilderLightingStepProps) {
   const planeRef = useRef<HTMLDivElement | null>(null);
+  const pendingDragUpdateRef = useRef<{
+    fixtureId: string;
+    positionMm: LightingFixture["positionMm"];
+  } | null>(null);
+  const dragFrameRef = useRef<number | null>(null);
   const [draggingFixtureId, setDraggingFixtureId] = useState<string | null>(null);
   const directFixtures =
     fixtures.length > 0
       ? normalizeLightingFixtures(fixtures, roomBoundsMm)
       : createDefaultDirectLightingFixtures(roomBoundsMm, 3);
-  const roomWidth = Math.max(1, roomBoundsMm.maxXMm - roomBoundsMm.minXMm);
-  const roomDepth = Math.max(1, roomBoundsMm.maxZMm - roomBoundsMm.minZMm);
 
   const setDirectFixtures = (nextFixtures: LightingFixture[]) => {
     onFixturesChange(normalizeLightingFixtures(nextFixtures, roomBoundsMm));
@@ -58,22 +63,37 @@ export function BuilderLightingStep({
     );
   };
 
+  const flushPendingDragUpdate = () => {
+    dragFrameRef.current = null;
+    const pending = pendingDragUpdateRef.current;
+    pendingDragUpdateRef.current = null;
+    if (!pending) return;
+    updateFixture(pending.fixtureId, {
+      positionMm: pending.positionMm
+    });
+  };
+
   const updateFixtureFromPointer = (fixtureId: string, event: PointerEvent<HTMLElement>) => {
     const rect = planeRef.current?.getBoundingClientRect();
     if (!rect) return;
     const xRatio = clamp((event.clientX - rect.left) / rect.width, 0, 1);
     const zRatio = clamp((event.clientY - rect.top) / rect.height, 0, 1);
-    const nextX = Math.round(roomBoundsMm.minXMm + roomWidth * xRatio);
-    const nextZ = Math.round(roomBoundsMm.minZMm + roomDepth * zRatio);
-
-    updateFixture(fixtureId, {
-      positionMm: [
-        nextX,
-        roomBoundsMm.ceilingHeightMm,
-        nextZ
-      ]
-    });
+    pendingDragUpdateRef.current = {
+      fixtureId,
+      positionMm: resolveLightingPositionMmFromNormalized(xRatio, zRatio, roomBoundsMm)
+    };
+    if (dragFrameRef.current === null) {
+      dragFrameRef.current = requestAnimationFrame(flushPendingDragUpdate);
+    }
   };
+
+  useEffect(() => {
+    return () => {
+      if (dragFrameRef.current !== null) {
+        cancelAnimationFrame(dragFrameRef.current);
+      }
+    };
+  }, []);
 
   const setFixtureCount = (count: number) => {
     setDirectFixtures(createDefaultDirectLightingFixtures(roomBoundsMm, normalizeDirectLightCount(count), directFixtures[0]));
@@ -132,6 +152,9 @@ export function BuilderLightingStep({
               <p className="mt-2 text-sm leading-6 text-[#5d554a]">
                 다운라이트 개수와 위치는 scene lighting payload에 저장됩니다.
               </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#9a6a1f]">
+                Snap {DEFAULT_LIGHTING_GRID_SNAP_MM}mm
+              </p>
             </div>
             <button
               type="button"
@@ -169,6 +192,7 @@ export function BuilderLightingStep({
 
           <div
             ref={planeRef}
+            data-testid="builder-lighting-grid"
             className="relative aspect-[4/3] overflow-hidden rounded-[18px] border border-black/10 bg-[linear-gradient(90deg,rgba(0,0,0,0.055)_1px,transparent_1px),linear-gradient(rgba(0,0,0,0.055)_1px,transparent_1px)] bg-[length:32px_32px] bg-[#ede8df]"
           >
             {directFixtures.map((fixture, index) => {
@@ -195,6 +219,9 @@ export function BuilderLightingStep({
                   }}
                   onPointerCancel={() => setDraggingFixtureId(null)}
                   className="absolute grid size-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-[#f2b65b] text-xs font-black text-[#171411] shadow-[0_8px_20px_rgba(71,50,22,0.25)]"
+                  data-testid="builder-lighting-fixture-marker"
+                  data-position-x-mm={fixture.positionMm[0]}
+                  data-position-z-mm={fixture.positionMm[2]}
                   style={{ left: `${left}%`, top: `${top}%` }}
                   aria-label={`조명 ${index + 1} 위치 조정`}
                 >

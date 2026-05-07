@@ -1,5 +1,13 @@
 export type WalkMovementKey = "forward" | "backward" | "left" | "right";
 
+export const WALK_VIEWPORT_FOCUS_EVENT = "deskterioronline:walk:focus-viewport";
+export const WALK_KEYBOARD_RESET_EVENT = "deskterioronline:walk:reset-keyboard";
+
+export type WalkKeyboardResetDetail = {
+  reason: string;
+  focusViewport: boolean;
+};
+
 type WalkKeyboardEventLike = {
   code?: string;
   key?: string;
@@ -74,4 +82,28 @@ export function isWalkInventoryShortcut(event: WalkKeyboardEventLike) {
 export function isWalkInteractShortcut(event: WalkKeyboardEventLike) {
   if (event.isComposing || isModifiedShortcut(event)) return false;
   return event.code === "KeyE" || event.key?.toLowerCase() === "e";
+}
+
+export function requestWalkViewportFocus(reason: string) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent(WALK_VIEWPORT_FOCUS_EVENT, {
+      detail: { reason }
+    })
+  );
+}
+
+export function requestWalkKeyboardReset(
+  reason: string,
+  options?: { focusViewport?: boolean }
+) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent<WalkKeyboardResetDetail>(WALK_KEYBOARD_RESET_EVENT, {
+      detail: {
+        reason,
+        focusViewport: options?.focusViewport ?? false
+      }
+    })
+  );
 }

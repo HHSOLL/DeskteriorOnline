@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three";
-import { useLoader, useThree } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import { Geometry, Base, Subtraction } from "@react-three/csg";
 import { RuntimeTextureLoader } from "../../../lib/loaders/RuntimeTextureLoader";
 import { configureRuntimeAssetLoaders } from "../../../lib/loaders/AssetLoader";
@@ -20,6 +20,7 @@ import {
 import {
   WALL_TEXTURE_PRESETS,
   resolveRuntimeTextureSet,
+  type RuntimeTextureSet,
   type RoomShellTexturePreset
 } from "../../../lib/textures/room-shell-textures";
 
@@ -33,6 +34,64 @@ type LoadedTextureSet = {
   normalMap: THREE.Texture;
   bumpMap: THREE.Texture;
 };
+
+function textureSetKey(textureUrls: RuntimeTextureSet | null) {
+  return textureUrls
+    ? `${textureUrls.map}|${textureUrls.roughnessMap}|${textureUrls.normalMap}|${textureUrls.bumpMap}`
+    : "solid";
+}
+
+function loadTexture(url: string) {
+  return new Promise<THREE.Texture>((resolve, reject) => {
+    const loader = new RuntimeTextureLoader();
+    loader.load(url, resolve, undefined, reject);
+  });
+}
+
+function useRetainedTextureSet(textureUrls: RuntimeTextureSet | null) {
+  const [textures, setTextures] = useState<LoadedTextureSet | null>(null);
+  const key = textureSetKey(textureUrls);
+
+  useEffect(() => {
+    if (!textureUrls) {
+      setTextures(null);
+      return undefined;
+    }
+
+    let cancelled = false;
+    Promise.all([
+      loadTexture(textureUrls.map),
+      loadTexture(textureUrls.roughnessMap),
+      loadTexture(textureUrls.normalMap),
+      loadTexture(textureUrls.bumpMap)
+    ])
+      .then(([map, roughnessMap, normalMap, bumpMap]) => {
+        const nextTextures = { map, roughnessMap, normalMap, bumpMap };
+        if (cancelled) {
+          Object.values(nextTextures).forEach((texture) => texture.dispose());
+          return;
+        }
+        setTextures(nextTextures);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTextures((current) => current);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [key, textureUrls]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(textures ?? {}).forEach((texture) => texture.dispose());
+    };
+  }, [textures]);
+
+  return textures;
+}
 
 function hasRenderableTexture(texture: THREE.Texture | undefined) {
   if (!texture) return false;
@@ -350,24 +409,7 @@ function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
     () => (isWhitePreview ? null : resolveRuntimeTextureSet(textureConfig)),
     [isWhitePreview, textureConfig]
   );
-  const loadedTextures = useLoader(
-    RuntimeTextureLoader,
-    textureUrls
-      ? [textureUrls.map, textureUrls.roughnessMap, textureUrls.normalMap, textureUrls.bumpMap]
-      : []
-  ) as THREE.Texture[];
-  const textures = useMemo(
-    () =>
-      textureUrls
-        ? {
-            map: loadedTextures[0]!,
-            roughnessMap: loadedTextures[1]!,
-            normalMap: loadedTextures[2]!,
-            bumpMap: loadedTextures[3]!
-          }
-        : null,
-    [loadedTextures, textureUrls]
-  );
+  const textures = useRetainedTextureSet(textureUrls);
   const hasRenderableTextureSet = useMemo(
     () =>
       Boolean(
@@ -400,7 +442,34 @@ function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
   );
 }
 
-export default function ProceduralWall() {
+function FallbackWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number; walls: Wall[] }) {
+  const isWhitePreview = wallMaterialIndex < 0;
+  const textureConfig =
+    WALL_TEXTURE_PRESETS[wallMaterialIndex % WALL_TEXTURE_PRESETS.length] ?? WALL_TEXTURE_PRESETS[0];
+  const baseboardColor = isWhitePreview ? "#f2ede4" : "#e8dfd3";
+  const cornerCapColor = isWhitePreview ? "#f5f0e9" : "#eadfd2";
+
+  return (
+    <group>
+      {walls.map((wall) => (
+        <WallMesh
+          key={wall.id}
+          wallId={wall.id}
+          textureConfig={textureConfig}
+          textures={null}
+          hasRenderableTextureSet={false}
+          isWhitePreview={isWhitePreview}
+        />
+      ))}
+      {walls.map((wall) => (
+        <BaseboardTrim key={`${wall.id}-baseboard`} wallId={wall.id} color={baseboardColor} />
+      ))}
+      <CornerCapColumns color={cornerCapColor} />
+    </group>
+  );
+}
+
+function ProceduralWallBase({ useTextureFallback }: { useTextureFallback: boolean }) {
   const viewMode = useEditorStore((state) => state.viewMode);
   const wallMaterialIndex = useShellSelector((slice) => slice.wallMaterialIndex);
   const walls = useShellSelector((slice) => slice.walls);
@@ -412,7 +481,11 @@ export default function ProceduralWall() {
   if (viewMode === "top") {
     return (
       <group>
-        <DetailedWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+        {useTextureFallback ? (
+          <FallbackWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+        ) : (
+          <DetailedWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+        )}
         {walls.map((wall) => (
           <TopWallFootprint key={wall.id} wallId={wall.id} color={topWallColor} />
         ))}
@@ -420,5 +493,17 @@ export default function ProceduralWall() {
     );
   }
 
-  return <DetailedWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />;
+  return useTextureFallback ? (
+    <FallbackWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+  ) : (
+    <DetailedWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+  );
+}
+
+export function ProceduralWallFallback() {
+  return <ProceduralWallBase useTextureFallback />;
+}
+
+export default function ProceduralWall() {
+  return <ProceduralWallBase useTextureFallback={false} />;
 }
