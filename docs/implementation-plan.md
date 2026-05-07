@@ -1474,3 +1474,13 @@ Removed/Deprecated:
 - inventory click 즉시 확정 배치.
 - direct lighting fixed 3 auto layout.
 - default material preset에 damaged/dirty/industrial wall을 노출하는 구성.
+
+## 2026-05-07 변경 동기화 (Opening Renderer Hardening)
+Added:
+- `verify:room-openings`는 opening normalization 외에 renderer path wiring, variant metadata, procedural fallback smoke nodes, material contrast를 확인해야 한다.
+
+Updated:
+- builder/editor/shared opening parity 작업을 file existence gate에서 shared renderer contract gate로 강화한다.
+
+Removed/Deprecated:
+- opening verify가 GLB 파일 존재 여부만 확인하는 상태.

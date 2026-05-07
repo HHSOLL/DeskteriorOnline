@@ -83,6 +83,13 @@ function main() {
       `${testCase.label}: expected ${testCase.expectedFrameLoop}, got ${quality.frameLoop}`
     );
 
+    if (testCase.interactionMode === "preview" || testCase.viewMode === "builder-preview") {
+      assert.equal(quality.enableContactShadows, false, "builder preview must not render contact shadow planes");
+      assert.equal(quality.enableShadows, false, "builder preview must keep dynamic shadow work disabled");
+      assert.equal(quality.enablePostEffects, false, "builder preview must keep heavy post effects disabled");
+      assert.equal(quality.dpr[1] <= 1.15, true, "builder preview DPR ceiling should stay lightweight");
+    }
+
     return {
       label: testCase.label,
       frameLoop: quality.frameLoop

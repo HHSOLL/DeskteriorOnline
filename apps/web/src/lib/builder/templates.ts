@@ -1,5 +1,9 @@
 import type { Floor, Opening, ScaleInfo, Wall } from "../stores/useSceneStore";
-import { FLOOR_TEXTURE_PRESETS, WALL_TEXTURE_PRESETS } from "../textures/room-shell-textures";
+import {
+  FLOOR_TEXTURE_PRESETS,
+  WALL_TEXTURE_PRESETS,
+  resolveRoomShellTextureDefaultExposure
+} from "../textures/room-shell-textures";
 
 export type BuilderTemplateId =
   | "rect-studio"
@@ -113,12 +117,20 @@ export const builderTemplates: BuilderTemplate[] = [
 ];
 
 function texturePresetsToBuilderFinishes(
-  presets: readonly { name: string; category: string }[]
+  presets: readonly {
+    name: string;
+    category: string;
+    useCategory: "commercial_default" | "commercial_option" | "special_industrial";
+    previewThumbnail: string;
+  }[]
 ) {
   return presets.map((preset, index) => ({
     id: index,
     name: preset.name,
-    category: preset.category
+    category: preset.category,
+    useCategory: preset.useCategory,
+    defaultExposure: resolveRoomShellTextureDefaultExposure(preset.useCategory),
+    previewThumbnail: preset.previewThumbnail
   }));
 }
 

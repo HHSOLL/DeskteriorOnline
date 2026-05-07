@@ -57,7 +57,7 @@ export default function Crosshair() {
           : `${placementDraft.label} · ghost 배치`
         : "I — 인벤토리";
   const controlText = pointerLockBlocked
-    ? "Mouse look paused · close panels or click scene"
+    ? "Mouse lock unavailable · canvas focus WASD"
     : pointerLocked
       ? "Mouse look active · WASD"
       : "Click scene · mouse look / WASD";

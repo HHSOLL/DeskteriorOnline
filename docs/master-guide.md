@@ -1229,6 +1229,17 @@ Removed/Deprecated:
 - readiness score 85/warning을 상용 시연 가능한 최종 상태로 보는 기준.
 - 외부 샘플/벤더 문서를 DeskteriorOnline 활성 docs surface에 보관하는 방식.
 
+## 2026-05-07 변경 동기화 (Opening Visual Parity + Fallback Contract)
+Added:
+- builder preview, editor, shared viewer는 모두 `SceneViewport -> InteractiveDoors` 단일 개구부 렌더 경로를 사용해야 한다.
+- opening renderer는 GLB variant metadata와 procedural fallback smoke-hook node names를 같은 계약으로 노출해야 한다.
+
+Updated:
+- door/window visual quality 기준을 “GLB가 보인다”에서 “GLB 실패 시에도 slab/handle/frame/threshold 또는 glass/frame/mullion/sill을 유지하는 shared renderer” 기준으로 강화한다.
+
+Removed/Deprecated:
+- opening GLB 로드 실패 시 plain white placeholder나 무구조 box로 대체되는 fallback.
+
 ## 2026-05-02 변경 동기화 (Walk Aim + Desk Preview Closure)
 Added:
 - walk placement의 기본 시작 경로는 선택 제품을 든 상태에서 crosshair가 바라본 support object의 focus placement request를 `AIM_AT_SURFACE`로 전달하고 즉시 ghost preview session을 시작하는 방식이다.

@@ -13,8 +13,8 @@ import SceneEnvironment from "../canvas/core/SceneEnvironment";
 import Lights from "../canvas/effects/Lights";
 import PostEffects from "../canvas/effects/PostEffects";
 import ProceduralCeiling from "../canvas/features/ProceduralCeiling";
-import ProceduralFloor from "../canvas/features/ProceduralFloor";
-import ProceduralWall from "../canvas/features/ProceduralWall";
+import ProceduralFloor, { ProceduralFloorFallback } from "../canvas/features/ProceduralFloor";
+import ProceduralWall, { ProceduralWallFallback } from "../canvas/features/ProceduralWall";
 import Furniture from "../canvas/features/Furniture";
 import InteractiveDoors from "../canvas/features/InteractiveDoors";
 import InteractiveLights from "../canvas/features/InteractiveLights";
@@ -135,9 +135,13 @@ export function SceneViewport({
       <SceneEnvironment quality={quality} />
       <CameraRig interactionMode={resolvedInteractionMode} />
       <InteractionManager>
-        <ProceduralFloor />
         <ProceduralCeiling />
-        <ProceduralWall />
+        <Suspense fallback={<ProceduralFloorFallback />}>
+          <ProceduralFloor />
+        </Suspense>
+        <Suspense fallback={<ProceduralWallFallback />}>
+          <ProceduralWall />
+        </Suspense>
         {renderOpeningDecor ? <InteractiveDoors /> : null}
         {renderLightingDecor ? <InteractiveLights /> : null}
         <Furniture allowDynamicLights={quality.allowDynamicLights} />

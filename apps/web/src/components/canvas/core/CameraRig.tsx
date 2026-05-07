@@ -3,7 +3,7 @@
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, type RapierRigidBody, RigidBody } from "@react-three/rapier";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { SceneInteractionMode } from "../../../lib/scene/render-quality";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
@@ -17,6 +17,9 @@ import {
 import { useMobileControlsStore } from "../../../lib/stores/useMobileControlsStore";
 import { resolveSharedViewerPresentationPolish } from "../../../lib/viewer/presentation";
 import {
+  WALK_KEYBOARD_RESET_EVENT,
+  WALK_VIEWPORT_FOCUS_EVENT,
+  type WalkKeyboardResetDetail,
   isEditableWalkKeyboardTarget,
   resolveWalkMovementKey
 } from "../../../lib/runtime/walk-keyboard";
@@ -32,6 +35,27 @@ const WALK_SPEED = 3.5;
 const BODY_Y = 1;
 const EYE_HEIGHT = 0.6;
 const ZOOM_EVENT_NAME = "deskterioronline:zoom";
+
+type WalkKeyboardDebugState = {
+  active: boolean;
+  pointerLocked: boolean;
+  pointerLockBlocked: boolean;
+  canvasFocused: boolean;
+  movementBlockedByPanel: boolean;
+  moveState: MoveState;
+  cameraPosition: [number, number, number];
+  bodyPosition: [number, number, number] | null;
+  lastMovementAt: number | null;
+};
+
+function createEmptyMoveState(): MoveState {
+  return {
+    forward: false,
+    backward: false,
+    left: false,
+    right: false
+  };
+}
 
 function clampValue(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -112,7 +136,7 @@ function WalkRig({
 }) {
   const bodyRef = useRef<RapierRigidBody | null>(null);
   const pointerLockedRef = useRef(false);
-  const moveState = useRef<MoveState>({ forward: false, backward: false, left: false, right: false });
+  const moveState = useRef<MoveState>(createEmptyMoveState());
   const { camera, gl } = useThree();
   const resetLookDelta = useMobileControlsStore((state) => state.resetLookDelta);
   const setWalkPointerLockStatus = useInteractionStore((state) => state.setWalkPointerLockStatus);
@@ -120,6 +144,29 @@ function WalkRig({
   const blockPointerLock = panels.assets || panels.properties;
   const yawRef = useRef(0);
   const pitchRef = useRef(0);
+  const lastMovementAtRef = useRef<number | null>(null);
+  const debugStateRef = useRef<WalkKeyboardDebugState | null>(null);
+
+  const publishDebugState = useCallback((state: Partial<WalkKeyboardDebugState>) => {
+    if (typeof window === "undefined") return;
+    const nextState: WalkKeyboardDebugState = {
+      active: true,
+      pointerLocked: false,
+      pointerLockBlocked: false,
+      canvasFocused: false,
+      movementBlockedByPanel: false,
+      moveState: { forward: false, backward: false, left: false, right: false },
+      cameraPosition: [0, 0, 0],
+      bodyPosition: null,
+      lastMovementAt: null,
+      ...debugStateRef.current,
+      ...state
+    };
+    debugStateRef.current = nextState;
+    (window as typeof window & {
+      __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: WalkKeyboardDebugState;
+    }).__DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__ = nextState;
+  }, []);
 
   useEffect(() => {
     if (isTouch) {
@@ -144,6 +191,34 @@ function WalkRig({
     let pointerLockRequestInFlight = false;
     const previousTabIndex = canvas.getAttribute("tabindex");
 
+    const focusCanvas = () => {
+      if (!canvas.isConnected || ownerDocument.visibilityState === "hidden") return;
+      canvas.focus({ preventScroll: true });
+      publishDebugState({
+        canvasFocused: ownerDocument.activeElement === canvas,
+        movementBlockedByPanel: blockPointerLock
+      });
+    };
+
+    const resetMovementState = (state?: {
+      canvasFocused?: boolean;
+      pointerLocked?: boolean;
+      pointerLockBlocked?: boolean;
+      focusViewport?: boolean;
+    }) => {
+      moveState.current = createEmptyMoveState();
+      if (state?.focusViewport) {
+        focusCanvas();
+      }
+      publishDebugState({
+        pointerLocked: state?.pointerLocked ?? (pointerLockedRef.current || isPointerLocked()),
+        pointerLockBlocked: state?.pointerLockBlocked ?? blockPointerLock,
+        canvasFocused: state?.canvasFocused ?? ownerDocument.activeElement === canvas,
+        movementBlockedByPanel: state?.pointerLockBlocked ?? blockPointerLock,
+        moveState: { ...moveState.current }
+      });
+    };
+
     const canRequestPointerLock = () =>
       !blockPointerLock &&
       typeof canvas.requestPointerLock === "function" &&
@@ -154,21 +229,30 @@ function WalkRig({
     const isPointerLocked = () => ownerDocument.pointerLockElement === canvas;
 
     canvas.tabIndex = 0;
+    const focusFrame = window.requestAnimationFrame(() => {
+      if (!blockPointerLock) {
+        focusCanvas();
+      }
+    });
     setWalkPointerLockStatus({
       locked: isPointerLocked(),
       blocked: blockPointerLock
     });
+    resetMovementState();
 
     if (blockPointerLock && isPointerLocked()) {
       ownerDocument.exitPointerLock();
       pointerLockedRef.current = false;
-      moveState.current = { forward: false, backward: false, left: false, right: false };
       setWalkPointerLockStatus({ locked: false, blocked: true });
+      resetMovementState({
+        pointerLocked: false,
+        pointerLockBlocked: true
+      });
     }
 
     const handleCanvasPointerDown = (event: PointerEvent) => {
       if (event.button !== 0) return;
-      canvas.focus({ preventScroll: true });
+      focusCanvas();
       if (pointerLockedRef.current || isPointerLocked()) return;
       if (pointerLockRequestInFlight || !canRequestPointerLock()) return;
 
@@ -185,11 +269,20 @@ function WalkRig({
               locked: pointerLockedRef.current,
               blocked: false
             });
+            publishDebugState({
+              pointerLocked: pointerLockedRef.current,
+              pointerLockBlocked: false,
+              canvasFocused: ownerDocument.activeElement === canvas
+            });
           })
           .catch(() => {
             pointerLockedRef.current = false;
-            moveState.current = { forward: false, backward: false, left: false, right: false };
             setWalkPointerLockStatus({ locked: false, blocked: true });
+            resetMovementState({
+              pointerLocked: false,
+              pointerLockBlocked: true,
+              focusViewport: true
+            });
           })
           .finally(() => {
             pointerLockRequestInFlight = false;
@@ -205,16 +298,28 @@ function WalkRig({
         locked: pointerLockedRef.current,
         blocked: blockPointerLock
       });
+      publishDebugState({
+        pointerLocked: pointerLockedRef.current,
+        pointerLockBlocked: blockPointerLock,
+        canvasFocused: ownerDocument.activeElement === canvas
+      });
       if (!pointerLockedRef.current) {
-        moveState.current = { forward: false, backward: false, left: false, right: false };
+        resetMovementState({
+          pointerLocked: false,
+          pointerLockBlocked: blockPointerLock
+        });
       }
     };
 
     const handlePointerLockError = () => {
       pointerLockRequestInFlight = false;
       pointerLockedRef.current = false;
-      moveState.current = { forward: false, backward: false, left: false, right: false };
       setWalkPointerLockStatus({ locked: false, blocked: true });
+      resetMovementState({
+        pointerLocked: false,
+        pointerLockBlocked: true,
+        focusViewport: true
+      });
     };
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -230,13 +335,28 @@ function WalkRig({
       const movementKey = resolveWalkMovementKey(event);
       if (!movementKey || isEditableWalkKeyboardTarget(event.target)) return;
 
+      if (blockPointerLock) {
+        resetMovementState({
+          pointerLocked: false,
+          pointerLockBlocked: true
+        });
+        return;
+      }
+
       const pointerLocked = pointerLockedRef.current || isPointerLocked();
       const canvasFocused = ownerDocument.activeElement === canvas;
-      if (!pointerLocked && (!canvasFocused || blockPointerLock)) return;
+      if (!pointerLocked && !canvasFocused) return;
 
       event.preventDefault();
       pointerLockedRef.current = pointerLocked;
       moveState.current[movementKey] = true;
+      publishDebugState({
+        pointerLocked,
+        pointerLockBlocked: false,
+        canvasFocused,
+        movementBlockedByPanel: false,
+        moveState: { ...moveState.current }
+      });
     };
     const handleKeyUp = (event: KeyboardEvent) => {
       const movementKey = resolveWalkMovementKey(event, { allowModified: true });
@@ -248,16 +368,40 @@ function WalkRig({
         event.preventDefault();
       }
       moveState.current[movementKey] = false;
+      publishDebugState({
+        pointerLocked,
+        canvasFocused,
+        movementBlockedByPanel: blockPointerLock,
+        moveState: { ...moveState.current }
+      });
+    };
+
+    const handleFocusRequest = () => {
+      focusCanvas();
+    };
+
+    const handleResetKeyboard = (event: Event) => {
+      const detail = (event as CustomEvent<WalkKeyboardResetDetail>).detail;
+      resetMovementState({
+        focusViewport: detail?.focusViewport ?? false,
+        pointerLocked: pointerLockedRef.current || isPointerLocked(),
+        pointerLockBlocked: blockPointerLock
+      });
     };
 
     canvas.addEventListener("pointerdown", handleCanvasPointerDown);
+    window.addEventListener(WALK_KEYBOARD_RESET_EVENT, handleResetKeyboard);
+    window.addEventListener(WALK_VIEWPORT_FOCUS_EVENT, handleFocusRequest);
     ownerDocument.addEventListener("pointerlockchange", handlePointerLockChange);
     ownerDocument.addEventListener("pointerlockerror", handlePointerLockError);
     ownerDocument.addEventListener("mousemove", handleMouseMove);
     ownerDocument.addEventListener("keydown", handleKeyDown);
     ownerDocument.addEventListener("keyup", handleKeyUp);
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       canvas.removeEventListener("pointerdown", handleCanvasPointerDown);
+      window.removeEventListener(WALK_KEYBOARD_RESET_EVENT, handleResetKeyboard);
+      window.removeEventListener(WALK_VIEWPORT_FOCUS_EVENT, handleFocusRequest);
       ownerDocument.removeEventListener("pointerlockchange", handlePointerLockChange);
       ownerDocument.removeEventListener("pointerlockerror", handlePointerLockError);
       ownerDocument.removeEventListener("mousemove", handleMouseMove);
@@ -272,9 +416,28 @@ function WalkRig({
         canvas.setAttribute("tabindex", previousTabIndex);
       }
       pointerLockedRef.current = false;
+      moveState.current = createEmptyMoveState();
       setWalkPointerLockStatus({ locked: false, blocked: false });
+      if (typeof window !== "undefined") {
+        (window as typeof window & {
+          __DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__?: WalkKeyboardDebugState;
+        }).__DESKTERIORONLINE_WALK_KEYBOARD_DEBUG__ = {
+          ...(debugStateRef.current ?? {
+            cameraPosition: [camera.position.x, camera.position.y, camera.position.z],
+            bodyPosition: null,
+            lastMovementAt: null,
+            moveState: { forward: false, backward: false, left: false, right: false },
+            canvasFocused: false
+          }),
+          active: false,
+          pointerLocked: false,
+          pointerLockBlocked: false,
+          movementBlockedByPanel: false,
+          moveState: { forward: false, backward: false, left: false, right: false }
+        };
+      }
     };
-  }, [blockPointerLock, camera, gl.domElement, isTouch, setWalkPointerLockStatus]);
+  }, [blockPointerLock, camera, gl.domElement, isTouch, publishDebugState, setWalkPointerLockStatus]);
 
   useFrame(() => {
     const isDesktopPointerLocked =
@@ -323,9 +486,21 @@ function WalkRig({
     if (movement.lengthSq() > 0) {
       movement.normalize();
       body.setLinvel({ x: movement.x * WALK_SPEED, y: current.y, z: movement.z * WALK_SPEED }, true);
+      lastMovementAtRef.current = performance.now();
     } else {
       body.setLinvel({ x: 0, y: current.y, z: 0 }, true);
     }
+    const bodyTranslation = body.translation();
+    publishDebugState({
+      pointerLocked: pointerLockedRef.current || isDesktopPointerLocked,
+      pointerLockBlocked: !isTouch && blockPointerLock,
+      canvasFocused: isDesktopCanvasFocused,
+      movementBlockedByPanel: !isTouch && blockPointerLock,
+      moveState: { ...moveState.current },
+      cameraPosition: [camera.position.x, camera.position.y, camera.position.z],
+      bodyPosition: [bodyTranslation.x, bodyTranslation.y, bodyTranslation.z],
+      lastMovementAt: lastMovementAtRef.current
+    });
   });
 
   return (

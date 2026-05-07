@@ -9,6 +9,7 @@ export type RoomShellTextureSourceResolution = "1k" | "2k" | "4k" | "unknown";
 export type RoomShellTextureQualityTier = "commercial_pbr" | "generic_candidate";
 export type RoomShellTextureSourceKind = "reference_pbr" | "generic_ai_candidate";
 export type RoomShellTextureUseCategory = "commercial_default" | "commercial_option" | "special_industrial";
+export type RoomShellTextureDefaultExposure = "default" | "advanced";
 
 export type RoomShellTexturePreset = RuntimeTextureSet & {
   id: string;
@@ -60,6 +61,12 @@ export type RuntimeTextureEncodeTarget = {
     | "normal"
     | "bump";
 };
+
+export function resolveRoomShellTextureDefaultExposure(
+  useCategory: RoomShellTextureUseCategory
+): RoomShellTextureDefaultExposure {
+  return useCategory === "commercial_default" ? "default" : "advanced";
+}
 
 function defineRoomShellTexturePreset(preset: RoomShellTexturePresetDefinition): RoomShellTexturePreset {
   const sourceKind = preset.sourceKind ?? (preset.map.includes("/ai_") ? "generic_ai_candidate" : "reference_pbr");
@@ -225,7 +232,7 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     id: "light-oak-wall-panel",
     name: "Light Oak Wall Panel",
     category: "Wood Panel",
-    useCategory: "commercial_option",
+    useCategory: "commercial_default",
     topColor: "#b08a62",
     map: "/assets/textures/oak_veneer_01/oak_veneer_01_diff_2k.jpg",
     roughnessMap: "/assets/textures/oak_veneer_01/oak_veneer_01_rough_2k.jpg",
@@ -308,6 +315,23 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     normalScale: 0.16,
     envMapIntensity: 0.42,
     repeatScaleMeters: [1.8, 1.8]
+  }),
+  defineRoomShellTexturePreset({
+    id: "clean-subtle-concrete",
+    name: "Clean Subtle Concrete",
+    category: "Clean Concrete",
+    useCategory: "commercial_default",
+    topColor: "#c5c0b9",
+    map: "/assets/textures/concrete_layers_02/concrete_layers_02_diff_2k.jpg",
+    roughnessMap: "/assets/textures/concrete_layers_02/concrete_layers_02_rough_2k.jpg",
+    normalMap: "/assets/textures/concrete_layers_02/concrete_layers_02_disp_2k.jpg",
+    bumpMap: "/assets/textures/concrete_layers_02/concrete_layers_02_disp_2k.jpg",
+    color: "#d4cec6",
+    roughness: 0.9,
+    bumpScale: 0.008,
+    normalScale: 0.18,
+    envMapIntensity: 0.34,
+    repeatScaleMeters: [2.8, 2.8]
   })
 ];
 

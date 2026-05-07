@@ -913,6 +913,18 @@ Updated:
 Removed/Deprecated:
 - wall screw나 grommet hole 후보가 HUD에서 일반 surface candidate와 구분되지 않아도 된다는 가정.
 
+## 2026-05-07 변경 동기화 (Opening Visual Fidelity + Procedural Fallback)
+Added:
+- `InteractiveDoors`는 door/window GLB와 같은 variant metadata를 사용하는 procedural fallback을 가져야 하며, smoke hook용 node name/renderer metadata를 노출해야 한다.
+- door fallback은 최소 slab, handle/knob, frame/casing/molding, threshold를 읽을 수 있어야 하고, window fallback은 최소 glass, frame, mullion, sill, interior molding을 읽을 수 있어야 한다.
+
+Updated:
+- opening visual 기준을 asset existence에서 wall opening cut에 맞는 trim alignment, light-wall 대비가 있는 material contrast, shared renderer parity까지 확장한다.
+- GLB load failure 시 opening visual은 plain white box가 아니라 structured procedural fallback으로 유지되어야 한다.
+
+Removed/Deprecated:
+- opening GLB 실패를 무구조 placeholder mesh로 감추는 방식.
+
 ## 2026-05-02 변경 동기화 (Asset Metadata Visual Contract)
 Added:
 - runtime asset은 시각적으로 보이는 GLB만이 아니라 collider, support surface, attachment point, provenance, SKU/manufacturer가 함께 검증된 package여야 catalog에 노출될 수 있다.

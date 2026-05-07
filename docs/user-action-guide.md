@@ -1221,3 +1221,14 @@ Updated:
 Removed/Deprecated:
 - inventory click 직후 정면 자동 배치를 정상 UX로 보는 절차.
 - lighting step에서 direct/indirect 카드만 선택하면 충분하다고 보는 절차.
+
+## 2026-05-07 변경 동기화 (Opening Visual QA Contract)
+Added:
+- `npm --workspace apps/web run verify:room-openings` 결과는 opening payload 검증뿐 아니라 shared renderer path, style metadata, procedural fallback smoke hook까지 포함해 읽는다.
+- opening QA 시 door/window GLB를 강제로 실패시킬 수 있는 환경에서는 fallback이 plain white box가 아니라 slab/handle/frame 또는 glass/mullion/sill 구조를 유지하는지 확인한다.
+
+Updated:
+- builder 3단계와 editor/shared viewer QA는 같은 `InteractiveDoors` visual path를 사용한다는 전제로 확인한다.
+
+Removed/Deprecated:
+- opening verify PASS를 “GLB 파일이 있다” 정도의 약한 증거로 해석하는 절차.

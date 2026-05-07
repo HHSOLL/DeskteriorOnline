@@ -1,21 +1,87 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import * as THREE from "three";
-import { useLoader, useThree } from "@react-three/fiber";
+import { useThree } from "@react-three/fiber";
 import { RuntimeTextureLoader } from "../../../lib/loaders/RuntimeTextureLoader";
 import { configureRuntimeAssetLoaders } from "../../../lib/loaders/AssetLoader";
 import { useShellSelector } from "../../../lib/stores/scene-slices";
 import { buildExteriorPolygon, buildFallbackShape } from "../../../lib/geometry/floor-shape";
 import {
   FLOOR_TEXTURE_PRESETS,
-  resolveRuntimeTextureSet
+  resolveRuntimeTextureSet,
+  type RuntimeTextureSet
 } from "../../../lib/textures/room-shell-textures";
 
 type FloorGeometryEntry = {
   id: string;
   geometry: THREE.ShapeGeometry;
 };
+
+type LoadedTextureSet = {
+  map: THREE.Texture;
+  roughnessMap: THREE.Texture;
+  normalMap: THREE.Texture;
+  bumpMap: THREE.Texture;
+};
+
+function textureSetKey(textureUrls: RuntimeTextureSet | null) {
+  return textureUrls
+    ? `${textureUrls.map}|${textureUrls.roughnessMap}|${textureUrls.normalMap}|${textureUrls.bumpMap}`
+    : "solid";
+}
+
+function loadTexture(url: string) {
+  return new Promise<THREE.Texture>((resolve, reject) => {
+    const loader = new RuntimeTextureLoader();
+    loader.load(url, resolve, undefined, reject);
+  });
+}
+
+function useRetainedTextureSet(textureUrls: RuntimeTextureSet | null) {
+  const [textures, setTextures] = useState<LoadedTextureSet | null>(null);
+  const key = textureSetKey(textureUrls);
+
+  useEffect(() => {
+    if (!textureUrls) {
+      setTextures(null);
+      return undefined;
+    }
+
+    let cancelled = false;
+    Promise.all([
+      loadTexture(textureUrls.map),
+      loadTexture(textureUrls.roughnessMap),
+      loadTexture(textureUrls.normalMap),
+      loadTexture(textureUrls.bumpMap)
+    ])
+      .then(([map, roughnessMap, normalMap, bumpMap]) => {
+        const nextTextures = { map, roughnessMap, normalMap, bumpMap };
+        if (cancelled) {
+          Object.values(nextTextures).forEach((texture) => texture.dispose());
+          return;
+        }
+        setTextures(nextTextures);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTextures((current) => current);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [key, textureUrls]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(textures ?? {}).forEach((texture) => texture.dispose());
+    };
+  }, [textures]);
+
+  return textures;
+}
 
 function hasRenderableTexture(texture: THREE.Texture | undefined) {
   if (!texture) return false;
@@ -48,55 +114,24 @@ function computeBounds(walls: { start: [number, number]; end: [number, number] }
   return { minX, maxX, minZ, maxZ };
 }
 
-function DetailedFloorMeshes({
+function FloorMeshes({
   geometries,
   width,
   depth,
-  floorMaterialIndex
+  floorMaterialIndex,
+  textureConfig,
+  textures,
+  hasRenderableTextureSet
 }: {
   geometries: FloorGeometryEntry[];
   width: number;
   depth: number;
   floorMaterialIndex: number;
+  textureConfig: (typeof FLOOR_TEXTURE_PRESETS)[number];
+  textures: LoadedTextureSet | null;
+  hasRenderableTextureSet: boolean;
 }) {
   const isWhitePreview = floorMaterialIndex < 0;
-  const gl = useThree((state) => state.gl);
-  const textureConfig =
-    FLOOR_TEXTURE_PRESETS[floorMaterialIndex % FLOOR_TEXTURE_PRESETS.length] ?? FLOOR_TEXTURE_PRESETS[0];
-  configureRuntimeAssetLoaders(gl);
-  const textureUrls = useMemo(
-    () => (isWhitePreview ? null : resolveRuntimeTextureSet(textureConfig)),
-    [isWhitePreview, textureConfig]
-  );
-  const loadedTextures = useLoader(
-    RuntimeTextureLoader,
-    textureUrls
-      ? [textureUrls.map, textureUrls.roughnessMap, textureUrls.normalMap, textureUrls.bumpMap]
-      : []
-  ) as THREE.Texture[];
-  const textures = useMemo(
-    () =>
-      textureUrls
-        ? {
-            map: loadedTextures[0]!,
-            roughnessMap: loadedTextures[1]!,
-            normalMap: loadedTextures[2]!,
-            bumpMap: loadedTextures[3]!
-          }
-        : null,
-    [loadedTextures, textureUrls]
-  );
-  const hasRenderableTextureSet = useMemo(
-    () =>
-      Boolean(
-        textures &&
-          hasRenderableTexture(textures.map) &&
-          hasRenderableTexture(textures.roughnessMap) &&
-          hasRenderableTexture(textures.normalMap) &&
-          hasRenderableTexture(textures.bumpMap)
-      ),
-    [textures]
-  );
 
   useEffect(() => {
     if (!textures || !hasRenderableTextureSet) return;
@@ -172,11 +207,52 @@ function DetailedFloorMeshes({
   ));
 }
 
-export default function ProceduralFloor() {
+function FloorGeometryGroup({
+  floorMaterialIndex,
+  geometries,
+  width,
+  depth,
+  textures
+}: {
+  floorMaterialIndex: number;
+  geometries: FloorGeometryEntry[];
+  width: number;
+  depth: number;
+  textures: LoadedTextureSet | null;
+}) {
+  const textureConfig =
+    FLOOR_TEXTURE_PRESETS[floorMaterialIndex % FLOOR_TEXTURE_PRESETS.length] ?? FLOOR_TEXTURE_PRESETS[0];
+  const hasRenderableTextureSet = useMemo(
+    () =>
+      Boolean(
+        textures &&
+          hasRenderableTexture(textures.map) &&
+          hasRenderableTexture(textures.roughnessMap) &&
+          hasRenderableTexture(textures.normalMap) &&
+          hasRenderableTexture(textures.bumpMap)
+      ),
+    [textures]
+  );
+
+  return (
+    <FloorMeshes
+      geometries={geometries}
+      width={width}
+      depth={depth}
+      floorMaterialIndex={floorMaterialIndex}
+      textureConfig={textureConfig}
+      textures={textures}
+      hasRenderableTextureSet={hasRenderableTextureSet}
+    />
+  );
+}
+
+function ProceduralFloorBase({ useTextureFallback }: { useTextureFallback: boolean }) {
   const walls = useShellSelector((slice) => slice.walls);
   const floors = useShellSelector((slice) => slice.floors);
   const scale = useShellSelector((slice) => slice.scale);
   const floorMaterialIndex = useShellSelector((slice) => slice.floorMaterialIndex);
+  const gl = useThree((state) => state.gl);
 
   const bounds = useMemo(() => computeBounds(walls, scale), [walls, scale]);
   const exterior = useMemo(() => buildExteriorPolygon(walls, scale), [walls, scale]);
@@ -230,12 +306,33 @@ export default function ProceduralFloor() {
     };
   }, [geometries]);
 
+  const textureConfig =
+    FLOOR_TEXTURE_PRESETS[floorMaterialIndex % FLOOR_TEXTURE_PRESETS.length] ?? FLOOR_TEXTURE_PRESETS[0];
+  configureRuntimeAssetLoaders(gl);
+  const textureUrls = useMemo(
+    () =>
+      useTextureFallback || floorMaterialIndex < 0
+        ? null
+        : resolveRuntimeTextureSet(textureConfig),
+    [floorMaterialIndex, textureConfig, useTextureFallback]
+  );
+  const textures = useRetainedTextureSet(textureUrls);
+
   return (
-    <DetailedFloorMeshes
+    <FloorGeometryGroup
       geometries={geometries}
       width={width}
       depth={depth}
       floorMaterialIndex={floorMaterialIndex}
+      textures={textures}
     />
   );
+}
+
+export function ProceduralFloorFallback() {
+  return <ProceduralFloorBase useTextureFallback />;
+}
+
+export default function ProceduralFloor() {
+  return <ProceduralFloorBase useTextureFallback={false} />;
 }
