@@ -64,6 +64,29 @@ function requireCuratedContract(
 function buildCuratedInserts(curatedAssets: ReturnType<typeof getCuratedDeskteriorAssets>): CatalogEntry[] {
   return [
     {
+      id: "p2s_fursys_setina_zdq012j",
+      label: "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+      category: "Tables",
+      assetId: "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+      scale: [1, 1, 1],
+      description:
+        "퍼시스 SETINA 시리즈 ZDQ012J를 테스트용으로 재구성한 모션 사이드 데스크입니다. 실제 제품 공개 페이지 치수와 상세 이미지를 기준으로 제작한 prototype SKU입니다.",
+      brand: "FURSYS",
+      price: "Prototype reference",
+      options: "1172x590x587 mm · height range 587~1073 mm · desktop_top only",
+      externalUrl: "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+      dimensionsMm: { width: 1172, depth: 590, height: 587 },
+      finishColor: "Light laminate / warm grey / graphite",
+      finishMaterial: "23T laminated top, steel frame, graphite wiring channel, side laminate panel",
+      detailNotes:
+        "Includes top slab, front modesty/lift panel, side support panel, telescoping lift plates, collision sensor paddle, sliding power channel, and cable duct. This is not release eligible without FURSYS product-design/CAD licensing.",
+      scaleLocked: true,
+      ...requireCuratedContract(curatedAssets, "p2s_fursys_setina_zdq012j"),
+      supportProfile:
+        curatedAssets.find((asset) => asset.manifestId === "p2s_fursys_setina_zdq012j")?.supportProfileExpectation ??
+        null
+    },
+    {
       id: "p2s_desk_oak_140",
       label: "P2S 오크 데스크 1400",
       category: "Tables",

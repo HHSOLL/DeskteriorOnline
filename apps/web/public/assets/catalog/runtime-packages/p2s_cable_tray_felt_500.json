@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-10T17:40:14.788Z",
   "key": "p2s_cable_tray_felt_500",
   "packageKind": "catalog_variant",
   "baseAssetKey": "p2s_under_desk_tray_mount",
@@ -270,7 +270,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+            "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
             "required": false,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           }
@@ -336,7 +336,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+          "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
           "required": false,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         }
@@ -407,7 +407,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_cable_tray_felt_500.webp",
+      "path": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
       "required": true,
       "exists": true
     }
@@ -425,7 +425,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_cable_tray_felt_500.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_cable_tray_felt_500.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_cable_tray_felt_500.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_cable_tray_felt_500.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp"
   },
   "qa": {
     "status": "passed",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-10T17:40:14.788Z",
   "key": "p2s_monitor_32_creator",
   "packageKind": "catalog_variant",
   "baseAssetKey": "Television_01",
@@ -287,7 +287,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/Television_01/Television_01_1k.gltf",
+            "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
             "required": false,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           }
@@ -353,7 +353,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/Television_01/Television_01_1k.gltf",
+          "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
           "required": false,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         }
@@ -424,7 +424,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_monitor_32_creator.webp",
+      "path": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
       "required": true,
       "exists": true
     }
@@ -442,7 +442,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_monitor_32_creator.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_monitor_32_creator.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_monitor_stand.webp"
   },
   "qa": {
     "status": "passed",

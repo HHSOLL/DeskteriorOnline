@@ -1,0 +1,430 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-05-10T17:40:14.788Z",
+  "key": "p2s_fursys_setina_zdq012j",
+  "packageKind": "curated_asset",
+  "baseAssetKey": null,
+  "manifestId": "p2s_fursys_setina_zdq012j",
+  "label": "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+  "assetId": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+  "sourcePath": "assets/blender/deskterior/p2s_fursys_setina_zdq012j.blend",
+  "runtimePath": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+  "dimensionsMm": {
+    "width": 1172,
+    "depth": 590,
+    "height": 587
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline prototype rebuild from FURSYS SETINA ZDQ012J references",
+      "path": "assets/blender/deskterior/p2s_fursys_setina_zdq012j.blend",
+      "url": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1"
+    },
+    "license": {
+      "spdx": "LicenseRef-Fursys-Store-Prototype-Reference",
+      "label": "Prototype-only FURSYS reference rebuild; not for commercial catalog release",
+      "requiresAttribution": true
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 24,
+      "maxTriangleCount": 8000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "desk-top",
+        "anchorTypes": [
+          "desk_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          1.172,
+          0.59
+        ],
+        "top": 0.587,
+        "surfaceType": "desktop_top",
+        "allowedAttachments": [
+          "place_on_surface"
+        ],
+        "thicknessMm": 23,
+        "margin": [
+          0.06,
+          0.06
+        ],
+        "localFrame": {
+          "originMm": [
+            0,
+            587,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            1000,
+            0
+          ]
+        }
+      }
+    ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "FURSYS product page notes screen/accessory attachment is not supported; only desktop_top placement is exposed."
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+    "productId": "p2s_fursys_setina_zdq012j",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 1172,
+      "depth": 590,
+      "height": 587
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+      "manufacturer": "FURSYS",
+      "license": "LicenseRef-Fursys-Store-Prototype-Reference",
+      "attributionRequired": true
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+          "triangleCount": 8000,
+          "drawCallBudget": 24
+        }
+      ],
+      "proxy": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 8000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 1172,
+          "depth": 590,
+          "height": 587
+        },
+        "centerMm": [
+          0,
+          294,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [
+      {
+        "id": "desk-top",
+        "type": "desktop_top",
+        "localFrame": {
+          "originMm": [
+            0,
+            587,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            1000,
+            0
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -526,
+            -235
+          ],
+          "max": [
+            526,
+            235
+          ]
+        },
+        "thicknessMm": 23,
+        "allowedAttachments": [
+          "place_on_surface"
+        ]
+      }
+    ],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+        "finishColor": "Light laminate / warm grey / graphite",
+        "finishMaterial": "23T laminated top, steel frame, graphite wiring channel, side laminate panel",
+        "detailNotes": "Includes top slab, front modesty/lift panel, side support panel, telescoping lift plates, collision sensor paddle, sliding power channel, and cable duct. This is not release eligible without FURSYS product-design/CAD licensing.",
+        "slotMaterials": [
+          {
+            "slot": "default",
+            "materialType": "metal",
+            "qaStatus": "pending",
+            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+          }
+        ]
+      }
+    ],
+    "commercialReadiness": {
+      "tier": "draft",
+      "sku": "ZDQ012J",
+      "manufacturer": "FURSYS",
+      "referencePack": {
+        "sku": "ZDQ012J",
+        "manufacturer": "FURSYS",
+        "canonicalProductUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+        "dimensionSourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+        "referenceImages": [
+          {
+            "view": "front",
+            "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg",
+            "required": false,
+            "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+          },
+          {
+            "view": "right",
+            "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#dimension-side",
+            "required": false,
+            "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+          },
+          {
+            "view": "top",
+            "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#dimension-top",
+            "required": false,
+            "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+          },
+          {
+            "view": "detail",
+            "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#power-channel-and-cable-duct",
+            "required": false,
+            "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+          }
+        ],
+        "finishReferences": [
+          {
+            "finishId": "tl",
+            "label": "TL light laminate top with graphite frame",
+            "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+            "materialType": "mixed"
+          }
+        ],
+        "license": {
+          "spdx": "LicenseRef-Fursys-Store-Prototype-Reference",
+          "label": "FURSYS Store reference, prototype-only DeskteriorOnline rebuild",
+          "requiresAttribution": true
+        },
+        "status": "reference_collected",
+        "notes": "Prototype-only SKU rebuild from public product page references. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
+      },
+      "visualFidelityScore": 0.78,
+      "dimensionToleranceMm": 0,
+      "dimensionTolerancePercent": 0,
+      "supportSurfaceToleranceMm": 3,
+      "footprintToleranceMm": 2,
+      "materialQaStatus": "pending",
+      "releaseEligible": false
+    },
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 1172,
+        "depth": 590,
+        "height": 587
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3",
+      "commercialFidelity": {
+        "referencePackStatus": "reference_collected",
+        "visualFidelityScore": 0.78,
+        "dimensionToleranceMm": 0,
+        "dimensionTolerancePercent": 0,
+        "supportSurfaceToleranceMm": 3,
+        "footprintToleranceMm": 2,
+        "materialQaStatus": "pending",
+        "releaseEligible": false
+      }
+    }
+  },
+  "commercialReadiness": {
+    "tier": "draft",
+    "sku": "ZDQ012J",
+    "manufacturer": "FURSYS",
+    "referencePack": {
+      "sku": "ZDQ012J",
+      "manufacturer": "FURSYS",
+      "canonicalProductUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+      "dimensionSourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+      "referenceImages": [
+        {
+          "view": "front",
+          "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg",
+          "required": false,
+          "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+        },
+        {
+          "view": "right",
+          "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#dimension-side",
+          "required": false,
+          "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+        },
+        {
+          "view": "top",
+          "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#dimension-top",
+          "required": false,
+          "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+        },
+        {
+          "view": "detail",
+          "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#power-channel-and-cable-duct",
+          "required": false,
+          "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+        }
+      ],
+      "finishReferences": [
+        {
+          "finishId": "tl",
+          "label": "TL light laminate top with graphite frame",
+          "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+          "materialType": "mixed"
+        }
+      ],
+      "license": {
+        "spdx": "LicenseRef-Fursys-Store-Prototype-Reference",
+        "label": "FURSYS Store reference, prototype-only DeskteriorOnline rebuild",
+        "requiresAttribution": true
+      },
+      "status": "reference_collected",
+      "notes": "Prototype-only SKU rebuild from public product page references. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
+    },
+    "visualFidelityScore": 0.78,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/blender/deskterior/p2s_fursys_setina_zdq012j.blend",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_fursys_setina_zdq012j.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_fursys_setina_zdq012j.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

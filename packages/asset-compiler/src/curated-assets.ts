@@ -35,6 +35,12 @@ const INTERNAL_HERO_SKU_RELEASE_KEYS = new Set([
   "p2s_desk_planter_pilea"
 ]);
 
+const FURSYS_SETINA_ZDQ012J_PRODUCT_URL =
+  "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1";
+
+const FURSYS_SETINA_ZDQ012J_REFERENCE_IMAGE =
+  "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg";
+
 function githubSourceUrl(repoPath: string) {
   return `https://github.com/HHSOLL/DeskteriorOnline/blob/main/${repoPath}`;
 }
@@ -189,8 +195,150 @@ function createCommercialMetadata(
   };
 }
 
+function createFursysSetinaZdq012jCommercialMetadata(): CommercialAssetFidelityMetadata {
+  return {
+    tier: "draft",
+    sku: "ZDQ012J",
+    manufacturer: "FURSYS",
+    referencePack: {
+      sku: "ZDQ012J",
+      manufacturer: "FURSYS",
+      canonicalProductUrl: FURSYS_SETINA_ZDQ012J_PRODUCT_URL,
+      dimensionSourceUrl: FURSYS_SETINA_ZDQ012J_PRODUCT_URL,
+      referenceImages: [
+        {
+          view: "front",
+          url: FURSYS_SETINA_ZDQ012J_REFERENCE_IMAGE,
+          required: false,
+          license: "LicenseRef-Fursys-Store-Prototype-Reference"
+        },
+        {
+          view: "right",
+          url: `${FURSYS_SETINA_ZDQ012J_REFERENCE_IMAGE}#dimension-side`,
+          required: false,
+          license: "LicenseRef-Fursys-Store-Prototype-Reference"
+        },
+        {
+          view: "top",
+          url: `${FURSYS_SETINA_ZDQ012J_REFERENCE_IMAGE}#dimension-top`,
+          required: false,
+          license: "LicenseRef-Fursys-Store-Prototype-Reference"
+        },
+        {
+          view: "detail",
+          url: `${FURSYS_SETINA_ZDQ012J_REFERENCE_IMAGE}#power-channel-and-cable-duct`,
+          required: false,
+          license: "LicenseRef-Fursys-Store-Prototype-Reference"
+        }
+      ],
+      finishReferences: [
+        {
+          finishId: "tl",
+          label: "TL light laminate top with graphite frame",
+          sourceUrl: FURSYS_SETINA_ZDQ012J_PRODUCT_URL,
+          materialType: "mixed"
+        }
+      ],
+      license: {
+        spdx: "LicenseRef-Fursys-Store-Prototype-Reference",
+        label: "FURSYS Store reference, prototype-only DeskteriorOnline rebuild",
+        requiresAttribution: true
+      },
+      status: "reference_collected",
+      notes:
+        "Prototype-only SKU rebuild from public product page references. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
+    },
+    visualFidelityScore: 0.78,
+    dimensionToleranceMm: 0,
+    dimensionTolerancePercent: 0,
+    supportSurfaceToleranceMm: 3,
+    footprintToleranceMm: 2,
+    materialQaStatus: "pending",
+    releaseEligible: false,
+    qaThresholds: {
+      minVisualFidelityScore: 0.95,
+      maxDimensionToleranceMm: 5,
+      maxDimensionTolerancePercent: 1,
+      maxSupportSurfaceToleranceMm: 3,
+      maxFootprintToleranceMm: 2
+    }
+  };
+}
+
 export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDeskteriorAsset[] {
   return [
+    {
+      key: "p2s_fursys_setina_zdq012j",
+      manifestId: "p2s_fursys_setina_zdq012j",
+      sourcePath: sourceBlendPath(paths.repoRoot, "p2s_fursys_setina_zdq012j"),
+      runtimePath: runtimeAssetPath(paths.publicRoot, "p2s_fursys_setina_zdq012j"),
+      expectedAssetId: runtimeAssetId("p2s_fursys_setina_zdq012j"),
+      requiredMetadata: ["brand", "externalUrl", "description", "category", "options"],
+      budget: {
+        maxFileSizeBytes: 1_500_000,
+        maxDrawCalls: 24,
+        maxTriangleCount: 8_000
+      },
+      commercialMetadata: createFursysSetinaZdq012jCommercialMetadata(),
+      contractMetadata: {
+        source: {
+          kind: "deskterioronline_blender",
+          name: "DeskteriorOnline prototype rebuild from FURSYS SETINA ZDQ012J references",
+          path: sourceBlendRepoPath("p2s_fursys_setina_zdq012j"),
+          url: FURSYS_SETINA_ZDQ012J_PRODUCT_URL
+        },
+        license: {
+          spdx: "LicenseRef-Fursys-Store-Prototype-Reference",
+          label: "Prototype-only FURSYS reference rebuild; not for commercial catalog release",
+          requiresAttribution: true
+        },
+        pivot: {
+          x: "center",
+          y: "floor",
+          z: "center"
+        },
+        collisionProxy: {
+          kind: "box",
+          derivesFrom: "dimensionsMm"
+        },
+        textureSet: {
+          workflow: "pbr_metallic_roughness",
+          authored: "procedural",
+          ktx2Ready: false
+        },
+        lodProfile: {
+          strategy: "single_mesh",
+          levelCount: 1,
+          maxDrawCalls: 24,
+          maxTriangleCount: 8_000
+        }
+      },
+      attachmentAuthoring: {
+        mode: "none",
+        reason: "FURSYS product page notes screen/accessory attachment is not supported; only desktop_top placement is exposed."
+      },
+      supportProfileExpectation: {
+        surfaces: [
+          {
+            id: "desk-top",
+            anchorTypes: ["desk_surface", "furniture_surface"],
+            center: [0, 0],
+            size: [1.172, 0.59],
+            top: 0.587,
+            surfaceType: "desktop_top",
+            allowedAttachments: ["place_on_surface"],
+            thicknessMm: 23,
+            margin: [0.06, 0.06],
+            localFrame: {
+              originMm: [0, 587, 0],
+              tangentU: [1000, 0, 0],
+              tangentV: [0, 0, 1000],
+              normal: [0, 1000, 0]
+            }
+          }
+        ]
+      }
+    },
     {
       key: "p2s_desk_oak",
       manifestId: "p2s_desk_oak_140",

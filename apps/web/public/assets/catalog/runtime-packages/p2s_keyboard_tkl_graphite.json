@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-10T17:40:14.788Z",
   "key": "p2s_keyboard_tkl_graphite",
   "packageKind": "catalog_variant",
   "baseAssetKey": "p2s_low_profile_keyboard",
@@ -138,7 +138,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+            "url": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
             "required": false,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           }
@@ -204,7 +204,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+          "url": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
           "required": false,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         }
@@ -275,7 +275,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_keyboard_tkl_graphite.webp",
+      "path": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
       "required": true,
       "exists": true
     }
@@ -293,7 +293,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_keyboard_tkl_graphite.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_keyboard_tkl_graphite.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_keyboard_tkl_graphite.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_keyboard_tkl_graphite.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp"
   },
   "qa": {
     "status": "passed",

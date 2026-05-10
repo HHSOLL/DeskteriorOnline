@@ -42,6 +42,7 @@
 
 진행:
 - Blender 원본 -> GLB -> catalog sync 파이프라인 표준화
+- 실제 SKU 테스트로 FURSYS SETINA ZDQ012J prototype rebuild를 Blender source/GLB/catalog metadata/runtime package 경로에 추가
 - `assets:export:deskterior` / `assets:sync:deskterior` / `assets:validate:deskterior` / `assets:verify:deskterior` 4단계 CLI 계약 고정
 - 저장/연산 경계에서 placement 데이터를 mm 정수 기준으로 정규화하고, 렌더 직전에만 meter float로 변환하는 계약 도입
 - `/project/[id]` 편집 흐름을 room mode와 desk precision mode로 분리하고 카메라/스냅/피킹 정책을 각 모드별로 고정
@@ -120,6 +121,19 @@ Removed/Deprecated:
 - preview 중 scene document/store mutation이 발생해도 UI가 맞아 보이면 허용한다는 가정.
 - controller가 candidate switch와 commit 가능 여부를 독자 판단하는 구조.
 - wall/grommet attachment가 schema에만 존재하고 focus/kernel 제품 경로에서는 검증되지 않아도 된다는 가정.
+
+## 2026-05-11 변경 동기화 (Actual SKU Prototype Asset)
+Added:
+- `p2s_fursys_setina_zdq012j`를 테스트용 실제 SKU reference rebuild로 추가한다.
+- 이 SKU는 공개 제품 페이지의 1172x590x587mm, 높이 조절 587~1073mm, 23T 상판 정보를 기준으로 Blender source와 runtime GLB를 가진다.
+- 제품 공개 페이지 URL, 상세 이미지 URL, prototype-only reference license, `releaseEligible=false`를 commercial readiness에 기록한다.
+
+Updated:
+- 실제 브랜드 제품을 repo catalog에 넣을 때는 운영 승격 전까지 `tier="draft"`와 `materialQaStatus="pending"`을 유지한다.
+- 제조사 허가/CAD/reference license가 없는 실제 SKU rebuild는 테스트 catalog 검증에는 사용할 수 있지만 paid-beta hero catalog로 승격하지 않는다.
+
+Removed/Deprecated:
+- 공개 제품 사진만 보고 만든 브랜드 SKU를 바로 release eligible catalog로 취급하는 방식.
 
 ## 2026-04-19 심층 분석 기반 실행 순서
 이 순서는 `/Users/sol/Downloads/DeskteriorOnline 정밀 공간 편집 시스템 심층 분석 보고서.docx`의 제안을 현재 room-first 제품 흐름에 맞게 재배열한 것이다. P0~P3의 큰 축은 유지하되, 실제 실행은 아래 Phase와 Slice 단위로 끊어서 진행한다.

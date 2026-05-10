@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-10T17:40:14.788Z",
   "key": "p2s_monitor_arm_single_clamp",
   "packageKind": "catalog_variant",
   "baseAssetKey": "desk_lamp_arm_01",
@@ -345,7 +345,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+            "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
             "required": true,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           },
@@ -429,7 +429,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+          "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
           "required": true,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         },
@@ -518,7 +518,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_monitor_arm_single_clamp.webp",
+      "path": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
       "required": true,
       "exists": true
     }
@@ -536,7 +536,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_single_clamp.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_monitor_arm_single_clamp.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp"
   },
   "qa": {
     "status": "passed",

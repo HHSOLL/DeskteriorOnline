@@ -1,7 +1,222 @@
 {
   "schemaVersion": "asset-package-index-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-10T17:40:14.788Z",
   "assets": [
+    {
+      "key": "p2s_fursys_setina_zdq012j",
+      "packageKind": "curated_asset",
+      "baseAssetKey": null,
+      "manifestId": "p2s_fursys_setina_zdq012j",
+      "label": "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+      "assetId": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+        "productId": "p2s_fursys_setina_zdq012j",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 1172,
+          "depth": 590,
+          "height": 587
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+          "manufacturer": "FURSYS",
+          "license": "LicenseRef-Fursys-Store-Prototype-Reference",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+              "triangleCount": 8000,
+              "drawCallBudget": 24
+            }
+          ],
+          "proxy": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 8000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 1172,
+              "depth": 590,
+              "height": 587
+            },
+            "centerMm": [
+              0,
+              294,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [
+          {
+            "id": "desk-top",
+            "type": "desktop_top",
+            "localFrame": {
+              "originMm": [
+                0,
+                587,
+                0
+              ],
+              "tangentU": [
+                1000,
+                0,
+                0
+              ],
+              "tangentV": [
+                0,
+                0,
+                1000
+              ],
+              "normal": [
+                0,
+                1000,
+                0
+              ]
+            },
+            "boundsMm": {
+              "min": [
+                -526,
+                -235
+              ],
+              "max": [
+                526,
+                235
+              ]
+            },
+            "thicknessMm": 23,
+            "allowedAttachments": [
+              "place_on_surface"
+            ]
+          }
+        ],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+            "finishColor": "Light laminate / warm grey / graphite",
+            "finishMaterial": "23T laminated top, steel frame, graphite wiring channel, side laminate panel",
+            "detailNotes": "Includes top slab, front modesty/lift panel, side support panel, telescoping lift plates, collision sensor paddle, sliding power channel, and cable duct. This is not release eligible without FURSYS product-design/CAD licensing.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "draft",
+          "sku": "ZDQ012J",
+          "manufacturer": "FURSYS",
+          "referencePack": {
+            "sku": "ZDQ012J",
+            "manufacturer": "FURSYS",
+            "canonicalProductUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+            "dimensionSourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg",
+                "required": false,
+                "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+              },
+              {
+                "view": "right",
+                "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#dimension-side",
+                "required": false,
+                "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+              },
+              {
+                "view": "top",
+                "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#dimension-top",
+                "required": false,
+                "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+              },
+              {
+                "view": "detail",
+                "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg#power-channel-and-cable-duct",
+                "required": false,
+                "license": "LicenseRef-Fursys-Store-Prototype-Reference"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "tl",
+                "label": "TL light laminate top with graphite frame",
+                "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Fursys-Store-Prototype-Reference",
+              "label": "FURSYS Store reference, prototype-only DeskteriorOnline rebuild",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Prototype-only SKU rebuild from public product page references. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 1172,
+            "depth": 590,
+            "height": 587
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 1,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "draft",
+      "sku": "ZDQ012J",
+      "manufacturer": "FURSYS",
+      "releaseEligible": false
+    },
     {
       "key": "p2s_desk_oak",
       "packageKind": "curated_asset",
@@ -2331,7 +2546,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -2624,7 +2839,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -2917,7 +3132,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -3210,7 +3425,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -3503,7 +3718,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -3676,7 +3891,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/SchoolChair_01/SchoolChair_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -3849,7 +4064,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/dining_chair_02/dining_chair_02_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -4022,7 +4237,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/bar_chair_round_01/bar_chair_round_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -4249,7 +4464,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/Television_01/Television_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -4476,7 +4691,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/Television_01/Television_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -4721,7 +4936,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/Television_01/Television_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -4948,7 +5163,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/Television_01/Television_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -5175,7 +5390,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/Television_01/Television_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -5431,7 +5646,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
                 "required": true,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               },
@@ -5705,7 +5920,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -5961,7 +6176,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -6116,7 +6331,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+                "url": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -6271,7 +6486,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+                "url": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -6426,7 +6641,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+                "url": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -6581,7 +6796,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+                "url": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -6736,7 +6951,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_low_profile_keyboard/p2s_low_profile_keyboard.glb",
+                "url": "/assets/catalog/thumbnails/p2s_low_profile_keyboard.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -6891,7 +7106,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+                "url": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -7046,7 +7261,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+                "url": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -7201,7 +7416,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+                "url": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -7356,7 +7571,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+                "url": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -7511,7 +7726,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_wireless_mouse/p2s_wireless_mouse.glb",
+                "url": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -7666,7 +7881,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb",
+                "url": "/assets/catalog/thumbnails/p2s_compact_speaker.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -7821,7 +8036,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/boombox/boombox_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_compact_speaker.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -7976,7 +8191,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_compact_speaker/p2s_compact_speaker.glb",
+                "url": "/assets/catalog/thumbnails/p2s_compact_speaker.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -8158,7 +8373,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -8313,7 +8528,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -8588,7 +8803,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -8783,7 +8998,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -8978,7 +9193,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -9173,7 +9388,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -9368,7 +9583,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -9563,7 +9778,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -9790,7 +10005,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+                "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -10017,7 +10232,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+                "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -10244,7 +10459,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+                "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -10431,7 +10646,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+                "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -10618,7 +10833,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+                "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -10802,7 +11017,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+                "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -10985,7 +11200,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+                "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -11172,7 +11387,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_under_desk_tray_mount/p2s_under_desk_tray_mount.glb",
+                "url": "/assets/catalog/thumbnails/p2s_under_desk_tray_mount.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -11395,7 +11610,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/Shelf_01/Shelf_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -11618,7 +11833,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/wooden_display_shelves_01/wooden_display_shelves_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -11813,7 +12028,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/steel_frame_shelves_01/steel_frame_shelves_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -11968,7 +12183,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+                "url": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -12123,7 +12338,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+                "url": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -12278,7 +12493,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_book_stack_warm/p2s_book_stack_warm.glb",
+                "url": "/assets/catalog/thumbnails/p2s_book_stack_warm.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -12433,7 +12648,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_book_stack_warm/p2s_book_stack_warm.glb",
+                "url": "/assets/catalog/thumbnails/p2s_book_stack_warm.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -12588,7 +12803,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_planter_pilea.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -12743,7 +12958,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_planter_pilea.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -12898,7 +13113,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+                "url": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -13093,7 +13308,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_tray_oak/p2s_desk_tray_oak.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -13248,7 +13463,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_book_stack_warm/p2s_book_stack_warm.glb",
+                "url": "/assets/catalog/thumbnails/p2s_book_stack_warm.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -13403,7 +13618,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_book_stack_warm/p2s_book_stack_warm.glb",
+                "url": "/assets/catalog/thumbnails/p2s_book_stack_warm.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -13558,7 +13773,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/alarm_clock_01/alarm_clock_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -13713,7 +13928,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/Camera_01/Camera_01_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_desk_tray_oak.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -13868,7 +14083,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/brass_candleholders/brass_candleholders_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -14023,7 +14238,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/gamepad/gamepad_1k.gltf",
+                "url": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -14178,7 +14393,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.glb",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -14333,7 +14548,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_book_stack_warm/p2s_book_stack_warm.glb",
+                "url": "/assets/catalog/thumbnails/p2s_book_stack_warm.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -14488,7 +14703,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_monitor_stand/p2s_monitor_stand.glb",
+                "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -14643,7 +14858,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_desk_planter_pilea/p2s_desk_planter_pilea.glb",
+                "url": "/assets/catalog/thumbnails/p2s_desk_planter_pilea.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -14798,7 +15013,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_book_stack_warm/p2s_book_stack_warm.glb",
+                "url": "/assets/catalog/thumbnails/p2s_book_stack_warm.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }
@@ -14953,7 +15168,7 @@
             "referenceImages": [
               {
                 "view": "front",
-                "url": "/assets/models/p2s_ceramic_mug/p2s_ceramic_mug.glb",
+                "url": "/assets/catalog/thumbnails/p2s_ceramic_mug.webp",
                 "required": false,
                 "license": "LicenseRef-DeskteriorOnline-Internal"
               }

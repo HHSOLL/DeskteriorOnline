@@ -1,0 +1,17 @@
+[
+  {
+    "id": "default",
+    "label": "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+    "finishColor": "Light laminate / warm grey / graphite",
+    "finishMaterial": "23T laminated top, steel frame, graphite wiring channel, side laminate panel",
+    "detailNotes": "Includes top slab, front modesty/lift panel, side support panel, telescoping lift plates, collision sensor paddle, sliding power channel, and cable duct. This is not release eligible without FURSYS product-design/CAD licensing.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
+  }
+]

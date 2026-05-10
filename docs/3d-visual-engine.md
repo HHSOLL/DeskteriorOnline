@@ -248,6 +248,7 @@ Removed/Deprecated:
 - focus/walk/desk precision preview lifecycle은 `interaction-engine` event/result/command를 기준으로 한다. `aiming`, `candidate_preview`, `manipulating`, `blocked` 동안에는 renderer ghost preview만 갱신하고, canonical document patch는 만들지 않는다.
 - blocked preview도 ghost affordance는 보여줄 수 있지만 commit은 막아야 하며, HUD/overlay는 interaction engine의 blocked reason을 표시해야 한다.
 - 제품 외형 치수 오차는 `<= 1%` 또는 `<= 5mm`, desk/대형 가구 support surface 오차는 `<= 3mm`, 소품 footprint 오차는 `<= 2mm`를 paid-beta 기준으로 본다.
+- 공개 제품 사진 기반 실제 SKU rebuild는 draft/prototype tier로만 두고, manufacturer CAD 또는 사용 허가가 확보되기 전에는 `releaseEligible=false`와 `materialQaStatus=pending`을 유지한다.
 
 ## 2026-05-02 변경 동기화 (Interaction Preview Contract)
 Added:

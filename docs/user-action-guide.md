@@ -103,6 +103,7 @@
 51. 새 asset을 운영 catalog에 올리기 전 `referencePack`, 공식 치수, reference image, material QA, release eligibility가 `asset:publish` 산출물에 반영되는지 확인하기
 52. wall/floor texture preset이 12개 이하이고, AI 생성 1K texture는 candidate로 표시되며, 상용 preset은 2K source/KTX2/fallback metadata를 가지는지 확인하기
 53. `verify:interaction-engine` 실행 시 preview 상태에서는 document patch가 0건이고, commit 상태에서만 placement patch intent가 1건 발생하는지 확인하기
+54. 실제 브랜드 제품 prototype asset은 catalog에 노출되더라도 `releaseEligible=false`/draft 상태인지, 제조사 URL과 치수 출처가 runtime package에 남는지 확인하기
 
 ## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing QA)
 Added:
