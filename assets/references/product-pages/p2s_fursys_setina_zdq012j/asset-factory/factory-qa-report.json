@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "product-asset-factory-qa-alpha-v1",
+  "generatedAt": "2026-05-11T22:52:20.588Z",
+  "assetKey": "p2s_fursys_setina_zdq012j",
+  "status": "ready_for_private_use",
+  "privateUseOnly": true,
+  "releaseEligible": false,
+  "commercialStatus": "needs_repair",
+  "scores": {
+    "privateReadiness": 0.885,
+    "visualFidelity": 0.84,
+    "dimensionFidelity": 1,
+    "artifactCompleteness": 1,
+    "materialReferenceReadiness": 0.55
+  },
+  "dimensionComparison": {
+    "referenceMm": {
+      "width": 1172,
+      "depth": 590,
+      "height": 587
+    },
+    "runtimeMm": {
+      "width": 1172,
+      "depth": 590,
+      "height": 587
+    },
+    "errorMm": {
+      "width": 0,
+      "depth": 0,
+      "height": 0
+    },
+    "maxErrorMm": 0,
+    "maxErrorPercent": 0,
+    "passed": true
+  },
+  "referenceCoverage": {
+    "imageCount": 3,
+    "views": [
+      "detail",
+      "front"
+    ],
+    "finishReferenceCount": 4,
+    "status": "dimension_verified"
+  },
+  "materialCoverage": {
+    "plannedSlotCount": 9,
+    "runtimeSlotCount": 6,
+    "pendingSlotCount": 6,
+    "qaStatus": "pending"
+  },
+  "artifactChecks": [
+    {
+      "id": "source_blend",
+      "label": "Blender source file",
+      "path": "assets/blender/deskterior/p2s_fursys_setina_zdq012j.blend",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 2188973
+    },
+    {
+      "id": "runtime_model",
+      "label": "Runtime GLB model",
+      "path": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 1554600
+    },
+    {
+      "id": "proxy_model",
+      "label": "Runtime proxy GLB",
+      "path": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.proxy.glb",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 398348
+    },
+    {
+      "id": "colliders",
+      "label": "Collider sidecar",
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.colliders.json",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 191
+    },
+    {
+      "id": "support_surfaces",
+      "label": "Support surface sidecar",
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.support-surfaces.json",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 546
+    },
+    {
+      "id": "attachment_points",
+      "label": "Attachment point sidecar",
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.attachment-points.json",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 3
+    },
+    {
+      "id": "material_variants",
+      "label": "Material variant sidecar",
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.material-variants.json",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 2480
+    },
+    {
+      "id": "qa_report",
+      "label": "Runtime QA report",
+      "path": "/assets/catalog/runtime-packages/p2s_fursys_setina_zdq012j.qa-report.json",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 546
+    },
+    {
+      "id": "thumbnail",
+      "label": "Inventory thumbnail",
+      "path": "/assets/catalog/thumbnails/p2s_fursys_setina_zdq012j.webp",
+      "required": true,
+      "exists": true,
+      "sizeBytes": 11148
+    }
+  ],
+  "catalogVisibility": {
+    "runtimePackageFound": true,
+    "runtimeIndexFound": true,
+    "publicReleaseBlocked": true,
+    "releaseEligible": false
+  },
+  "repairInstructions": [
+    "Run a focused Blender rebuild pass for product-specific silhouette details and compare rendered orthographic views against references.",
+    "Replace URL-inferred procedural materials with manufacturer finish swatches, calibrated PBR values, or licensed material references.",
+    "Keep the asset private/prototype-only until product-design, CAD, texture, trademark, and reference-image usage rights are cleared."
+  ]
+}

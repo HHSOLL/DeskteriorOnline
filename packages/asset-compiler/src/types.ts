@@ -4,6 +4,8 @@ import type {
   ColliderDefinition,
   DimensionsMm,
   MaterialVariant,
+  ProductReferencePack,
+  ReferenceImageView,
   RuntimeCommercialReadiness,
   RuntimeAsset,
   SupportSurface
@@ -246,4 +248,196 @@ export type AssetIngestSummary = {
   ok: boolean;
   outputPath: string;
   assetKey: string;
+};
+
+export type ProductUrlReferenceImage = {
+  url: string;
+  view: ReferenceImageView;
+  source: "json_ld" | "open_graph" | "html_image" | "detail_image";
+  score: number;
+  localPath?: string | null;
+};
+
+export type ProductUrlMaterialSlotHint = {
+  slot: string;
+  materialType: NonNullable<MaterialVariant["slotMaterials"]>[number]["materialType"];
+  label: string;
+  evidence: string[];
+  qaStatus: "pending";
+};
+
+export type ProductUrlReferenceDraft = {
+  schemaVersion: "product-url-reference-alpha-v1";
+  createdAt: string;
+  assetKey: string;
+  sourceUrl: string;
+  product: {
+    title: string | null;
+    sku: string | null;
+    manufacturer: string | null;
+    brand: string | null;
+    price: number | null;
+    priceCurrency: string | null;
+    options: string[];
+    dimensionsMm: DimensionsMm | null;
+    heightRangeMm: [number, number] | null;
+  };
+  legalUse: {
+    mode: "prototype_reference_only";
+    releaseEligible: false;
+    license: ProductReferencePack["license"];
+    warning: string;
+  };
+  referencePack: ProductReferencePack;
+  referenceImages: ProductUrlReferenceImage[];
+  materialHints: ProductUrlMaterialSlotHint[];
+  extraction: {
+    jsonLdProductFound: boolean;
+    openGraphImageFound: boolean;
+    htmlImageCount: number;
+    selectedImageCount: number;
+    dimensionSource: "html_text" | "ocr" | "override" | "not_found";
+    ocrAttempted: boolean;
+    ocrAvailable: boolean;
+    ocrTextSample: string | null;
+    warnings: string[];
+  };
+};
+
+export type ProductUrlReferenceSummary = {
+  ok: boolean;
+  assetKey: string;
+  outputPath: string;
+  draft: ProductUrlReferenceDraft;
+};
+
+export type ProductAssetFactoryMaterialPlan = {
+  slot: string;
+  materialType: NonNullable<MaterialVariant["slotMaterials"]>[number]["materialType"];
+  target: string;
+  evidence: string[];
+  qaStatus: "pending_reference" | "runtime_authored" | "manufacturer_verified";
+};
+
+export type ProductAssetFactoryArtifactCheck = {
+  id:
+    | "source_blend"
+    | "runtime_model"
+    | "proxy_model"
+    | "colliders"
+    | "support_surfaces"
+    | "attachment_points"
+    | "material_variants"
+    | "qa_report"
+    | "thumbnail";
+  label: string;
+  path: string;
+  required: boolean;
+  exists: boolean;
+  sizeBytes: number | null;
+};
+
+export type ProductAssetFactoryPlan = {
+  schemaVersion: "product-asset-factory-plan-alpha-v1";
+  generatedAt: string;
+  assetKey: string;
+  product: ProductUrlReferenceDraft["product"];
+  sourceUrl: string;
+  referencePackPath: string;
+  visibility: {
+    mode: "private_prototype";
+    catalogExposure: "private_only";
+    releaseEligible: false;
+    reason: string;
+  };
+  qualityTargets: {
+    targetSimilarityPercent: number;
+    minVisualFidelityScore: number;
+    maxDimensionToleranceMm: number;
+    maxDimensionTolerancePercent: number;
+    requireLicensedCadForCommercial: true;
+  };
+  build: {
+    strategy: "blender_procedural_reference_rebuild";
+    blenderScriptPath: string;
+    outputModelPath: string;
+    outputProxyPath: string;
+    outputThumbnailPath: string;
+    requiredComponents: string[];
+    materialSlots: ProductAssetFactoryMaterialPlan[];
+  };
+  validationGates: string[];
+  referenceImages: ProductUrlReferenceImage[];
+};
+
+export type ProductAssetFactoryQaReport = {
+  schemaVersion: "product-asset-factory-qa-alpha-v1";
+  generatedAt: string;
+  assetKey: string;
+  status: "ready_for_private_use" | "needs_repair" | "blocked";
+  privateUseOnly: true;
+  releaseEligible: false;
+  commercialStatus: "not_eligible_without_license" | "needs_repair" | "blocked";
+  scores: {
+    privateReadiness: number;
+    visualFidelity: number;
+    dimensionFidelity: number;
+    artifactCompleteness: number;
+    materialReferenceReadiness: number;
+  };
+  dimensionComparison: {
+    referenceMm: DimensionsMm | null;
+    runtimeMm: DimensionsMm | null;
+    errorMm: DimensionsMm | null;
+    maxErrorMm: number | null;
+    maxErrorPercent: number | null;
+    passed: boolean;
+  };
+  referenceCoverage: {
+    imageCount: number;
+    views: ReferenceImageView[];
+    finishReferenceCount: number;
+    status: ProductReferencePack["status"];
+  };
+  materialCoverage: {
+    plannedSlotCount: number;
+    runtimeSlotCount: number;
+    pendingSlotCount: number;
+    qaStatus: RuntimeCommercialReadiness["materialQaStatus"] | "missing";
+  };
+  artifactChecks: ProductAssetFactoryArtifactCheck[];
+  catalogVisibility: {
+    runtimePackageFound: boolean;
+    runtimeIndexFound: boolean;
+    publicReleaseBlocked: boolean;
+    releaseEligible: false;
+  };
+  repairInstructions: string[];
+};
+
+export type ProductAssetFactoryPrivateCatalogEntry = {
+  schemaVersion: "product-asset-private-catalog-alpha-v1";
+  generatedAt: string;
+  assetKey: string;
+  label: string;
+  assetId: string | null;
+  thumbnailPath: string | null;
+  referencePackPath: string;
+  qaReportPath: string;
+  visibility: "private_prototype";
+  releaseEligible: false;
+  restrictions: string[];
+};
+
+export type ProductAssetFactorySummary = {
+  ok: boolean;
+  assetKey: string;
+  outputDir: string;
+  planPath: string;
+  qaReportPath: string;
+  repairInstructionsPath: string;
+  privateCatalogEntryPath: string;
+  plan: ProductAssetFactoryPlan;
+  qaReport: ProductAssetFactoryQaReport;
+  privateCatalogEntry: ProductAssetFactoryPrivateCatalogEntry;
 };

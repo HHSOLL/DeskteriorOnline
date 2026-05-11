@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
   "key": "p2s_desk_lamp_dome_warm",
   "packageKind": "catalog_variant",
   "baseAssetKey": "p2s_desk_lamp_glow",
@@ -371,7 +371,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb",
+            "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
             "required": false,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           }
@@ -437,7 +437,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/p2s_desk_lamp_glow/p2s_desk_lamp_glow.glb",
+          "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
           "required": false,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         }
@@ -508,7 +508,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_desk_lamp_dome_warm.webp",
+      "path": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
       "required": true,
       "exists": true
     }
@@ -526,7 +526,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_desk_lamp_dome_warm.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_desk_lamp_dome_warm.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_desk_lamp_dome_warm.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_lamp_dome_warm.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp"
   },
   "qa": {
     "status": "passed",

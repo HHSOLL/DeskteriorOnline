@@ -1,0 +1,303 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
+  "key": "p2s_video_so_ong_square1_power_cube",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_video_so_ong_square1_power_cube",
+  "manifestId": "p2s_video_so_ong_square1_power_cube",
+  "label": "Reference prototype · Avolt x Martinelli Luce Square1 power cube",
+  "assetId": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+  "sourcePath": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+  "runtimePath": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+  "dimensionsMm": {
+    "width": 76,
+    "depth": 76,
+    "height": 76
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline So Ong video reference prototype pack",
+      "path": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+      "url": "https://www.youtube.com/watch?v=jHakJw40k58"
+    },
+    "license": {
+      "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+      "label": "Prototype-only rebuild from public video/product references",
+      "requiresAttribution": true
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 18,
+      "maxTriangleCount": 12000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+    "productId": "p2s_video_so_ong_square1_power_cube",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 76,
+      "depth": 76,
+      "height": 76
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+      "manufacturer": "Avolt / Martinelli Luce",
+      "license": "LicenseRef-Video-Reference-Prototype-Only",
+      "attributionRequired": true
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+          "triangleCount": 12000,
+          "drawCallBudget": 18
+        }
+      ],
+      "proxy": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 12000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 76,
+          "depth": 76,
+          "height": 76
+        },
+        "centerMm": [
+          0,
+          38,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "Reference prototype · Avolt x Martinelli Luce Square1 power cube",
+        "finishColor": "White cube",
+        "finishMaterial": "Matte plastic with recessed sockets",
+        "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+        "slotMaterials": [
+          {
+            "slot": "default",
+            "materialType": "plastic",
+            "qaStatus": "pending",
+            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+          }
+        ]
+      }
+    ],
+    "commercialReadiness": {
+      "tier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-SQUARE1-POWER-CUBE",
+      "manufacturer": "Avolt / Martinelli Luce",
+      "referencePack": {
+        "sku": "P2S-VIDEO-SO-ONG-SQUARE1-POWER-CUBE",
+        "manufacturer": "Avolt / Martinelli Luce",
+        "canonicalProductUrl": "https://ozip.me/mAWYfhB?af",
+        "dimensionSourceUrl": "https://ozip.me/mAWYfhB?af",
+        "referenceImages": [
+          {
+            "view": "front",
+            "url": "/assets/catalog/thumbnails/p2s_video_so_ong_square1_power_cube.webp",
+            "required": false,
+            "license": "LicenseRef-Video-Reference-Prototype-Only"
+          }
+        ],
+        "finishReferences": [
+          {
+            "finishId": "default",
+            "label": "Matte plastic with recessed sockets",
+            "sourceUrl": "https://ozip.me/mAWYfhB?af",
+            "materialType": "mixed"
+          }
+        ],
+        "license": {
+          "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+          "label": "Prototype-only rebuild from public video/product references",
+          "requiresAttribution": true
+        },
+        "status": "reference_collected",
+        "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+      },
+      "visualFidelityScore": 0.78,
+      "dimensionToleranceMm": 0,
+      "dimensionTolerancePercent": 0,
+      "supportSurfaceToleranceMm": 3,
+      "footprintToleranceMm": 2,
+      "materialQaStatus": "pending",
+      "releaseEligible": false
+    },
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 76,
+        "depth": 76,
+        "height": 76
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3",
+      "commercialFidelity": {
+        "referencePackStatus": "reference_collected",
+        "visualFidelityScore": 0.78,
+        "dimensionToleranceMm": 0,
+        "dimensionTolerancePercent": 0,
+        "supportSurfaceToleranceMm": 3,
+        "footprintToleranceMm": 2,
+        "materialQaStatus": "pending",
+        "releaseEligible": false
+      }
+    }
+  },
+  "commercialReadiness": {
+    "tier": "generic_catalog",
+    "sku": "P2S-VIDEO-SO-ONG-SQUARE1-POWER-CUBE",
+    "manufacturer": "Avolt / Martinelli Luce",
+    "referencePack": {
+      "sku": "P2S-VIDEO-SO-ONG-SQUARE1-POWER-CUBE",
+      "manufacturer": "Avolt / Martinelli Luce",
+      "canonicalProductUrl": "https://ozip.me/mAWYfhB?af",
+      "dimensionSourceUrl": "https://ozip.me/mAWYfhB?af",
+      "referenceImages": [
+        {
+          "view": "front",
+          "url": "/assets/catalog/thumbnails/p2s_video_so_ong_square1_power_cube.webp",
+          "required": false,
+          "license": "LicenseRef-Video-Reference-Prototype-Only"
+        }
+      ],
+      "finishReferences": [
+        {
+          "finishId": "default",
+          "label": "Matte plastic with recessed sockets",
+          "sourceUrl": "https://ozip.me/mAWYfhB?af",
+          "materialType": "mixed"
+        }
+      ],
+      "license": {
+        "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+        "label": "Prototype-only rebuild from public video/product references",
+        "requiresAttribution": true
+      },
+      "status": "reference_collected",
+      "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+    },
+    "visualFidelityScore": 0.78,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_video_so_ong_square1_power_cube.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_video_so_ong_square1_power_cube.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

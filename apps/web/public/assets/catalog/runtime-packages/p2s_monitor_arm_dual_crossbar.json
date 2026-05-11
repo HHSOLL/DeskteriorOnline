@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
   "key": "p2s_monitor_arm_dual_crossbar",
   "packageKind": "catalog_variant",
   "baseAssetKey": "desk_lamp_arm_01",
@@ -345,7 +345,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+            "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
             "required": false,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           }
@@ -411,7 +411,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/desk_lamp_arm_01/desk_lamp_arm_01_1k.gltf",
+          "url": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
           "required": false,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         }
@@ -482,7 +482,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_monitor_arm_dual_crossbar.webp",
+      "path": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp",
       "required": true,
       "exists": true
     }
@@ -500,7 +500,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_dual_crossbar.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_dual_crossbar.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_monitor_arm_dual_crossbar.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_monitor_arm_dual_crossbar.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_lamp_glow.webp"
   },
   "qa": {
     "status": "passed",

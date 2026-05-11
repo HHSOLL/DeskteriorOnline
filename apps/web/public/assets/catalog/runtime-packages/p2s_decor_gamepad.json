@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
   "key": "p2s_decor_gamepad",
   "packageKind": "catalog_variant",
   "baseAssetKey": "gamepad",
@@ -138,7 +138,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/gamepad/gamepad_1k.gltf",
+            "url": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
             "required": false,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           }
@@ -204,7 +204,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/gamepad/gamepad_1k.gltf",
+          "url": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
           "required": false,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         }
@@ -275,7 +275,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_decor_gamepad.webp",
+      "path": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp",
       "required": true,
       "exists": true
     }
@@ -293,7 +293,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_decor_gamepad.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_decor_gamepad.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_decor_gamepad.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_decor_gamepad.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_wireless_mouse.webp"
   },
   "qa": {
     "status": "passed",

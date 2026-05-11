@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
   "key": "p2s_desk_black_sitstand_150",
   "packageKind": "catalog_variant",
   "baseAssetKey": "p2s_desk_oak",
@@ -371,7 +371,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+            "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
             "required": true,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           },
@@ -455,7 +455,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/p2s_desk_oak/p2s_desk_oak.glb",
+          "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
           "required": true,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         },
@@ -544,7 +544,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_desk_black_sitstand_150.webp",
+      "path": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
       "required": true,
       "exists": true
     }
@@ -562,7 +562,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_desk_black_sitstand_150.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_desk_black_sitstand_150.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_desk_black_sitstand_150.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_black_sitstand_150.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_oak.webp"
   },
   "qa": {
     "status": "passed",

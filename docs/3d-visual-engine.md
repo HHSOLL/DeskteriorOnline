@@ -109,6 +109,20 @@ Updated:
 Removed/Deprecated:
 - room mode direct-drag 때문에 editor room top은 instancing을 전혀 사용할 수 없다는 가정.
 
+## 2026-05-11 변경 동기화 (Actual SKU Material Pass)
+Added:
+- FURSYS `ZDQ012J` prototype asset은 product URL reference pack, slot-level material hints, Blender-authored procedural PBR maps를 함께 보관한다.
+- 실제 SKU prototype material pass는 `DeskWood_light_laminate`, `DeskMetal_warm_grey_panel`, `DeskMetal_graphite_frame`, `DeskMetal_silver_detail`, `DeskPlastic_light_sensor` 같은 named slot을 유지해야 한다.
+- `asset:factory`는 실제 SKU prototype asset마다 Blender rebuild scaffold, required component list, material slot plan, artifact QA, repair instruction을 남긴다.
+
+Updated:
+- 제품 재질 개선은 이미지 텍스처를 단순히 붙이는 것이 아니라 UV scale, visible laminate surface, roughness/normal intensity, runtime GLB size budget을 동시에 통과해야 한다.
+- public product page 기반 texture는 최종 상용 texture가 아니라 prototype rebuild source로만 쓰며, runtime GLB는 curated asset budget 안에서 export해야 한다.
+- private/prototype asset은 runtime GLB와 thumbnail이 있어도 material slot이 manufacturer swatch/CAD 기준으로 검증되기 전까지 visual fidelity repair loop를 유지한다.
+
+Removed/Deprecated:
+- 나뭇결을 별도 protruding geometry strip으로 구현해 reference 사진과 다르게 보이거나 runtime 예산을 낭비하는 방식.
+
 ## Scene 데이터 소비 규칙
 - `apps/web/src/lib/domain/scene-document.ts`를 scene 복원의 canonical 매핑 계층으로 사용
 - scene 저장/복원은 `project_versions.customization.sceneDocument`를 우선 source로 사용
@@ -248,6 +262,7 @@ Removed/Deprecated:
 - focus/walk/desk precision preview lifecycle은 `interaction-engine` event/result/command를 기준으로 한다. `aiming`, `candidate_preview`, `manipulating`, `blocked` 동안에는 renderer ghost preview만 갱신하고, canonical document patch는 만들지 않는다.
 - blocked preview도 ghost affordance는 보여줄 수 있지만 commit은 막아야 하며, HUD/overlay는 interaction engine의 blocked reason을 표시해야 한다.
 - 제품 외형 치수 오차는 `<= 1%` 또는 `<= 5mm`, desk/대형 가구 support surface 오차는 `<= 3mm`, 소품 footprint 오차는 `<= 2mm`를 paid-beta 기준으로 본다.
+- 공개 제품 사진 기반 실제 SKU rebuild는 draft/prototype tier로만 두고, manufacturer CAD 또는 사용 허가가 확보되기 전에는 `releaseEligible=false`와 `materialQaStatus=pending`을 유지한다.
 
 ## 2026-05-02 변경 동기화 (Interaction Preview Contract)
 Added:

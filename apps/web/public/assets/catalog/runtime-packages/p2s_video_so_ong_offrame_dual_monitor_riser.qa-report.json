@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "measuredBoundsMm": {
+    "width": 1000,
+    "depth": 250,
+    "height": 120
+  },
+  "dimensionErrorMm": {
+    "width": 0,
+    "depth": 0,
+    "height": 0
+  },
+  "validatorVersion": "asset-compiler-alpha-v3",
+  "commercialFidelity": {
+    "referencePackStatus": "reference_collected",
+    "visualFidelityScore": 0.78,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
+  }
+}

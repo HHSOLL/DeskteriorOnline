@@ -1,0 +1,303 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
+  "key": "p2s_video_so_ong_arturia_minifuse2",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_video_so_ong_arturia_minifuse2",
+  "manifestId": "p2s_video_so_ong_arturia_minifuse2",
+  "label": "Reference prototype · Arturia MiniFuse 2 audio interface",
+  "assetId": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+  "sourcePath": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+  "runtimePath": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+  "dimensionsMm": {
+    "width": 200,
+    "depth": 100,
+    "height": 43
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline So Ong video reference prototype pack",
+      "path": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+      "url": "https://www.youtube.com/watch?v=jHakJw40k58"
+    },
+    "license": {
+      "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+      "label": "Prototype-only rebuild from public video/product references",
+      "requiresAttribution": true
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 18,
+      "maxTriangleCount": 12000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+    "productId": "p2s_video_so_ong_arturia_minifuse2",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 200,
+      "depth": 100,
+      "height": 43
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+      "manufacturer": "Arturia",
+      "license": "LicenseRef-Video-Reference-Prototype-Only",
+      "attributionRequired": true
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+          "triangleCount": 12000,
+          "drawCallBudget": 18
+        }
+      ],
+      "proxy": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 12000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 200,
+          "depth": 100,
+          "height": 43
+        },
+        "centerMm": [
+          0,
+          22,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "Reference prototype · Arturia MiniFuse 2 audio interface",
+        "finishColor": "White body / grey controls",
+        "finishMaterial": "Painted aluminum/plastic interface body",
+        "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+        "slotMaterials": [
+          {
+            "slot": "default",
+            "materialType": "plastic",
+            "qaStatus": "pending",
+            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+          }
+        ]
+      }
+    ],
+    "commercialReadiness": {
+      "tier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ARTURIA-MINIFUSE2",
+      "manufacturer": "Arturia",
+      "referencePack": {
+        "sku": "P2S-VIDEO-SO-ONG-ARTURIA-MINIFUSE2",
+        "manufacturer": "Arturia",
+        "canonicalProductUrl": "https://link.coupang.com/a/b5Hayv",
+        "dimensionSourceUrl": "https://link.coupang.com/a/b5Hayv",
+        "referenceImages": [
+          {
+            "view": "front",
+            "url": "/assets/catalog/thumbnails/p2s_video_so_ong_arturia_minifuse2.webp",
+            "required": false,
+            "license": "LicenseRef-Video-Reference-Prototype-Only"
+          }
+        ],
+        "finishReferences": [
+          {
+            "finishId": "default",
+            "label": "Painted aluminum/plastic interface body",
+            "sourceUrl": "https://link.coupang.com/a/b5Hayv",
+            "materialType": "mixed"
+          }
+        ],
+        "license": {
+          "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+          "label": "Prototype-only rebuild from public video/product references",
+          "requiresAttribution": true
+        },
+        "status": "reference_collected",
+        "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+      },
+      "visualFidelityScore": 0.78,
+      "dimensionToleranceMm": 0,
+      "dimensionTolerancePercent": 0,
+      "supportSurfaceToleranceMm": 3,
+      "footprintToleranceMm": 2,
+      "materialQaStatus": "pending",
+      "releaseEligible": false
+    },
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 200,
+        "depth": 100,
+        "height": 43
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3",
+      "commercialFidelity": {
+        "referencePackStatus": "reference_collected",
+        "visualFidelityScore": 0.78,
+        "dimensionToleranceMm": 0,
+        "dimensionTolerancePercent": 0,
+        "supportSurfaceToleranceMm": 3,
+        "footprintToleranceMm": 2,
+        "materialQaStatus": "pending",
+        "releaseEligible": false
+      }
+    }
+  },
+  "commercialReadiness": {
+    "tier": "generic_catalog",
+    "sku": "P2S-VIDEO-SO-ONG-ARTURIA-MINIFUSE2",
+    "manufacturer": "Arturia",
+    "referencePack": {
+      "sku": "P2S-VIDEO-SO-ONG-ARTURIA-MINIFUSE2",
+      "manufacturer": "Arturia",
+      "canonicalProductUrl": "https://link.coupang.com/a/b5Hayv",
+      "dimensionSourceUrl": "https://link.coupang.com/a/b5Hayv",
+      "referenceImages": [
+        {
+          "view": "front",
+          "url": "/assets/catalog/thumbnails/p2s_video_so_ong_arturia_minifuse2.webp",
+          "required": false,
+          "license": "LicenseRef-Video-Reference-Prototype-Only"
+        }
+      ],
+      "finishReferences": [
+        {
+          "finishId": "default",
+          "label": "Painted aluminum/plastic interface body",
+          "sourceUrl": "https://link.coupang.com/a/b5Hayv",
+          "materialType": "mixed"
+        }
+      ],
+      "license": {
+        "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+        "label": "Prototype-only rebuild from public video/product references",
+        "requiresAttribution": true
+      },
+      "status": "reference_collected",
+      "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+    },
+    "visualFidelityScore": 0.78,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_video_so_ong_arturia_minifuse2.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_video_so_ong_arturia_minifuse2.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

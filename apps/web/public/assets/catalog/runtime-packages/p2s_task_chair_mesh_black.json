@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
   "key": "p2s_task_chair_mesh_black",
   "packageKind": "catalog_variant",
   "baseAssetKey": "SchoolChair_01",
@@ -138,7 +138,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/SchoolChair_01/SchoolChair_01_1k.gltf",
+            "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
             "required": true,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           },
@@ -222,7 +222,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/SchoolChair_01/SchoolChair_01_1k.gltf",
+          "url": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
           "required": true,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         },
@@ -311,7 +311,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_task_chair_mesh_black.webp",
+      "path": "/assets/catalog/thumbnails/p2s_desk_oak.webp",
       "required": true,
       "exists": true
     }
@@ -329,7 +329,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_task_chair_mesh_black.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_task_chair_mesh_black.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_task_chair_mesh_black.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_task_chair_mesh_black.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_desk_oak.webp"
   },
   "qa": {
     "status": "passed",

@@ -103,6 +103,7 @@
 51. 새 asset을 운영 catalog에 올리기 전 `referencePack`, 공식 치수, reference image, material QA, release eligibility가 `asset:publish` 산출물에 반영되는지 확인하기
 52. wall/floor texture preset이 12개 이하이고, AI 생성 1K texture는 candidate로 표시되며, 상용 preset은 2K source/KTX2/fallback metadata를 가지는지 확인하기
 53. `verify:interaction-engine` 실행 시 preview 상태에서는 document patch가 0건이고, commit 상태에서만 placement patch intent가 1건 발생하는지 확인하기
+54. 실제 브랜드 제품 prototype asset은 catalog에 노출되더라도 `releaseEligible=false`/draft 상태인지, 제조사 URL과 치수 출처가 runtime package에 남는지 확인하기
 
 ## 2026-04-20 변경 동기화 (Room Mode Direct-Drag Instancing QA)
 Added:
@@ -200,6 +201,10 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - `npm --workspace apps/web run verify:asset-compiler`가 alpha runtime package index, descriptor, sidecar 정합성을 통과하는지 확인
 - `npm --workspace apps/web run verify:commercial-qa`가 SKU reference/material QA, placement regression, compatibility, scene integrity gate를 모두 읽는지 확인
 - `npm --workspace apps/web run asset:ingest -- --source <source-path>`가 `assets/ingest-staging/<assetKey>/source.asset.json` draft를 생성하는지 확인
+- `npm --workspace apps/web run asset:analyze-url -- --url <product-url> --asset-key <assetKey> --dimensions-mm <WxDxH>`가 prototype-only `assets/references/product-pages/<assetKey>/reference-pack.json`을 생성하는지 확인
+- `npm --workspace apps/web run verify:product-url-reference`가 URL-derived SKU/manufacturer/options/reference image/material hint/legal boundary를 fixture 기준으로 통과하는지 확인
+- `npm --workspace apps/web run asset:factory -- --reference-pack assets/references/product-pages/<assetKey>/reference-pack.json`가 private/prototype `asset-plan.json`, `factory-qa-report.json`, `repair-instructions.json`, `private-catalog-entry.json`, Blender scaffold를 생성하는지 확인
+- `npm --workspace apps/web run verify:product-asset-factory`가 FURSYS fixture의 runtime GLB/proxy/thumbnail/sidecar, private-only visibility, `releaseEligible=false`, material/visual repair loop를 통과하는지 확인
 - shared viewer가 generic showcase viewer와 다른 경량 preset으로 동작해도 제품 hotspot / drawer 읽기 흐름은 유지되는지 확인
 - shared viewer walk HUD는 터치 조작용 요소만 남고 crosshair는 보이지 않는지 확인
 - shared viewer가 상단 light bar, 우측 zoom rail, 하단 readonly status pill 기준으로 노출되는지 확인

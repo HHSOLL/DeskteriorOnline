@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "product-asset-factory-plan-alpha-v1",
+  "generatedAt": "2026-05-11T22:52:20.587Z",
+  "assetKey": "p2s_fursys_setina_zdq012j",
+  "product": {
+    "title": "퍼시스 SETINA 세티나 ZDQ012J 사이드 중역용 모션데스크(라미네이트)",
+    "sku": "ZDQ012J",
+    "manufacturer": "FURSYS",
+    "brand": "퍼시스스토어",
+    "price": 2512400,
+    "priceCurrency": "KRW",
+    "options": [
+      "OBL",
+      "TL",
+      "WP",
+      "WW"
+    ],
+    "dimensionsMm": {
+      "width": 1172,
+      "depth": 590,
+      "height": 587
+    },
+    "heightRangeMm": [
+      587,
+      1073
+    ]
+  },
+  "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+  "referencePackPath": "assets/references/product-pages/p2s_fursys_setina_zdq012j/reference-pack.json",
+  "visibility": {
+    "mode": "private_prototype",
+    "catalogExposure": "private_only",
+    "releaseEligible": false,
+    "reason": "Product detail pages and downloaded reference imagery are sufficient for private prototype rebuilding only; public/commercial catalog exposure requires explicit rights and stronger visual QA."
+  },
+  "qualityTargets": {
+    "targetSimilarityPercent": 90,
+    "minVisualFidelityScore": 0.9,
+    "maxDimensionToleranceMm": 5,
+    "maxDimensionTolerancePercent": 1,
+    "requireLicensedCadForCommercial": true
+  },
+  "build": {
+    "strategy": "blender_procedural_reference_rebuild",
+    "blenderScriptPath": "assets/references/product-pages/p2s_fursys_setina_zdq012j/asset-factory/build-p2s_fursys_setina_zdq012j.py",
+    "outputModelPath": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+    "outputProxyPath": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.proxy.glb",
+    "outputThumbnailPath": "/assets/catalog/thumbnails/p2s_fursys_setina_zdq012j.webp",
+    "requiredComponents": [
+      "dimension-locked desktop slab with bevelled laminate edge band",
+      "front modesty/lift fascia panel with satin warm-grey finish",
+      "right-side vertical support panel with matching laminate grain",
+      "telescoping lift plates and graphite frame rails",
+      "sliding rear power channel and black cable duct",
+      "collision sensor paddle/control strip under the front edge",
+      "two brushed-metal vertical pull handles",
+      "black foot pads and levelling details"
+    ],
+    "materialSlots": [
+      {
+        "slot": "DeskWood",
+        "materialType": "wood",
+        "target": "light laminate wood grain",
+        "evidence": [
+          "퍼시스 SETINA 세티나 ZDQ012J 사이드 중역용 모션데스크(라미네이트)",
+          "ZDQ012J",
+          "options:OBL,TL,WP,WW",
+          "top/side laminate finish inferred from product title"
+        ],
+        "qaStatus": "pending_reference"
+      },
+      {
+        "slot": "DeskMetal",
+        "materialType": "metal",
+        "target": "satin warm-grey panel and graphite frame",
+        "evidence": [
+          "퍼시스 SETINA 세티나 ZDQ012J 사이드 중역용 모션데스크(라미네이트)",
+          "ZDQ012J",
+          "options:OBL,TL,WP,WW",
+          "motion desk frame/panel product imagery requires metal/plastic separation"
+        ],
+        "qaStatus": "pending_reference"
+      },
+      {
+        "slot": "DeskPlastic",
+        "materialType": "plastic",
+        "target": "matte black sensor/cable channel plastic",
+        "evidence": [
+          "퍼시스 SETINA 세티나 ZDQ012J 사이드 중역용 모션데스크(라미네이트)",
+          "ZDQ012J",
+          "options:OBL,TL,WP,WW",
+          "control strip and cable channel visible in detail reference"
+        ],
+        "qaStatus": "pending_reference"
+      },
+      {
+        "slot": "DeskWood_light_laminate",
+        "materialType": "wood",
+        "target": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release.",
+        "evidence": [
+          "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+          "runtime package material variant"
+        ],
+        "qaStatus": "runtime_authored"
+      },
+      {
+        "slot": "DeskMetal_warm_grey_panel",
+        "materialType": "metal",
+        "target": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release.",
+        "evidence": [
+          "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+          "runtime package material variant"
+        ],
+        "qaStatus": "runtime_authored"
+      },
+      {
+        "slot": "DeskMetal_graphite_frame",
+        "materialType": "metal",
+        "target": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release.",
+        "evidence": [
+          "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+          "runtime package material variant"
+        ],
+        "qaStatus": "runtime_authored"
+      },
+      {
+        "slot": "DeskMetal_silver_detail",
+        "materialType": "metal",
+        "target": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release.",
+        "evidence": [
+          "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+          "runtime package material variant"
+        ],
+        "qaStatus": "runtime_authored"
+      },
+      {
+        "slot": "DeskPlastic_light_sensor",
+        "materialType": "plastic",
+        "target": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release.",
+        "evidence": [
+          "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+          "runtime package material variant"
+        ],
+        "qaStatus": "runtime_authored"
+      },
+      {
+        "slot": "DeskRubber_foot_pad",
+        "materialType": "plastic",
+        "target": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release.",
+        "evidence": [
+          "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+          "runtime package material variant"
+        ],
+        "qaStatus": "runtime_authored"
+      }
+    ]
+  },
+  "validationGates": [
+    "reference-pack dimensions and SKU present",
+    "Blender source, runtime GLB, proxy GLB, thumbnail, and sidecars exist",
+    "runtime dimensions match official dimensions within 5mm or 1%",
+    "material slots are separated for wood/metal/plastic/glass/fabric as applicable",
+    "runtime package releaseEligible remains false until rights and commercial QA are cleared"
+  ],
+  "referenceImages": [
+    {
+      "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg",
+      "view": "detail",
+      "source": "detail_image",
+      "score": 270
+    },
+    {
+      "url": "https://fursys-store.com/web/product/big/202104/523caf072732e508b8c8507f6bc2fa2d.jpg",
+      "view": "front",
+      "source": "json_ld",
+      "score": 120
+    },
+    {
+      "url": "https://fursys-store.com/web/product/small/202104/3d77e2e8c3eb17795e1e436673d0a477.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 90
+    }
+  ]
+}

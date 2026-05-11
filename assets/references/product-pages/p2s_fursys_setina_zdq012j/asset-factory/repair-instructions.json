@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "product-asset-factory-repair-alpha-v1",
+  "generatedAt": "2026-05-11T22:52:20.592Z",
+  "assetKey": "p2s_fursys_setina_zdq012j",
+  "instructions": [
+    "Run a focused Blender rebuild pass for product-specific silhouette details and compare rendered orthographic views against references.",
+    "Replace URL-inferred procedural materials with manufacturer finish swatches, calibrated PBR values, or licensed material references.",
+    "Keep the asset private/prototype-only until product-design, CAD, texture, trademark, and reference-image usage rights are cleared."
+  ]
+}

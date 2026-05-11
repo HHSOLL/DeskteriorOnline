@@ -3,6 +3,7 @@ import {
   normalizeAssetSupportProfile,
   type AssetSupportProfile
 } from "../scene/support-profiles";
+import { SO_ONG_VIDEO_CATALOG_VARIANTS } from "./so-ong-video-reference";
 
 export type LibraryCatalogCategoryId =
   | "all"
@@ -1154,9 +1155,13 @@ function normalizeCatalogItem(item: unknown): LibraryCatalogItem | null {
   } satisfies LibraryCatalogItem;
 }
 
-export const DEFAULT_CATALOG: LibraryCatalogItem[] = [...DEFAULT_CATALOG_SOURCE, ...COMMERCIAL_CATALOG_VARIANTS].map((item) =>
-  normalizeCatalogItem(item)
-).filter((item): item is LibraryCatalogItem => item !== null);
+export const DEFAULT_CATALOG: LibraryCatalogItem[] = [
+  ...DEFAULT_CATALOG_SOURCE,
+  ...COMMERCIAL_CATALOG_VARIANTS,
+  ...SO_ONG_VIDEO_CATALOG_VARIANTS
+]
+  .map((item) => normalizeCatalogItem(item))
+  .filter((item): item is LibraryCatalogItem => item !== null);
 
 export function toCatalogProductSnapshot(item: LibraryCatalogItem): CatalogProductSnapshot {
   return {

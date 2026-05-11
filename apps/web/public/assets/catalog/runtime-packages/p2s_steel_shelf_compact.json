@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-02T03:41:23.669Z",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
   "key": "p2s_steel_shelf_compact",
   "packageKind": "catalog_variant",
   "baseAssetKey": "steel_frame_shelves_01",
@@ -205,7 +205,7 @@
         "referenceImages": [
           {
             "view": "front",
-            "url": "/assets/models/steel_frame_shelves_01/steel_frame_shelves_01_1k.gltf",
+            "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
             "required": false,
             "license": "LicenseRef-DeskteriorOnline-Internal"
           }
@@ -271,7 +271,7 @@
       "referenceImages": [
         {
           "view": "front",
-          "url": "/assets/models/steel_frame_shelves_01/steel_frame_shelves_01_1k.gltf",
+          "url": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
           "required": false,
           "license": "LicenseRef-DeskteriorOnline-Internal"
         }
@@ -342,7 +342,7 @@
       "exists": true
     },
     "thumbnail": {
-      "path": "/assets/catalog/thumbnails/p2s_steel_shelf_compact.webp",
+      "path": "/assets/catalog/thumbnails/p2s_monitor_stand.webp",
       "required": true,
       "exists": true
     }
@@ -360,7 +360,7 @@
     "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_steel_shelf_compact.attachment-points.json",
     "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_steel_shelf_compact.material-variants.json",
     "qaReportPath": "/assets/catalog/runtime-packages/p2s_steel_shelf_compact.qa-report.json",
-    "thumbnailPath": "/assets/catalog/thumbnails/p2s_steel_shelf_compact.webp"
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_monitor_stand.webp"
   },
   "qa": {
     "status": "passed",

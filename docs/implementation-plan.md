@@ -42,6 +42,7 @@
 
 진행:
 - Blender 원본 -> GLB -> catalog sync 파이프라인 표준화
+- 실제 SKU 테스트로 FURSYS SETINA ZDQ012J prototype rebuild를 Blender source/GLB/catalog metadata/runtime package 경로에 추가
 - `assets:export:deskterior` / `assets:sync:deskterior` / `assets:validate:deskterior` / `assets:verify:deskterior` 4단계 CLI 계약 고정
 - 저장/연산 경계에서 placement 데이터를 mm 정수 기준으로 정규화하고, 렌더 직전에만 meter float로 변환하는 계약 도입
 - `/project/[id]` 편집 흐름을 room mode와 desk precision mode로 분리하고 카메라/스냅/피킹 정책을 각 모드별로 고정
@@ -120,6 +121,19 @@ Removed/Deprecated:
 - preview 중 scene document/store mutation이 발생해도 UI가 맞아 보이면 허용한다는 가정.
 - controller가 candidate switch와 commit 가능 여부를 독자 판단하는 구조.
 - wall/grommet attachment가 schema에만 존재하고 focus/kernel 제품 경로에서는 검증되지 않아도 된다는 가정.
+
+## 2026-05-11 변경 동기화 (Actual SKU Prototype Asset)
+Added:
+- `p2s_fursys_setina_zdq012j`를 테스트용 실제 SKU reference rebuild로 추가한다.
+- 이 SKU는 공개 제품 페이지의 1172x590x587mm, 높이 조절 587~1073mm, 23T 상판 정보를 기준으로 Blender source와 runtime GLB를 가진다.
+- 제품 공개 페이지 URL, 상세 이미지 URL, prototype-only reference license, `releaseEligible=false`를 commercial readiness에 기록한다.
+
+Updated:
+- 실제 브랜드 제품을 repo catalog에 넣을 때는 운영 승격 전까지 `tier="draft"`와 `materialQaStatus="pending"`을 유지한다.
+- 제조사 허가/CAD/reference license가 없는 실제 SKU rebuild는 테스트 catalog 검증에는 사용할 수 있지만 paid-beta hero catalog로 승격하지 않는다.
+
+Removed/Deprecated:
+- 공개 제품 사진만 보고 만든 브랜드 SKU를 바로 release eligible catalog로 취급하는 방식.
 
 ## 2026-04-19 심층 분석 기반 실행 순서
 이 순서는 `/Users/sol/Downloads/DeskteriorOnline 정밀 공간 편집 시스템 심층 분석 보고서.docx`의 제안을 현재 room-first 제품 흐름에 맞게 재배열한 것이다. P0~P3의 큰 축은 유지하되, 실제 실행은 아래 Phase와 Slice 단위로 끊어서 진행한다.
@@ -1494,3 +1508,89 @@ Updated:
 
 Removed/Deprecated:
 - pointer lock 실패를 movement-blocked 상태로 저장해 사용 가능한 fallback UX 위에 경고를 계속 띄우는 상태.
+
+## 2026-05-11 변경 동기화 (Product URL -> Prototype SKU Asset)
+Added:
+- `packages/asset-compiler`에 `analyze-url` command를 추가해 제품 URL에서 prototype-only `reference-pack.json`을 생성한다.
+- FURSYS SETINA/TIERRA `ZDQ012J` 책상은 URL 분석 결과, 공식 치수 override, procedural PBR material pass, slot-level pending material metadata를 가진 draft SKU asset으로 유지한다.
+- `verify:product-url-reference`를 추가해 URL 분석 contract를 네트워크 없는 fixture 기반 smoke로 고정한다.
+
+Updated:
+- 실제 SKU asset 자동화 목표는 `URL scrape -> referencePack draft -> Blender rebuild/material pass -> runtime GLB export -> asset publish/verify` 순서로 진행한다.
+- FURSYS prototype asset의 visual fidelity score는 material pass 반영으로 0.84로 올리되, material QA와 license가 pending이므로 `releaseEligible=false`를 유지한다.
+- 제품 URL 기반 material hint는 운영 catalog 승격 증거가 아니라 Blender authoring seed로만 사용한다.
+- FURSYS prototype desk budget은 visible material veneers, tangent-bearing normal map, 실제 SKU silhouette 세부를 포함하기 위해 `maxTriangleCount=9000`, `maxFileSizeBytes=1.65MB`, `maxDrawCalls=24`로 관리한다.
+
+Removed/Deprecated:
+- 링크 분석 없이 수동 메모만으로 실제 SKU reference metadata를 관리하는 방식.
+- 공개 제품 이미지를 직접 texture로 쓰거나, 제조사 허가 없이 실제 브랜드 asset을 release-ready로 표시하는 방식.
+
+## 2026-05-12 변경 동기화 (Private Product Asset Factory)
+Added:
+- `packages/asset-compiler`에 `factory` command를 추가해 product URL reference pack을 asset 제작 지시서와 QA/repair loop로 변환한다.
+- factory output은 `assets/references/product-pages/<assetKey>/asset-factory/` 아래에 `asset-plan.json`, `factory-qa-report.json`, `repair-instructions.json`, `private-catalog-entry.json`, `build-<assetKey>.py`를 남긴다.
+- `verify:product-asset-factory`는 FURSYS `ZDQ012J`를 기준으로 Blender source, runtime GLB/proxy, inventory thumbnail, runtime sidecars, dimension fidelity, material pending state, private-only visibility, release blocking을 검증한다.
+
+Updated:
+- 실제 SKU asset 자동화 목표는 `URL scrape -> referencePack draft -> factory plan -> Blender/procedural rebuild -> runtime sidecars/thumbnail -> factory QA -> repair instruction -> private catalog entry` 순서로 확장한다.
+- 개인 테스트용 asset은 `ready_for_private_use`가 될 수 있지만, material QA와 licensing이 pending이면 `commercialStatus=needs_repair`, `releaseEligible=false`를 유지한다.
+- FURSYS `ZDQ012J` factory fixture는 치수 오차 0mm, artifact completeness 1.0, private readiness 0.885를 기준 evidence로 남긴다.
+
+Removed/Deprecated:
+- Blender asset 생성 지시서와 runtime artifact QA를 분리하지 않고 “대충 만들어진 GLB”만 catalog에 넣는 방식.
+- prototype/private asset과 commercial hero SKU의 gate를 같은 상태값으로 관리하는 방식.
+
+## 2026-05-11 변경 동기화 (Creator Video Reference Pack)
+Added:
+- So Ong desk setup video의 comment-listed 제품 20개를 `p2s_video_so_ong_*` namespace의 `prototype_reference_only` catalog asset으로 추가한다.
+- 각 제품은 procedural GLB, inventory SVG thumbnail, source product URL, prototype-only license, scale-locked dimensions, reference layout entry를 가진다.
+- `verify:video-scene-reference`를 추가해 20개 제품 coverage, catalog exposure, GLB/thumbnail existence, prototype-only gate, scene layout coverage, preview render artifact를 검증한다.
+
+Updated:
+- 영상/크리에이터 셋업 기반 asset 작업은 상용 SKU promotion이 아니라 reference scene pack으로 시작한다. 제조사 CAD/권리/치수/재질 QA가 붙기 전까지 `releaseEligible=false`로 유지한다.
+- “영상과 같은 느낌” 검증은 먼저 흰 데스크, 초대형 모니터, 보조 디스플레이, PC 타워, 스피커, 소품, 라벤더 조명감이 맞는지 visual smoke render로 확인하고, 이후 service browser scene parity로 승격한다.
+
+Removed/Deprecated:
+- YouTube/product 링크만으로 실제 브랜드 제품을 release-ready catalog asset으로 취급하는 방식.
+- 제품명이 있는 catalog entry를 만들고 실제 모델/썸네일/배치 레이아웃 검증을 생략하는 방식.
+
+## 2026-05-11 변경 동기화 (Creator Video Reference Pack Extended)
+Added:
+- So Ong reference pack을 사용자가 추가 제공한 제품까지 포함해 28개 unique product reference로 확장한다.
+- 추가 asset: OFRAME dual monitor riser, Razer Cobra Pro White, Zionworks/Aiglatson SYNCHRONIZE mat, Angry Miao AM HATSU, Elgato Stream Deck Neo, reProducer Epic 5, HYTE Y70 Snow White, Itsub x Atom 60th figure.
+- reference smoke render는 HYTE Y70 내부 RGB 팬/유리 케이스, Epic 5 스피커, AM HATSU split keyboard, Cobra Pro mouse, Stream Deck Neo, SYNCHRONIZE mat가 보이는 screenshot-match composition을 포함한다.
+
+Updated:
+- `verify:video-scene-reference`의 count gate는 20개에서 28개로 갱신하고, 새 primary visible 제품이 scene layout에 포함되는지 확인한다.
+- 접근 가능한 공식/판매 상세 페이지에서 확인 가능한 dimensions는 `manufacturer_or_vendor_page`로 승격하되, 직접 접근이 막힌 제휴/단축 링크는 제품명 기반 보조 검색과 visual estimate로만 유지한다.
+
+Removed/Deprecated:
+- 영상 속 핵심 제품을 generic keyboard/mouse/speaker/mat/PC case catalog asset으로 대체하는 reference scene 구성.
+
+## 2026-05-11 변경 동기화 (Creator Video Product Detail Reconciliation)
+Added:
+- So Ong reference pack에 product-detail reconciliation pass를 추가해 공개 상세/스펙 페이지에서 확인 가능한 치수와 실제 화면 실루엣의 불일치를 다시 보정한다.
+
+Updated:
+- GravaStar Mars Pro는 201 x 180 x 191 mm 외곽 기준으로 procedural envelope를 재조정한다.
+- OFRAME dual monitor riser는 1000 x 250 x 120 mm shelf layer로 확대해 좌측 PC/소품 stack의 실제 reference 비율에 맞춘다.
+- Elgato Stream Deck Neo는 107 x 78 x 26 mm low tabletop controller footprint로 수정하고, 기존의 세로로 높은 임시 블록 형태를 폐기한다.
+- smoke render는 darker woven desk mat, off-white desktop, lavender wall wash, reduced neutral fill을 기준으로 재생성해 reference still의 보라색 조명감과 흰색/검정 재질 대비를 더 가깝게 맞춘다.
+
+Removed/Deprecated:
+- public/product detail page에서 확인 가능한 치수를 알면서도 visual-estimate scale만 유지하는 방식.
+- controller, speaker, mat처럼 사용자가 가까이 보는 소품을 단순 box silhouette로 남기는 방식.
+
+## 2026-05-12 변경 동기화 (Creator Video Reference Fidelity Pass)
+Added:
+- So Ong reference pack inventory thumbnail은 실제 Blender model render 기반 WebP artifact로 생성하며, `verify:video-scene-reference`가 placeholder 수준 파일을 차단한다.
+- reference smoke render는 HYTE Y70/OFRAME stack, Epic 5 양쪽 스피커, TFG40Q14WP, CPM1610IQ, AM HATSU, Cobra Pro White, Stream Deck Neo, SYNCHRONIZE mat, IVY, Mars Pro, Times Gate를 같은 배치 contract로 보여준다.
+
+Updated:
+- 흰색 plastic/laminate material과 preview lighting을 재보정해 desk surface가 blank white plane처럼 날아가지 않도록 한다.
+- reference preview room은 라벤더 wall wash와 확장된 desk/wall shell을 사용해 영상 still의 cool-white desk setup mood를 우선 검증한다.
+- 영상 기반 제품 asset은 계속 `prototype_reference_only`, `releaseEligible=false`로 유지하고, 제조사 CAD/라이선스/정밀 material QA가 붙기 전까지 실제 상용 SKU asset으로 승격하지 않는다.
+
+Removed/Deprecated:
+- inventory thumbnail을 generic SVG/card로 대체해 사용자가 제품 생김새를 이름으로만 추론하게 만드는 방식.
+- smoke render가 제품 배치 대신 파일 존재 검증만 통과하는 상태.

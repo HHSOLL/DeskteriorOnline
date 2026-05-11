@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-11T08:50:59.995Z",
+  "assetKey": "p2s_fursys_setina_zdq012j",
+  "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+  "product": {
+    "title": "퍼시스 SETINA 세티나 ZDQ012J 사이드 중역용 모션데스크(라미네이트)",
+    "sku": "ZDQ012J",
+    "manufacturer": "FURSYS",
+    "brand": "퍼시스스토어",
+    "price": 2512400,
+    "priceCurrency": "KRW",
+    "options": [
+      "OBL",
+      "TL",
+      "WP",
+      "WW"
+    ],
+    "dimensionsMm": {
+      "width": 1172,
+      "depth": 590,
+      "height": 587
+    },
+    "heightRangeMm": [
+      587,
+      1073
+    ]
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-FURSYS-Prototype-Reference",
+      "label": "FURSYS public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "ZDQ012J",
+    "manufacturer": "FURSYS",
+    "canonicalProductUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+    "dimensionSourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg",
+        "required": false,
+        "license": "LicenseRef-FURSYS-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://fursys-store.com/web/product/big/202104/523caf072732e508b8c8507f6bc2fa2d.jpg",
+        "required": false,
+        "license": "LicenseRef-FURSYS-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://fursys-store.com/web/product/small/202104/3d77e2e8c3eb17795e1e436673d0a477.jpg",
+        "required": false,
+        "license": "LicenseRef-FURSYS-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "obl",
+        "label": "OBL product-page finish option",
+        "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+        "materialType": "mixed"
+      },
+      {
+        "finishId": "tl",
+        "label": "TL product-page finish option",
+        "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+        "materialType": "mixed"
+      },
+      {
+        "finishId": "wp",
+        "label": "WP product-page finish option",
+        "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+        "materialType": "mixed"
+      },
+      {
+        "finishId": "ww",
+        "label": "WW product-page finish option",
+        "sourceUrl": "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-FURSYS-Prototype-Reference",
+      "label": "FURSYS public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "dimension_verified",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://kongganoa.godohosting.com/fursys/executive/TIERRA/ZDQ012J.jpg",
+      "view": "detail",
+      "source": "detail_image",
+      "score": 270
+    },
+    {
+      "url": "https://fursys-store.com/web/product/big/202104/523caf072732e508b8c8507f6bc2fa2d.jpg",
+      "view": "front",
+      "source": "json_ld",
+      "score": 120
+    },
+    {
+      "url": "https://fursys-store.com/web/product/small/202104/3d77e2e8c3eb17795e1e436673d0a477.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 90
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "퍼시스 SETINA 세티나 ZDQ012J 사이드 중역용 모션데스크(라미네이트)",
+        "ZDQ012J",
+        "options:OBL,TL,WP,WW",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "퍼시스 SETINA 세티나 ZDQ012J 사이드 중역용 모션데스크(라미네이트)",
+        "ZDQ012J",
+        "options:OBL,TL,WP,WW",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "퍼시스 SETINA 세티나 ZDQ012J 사이드 중역용 모션데스크(라미네이트)",
+        "ZDQ012J",
+        "options:OBL,TL,WP,WW",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": true,
+    "openGraphImageFound": true,
+    "htmlImageCount": 52,
+    "selectedImageCount": 3,
+    "dimensionSource": "override",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": []
+  }
+}
