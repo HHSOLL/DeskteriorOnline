@@ -1508,3 +1508,19 @@ Updated:
 
 Removed/Deprecated:
 - pointer lock 실패를 movement-blocked 상태로 저장해 사용 가능한 fallback UX 위에 경고를 계속 띄우는 상태.
+
+## 2026-05-11 변경 동기화 (Product URL -> Prototype SKU Asset)
+Added:
+- `packages/asset-compiler`에 `analyze-url` command를 추가해 제품 URL에서 prototype-only `reference-pack.json`을 생성한다.
+- FURSYS SETINA/TIERRA `ZDQ012J` 책상은 URL 분석 결과, 공식 치수 override, procedural PBR material pass, slot-level pending material metadata를 가진 draft SKU asset으로 유지한다.
+- `verify:product-url-reference`를 추가해 URL 분석 contract를 네트워크 없는 fixture 기반 smoke로 고정한다.
+
+Updated:
+- 실제 SKU asset 자동화 목표는 `URL scrape -> referencePack draft -> Blender rebuild/material pass -> runtime GLB export -> asset publish/verify` 순서로 진행한다.
+- FURSYS prototype asset의 visual fidelity score는 material pass 반영으로 0.84로 올리되, material QA와 license가 pending이므로 `releaseEligible=false`를 유지한다.
+- 제품 URL 기반 material hint는 운영 catalog 승격 증거가 아니라 Blender authoring seed로만 사용한다.
+- FURSYS prototype desk budget은 visible material veneers, tangent-bearing normal map, 실제 SKU silhouette 세부를 포함하기 위해 `maxTriangleCount=9000`, `maxFileSizeBytes=1.65MB`, `maxDrawCalls=24`로 관리한다.
+
+Removed/Deprecated:
+- 링크 분석 없이 수동 메모만으로 실제 SKU reference metadata를 관리하는 방식.
+- 공개 제품 이미지를 직접 texture로 쓰거나, 제조사 허가 없이 실제 브랜드 asset을 release-ready로 표시하는 방식.

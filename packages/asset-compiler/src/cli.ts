@@ -2,6 +2,11 @@ import { runExportCuratedRuntime, parseExportArgs, printExportSummary } from "./
 import { writeAssetIngestDraft } from "./ingest";
 import { runOptimizeCuratedRuntimeCli } from "./optimize";
 import { publishCuratedRuntimePackages } from "./publish";
+import {
+  analyzeProductUrlReference,
+  parseProductUrlReferenceArgs,
+  printProductUrlReferenceSummary
+} from "./product-url-reference";
 import { runSyncCuratedCatalogCli } from "./sync";
 import { buildCuratedValidationSummary, parseValidateArgs, printValidationSummary } from "./validate";
 import { buildCuratedPipelineSummary, printCuratedPipelineSummary } from "./verify";
@@ -40,6 +45,7 @@ function printHelp() {
       "",
       "Commands:",
       "  ingest      scaffold an asset source draft from a source path",
+      "  analyze-url scaffold a prototype-only product reference pack from a product URL",
       "  compile     export + sync + verify + validate + publish runtime packages",
       "  validate    run curated GLTF validation stage",
       "  optimize    run curated optimize stage",
@@ -73,6 +79,34 @@ export async function runAssetCompilerCli(argv: string[]) {
           2
         )
       );
+      return;
+    }
+    case "analyze-url": {
+      const args = parseProductUrlReferenceArgs(rest);
+      if (args.help) {
+        console.log(
+          [
+            "Usage: node --import tsx apps/web/scripts/asset-compiler.ts analyze-url --url <product-url> [options]",
+            "",
+            "Options:",
+            "  --asset-key <key>              Override generated asset key",
+            "  --out <path>                   Write reference pack JSON to a custom path",
+            "  --dimensions-mm <WxDxH>        Override official dimensions, for example 1172x590x587",
+            "  --height-range-mm <min-max>    Override height range, for example 587-1073",
+            "  --download-images              Download selected reference images beside the JSON output",
+            "  --ocr-images                   Run local tesseract OCR on selected reference images when available",
+            "  --json                         Print machine-readable summary",
+            "  --help                         Show help"
+          ].join("\n")
+        );
+        return;
+      }
+      const summary = await analyzeProductUrlReference(args);
+      if (args.json) {
+        console.log(JSON.stringify(summary, null, 2));
+      } else {
+        printProductUrlReferenceSummary(summary);
+      }
       return;
     }
     case "compile": {

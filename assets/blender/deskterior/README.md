@@ -32,3 +32,5 @@
 - 카탈로그 반영은 `npm --workspace apps/web run assets:sync:deskterior`로 동기화합니다.
 - 오픈소스 자산은 라이선스가 명확한 소스(CC0 권장)만 사용합니다.
 - 실제 브랜드 제품 reference rebuild는 테스트/draft 용도로만 두고, 운영 catalog release 전에는 제조사 사용 허가 또는 CAD/reference 라이선스를 확보해야 합니다.
+- FURSYS `ZDQ012J` material pass는 `textures/p2s_fursys_setina_zdq012j/`의 procedural PBR maps와 `assets/references/product-pages/p2s_fursys_setina_zdq012j/reference-pack.json`을 함께 봐야 합니다.
+- 제품 URL 기반 reference pack은 material authoring seed일 뿐이며, runtime catalog 승격은 `releaseEligible=false`를 유지한 상태에서 QA evidence로만 기록합니다.

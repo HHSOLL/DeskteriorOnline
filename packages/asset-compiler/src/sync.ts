@@ -77,9 +77,10 @@ function buildCuratedInserts(curatedAssets: ReturnType<typeof getCuratedDeskteri
       externalUrl: "https://fursys-store.com/product/detail.html?product_no=2913&cate_no=118&display_group=1",
       dimensionsMm: { width: 1172, depth: 590, height: 587 },
       finishColor: "Light laminate / warm grey / graphite",
-      finishMaterial: "23T laminated top, steel frame, graphite wiring channel, side laminate panel",
+      finishMaterial:
+        "23T TL light laminate top with procedural wood grain maps, satin warm-grey fascia, graphite metal frame, brushed aluminum pulls, and matte black plastic sensor/channel details",
       detailNotes:
-        "Includes top slab, front modesty/lift panel, side support panel, telescoping lift plates, collision sensor paddle, sliding power channel, and cable duct. This is not release eligible without FURSYS product-design/CAD licensing.",
+        "Includes top slab, front modesty/lift panel, side support panel, telescoping lift plates, collision sensor paddle, sliding power channel, and cable duct. Product URL reference analysis and procedural PBR material pass are prototype-only; this is not release eligible without FURSYS product-design/CAD licensing.",
       scaleLocked: true,
       ...requireCuratedContract(curatedAssets, "p2s_fursys_setina_zdq012j"),
       supportProfile:

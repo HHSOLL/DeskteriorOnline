@@ -4,6 +4,8 @@ import type {
   ColliderDefinition,
   DimensionsMm,
   MaterialVariant,
+  ProductReferencePack,
+  ReferenceImageView,
   RuntimeCommercialReadiness,
   RuntimeAsset,
   SupportSurface
@@ -246,4 +248,65 @@ export type AssetIngestSummary = {
   ok: boolean;
   outputPath: string;
   assetKey: string;
+};
+
+export type ProductUrlReferenceImage = {
+  url: string;
+  view: ReferenceImageView;
+  source: "json_ld" | "open_graph" | "html_image" | "detail_image";
+  score: number;
+  localPath?: string | null;
+};
+
+export type ProductUrlMaterialSlotHint = {
+  slot: string;
+  materialType: NonNullable<MaterialVariant["slotMaterials"]>[number]["materialType"];
+  label: string;
+  evidence: string[];
+  qaStatus: "pending";
+};
+
+export type ProductUrlReferenceDraft = {
+  schemaVersion: "product-url-reference-alpha-v1";
+  createdAt: string;
+  assetKey: string;
+  sourceUrl: string;
+  product: {
+    title: string | null;
+    sku: string | null;
+    manufacturer: string | null;
+    brand: string | null;
+    price: number | null;
+    priceCurrency: string | null;
+    options: string[];
+    dimensionsMm: DimensionsMm | null;
+    heightRangeMm: [number, number] | null;
+  };
+  legalUse: {
+    mode: "prototype_reference_only";
+    releaseEligible: false;
+    license: ProductReferencePack["license"];
+    warning: string;
+  };
+  referencePack: ProductReferencePack;
+  referenceImages: ProductUrlReferenceImage[];
+  materialHints: ProductUrlMaterialSlotHint[];
+  extraction: {
+    jsonLdProductFound: boolean;
+    openGraphImageFound: boolean;
+    htmlImageCount: number;
+    selectedImageCount: number;
+    dimensionSource: "html_text" | "ocr" | "override" | "not_found";
+    ocrAttempted: boolean;
+    ocrAvailable: boolean;
+    ocrTextSample: string | null;
+    warnings: string[];
+  };
+};
+
+export type ProductUrlReferenceSummary = {
+  ok: boolean;
+  assetKey: string;
+  outputPath: string;
+  draft: ProductUrlReferenceDraft;
 };

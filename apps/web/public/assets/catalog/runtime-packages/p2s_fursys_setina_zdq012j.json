@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-alpha-v2",
-  "generatedAt": "2026-05-10T17:40:14.788Z",
+  "generatedAt": "2026-05-11T08:43:58.186Z",
   "key": "p2s_fursys_setina_zdq012j",
   "packageKind": "curated_asset",
   "baseAssetKey": null,
@@ -45,7 +45,7 @@
       "strategy": "single_mesh",
       "levelCount": 1,
       "maxDrawCalls": 24,
-      "maxTriangleCount": 8000
+      "maxTriangleCount": 9000
     }
   },
   "supportProfile": {
@@ -133,13 +133,13 @@
           "id": "lod0",
           "level": 0,
           "model": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
-          "triangleCount": 8000,
+          "triangleCount": 9000,
           "drawCallBudget": 24
         }
       ],
       "proxy": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.proxy.glb",
       "defaultLod": 0,
-      "triangleBudget": 8000,
+      "triangleBudget": 9000,
       "textureBudgetMb": 48
     },
     "colliders": [
@@ -203,17 +203,47 @@
     "attachmentPoints": [],
     "materialVariants": [
       {
-        "id": "default",
+        "id": "tl-light-laminate",
         "label": "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
         "finishColor": "Light laminate / warm grey / graphite",
-        "finishMaterial": "23T laminated top, steel frame, graphite wiring channel, side laminate panel",
-        "detailNotes": "Includes top slab, front modesty/lift panel, side support panel, telescoping lift plates, collision sensor paddle, sliding power channel, and cable duct. This is not release eligible without FURSYS product-design/CAD licensing.",
+        "finishMaterial": "23T TL light laminate top with procedural wood grain maps, satin warm-grey fascia, graphite metal frame, brushed aluminum pulls, and matte black plastic sensor/channel details",
+        "detailNotes": "Includes top slab, front modesty/lift panel, side support panel, telescoping lift plates, collision sensor paddle, sliding power channel, and cable duct. Product URL reference analysis and procedural PBR material pass are prototype-only; this is not release eligible without FURSYS product-design/CAD licensing.",
         "slotMaterials": [
           {
-            "slot": "default",
+            "slot": "DeskWood_light_laminate",
+            "materialType": "wood",
+            "qaStatus": "pending",
+            "referenceNote": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release."
+          },
+          {
+            "slot": "DeskMetal_warm_grey_panel",
             "materialType": "metal",
             "qaStatus": "pending",
-            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+            "referenceNote": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release."
+          },
+          {
+            "slot": "DeskMetal_graphite_frame",
+            "materialType": "metal",
+            "qaStatus": "pending",
+            "referenceNote": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release."
+          },
+          {
+            "slot": "DeskMetal_silver_detail",
+            "materialType": "metal",
+            "qaStatus": "pending",
+            "referenceNote": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release."
+          },
+          {
+            "slot": "DeskPlastic_light_sensor",
+            "materialType": "plastic",
+            "qaStatus": "pending",
+            "referenceNote": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release."
+          },
+          {
+            "slot": "DeskRubber_foot_pad",
+            "materialType": "plastic",
+            "qaStatus": "pending",
+            "referenceNote": "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release."
           }
         ]
       }
@@ -266,10 +296,10 @@
           "label": "FURSYS Store reference, prototype-only DeskteriorOnline rebuild",
           "requiresAttribution": true
         },
-        "status": "reference_collected",
-        "notes": "Prototype-only SKU rebuild from public product page references. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
+        "status": "dimension_verified",
+        "notes": "Prototype-only SKU rebuild from public product page references and generated product URL reference pack. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
       },
-      "visualFidelityScore": 0.78,
+      "visualFidelityScore": 0.84,
       "dimensionToleranceMm": 0,
       "dimensionTolerancePercent": 0,
       "supportSurfaceToleranceMm": 3,
@@ -291,8 +321,8 @@
       },
       "validatorVersion": "asset-compiler-alpha-v3",
       "commercialFidelity": {
-        "referencePackStatus": "reference_collected",
-        "visualFidelityScore": 0.78,
+        "referencePackStatus": "dimension_verified",
+        "visualFidelityScore": 0.84,
         "dimensionToleranceMm": 0,
         "dimensionTolerancePercent": 0,
         "supportSurfaceToleranceMm": 3,
@@ -350,10 +380,10 @@
         "label": "FURSYS Store reference, prototype-only DeskteriorOnline rebuild",
         "requiresAttribution": true
       },
-      "status": "reference_collected",
-      "notes": "Prototype-only SKU rebuild from public product page references. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
+      "status": "dimension_verified",
+      "notes": "Prototype-only SKU rebuild from public product page references and generated product URL reference pack. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
     },
-    "visualFidelityScore": 0.78,
+    "visualFidelityScore": 0.84,
     "dimensionToleranceMm": 0,
     "dimensionTolerancePercent": 0,
     "supportSurfaceToleranceMm": 3,

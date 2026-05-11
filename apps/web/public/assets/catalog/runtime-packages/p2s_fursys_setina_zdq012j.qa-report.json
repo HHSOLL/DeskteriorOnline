@@ -12,8 +12,8 @@
   },
   "validatorVersion": "asset-compiler-alpha-v3",
   "commercialFidelity": {
-    "referencePackStatus": "reference_collected",
-    "visualFidelityScore": 0.78,
+    "referencePackStatus": "dimension_verified",
+    "visualFidelityScore": 0.84,
     "dimensionToleranceMm": 0,
     "dimensionTolerancePercent": 0,
     "supportSurfaceToleranceMm": 3,

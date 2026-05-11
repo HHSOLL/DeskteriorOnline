@@ -331,6 +331,58 @@ function buildColliders(dimensionsMm: RuntimeAsset["dimensionsMm"]): ColliderDef
 function buildMaterialVariants(entry: ManifestEntry, asset: CuratedDeskteriorAsset): MaterialVariant[] {
   const label = isNonEmptyString(entry.label) ? entry.label : "Default";
   const finishMaterial = isNonEmptyString(entry.finishMaterial) ? entry.finishMaterial : null;
+  if (asset.manifestId === "p2s_fursys_setina_zdq012j") {
+    const qaStatus = asset.commercialMetadata.materialQaStatus;
+    const prototypeNote =
+      "Prototype URL-derived material slot; replace with manufacturer finish swatches or licensed CAD/material references before hero SKU release.";
+    return [
+      {
+        id: "tl-light-laminate",
+        label,
+        finishColor: isNonEmptyString(entry.finishColor) ? entry.finishColor : "Light laminate / warm grey / graphite",
+        finishMaterial,
+        detailNotes: isNonEmptyString(entry.detailNotes) ? entry.detailNotes : null,
+        slotMaterials: [
+          {
+            slot: "DeskWood_light_laminate",
+            materialType: "wood",
+            qaStatus,
+            referenceNote: prototypeNote
+          },
+          {
+            slot: "DeskMetal_warm_grey_panel",
+            materialType: "metal",
+            qaStatus,
+            referenceNote: prototypeNote
+          },
+          {
+            slot: "DeskMetal_graphite_frame",
+            materialType: "metal",
+            qaStatus,
+            referenceNote: prototypeNote
+          },
+          {
+            slot: "DeskMetal_silver_detail",
+            materialType: "metal",
+            qaStatus,
+            referenceNote: prototypeNote
+          },
+          {
+            slot: "DeskPlastic_light_sensor",
+            materialType: "plastic",
+            qaStatus,
+            referenceNote: prototypeNote
+          },
+          {
+            slot: "DeskRubber_foot_pad",
+            materialType: "plastic",
+            qaStatus,
+            referenceNote: prototypeNote
+          }
+        ]
+      }
+    ];
+  }
   const normalizedMaterial = finishMaterial?.toLowerCase() ?? "";
   const materialType: NonNullable<MaterialVariant["slotMaterials"]>[number]["materialType"] =
     normalizedMaterial.includes("oak") ||

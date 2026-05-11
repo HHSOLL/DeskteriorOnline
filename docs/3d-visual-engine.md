@@ -109,6 +109,18 @@ Updated:
 Removed/Deprecated:
 - room mode direct-drag 때문에 editor room top은 instancing을 전혀 사용할 수 없다는 가정.
 
+## 2026-05-11 변경 동기화 (Actual SKU Material Pass)
+Added:
+- FURSYS `ZDQ012J` prototype asset은 product URL reference pack, slot-level material hints, Blender-authored procedural PBR maps를 함께 보관한다.
+- 실제 SKU prototype material pass는 `DeskWood_light_laminate`, `DeskMetal_warm_grey_panel`, `DeskMetal_graphite_frame`, `DeskMetal_silver_detail`, `DeskPlastic_light_sensor` 같은 named slot을 유지해야 한다.
+
+Updated:
+- 제품 재질 개선은 이미지 텍스처를 단순히 붙이는 것이 아니라 UV scale, visible laminate surface, roughness/normal intensity, runtime GLB size budget을 동시에 통과해야 한다.
+- public product page 기반 texture는 최종 상용 texture가 아니라 prototype rebuild source로만 쓰며, runtime GLB는 curated asset budget 안에서 export해야 한다.
+
+Removed/Deprecated:
+- 나뭇결을 별도 protruding geometry strip으로 구현해 reference 사진과 다르게 보이거나 runtime 예산을 낭비하는 방식.
+
 ## Scene 데이터 소비 규칙
 - `apps/web/src/lib/domain/scene-document.ts`를 scene 복원의 canonical 매핑 계층으로 사용
 - scene 저장/복원은 `project_versions.customization.sceneDocument`를 우선 source로 사용

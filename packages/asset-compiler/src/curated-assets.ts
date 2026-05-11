@@ -244,11 +244,11 @@ function createFursysSetinaZdq012jCommercialMetadata(): CommercialAssetFidelityM
         label: "FURSYS Store reference, prototype-only DeskteriorOnline rebuild",
         requiresAttribution: true
       },
-      status: "reference_collected",
+      status: "dimension_verified",
       notes:
-        "Prototype-only SKU rebuild from public product page references. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
+        "Prototype-only SKU rebuild from public product page references and generated product URL reference pack. Not release eligible until FURSYS grants asset/product-design usage rights or provides licensed CAD/reference material."
     },
-    visualFidelityScore: 0.78,
+    visualFidelityScore: 0.84,
     dimensionToleranceMm: 0,
     dimensionTolerancePercent: 0,
     supportSurfaceToleranceMm: 3,
@@ -275,9 +275,9 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
       expectedAssetId: runtimeAssetId("p2s_fursys_setina_zdq012j"),
       requiredMetadata: ["brand", "externalUrl", "description", "category", "options"],
       budget: {
-        maxFileSizeBytes: 1_500_000,
+        maxFileSizeBytes: 1_650_000,
         maxDrawCalls: 24,
-        maxTriangleCount: 8_000
+        maxTriangleCount: 9_000
       },
       commercialMetadata: createFursysSetinaZdq012jCommercialMetadata(),
       contractMetadata: {
@@ -310,7 +310,7 @@ export function getCuratedDeskteriorAssets(paths: AssetCompilerPaths): CuratedDe
           strategy: "single_mesh",
           levelCount: 1,
           maxDrawCalls: 24,
-          maxTriangleCount: 8_000
+          maxTriangleCount: 9_000
         }
       },
       attachmentAuthoring: {

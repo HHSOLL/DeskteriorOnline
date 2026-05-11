@@ -57,3 +57,15 @@ Updated:
 
 Removed/Deprecated:
 - AI 1K texture 후보를 paid-beta commercial PBR library에 포함하는 방식.
+
+## 2026-05-11 변경 동기화 (Product URL Reference Pipeline)
+Added:
+- `asset:analyze-url`을 prototype-only 실제 SKU reference 수집 entrypoint로 추가한다. 제품 URL에서 JSON-LD, Open Graph image, 상세 이미지, option/SKU/manufacturer/price field를 수집하고 `assets/references/product-pages/<assetKey>/reference-pack.json`을 생성한다.
+- `verify:product-url-reference`는 FURSYS `ZDQ012J` fixture를 기준으로 SKU/manufacturer/options/dimensions/reference image/material hint/prototype-only legal boundary를 검증한다.
+
+Updated:
+- 제품 URL 분석 결과는 실제 제품 동일성의 시작점일 뿐이며, 운영 승격에는 제조사 CAD 또는 사용 허가, 공식 finish swatch, slot-level material QA가 계속 필요하다.
+- URL에서 추론한 material hint는 `qaStatus=pending`, `releaseEligible=false`로만 발행한다.
+
+Removed/Deprecated:
+- 공개 제품 페이지 이미지 또는 OCR 결과만으로 실제 SKU asset을 release eligible로 보는 방식.
