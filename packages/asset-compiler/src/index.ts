@@ -10,4 +10,5 @@ export * from "./verify";
 export * from "./verify-packages";
 export * from "./publish";
 export * from "./product-url-reference";
+export * from "./product-asset-factory";
 export * from "./cli";

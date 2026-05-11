@@ -1,0 +1,17 @@
+[
+  {
+    "id": "default",
+    "label": "Reference prototype · Angry Miao AM HATSU keyboard",
+    "finishColor": "White 3D curved body / dark sculpted keycaps",
+    "finishMaterial": "CNC aluminum-style body and plastic keycaps",
+    "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "plastic",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
+  }
+]

@@ -310,3 +310,134 @@ export type ProductUrlReferenceSummary = {
   outputPath: string;
   draft: ProductUrlReferenceDraft;
 };
+
+export type ProductAssetFactoryMaterialPlan = {
+  slot: string;
+  materialType: NonNullable<MaterialVariant["slotMaterials"]>[number]["materialType"];
+  target: string;
+  evidence: string[];
+  qaStatus: "pending_reference" | "runtime_authored" | "manufacturer_verified";
+};
+
+export type ProductAssetFactoryArtifactCheck = {
+  id:
+    | "source_blend"
+    | "runtime_model"
+    | "proxy_model"
+    | "colliders"
+    | "support_surfaces"
+    | "attachment_points"
+    | "material_variants"
+    | "qa_report"
+    | "thumbnail";
+  label: string;
+  path: string;
+  required: boolean;
+  exists: boolean;
+  sizeBytes: number | null;
+};
+
+export type ProductAssetFactoryPlan = {
+  schemaVersion: "product-asset-factory-plan-alpha-v1";
+  generatedAt: string;
+  assetKey: string;
+  product: ProductUrlReferenceDraft["product"];
+  sourceUrl: string;
+  referencePackPath: string;
+  visibility: {
+    mode: "private_prototype";
+    catalogExposure: "private_only";
+    releaseEligible: false;
+    reason: string;
+  };
+  qualityTargets: {
+    targetSimilarityPercent: number;
+    minVisualFidelityScore: number;
+    maxDimensionToleranceMm: number;
+    maxDimensionTolerancePercent: number;
+    requireLicensedCadForCommercial: true;
+  };
+  build: {
+    strategy: "blender_procedural_reference_rebuild";
+    blenderScriptPath: string;
+    outputModelPath: string;
+    outputProxyPath: string;
+    outputThumbnailPath: string;
+    requiredComponents: string[];
+    materialSlots: ProductAssetFactoryMaterialPlan[];
+  };
+  validationGates: string[];
+  referenceImages: ProductUrlReferenceImage[];
+};
+
+export type ProductAssetFactoryQaReport = {
+  schemaVersion: "product-asset-factory-qa-alpha-v1";
+  generatedAt: string;
+  assetKey: string;
+  status: "ready_for_private_use" | "needs_repair" | "blocked";
+  privateUseOnly: true;
+  releaseEligible: false;
+  commercialStatus: "not_eligible_without_license" | "needs_repair" | "blocked";
+  scores: {
+    privateReadiness: number;
+    visualFidelity: number;
+    dimensionFidelity: number;
+    artifactCompleteness: number;
+    materialReferenceReadiness: number;
+  };
+  dimensionComparison: {
+    referenceMm: DimensionsMm | null;
+    runtimeMm: DimensionsMm | null;
+    errorMm: DimensionsMm | null;
+    maxErrorMm: number | null;
+    maxErrorPercent: number | null;
+    passed: boolean;
+  };
+  referenceCoverage: {
+    imageCount: number;
+    views: ReferenceImageView[];
+    finishReferenceCount: number;
+    status: ProductReferencePack["status"];
+  };
+  materialCoverage: {
+    plannedSlotCount: number;
+    runtimeSlotCount: number;
+    pendingSlotCount: number;
+    qaStatus: RuntimeCommercialReadiness["materialQaStatus"] | "missing";
+  };
+  artifactChecks: ProductAssetFactoryArtifactCheck[];
+  catalogVisibility: {
+    runtimePackageFound: boolean;
+    runtimeIndexFound: boolean;
+    publicReleaseBlocked: boolean;
+    releaseEligible: false;
+  };
+  repairInstructions: string[];
+};
+
+export type ProductAssetFactoryPrivateCatalogEntry = {
+  schemaVersion: "product-asset-private-catalog-alpha-v1";
+  generatedAt: string;
+  assetKey: string;
+  label: string;
+  assetId: string | null;
+  thumbnailPath: string | null;
+  referencePackPath: string;
+  qaReportPath: string;
+  visibility: "private_prototype";
+  releaseEligible: false;
+  restrictions: string[];
+};
+
+export type ProductAssetFactorySummary = {
+  ok: boolean;
+  assetKey: string;
+  outputDir: string;
+  planPath: string;
+  qaReportPath: string;
+  repairInstructionsPath: string;
+  privateCatalogEntryPath: string;
+  plan: ProductAssetFactoryPlan;
+  qaReport: ProductAssetFactoryQaReport;
+  privateCatalogEntry: ProductAssetFactoryPrivateCatalogEntry;
+};

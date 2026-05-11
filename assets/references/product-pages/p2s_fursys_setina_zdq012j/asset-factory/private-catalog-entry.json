@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "product-asset-private-catalog-alpha-v1",
+  "generatedAt": "2026-05-11T22:52:20.588Z",
+  "assetKey": "p2s_fursys_setina_zdq012j",
+  "label": "FURSYS SETINA ZDQ012J 모션 사이드 데스크",
+  "assetId": "/assets/models/p2s_fursys_setina_zdq012j/p2s_fursys_setina_zdq012j.glb",
+  "thumbnailPath": "/assets/catalog/thumbnails/p2s_fursys_setina_zdq012j.webp",
+  "referencePackPath": "assets/references/product-pages/p2s_fursys_setina_zdq012j/reference-pack.json",
+  "qaReportPath": "assets/references/product-pages/p2s_fursys_setina_zdq012j/asset-factory/factory-qa-report.json",
+  "visibility": "private_prototype",
+  "releaseEligible": false,
+  "restrictions": [
+    "Do not expose in public catalog.",
+    "Do not mark as commercial hero SKU.",
+    "Do not reuse downloaded product-page imagery as runtime texture maps.",
+    "Require manufacturer CAD/material/license evidence before commercial promotion."
+  ]
+}

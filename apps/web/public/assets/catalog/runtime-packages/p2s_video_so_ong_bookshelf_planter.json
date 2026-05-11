@@ -1,0 +1,370 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
+  "key": "p2s_video_so_ong_bookshelf_planter",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_video_so_ong_bookshelf_planter",
+  "manifestId": "p2s_video_so_ong_bookshelf_planter",
+  "label": "Reference prototype · bookshelf plant",
+  "assetId": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb",
+  "sourcePath": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+  "runtimePath": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb",
+  "dimensionsMm": {
+    "width": 110,
+    "depth": 110,
+    "height": 190
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline So Ong video reference prototype pack",
+      "path": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+      "url": "https://www.youtube.com/watch?v=jHakJw40k58"
+    },
+    "license": {
+      "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+      "label": "Prototype-only rebuild from public video/product references",
+      "requiresAttribution": true
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 18,
+      "maxTriangleCount": 12000
+    }
+  },
+  "supportProfile": {
+    "surfaces": [
+      {
+        "id": "shelf-top",
+        "anchorTypes": [
+          "shelf_surface",
+          "furniture_surface"
+        ],
+        "center": [
+          0,
+          0
+        ],
+        "size": [
+          0.099,
+          0.09459999999999999
+        ],
+        "top": 0.19,
+        "surfaceType": "shelf_top",
+        "allowedAttachments": [
+          "place_on_surface"
+        ],
+        "margin": [
+          0.02,
+          0.02
+        ]
+      }
+    ]
+  },
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb",
+    "productId": "p2s_video_so_ong_bookshelf_planter",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 110,
+      "depth": 110,
+      "height": 190
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+      "manufacturer": "AliExpress reference",
+      "license": "LicenseRef-Video-Reference-Prototype-Only",
+      "attributionRequired": true
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb",
+          "triangleCount": 12000,
+          "drawCallBudget": 18
+        }
+      ],
+      "proxy": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 12000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 110,
+          "depth": 110,
+          "height": 190
+        },
+        "centerMm": [
+          0,
+          95,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [
+      {
+        "id": "shelf-top",
+        "type": "shelf_top",
+        "localFrame": {
+          "originMm": [
+            0,
+            190,
+            0
+          ],
+          "tangentU": [
+            1000,
+            0,
+            0
+          ],
+          "tangentV": [
+            0,
+            0,
+            1000
+          ],
+          "normal": [
+            0,
+            1000,
+            0
+          ]
+        },
+        "boundsMm": {
+          "min": [
+            -30,
+            -27
+          ],
+          "max": [
+            30,
+            27
+          ]
+        },
+        "allowedAttachments": [
+          "place_on_surface"
+        ]
+      }
+    ],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "Reference prototype · bookshelf plant",
+        "finishColor": "White planter / green leaves",
+        "finishMaterial": "Ceramic-style pot and artificial greenery",
+        "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+        "slotMaterials": [
+          {
+            "slot": "default",
+            "materialType": "ceramic",
+            "qaStatus": "pending",
+            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+          }
+        ]
+      }
+    ],
+    "commercialReadiness": {
+      "tier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-BOOKSHELF-PLANTER",
+      "manufacturer": "AliExpress reference",
+      "referencePack": {
+        "sku": "P2S-VIDEO-SO-ONG-BOOKSHELF-PLANTER",
+        "manufacturer": "AliExpress reference",
+        "canonicalProductUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+        "dimensionSourceUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+        "referenceImages": [
+          {
+            "view": "front",
+            "url": "/assets/catalog/thumbnails/p2s_video_so_ong_bookshelf_planter.webp",
+            "required": false,
+            "license": "LicenseRef-Video-Reference-Prototype-Only"
+          }
+        ],
+        "finishReferences": [
+          {
+            "finishId": "default",
+            "label": "Ceramic-style pot and artificial greenery",
+            "sourceUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+            "materialType": "mixed"
+          }
+        ],
+        "license": {
+          "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+          "label": "Prototype-only rebuild from public video/product references",
+          "requiresAttribution": true
+        },
+        "status": "reference_collected",
+        "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+      },
+      "visualFidelityScore": 0.78,
+      "dimensionToleranceMm": 0,
+      "dimensionTolerancePercent": 0,
+      "supportSurfaceToleranceMm": 3,
+      "footprintToleranceMm": 2,
+      "materialQaStatus": "pending",
+      "releaseEligible": false
+    },
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 110,
+        "depth": 110,
+        "height": 190
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3",
+      "commercialFidelity": {
+        "referencePackStatus": "reference_collected",
+        "visualFidelityScore": 0.78,
+        "dimensionToleranceMm": 0,
+        "dimensionTolerancePercent": 0,
+        "supportSurfaceToleranceMm": 3,
+        "footprintToleranceMm": 2,
+        "materialQaStatus": "pending",
+        "releaseEligible": false
+      }
+    }
+  },
+  "commercialReadiness": {
+    "tier": "generic_catalog",
+    "sku": "P2S-VIDEO-SO-ONG-BOOKSHELF-PLANTER",
+    "manufacturer": "AliExpress reference",
+    "referencePack": {
+      "sku": "P2S-VIDEO-SO-ONG-BOOKSHELF-PLANTER",
+      "manufacturer": "AliExpress reference",
+      "canonicalProductUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+      "dimensionSourceUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+      "referenceImages": [
+        {
+          "view": "front",
+          "url": "/assets/catalog/thumbnails/p2s_video_so_ong_bookshelf_planter.webp",
+          "required": false,
+          "license": "LicenseRef-Video-Reference-Prototype-Only"
+        }
+      ],
+      "finishReferences": [
+        {
+          "finishId": "default",
+          "label": "Ceramic-style pot and artificial greenery",
+          "sourceUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+          "materialType": "mixed"
+        }
+      ],
+      "license": {
+        "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+        "label": "Prototype-only rebuild from public video/product references",
+        "requiresAttribution": true
+      },
+      "status": "reference_collected",
+      "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+    },
+    "visualFidelityScore": 0.78,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_video_so_ong_bookshelf_planter.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_video_so_ong_bookshelf_planter.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

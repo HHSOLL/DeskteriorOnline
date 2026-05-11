@@ -7,6 +7,11 @@ import {
   parseProductUrlReferenceArgs,
   printProductUrlReferenceSummary
 } from "./product-url-reference";
+import {
+  parseProductAssetFactoryArgs,
+  printProductAssetFactorySummary,
+  runProductAssetFactory
+} from "./product-asset-factory";
 import { runSyncCuratedCatalogCli } from "./sync";
 import { buildCuratedValidationSummary, parseValidateArgs, printValidationSummary } from "./validate";
 import { buildCuratedPipelineSummary, printCuratedPipelineSummary } from "./verify";
@@ -46,6 +51,7 @@ function printHelp() {
       "Commands:",
       "  ingest      scaffold an asset source draft from a source path",
       "  analyze-url scaffold a prototype-only product reference pack from a product URL",
+      "  factory     generate a private/prototype asset plan, QA report, and repair loop from a reference pack",
       "  compile     export + sync + verify + validate + publish runtime packages",
       "  validate    run curated GLTF validation stage",
       "  optimize    run curated optimize stage",
@@ -106,6 +112,34 @@ export async function runAssetCompilerCli(argv: string[]) {
         console.log(JSON.stringify(summary, null, 2));
       } else {
         printProductUrlReferenceSummary(summary);
+      }
+      return;
+    }
+    case "factory": {
+      const args = parseProductAssetFactoryArgs(rest);
+      if (args.help) {
+        console.log(
+          [
+            "Usage: node --import tsx apps/web/scripts/asset-compiler.ts factory --reference-pack <path> [options]",
+            "",
+            "Options:",
+            "  --reference-pack <path>        Product URL reference pack JSON from asset:analyze-url",
+            "  --asset-key <key>              Override asset key from the reference pack",
+            "  --out <path>                   Write factory outputs to a custom directory",
+            "  --json                         Print machine-readable summary",
+            "  --help                         Show help"
+          ].join("\n")
+        );
+        return;
+      }
+      const summary = await runProductAssetFactory(args);
+      if (args.json) {
+        console.log(JSON.stringify(summary, null, 2));
+      } else {
+        printProductAssetFactorySummary(summary);
+      }
+      if (!summary.ok) {
+        process.exit(1);
       }
       return;
     }

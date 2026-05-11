@@ -203,6 +203,8 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - `npm --workspace apps/web run asset:ingest -- --source <source-path>`가 `assets/ingest-staging/<assetKey>/source.asset.json` draft를 생성하는지 확인
 - `npm --workspace apps/web run asset:analyze-url -- --url <product-url> --asset-key <assetKey> --dimensions-mm <WxDxH>`가 prototype-only `assets/references/product-pages/<assetKey>/reference-pack.json`을 생성하는지 확인
 - `npm --workspace apps/web run verify:product-url-reference`가 URL-derived SKU/manufacturer/options/reference image/material hint/legal boundary를 fixture 기준으로 통과하는지 확인
+- `npm --workspace apps/web run asset:factory -- --reference-pack assets/references/product-pages/<assetKey>/reference-pack.json`가 private/prototype `asset-plan.json`, `factory-qa-report.json`, `repair-instructions.json`, `private-catalog-entry.json`, Blender scaffold를 생성하는지 확인
+- `npm --workspace apps/web run verify:product-asset-factory`가 FURSYS fixture의 runtime GLB/proxy/thumbnail/sidecar, private-only visibility, `releaseEligible=false`, material/visual repair loop를 통과하는지 확인
 - shared viewer가 generic showcase viewer와 다른 경량 preset으로 동작해도 제품 hotspot / drawer 읽기 흐름은 유지되는지 확인
 - shared viewer walk HUD는 터치 조작용 요소만 남고 crosshair는 보이지 않는지 확인
 - shared viewer가 상단 light bar, 우측 zoom rail, 하단 readonly status pill 기준으로 노출되는지 확인

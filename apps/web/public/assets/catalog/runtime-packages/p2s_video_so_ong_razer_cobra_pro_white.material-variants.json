@@ -1,0 +1,17 @@
+[
+  {
+    "id": "default",
+    "label": "Reference prototype · Razer Cobra Pro White mouse",
+    "finishColor": "White shell / black grips / RGB underglow",
+    "finishMaterial": "Matte plastic, rubber grips, glossy lighting diffuser",
+    "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "plastic",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
+  }
+]

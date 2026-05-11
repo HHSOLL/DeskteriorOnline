@@ -69,3 +69,15 @@ Updated:
 
 Removed/Deprecated:
 - 공개 제품 페이지 이미지 또는 OCR 결과만으로 실제 SKU asset을 release eligible로 보는 방식.
+
+## 2026-05-12 변경 동기화 (Private Product Asset Factory)
+Added:
+- `asset:factory`를 private/prototype SKU asset production loop의 entrypoint로 추가한다. 입력은 `asset:analyze-url`이 만든 `reference-pack.json`이며, 출력은 `asset-plan.json`, `factory-qa-report.json`, `repair-instructions.json`, `private-catalog-entry.json`, Blender rebuild scaffold다.
+- `verify:product-asset-factory`는 FURSYS `ZDQ012J` fixture를 기준으로 reference pack, runtime GLB/proxy, thumbnail, collider/support/material sidecars, private visibility, release blocking, repair loop를 검증한다.
+
+Updated:
+- AI/API가 제품 상세 페이지를 분석해도 상용 승격 판단은 자동 통과가 아니라 factory QA report의 `privateUseOnly=true`, `releaseEligible=false`, `commercialStatus`와 repair instruction을 기준으로 한다.
+- factory는 개인/테스트용 prototype asset을 빠르게 만들기 위한 반복 루프다. public catalog 또는 paid-beta hero SKU 승격은 별도 licensing/CAD/material QA gate를 통과해야 한다.
+
+Removed/Deprecated:
+- 제품 링크 하나를 분석했다는 이유만으로 runtime asset을 상용 노출 가능한 catalog asset으로 취급하는 방식.

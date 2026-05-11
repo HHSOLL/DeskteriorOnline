@@ -1,0 +1,303 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
+  "key": "p2s_video_so_ong_elgato_stream_deck_neo",
+  "packageKind": "catalog_variant",
+  "baseAssetKey": "p2s_video_so_ong_elgato_stream_deck_neo",
+  "manifestId": "p2s_video_so_ong_elgato_stream_deck_neo",
+  "label": "Reference prototype · Elgato Stream Deck Neo",
+  "assetId": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb",
+  "sourcePath": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+  "runtimePath": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb",
+  "dimensionsMm": {
+    "width": 107,
+    "depth": 78,
+    "height": 26
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline So Ong video reference prototype pack",
+      "path": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+      "url": "https://www.youtube.com/watch?v=jHakJw40k58"
+    },
+    "license": {
+      "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+      "label": "Prototype-only rebuild from public video/product references",
+      "requiresAttribution": true
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 18,
+      "maxTriangleCount": 12000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "catalog variant does not require mounted attachment metadata"
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb",
+    "productId": "p2s_video_so_ong_elgato_stream_deck_neo",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 107,
+      "depth": 78,
+      "height": 26
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+      "manufacturer": "Elgato",
+      "license": "LicenseRef-Video-Reference-Prototype-Only",
+      "attributionRequired": true
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb",
+          "triangleCount": 12000,
+          "drawCallBudget": 18
+        }
+      ],
+      "proxy": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.proxy.glb",
+      "defaultLod": 0,
+      "triangleBudget": 12000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 107,
+          "depth": 78,
+          "height": 26
+        },
+        "centerMm": [
+          0,
+          13,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "default",
+        "label": "Reference prototype · Elgato Stream Deck Neo",
+        "finishColor": "White body / black LCD key face",
+        "finishMaterial": "Matte plastic shell, LCD keys, rubber base",
+        "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+        "slotMaterials": [
+          {
+            "slot": "default",
+            "materialType": "plastic",
+            "qaStatus": "pending",
+            "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+          }
+        ]
+      }
+    ],
+    "commercialReadiness": {
+      "tier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ELGATO-STREAM-DECK-NEO",
+      "manufacturer": "Elgato",
+      "referencePack": {
+        "sku": "P2S-VIDEO-SO-ONG-ELGATO-STREAM-DECK-NEO",
+        "manufacturer": "Elgato",
+        "canonicalProductUrl": "https://link.coupang.com/a/bG32Rh",
+        "dimensionSourceUrl": "https://link.coupang.com/a/bG32Rh",
+        "referenceImages": [
+          {
+            "view": "front",
+            "url": "/assets/catalog/thumbnails/p2s_video_so_ong_elgato_stream_deck_neo.webp",
+            "required": false,
+            "license": "LicenseRef-Video-Reference-Prototype-Only"
+          }
+        ],
+        "finishReferences": [
+          {
+            "finishId": "default",
+            "label": "Matte plastic shell, LCD keys, rubber base",
+            "sourceUrl": "https://link.coupang.com/a/bG32Rh",
+            "materialType": "mixed"
+          }
+        ],
+        "license": {
+          "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+          "label": "Prototype-only rebuild from public video/product references",
+          "requiresAttribution": true
+        },
+        "status": "reference_collected",
+        "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+      },
+      "visualFidelityScore": 0.78,
+      "dimensionToleranceMm": 0,
+      "dimensionTolerancePercent": 0,
+      "supportSurfaceToleranceMm": 3,
+      "footprintToleranceMm": 2,
+      "materialQaStatus": "pending",
+      "releaseEligible": false
+    },
+    "qaStatus": {
+      "status": "passed",
+      "measuredBoundsMm": {
+        "width": 107,
+        "depth": 78,
+        "height": 26
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "asset-compiler-alpha-v3",
+      "commercialFidelity": {
+        "referencePackStatus": "reference_collected",
+        "visualFidelityScore": 0.78,
+        "dimensionToleranceMm": 0,
+        "dimensionTolerancePercent": 0,
+        "supportSurfaceToleranceMm": 3,
+        "footprintToleranceMm": 2,
+        "materialQaStatus": "pending",
+        "releaseEligible": false
+      }
+    }
+  },
+  "commercialReadiness": {
+    "tier": "generic_catalog",
+    "sku": "P2S-VIDEO-SO-ONG-ELGATO-STREAM-DECK-NEO",
+    "manufacturer": "Elgato",
+    "referencePack": {
+      "sku": "P2S-VIDEO-SO-ONG-ELGATO-STREAM-DECK-NEO",
+      "manufacturer": "Elgato",
+      "canonicalProductUrl": "https://link.coupang.com/a/bG32Rh",
+      "dimensionSourceUrl": "https://link.coupang.com/a/bG32Rh",
+      "referenceImages": [
+        {
+          "view": "front",
+          "url": "/assets/catalog/thumbnails/p2s_video_so_ong_elgato_stream_deck_neo.webp",
+          "required": false,
+          "license": "LicenseRef-Video-Reference-Prototype-Only"
+        }
+      ],
+      "finishReferences": [
+        {
+          "finishId": "default",
+          "label": "Matte plastic shell, LCD keys, rubber base",
+          "sourceUrl": "https://link.coupang.com/a/bG32Rh",
+          "materialType": "mixed"
+        }
+      ],
+      "license": {
+        "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+        "label": "Prototype-only rebuild from public video/product references",
+        "requiresAttribution": true
+      },
+      "status": "reference_collected",
+      "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+    },
+    "visualFidelityScore": 0.78,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 3,
+    "footprintToleranceMm": 2,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.proxy.glb",
+      "required": true,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.support-surfaces.json",
+      "required": true,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.attachment-points.json",
+      "required": true,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/catalog/thumbnails/p2s_video_so_ong_elgato_stream_deck_neo.webp",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.proxy.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.qa-report.json",
+    "thumbnailPath": "/assets/catalog/thumbnails/p2s_video_so_ong_elgato_stream_deck_neo.webp"
+  },
+  "qa": {
+    "status": "passed",
+    "warnings": []
+  }
+}

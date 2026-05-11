@@ -1,0 +1,17 @@
+[
+  {
+    "id": "default",
+    "label": "Reference prototype · Avolt x Martinelli Luce Square1 power cube",
+    "finishColor": "White cube",
+    "finishMaterial": "Matte plastic with recessed sockets",
+    "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "plastic",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
+  }
+]

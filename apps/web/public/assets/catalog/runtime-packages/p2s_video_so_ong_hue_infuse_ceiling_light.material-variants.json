@@ -1,0 +1,17 @@
+[
+  {
+    "id": "default",
+    "label": "Reference prototype · Philips Hue Infuse ceiling light",
+    "finishColor": "White diffuser with color ambience",
+    "finishMaterial": "Translucent acrylic lens and metal housing",
+    "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "metal",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
+  }
+]

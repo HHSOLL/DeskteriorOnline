@@ -1,6 +1,6 @@
 {
   "schemaVersion": "asset-package-index-alpha-v2",
-  "generatedAt": "2026-05-11T08:43:58.186Z",
+  "generatedAt": "2026-05-11T15:44:19.721Z",
   "assets": [
     {
       "key": "p2s_fursys_setina_zdq012j",
@@ -15260,6 +15260,4454 @@
       "commercialTier": "generic_catalog",
       "sku": "P2S-DECOR-MINIMAL-FIGURE",
       "manufacturer": "Generic Decor",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_tfg40q14wp_monitor",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_tfg40q14wp_monitor",
+      "manifestId": "p2s_video_so_ong_tfg40q14wp_monitor",
+      "label": "Reference prototype · TFG40Q14WP main ultrawide monitor",
+      "assetId": "/assets/models/p2s_video_so_ong_tfg40q14wp_monitor/p2s_video_so_ong_tfg40q14wp_monitor.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_tfg40q14wp_monitor.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_tfg40q14wp_monitor/p2s_video_so_ong_tfg40q14wp_monitor.glb",
+        "productId": "p2s_video_so_ong_tfg40q14wp_monitor",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 944,
+          "depth": 287,
+          "height": 596
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Hansung / TFG",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_tfg40q14wp_monitor/p2s_video_so_ong_tfg40q14wp_monitor.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_tfg40q14wp_monitor/p2s_video_so_ong_tfg40q14wp_monitor.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 944,
+              "depth": 287,
+              "height": 596
+            },
+            "centerMm": [
+              0,
+              298,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · TFG40Q14WP main ultrawide monitor",
+            "finishColor": "White frame / black screen",
+            "finishMaterial": "Satin plastic shell, glossy screen glass",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-TFG40Q14WP-MONITOR",
+          "manufacturer": "Hansung / TFG",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-TFG40Q14WP-MONITOR",
+            "manufacturer": "Hansung / TFG",
+            "canonicalProductUrl": "https://link.coupang.com/a/b5EVrY",
+            "dimensionSourceUrl": "https://link.coupang.com/a/b5EVrY",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_tfg40q14wp_monitor.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Satin plastic shell, glossy screen glass",
+                "sourceUrl": "https://link.coupang.com/a/b5EVrY",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 944,
+            "depth": 287,
+            "height": 596
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-TFG40Q14WP-MONITOR",
+      "manufacturer": "Hansung / TFG",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_cpm1610iq_portable_monitor",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_cpm1610iq_portable_monitor",
+      "manifestId": "p2s_video_so_ong_cpm1610iq_portable_monitor",
+      "label": "Reference prototype · CPM1610IQ secondary portable monitor",
+      "assetId": "/assets/models/p2s_video_so_ong_cpm1610iq_portable_monitor/p2s_video_so_ong_cpm1610iq_portable_monitor.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_cpm1610iq_portable_monitor.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_cpm1610iq_portable_monitor/p2s_video_so_ong_cpm1610iq_portable_monitor.glb",
+        "productId": "p2s_video_so_ong_cpm1610iq_portable_monitor",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 358,
+          "depth": 40,
+          "height": 235
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Camel Prism",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_cpm1610iq_portable_monitor/p2s_video_so_ong_cpm1610iq_portable_monitor.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_cpm1610iq_portable_monitor/p2s_video_so_ong_cpm1610iq_portable_monitor.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 358,
+              "depth": 40,
+              "height": 235
+            },
+            "centerMm": [
+              0,
+              118,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · CPM1610IQ secondary portable monitor",
+            "finishColor": "Black display with grey folio stand",
+            "finishMaterial": "Gloss screen, matte folding cover",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "mixed",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-CPM1610IQ-PORTABLE-MONITOR",
+          "manufacturer": "Camel Prism",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-CPM1610IQ-PORTABLE-MONITOR",
+            "manufacturer": "Camel Prism",
+            "canonicalProductUrl": "https://link.coupang.com/a/b5HcjV",
+            "dimensionSourceUrl": "https://link.coupang.com/a/b5HcjV",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_cpm1610iq_portable_monitor.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Gloss screen, matte folding cover",
+                "sourceUrl": "https://link.coupang.com/a/b5HcjV",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 358,
+            "depth": 40,
+            "height": 235
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-CPM1610IQ-PORTABLE-MONITOR",
+      "manufacturer": "Camel Prism",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_empathist_stand",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_empathist_stand",
+      "manifestId": "p2s_video_so_ong_empathist_stand",
+      "label": "Reference prototype · The Empathist secondary monitor stand",
+      "assetId": "/assets/models/p2s_video_so_ong_empathist_stand/p2s_video_so_ong_empathist_stand.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_empathist_stand.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_empathist_stand/p2s_video_so_ong_empathist_stand.glb",
+        "productId": "p2s_video_so_ong_empathist_stand",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 280,
+          "depth": 180,
+          "height": 120
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "The Empathist",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_empathist_stand/p2s_video_so_ong_empathist_stand.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_empathist_stand/p2s_video_so_ong_empathist_stand.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 280,
+              "depth": 180,
+              "height": 120
+            },
+            "centerMm": [
+              0,
+              60,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · The Empathist secondary monitor stand",
+            "finishColor": "White",
+            "finishMaterial": "Painted metal plate and wire legs",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-EMPATHIST-STAND",
+          "manufacturer": "The Empathist",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-EMPATHIST-STAND",
+            "manufacturer": "The Empathist",
+            "canonicalProductUrl": "https://29cm.onelink.me/1080201211/y72msqrw",
+            "dimensionSourceUrl": "https://29cm.onelink.me/1080201211/y72msqrw",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_empathist_stand.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Painted metal plate and wire legs",
+                "sourceUrl": "https://29cm.onelink.me/1080201211/y72msqrw",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 280,
+            "depth": 180,
+            "height": 120
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-EMPATHIST-STAND",
+      "manufacturer": "The Empathist",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_ivy_planter",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_ivy_planter",
+      "manifestId": "p2s_video_so_ong_ivy_planter",
+      "label": "Reference prototype · IVY AI smart planter",
+      "assetId": "/assets/models/p2s_video_so_ong_ivy_planter/p2s_video_so_ong_ivy_planter.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_ivy_planter.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_ivy_planter/p2s_video_so_ong_ivy_planter.glb",
+        "productId": "p2s_video_so_ong_ivy_planter",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 110,
+          "depth": 90,
+          "height": 115
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "IVY",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_ivy_planter/p2s_video_so_ong_ivy_planter.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_ivy_planter/p2s_video_so_ong_ivy_planter.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 110,
+              "depth": 90,
+              "height": 115
+            },
+            "centerMm": [
+              0,
+              58,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · IVY AI smart planter",
+            "finishColor": "White body / black face screen",
+            "finishMaterial": "Gloss plastic, small live plant insert",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-IVY-PLANTER",
+          "manufacturer": "IVY",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-IVY-PLANTER",
+            "manufacturer": "IVY",
+            "canonicalProductUrl": "https://s.click.aliexpress.com/e/_oBRDB0x",
+            "dimensionSourceUrl": "https://s.click.aliexpress.com/e/_oBRDB0x",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_ivy_planter.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Gloss plastic, small live plant insert",
+                "sourceUrl": "https://s.click.aliexpress.com/e/_oBRDB0x",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 110,
+            "depth": 90,
+            "height": 115
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-IVY-PLANTER",
+      "manufacturer": "IVY",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_sml_spacecraft",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_sml_spacecraft",
+      "manifestId": "p2s_video_so_ong_sml_spacecraft",
+      "label": "Reference prototype · SML WARS SS 001 Spacecraft",
+      "assetId": "/assets/models/p2s_video_so_ong_sml_spacecraft/p2s_video_so_ong_sml_spacecraft.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_sml_spacecraft.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_sml_spacecraft/p2s_video_so_ong_sml_spacecraft.glb",
+        "productId": "p2s_video_so_ong_sml_spacecraft",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 160,
+          "depth": 115,
+          "height": 130
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Sticky Monster Lab",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_sml_spacecraft/p2s_video_so_ong_sml_spacecraft.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_sml_spacecraft/p2s_video_so_ong_sml_spacecraft.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 160,
+              "depth": 115,
+              "height": 130
+            },
+            "centerMm": [
+              0,
+              65,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · SML WARS SS 001 Spacecraft",
+            "finishColor": "Warm white with grey window",
+            "finishMaterial": "Painted collectible vinyl/plastic",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-SML-SPACECRAFT",
+          "manufacturer": "Sticky Monster Lab",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-SML-SPACECRAFT",
+            "manufacturer": "Sticky Monster Lab",
+            "canonicalProductUrl": "http://shop.stickymonsterlab.com/shop/shopdetail.html?branduid=1303229",
+            "dimensionSourceUrl": "http://shop.stickymonsterlab.com/shop/shopdetail.html?branduid=1303229",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_sml_spacecraft.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Painted collectible vinyl/plastic",
+                "sourceUrl": "http://shop.stickymonsterlab.com/shop/shopdetail.html?branduid=1303229",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 160,
+            "depth": 115,
+            "height": 130
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-SML-SPACECRAFT",
+      "manufacturer": "Sticky Monster Lab",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_divoom_times_gate",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_divoom_times_gate",
+      "manifestId": "p2s_video_so_ong_divoom_times_gate",
+      "label": "Reference prototype · Divoom Times Gate clock",
+      "assetId": "/assets/models/p2s_video_so_ong_divoom_times_gate/p2s_video_so_ong_divoom_times_gate.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_divoom_times_gate.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_divoom_times_gate/p2s_video_so_ong_divoom_times_gate.glb",
+        "productId": "p2s_video_so_ong_divoom_times_gate",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 283,
+          "depth": 47,
+          "height": 97
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Divoom",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_divoom_times_gate/p2s_video_so_ong_divoom_times_gate.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_divoom_times_gate/p2s_video_so_ong_divoom_times_gate.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 283,
+              "depth": 47,
+              "height": 97
+            },
+            "centerMm": [
+              0,
+              49,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Divoom Times Gate clock",
+            "finishColor": "Black shell / five bright screens",
+            "finishMaterial": "Matte plastic with IPS display glass",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-DIVOOM-TIMES-GATE",
+          "manufacturer": "Divoom",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-DIVOOM-TIMES-GATE",
+            "manufacturer": "Divoom",
+            "canonicalProductUrl": "https://link.coupang.com/a/b5EMZs",
+            "dimensionSourceUrl": "https://link.coupang.com/a/b5EMZs",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_divoom_times_gate.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Matte plastic with IPS display glass",
+                "sourceUrl": "https://link.coupang.com/a/b5EMZs",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 283,
+            "depth": 47,
+            "height": 97
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-DIVOOM-TIMES-GATE",
+      "manufacturer": "Divoom",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_charging_reel_cable",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_charging_reel_cable",
+      "manifestId": "p2s_video_so_ong_charging_reel_cable",
+      "label": "Reference prototype · charging reel cable",
+      "assetId": "/assets/models/p2s_video_so_ong_charging_reel_cable/p2s_video_so_ong_charging_reel_cable.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_charging_reel_cable.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_charging_reel_cable/p2s_video_so_ong_charging_reel_cable.glb",
+        "productId": "p2s_video_so_ong_charging_reel_cable",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 75,
+          "depth": 75,
+          "height": 28
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "AliExpress reference",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_charging_reel_cable/p2s_video_so_ong_charging_reel_cable.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_charging_reel_cable/p2s_video_so_ong_charging_reel_cable.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 75,
+              "depth": 75,
+              "height": 28
+            },
+            "centerMm": [
+              0,
+              14,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · charging reel cable",
+            "finishColor": "White reel / black cable",
+            "finishMaterial": "ABS shell and rubber cable",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "mixed",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-CHARGING-REEL-CABLE",
+          "manufacturer": "AliExpress reference",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-CHARGING-REEL-CABLE",
+            "manufacturer": "AliExpress reference",
+            "canonicalProductUrl": "https://s.click.aliexpress.com/e/_onOxqJd",
+            "dimensionSourceUrl": "https://s.click.aliexpress.com/e/_onOxqJd",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_charging_reel_cable.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "ABS shell and rubber cable",
+                "sourceUrl": "https://s.click.aliexpress.com/e/_onOxqJd",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 75,
+            "depth": 75,
+            "height": 28
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-CHARGING-REEL-CABLE",
+      "manufacturer": "AliExpress reference",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_square1_power_cube",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_square1_power_cube",
+      "manifestId": "p2s_video_so_ong_square1_power_cube",
+      "label": "Reference prototype · Avolt x Martinelli Luce Square1 power cube",
+      "assetId": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_square1_power_cube.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+        "productId": "p2s_video_so_ong_square1_power_cube",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 76,
+          "depth": 76,
+          "height": 76
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Avolt / Martinelli Luce",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 76,
+              "depth": 76,
+              "height": 76
+            },
+            "centerMm": [
+              0,
+              38,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Avolt x Martinelli Luce Square1 power cube",
+            "finishColor": "White cube",
+            "finishMaterial": "Matte plastic with recessed sockets",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-SQUARE1-POWER-CUBE",
+          "manufacturer": "Avolt / Martinelli Luce",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-SQUARE1-POWER-CUBE",
+            "manufacturer": "Avolt / Martinelli Luce",
+            "canonicalProductUrl": "https://ozip.me/mAWYfhB?af",
+            "dimensionSourceUrl": "https://ozip.me/mAWYfhB?af",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_square1_power_cube.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Matte plastic with recessed sockets",
+                "sourceUrl": "https://ozip.me/mAWYfhB?af",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 76,
+            "depth": 76,
+            "height": 76
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-SQUARE1-POWER-CUBE",
+      "manufacturer": "Avolt / Martinelli Luce",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_ecolor_power_strip",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_ecolor_power_strip",
+      "manifestId": "p2s_video_so_ong_ecolor_power_strip",
+      "label": "Reference prototype · Brennenstuhl Ecolor 4-outlet power strip",
+      "assetId": "/assets/models/p2s_video_so_ong_ecolor_power_strip/p2s_video_so_ong_ecolor_power_strip.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_ecolor_power_strip.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_ecolor_power_strip/p2s_video_so_ong_ecolor_power_strip.glb",
+        "productId": "p2s_video_so_ong_ecolor_power_strip",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 270,
+          "depth": 80,
+          "height": 58
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Brennenstuhl",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_ecolor_power_strip/p2s_video_so_ong_ecolor_power_strip.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_ecolor_power_strip/p2s_video_so_ong_ecolor_power_strip.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 270,
+              "depth": 80,
+              "height": 58
+            },
+            "centerMm": [
+              0,
+              29,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Brennenstuhl Ecolor 4-outlet power strip",
+            "finishColor": "White with red switch",
+            "finishMaterial": "Plastic shell and socket inserts",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-ECOLOR-POWER-STRIP",
+          "manufacturer": "Brennenstuhl",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-ECOLOR-POWER-STRIP",
+            "manufacturer": "Brennenstuhl",
+            "canonicalProductUrl": "https://link.coupang.com/a/b5EnDy",
+            "dimensionSourceUrl": "https://link.coupang.com/a/b5EnDy",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_ecolor_power_strip.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Plastic shell and socket inserts",
+                "sourceUrl": "https://link.coupang.com/a/b5EnDy",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 270,
+            "depth": 80,
+            "height": 58
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ECOLOR-POWER-STRIP",
+      "manufacturer": "Brennenstuhl",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_hue_infuse_ceiling_light",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_hue_infuse_ceiling_light",
+      "manifestId": "p2s_video_so_ong_hue_infuse_ceiling_light",
+      "label": "Reference prototype · Philips Hue Infuse ceiling light",
+      "assetId": "/assets/models/p2s_video_so_ong_hue_infuse_ceiling_light/p2s_video_so_ong_hue_infuse_ceiling_light.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_hue_infuse_ceiling_light.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_hue_infuse_ceiling_light/p2s_video_so_ong_hue_infuse_ceiling_light.glb",
+        "productId": "p2s_video_so_ong_hue_infuse_ceiling_light",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 381,
+          "depth": 381,
+          "height": 90
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Philips Hue",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_hue_infuse_ceiling_light/p2s_video_so_ong_hue_infuse_ceiling_light.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_hue_infuse_ceiling_light/p2s_video_so_ong_hue_infuse_ceiling_light.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 381,
+              "depth": 381,
+              "height": 90
+            },
+            "centerMm": [
+              0,
+              45,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Philips Hue Infuse ceiling light",
+            "finishColor": "White diffuser with color ambience",
+            "finishMaterial": "Translucent acrylic lens and metal housing",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-HUE-INFUSE-CEILING-LIGHT",
+          "manufacturer": "Philips Hue",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-HUE-INFUSE-CEILING-LIGHT",
+            "manufacturer": "Philips Hue",
+            "canonicalProductUrl": "https://link.coupang.com/a/b5EoFD",
+            "dimensionSourceUrl": "https://link.coupang.com/a/b5EoFD",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_hue_infuse_ceiling_light.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Translucent acrylic lens and metal housing",
+                "sourceUrl": "https://link.coupang.com/a/b5EoFD",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 381,
+            "depth": 381,
+            "height": 90
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-HUE-INFUSE-CEILING-LIGHT",
+      "manufacturer": "Philips Hue",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_movlabs_stand",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_movlabs_stand",
+      "manifestId": "p2s_video_so_ong_movlabs_stand",
+      "label": "Reference prototype · Movlabs stand for Samsung monitor",
+      "assetId": "/assets/models/p2s_video_so_ong_movlabs_stand/p2s_video_so_ong_movlabs_stand.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_movlabs_stand.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_movlabs_stand/p2s_video_so_ong_movlabs_stand.glb",
+        "productId": "p2s_video_so_ong_movlabs_stand",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 520,
+          "depth": 520,
+          "height": 1350
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Movlabs",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_movlabs_stand/p2s_video_so_ong_movlabs_stand.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_movlabs_stand/p2s_video_so_ong_movlabs_stand.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 520,
+              "depth": 520,
+              "height": 1350
+            },
+            "centerMm": [
+              0,
+              675,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Movlabs stand for Samsung monitor",
+            "finishColor": "White rolling stand",
+            "finishMaterial": "Powder-coated metal pole and caster base",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-MOVLABS-STAND",
+          "manufacturer": "Movlabs",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-MOVLABS-STAND",
+            "manufacturer": "Movlabs",
+            "canonicalProductUrl": "https://smartstore.naver.com/movlabs",
+            "dimensionSourceUrl": "https://smartstore.naver.com/movlabs",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_movlabs_stand.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Powder-coated metal pole and caster base",
+                "sourceUrl": "https://smartstore.naver.com/movlabs",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 520,
+            "depth": 520,
+            "height": 1350
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-MOVLABS-STAND",
+      "manufacturer": "Movlabs",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_s32dg800_monitor",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_s32dg800_monitor",
+      "manifestId": "p2s_video_so_ong_s32dg800_monitor",
+      "label": "Reference prototype · Samsung S32DG800 monitor",
+      "assetId": "/assets/models/p2s_video_so_ong_s32dg800_monitor/p2s_video_so_ong_s32dg800_monitor.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_s32dg800_monitor.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_s32dg800_monitor/p2s_video_so_ong_s32dg800_monitor.glb",
+        "productId": "p2s_video_so_ong_s32dg800_monitor",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 720,
+          "depth": 264,
+          "height": 585
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Samsung",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_s32dg800_monitor/p2s_video_so_ong_s32dg800_monitor.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_s32dg800_monitor/p2s_video_so_ong_s32dg800_monitor.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 720,
+              "depth": 264,
+              "height": 585
+            },
+            "centerMm": [
+              0,
+              293,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Samsung S32DG800 monitor",
+            "finishColor": "Silver/white stand with black screen",
+            "finishMaterial": "Display glass, satin plastic, metal stand",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-S32DG800-MONITOR",
+          "manufacturer": "Samsung",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-S32DG800-MONITOR",
+            "manufacturer": "Samsung",
+            "canonicalProductUrl": "https://link.coupang.com/a/b5JESi",
+            "dimensionSourceUrl": "https://link.coupang.com/a/b5JESi",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_s32dg800_monitor.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Display glass, satin plastic, metal stand",
+                "sourceUrl": "https://link.coupang.com/a/b5JESi",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 720,
+            "depth": 264,
+            "height": 585
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-S32DG800-MONITOR",
+      "manufacturer": "Samsung",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_bookshelf_planter",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_bookshelf_planter",
+      "manifestId": "p2s_video_so_ong_bookshelf_planter",
+      "label": "Reference prototype · bookshelf plant",
+      "assetId": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_bookshelf_planter.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb",
+        "productId": "p2s_video_so_ong_bookshelf_planter",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 110,
+          "depth": 110,
+          "height": 190
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "AliExpress reference",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_bookshelf_planter/p2s_video_so_ong_bookshelf_planter.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 110,
+              "depth": 110,
+              "height": 190
+            },
+            "centerMm": [
+              0,
+              95,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [
+          {
+            "id": "shelf-top",
+            "type": "shelf_top",
+            "localFrame": {
+              "originMm": [
+                0,
+                190,
+                0
+              ],
+              "tangentU": [
+                1000,
+                0,
+                0
+              ],
+              "tangentV": [
+                0,
+                0,
+                1000
+              ],
+              "normal": [
+                0,
+                1000,
+                0
+              ]
+            },
+            "boundsMm": {
+              "min": [
+                -30,
+                -27
+              ],
+              "max": [
+                30,
+                27
+              ]
+            },
+            "allowedAttachments": [
+              "place_on_surface"
+            ]
+          }
+        ],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · bookshelf plant",
+            "finishColor": "White planter / green leaves",
+            "finishMaterial": "Ceramic-style pot and artificial greenery",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "ceramic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-BOOKSHELF-PLANTER",
+          "manufacturer": "AliExpress reference",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-BOOKSHELF-PLANTER",
+            "manufacturer": "AliExpress reference",
+            "canonicalProductUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+            "dimensionSourceUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_bookshelf_planter.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Ceramic-style pot and artificial greenery",
+                "sourceUrl": "https://s.click.aliexpress.com/e/_onQyOt1",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 110,
+            "depth": 110,
+            "height": 190
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 1,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-BOOKSHELF-PLANTER",
+      "manufacturer": "AliExpress reference",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_arachne_wood_blind",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_arachne_wood_blind",
+      "manifestId": "p2s_video_so_ong_arachne_wood_blind",
+      "label": "Reference prototype · Arachne wood blind, Odong tree 00",
+      "assetId": "/assets/models/p2s_video_so_ong_arachne_wood_blind/p2s_video_so_ong_arachne_wood_blind.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_arachne_wood_blind.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_arachne_wood_blind/p2s_video_so_ong_arachne_wood_blind.glb",
+        "productId": "p2s_video_so_ong_arachne_wood_blind",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 1200,
+          "depth": 40,
+          "height": 1000
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Arachne",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_arachne_wood_blind/p2s_video_so_ong_arachne_wood_blind.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_arachne_wood_blind/p2s_video_so_ong_arachne_wood_blind.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 1200,
+              "depth": 40,
+              "height": 1000
+            },
+            "centerMm": [
+              0,
+              500,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Arachne wood blind, Odong tree 00",
+            "finishColor": "Light natural wood",
+            "finishMaterial": "Horizontal wood slats",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "wood",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-ARACHNE-WOOD-BLIND",
+          "manufacturer": "Arachne",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-ARACHNE-WOOD-BLIND",
+            "manufacturer": "Arachne",
+            "canonicalProductUrl": "https://ozip.me/37Fbr6W?af",
+            "dimensionSourceUrl": "https://ozip.me/37Fbr6W?af",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_arachne_wood_blind.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Horizontal wood slats",
+                "sourceUrl": "https://ozip.me/37Fbr6W?af",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 1200,
+            "depth": 40,
+            "height": 1000
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ARACHNE-WOOD-BLIND",
+      "manufacturer": "Arachne",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_jekca_cat_block",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_jekca_cat_block",
+      "manifestId": "p2s_video_so_ong_jekca_cat_block",
+      "label": "Reference prototype · JEKCA cow tabby cat block",
+      "assetId": "/assets/models/p2s_video_so_ong_jekca_cat_block/p2s_video_so_ong_jekca_cat_block.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_jekca_cat_block.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_jekca_cat_block/p2s_video_so_ong_jekca_cat_block.glb",
+        "productId": "p2s_video_so_ong_jekca_cat_block",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 220,
+          "depth": 105,
+          "height": 260
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "JEKCA",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_jekca_cat_block/p2s_video_so_ong_jekca_cat_block.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_jekca_cat_block/p2s_video_so_ong_jekca_cat_block.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 220,
+              "depth": 105,
+              "height": 260
+            },
+            "centerMm": [
+              0,
+              130,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · JEKCA cow tabby cat block",
+            "finishColor": "White and grey tabby blocks",
+            "finishMaterial": "Interlocking ABS blocks",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "mixed",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-JEKCA-CAT-BLOCK",
+          "manufacturer": "JEKCA",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-JEKCA-CAT-BLOCK",
+            "manufacturer": "JEKCA",
+            "canonicalProductUrl": "https://smartstore.naver.com/jekca/products/4639475955",
+            "dimensionSourceUrl": "https://smartstore.naver.com/jekca/products/4639475955",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_jekca_cat_block.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Interlocking ABS blocks",
+                "sourceUrl": "https://smartstore.naver.com/jekca/products/4639475955",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 220,
+            "depth": 105,
+            "height": 260
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-JEKCA-CAT-BLOCK",
+      "manufacturer": "JEKCA",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_gravastar_mars_pro",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_gravastar_mars_pro",
+      "manifestId": "p2s_video_so_ong_gravastar_mars_pro",
+      "label": "Reference prototype · Gravastar Mars Pro speaker",
+      "assetId": "/assets/models/p2s_video_so_ong_gravastar_mars_pro/p2s_video_so_ong_gravastar_mars_pro.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_gravastar_mars_pro.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_gravastar_mars_pro/p2s_video_so_ong_gravastar_mars_pro.glb",
+        "productId": "p2s_video_so_ong_gravastar_mars_pro",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 201,
+          "depth": 180,
+          "height": 191
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Gravastar",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_gravastar_mars_pro/p2s_video_so_ong_gravastar_mars_pro.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_gravastar_mars_pro/p2s_video_so_ong_gravastar_mars_pro.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 201,
+              "depth": 180,
+              "height": 191
+            },
+            "centerMm": [
+              0,
+              96,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Gravastar Mars Pro speaker",
+            "finishColor": "Black body with warm driver core",
+            "finishMaterial": "Painted metal/plastic robot speaker shell",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-GRAVASTAR-MARS-PRO",
+          "manufacturer": "Gravastar",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-GRAVASTAR-MARS-PRO",
+            "manufacturer": "Gravastar",
+            "canonicalProductUrl": "https://link.coupang.com/a/b5EypD",
+            "dimensionSourceUrl": "https://link.coupang.com/a/b5EypD",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_gravastar_mars_pro.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Painted metal/plastic robot speaker shell",
+                "sourceUrl": "https://link.coupang.com/a/b5EypD",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 201,
+            "depth": 180,
+            "height": 191
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-GRAVASTAR-MARS-PRO",
+      "manufacturer": "Gravastar",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_plant_guardian_spray",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_plant_guardian_spray",
+      "manifestId": "p2s_video_so_ong_plant_guardian_spray",
+      "label": "Reference prototype · Plant Guardian spray",
+      "assetId": "/assets/models/p2s_video_so_ong_plant_guardian_spray/p2s_video_so_ong_plant_guardian_spray.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_plant_guardian_spray.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_plant_guardian_spray/p2s_video_so_ong_plant_guardian_spray.glb",
+        "productId": "p2s_video_so_ong_plant_guardian_spray",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 70,
+          "depth": 55,
+          "height": 210
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Plant Guardian",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_plant_guardian_spray/p2s_video_so_ong_plant_guardian_spray.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_plant_guardian_spray/p2s_video_so_ong_plant_guardian_spray.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 70,
+              "depth": 55,
+              "height": 210
+            },
+            "centerMm": [
+              0,
+              105,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Plant Guardian spray",
+            "finishColor": "White bottle with green label",
+            "finishMaterial": "Plastic spray bottle",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-PLANT-GUARDIAN-SPRAY",
+          "manufacturer": "Plant Guardian",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-PLANT-GUARDIAN-SPRAY",
+            "manufacturer": "Plant Guardian",
+            "canonicalProductUrl": "https://naver.me/xGITNSUq",
+            "dimensionSourceUrl": "https://naver.me/xGITNSUq",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_plant_guardian_spray.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Plastic spray bottle",
+                "sourceUrl": "https://naver.me/xGITNSUq",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 70,
+            "depth": 55,
+            "height": 210
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-PLANT-GUARDIAN-SPRAY",
+      "manufacturer": "Plant Guardian",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_sanro_switch_cover",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_sanro_switch_cover",
+      "manifestId": "p2s_video_so_ong_sanro_switch_cover",
+      "label": "Reference prototype · SANRO wall switch cover",
+      "assetId": "/assets/models/p2s_video_so_ong_sanro_switch_cover/p2s_video_so_ong_sanro_switch_cover.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_sanro_switch_cover.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_sanro_switch_cover/p2s_video_so_ong_sanro_switch_cover.glb",
+        "productId": "p2s_video_so_ong_sanro_switch_cover",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 120,
+          "depth": 15,
+          "height": 120
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "SANRO",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_sanro_switch_cover/p2s_video_so_ong_sanro_switch_cover.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_sanro_switch_cover/p2s_video_so_ong_sanro_switch_cover.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 120,
+              "depth": 15,
+              "height": 120
+            },
+            "centerMm": [
+              0,
+              60,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · SANRO wall switch cover",
+            "finishColor": "White plate",
+            "finishMaterial": "Plastic wall switch cover",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-SANRO-SWITCH-COVER",
+          "manufacturer": "SANRO",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-SANRO-SWITCH-COVER",
+            "manufacturer": "SANRO",
+            "canonicalProductUrl": "https://ozip.me/U1EJzZj?af",
+            "dimensionSourceUrl": "https://ozip.me/U1EJzZj?af",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_sanro_switch_cover.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Plastic wall switch cover",
+                "sourceUrl": "https://ozip.me/U1EJzZj?af",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 120,
+            "depth": 15,
+            "height": 120
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-SANRO-SWITCH-COVER",
+      "manufacturer": "SANRO",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_diecast_car",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_diecast_car",
+      "manifestId": "p2s_video_so_ong_diecast_car",
+      "label": "Reference prototype · diecast car",
+      "assetId": "/assets/models/p2s_video_so_ong_diecast_car/p2s_video_so_ong_diecast_car.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_diecast_car.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_diecast_car/p2s_video_so_ong_diecast_car.glb",
+        "productId": "p2s_video_so_ong_diecast_car",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 120,
+          "depth": 55,
+          "height": 45
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "AliExpress reference",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_diecast_car/p2s_video_so_ong_diecast_car.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_diecast_car/p2s_video_so_ong_diecast_car.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 120,
+              "depth": 55,
+              "height": 45
+            },
+            "centerMm": [
+              0,
+              23,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · diecast car",
+            "finishColor": "White body / dark glass",
+            "finishMaterial": "Painted diecast metal and plastic wheels",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-DIECAST-CAR",
+          "manufacturer": "AliExpress reference",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-DIECAST-CAR",
+            "manufacturer": "AliExpress reference",
+            "canonicalProductUrl": "https://s.click.aliexpress.com/e/_oo9b0Jz",
+            "dimensionSourceUrl": "https://s.click.aliexpress.com/e/_oo9b0Jz",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_diecast_car.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Painted diecast metal and plastic wheels",
+                "sourceUrl": "https://s.click.aliexpress.com/e/_oo9b0Jz",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 120,
+            "depth": 55,
+            "height": 45
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-DIECAST-CAR",
+      "manufacturer": "AliExpress reference",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_arturia_minifuse2",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_arturia_minifuse2",
+      "manifestId": "p2s_video_so_ong_arturia_minifuse2",
+      "label": "Reference prototype · Arturia MiniFuse 2 audio interface",
+      "assetId": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_arturia_minifuse2.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+        "productId": "p2s_video_so_ong_arturia_minifuse2",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 200,
+          "depth": 100,
+          "height": 43
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Arturia",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 200,
+              "depth": 100,
+              "height": 43
+            },
+            "centerMm": [
+              0,
+              22,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Arturia MiniFuse 2 audio interface",
+            "finishColor": "White body / grey controls",
+            "finishMaterial": "Painted aluminum/plastic interface body",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-ARTURIA-MINIFUSE2",
+          "manufacturer": "Arturia",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-ARTURIA-MINIFUSE2",
+            "manufacturer": "Arturia",
+            "canonicalProductUrl": "https://link.coupang.com/a/b5Hayv",
+            "dimensionSourceUrl": "https://link.coupang.com/a/b5Hayv",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_arturia_minifuse2.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Painted aluminum/plastic interface body",
+                "sourceUrl": "https://link.coupang.com/a/b5Hayv",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 200,
+            "depth": 100,
+            "height": 43
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ARTURIA-MINIFUSE2",
+      "manufacturer": "Arturia",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_offrame_dual_monitor_riser",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_offrame_dual_monitor_riser",
+      "manifestId": "p2s_video_so_ong_offrame_dual_monitor_riser",
+      "label": "Reference prototype · OFRAME dual monitor desk riser",
+      "assetId": "/assets/models/p2s_video_so_ong_offrame_dual_monitor_riser/p2s_video_so_ong_offrame_dual_monitor_riser.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_offrame_dual_monitor_riser.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_offrame_dual_monitor_riser/p2s_video_so_ong_offrame_dual_monitor_riser.glb",
+        "productId": "p2s_video_so_ong_offrame_dual_monitor_riser",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 1000,
+          "depth": 250,
+          "height": 120
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "OFRAME",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_offrame_dual_monitor_riser/p2s_video_so_ong_offrame_dual_monitor_riser.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_offrame_dual_monitor_riser/p2s_video_so_ong_offrame_dual_monitor_riser.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 1000,
+              "depth": 250,
+              "height": 120
+            },
+            "centerMm": [
+              0,
+              60,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · OFRAME dual monitor desk riser",
+            "finishColor": "White shelf / grey shadow slot",
+            "finishMaterial": "Painted board or metal riser with rubber feet",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-OFFRAME-DUAL-MONITOR-RISER",
+          "manufacturer": "OFRAME",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-OFFRAME-DUAL-MONITOR-RISER",
+            "manufacturer": "OFRAME",
+            "canonicalProductUrl": "https://naver.me/xSFLRV8T",
+            "dimensionSourceUrl": "https://naver.me/xSFLRV8T",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_offrame_dual_monitor_riser.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Painted board or metal riser with rubber feet",
+                "sourceUrl": "https://naver.me/xSFLRV8T",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 1000,
+            "depth": 250,
+            "height": 120
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-OFFRAME-DUAL-MONITOR-RISER",
+      "manufacturer": "OFRAME",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_razer_cobra_pro_white",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_razer_cobra_pro_white",
+      "manifestId": "p2s_video_so_ong_razer_cobra_pro_white",
+      "label": "Reference prototype · Razer Cobra Pro White mouse",
+      "assetId": "/assets/models/p2s_video_so_ong_razer_cobra_pro_white/p2s_video_so_ong_razer_cobra_pro_white.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_razer_cobra_pro_white.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_razer_cobra_pro_white/p2s_video_so_ong_razer_cobra_pro_white.glb",
+        "productId": "p2s_video_so_ong_razer_cobra_pro_white",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 120,
+          "depth": 63,
+          "height": 38
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Razer",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_razer_cobra_pro_white/p2s_video_so_ong_razer_cobra_pro_white.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_razer_cobra_pro_white/p2s_video_so_ong_razer_cobra_pro_white.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 120,
+              "depth": 63,
+              "height": 38
+            },
+            "centerMm": [
+              0,
+              19,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Razer Cobra Pro White mouse",
+            "finishColor": "White shell / black grips / RGB underglow",
+            "finishMaterial": "Matte plastic, rubber grips, glossy lighting diffuser",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-RAZER-COBRA-PRO-WHITE",
+          "manufacturer": "Razer",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-RAZER-COBRA-PRO-WHITE",
+            "manufacturer": "Razer",
+            "canonicalProductUrl": "https://link.coupang.com/a/bG31KL",
+            "dimensionSourceUrl": "https://link.coupang.com/a/bG31KL",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_razer_cobra_pro_white.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Matte plastic, rubber grips, glossy lighting diffuser",
+                "sourceUrl": "https://link.coupang.com/a/bG31KL",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 120,
+            "depth": 63,
+            "height": 38
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-RAZER-COBRA-PRO-WHITE",
+      "manufacturer": "Razer",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_zionworks_synchronize_mat",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_zionworks_synchronize_mat",
+      "manifestId": "p2s_video_so_ong_zionworks_synchronize_mat",
+      "label": "Reference prototype · Zionworks SYNCHRONIZE desk mat",
+      "assetId": "/assets/models/p2s_video_so_ong_zionworks_synchronize_mat/p2s_video_so_ong_zionworks_synchronize_mat.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_zionworks_synchronize_mat.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_zionworks_synchronize_mat/p2s_video_so_ong_zionworks_synchronize_mat.glb",
+        "productId": "p2s_video_so_ong_zionworks_synchronize_mat",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 900,
+          "depth": 400,
+          "height": 4
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Zionworks / Aiglatson Studio",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_zionworks_synchronize_mat/p2s_video_so_ong_zionworks_synchronize_mat.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_zionworks_synchronize_mat/p2s_video_so_ong_zionworks_synchronize_mat.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 900,
+              "depth": 400,
+              "height": 4
+            },
+            "centerMm": [
+              0,
+              2,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [
+          {
+            "id": "surface-top",
+            "type": "desktop_top",
+            "localFrame": {
+              "originMm": [
+                0,
+                4,
+                0
+              ],
+              "tangentU": [
+                1000,
+                0,
+                0
+              ],
+              "tangentV": [
+                0,
+                0,
+                1000
+              ],
+              "normal": [
+                0,
+                1000,
+                0
+              ]
+            },
+            "boundsMm": {
+              "min": [
+                -385,
+                -152
+              ],
+              "max": [
+                385,
+                152
+              ]
+            },
+            "allowedAttachments": [
+              "place_on_surface"
+            ]
+          }
+        ],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Zionworks SYNCHRONIZE desk mat",
+            "finishColor": "Black woven field / white border and wordmark",
+            "finishMaterial": "Cloth top, stitched edge, rubber base",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "mixed",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-ZIONWORKS-SYNCHRONIZE-MAT",
+          "manufacturer": "Zionworks / Aiglatson Studio",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-ZIONWORKS-SYNCHRONIZE-MAT",
+            "manufacturer": "Zionworks / Aiglatson Studio",
+            "canonicalProductUrl": "https://naver.me/GipWYdYt",
+            "dimensionSourceUrl": "https://naver.me/GipWYdYt",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_zionworks_synchronize_mat.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Cloth top, stitched edge, rubber base",
+                "sourceUrl": "https://naver.me/GipWYdYt",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 900,
+            "depth": 400,
+            "height": 4
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 1,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ZIONWORKS-SYNCHRONIZE-MAT",
+      "manufacturer": "Zionworks / Aiglatson Studio",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_angry_miao_am_hatsu",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_angry_miao_am_hatsu",
+      "manifestId": "p2s_video_so_ong_angry_miao_am_hatsu",
+      "label": "Reference prototype · Angry Miao AM HATSU keyboard",
+      "assetId": "/assets/models/p2s_video_so_ong_angry_miao_am_hatsu/p2s_video_so_ong_angry_miao_am_hatsu.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_angry_miao_am_hatsu.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_angry_miao_am_hatsu/p2s_video_so_ong_angry_miao_am_hatsu.glb",
+        "productId": "p2s_video_so_ong_angry_miao_am_hatsu",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 360,
+          "depth": 220,
+          "height": 75
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Angry Miao",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_angry_miao_am_hatsu/p2s_video_so_ong_angry_miao_am_hatsu.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_angry_miao_am_hatsu/p2s_video_so_ong_angry_miao_am_hatsu.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 360,
+              "depth": 220,
+              "height": 75
+            },
+            "centerMm": [
+              0,
+              38,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Angry Miao AM HATSU keyboard",
+            "finishColor": "White 3D curved body / dark sculpted keycaps",
+            "finishMaterial": "CNC aluminum-style body and plastic keycaps",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-ANGRY-MIAO-AM-HATSU",
+          "manufacturer": "Angry Miao",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-ANGRY-MIAO-AM-HATSU",
+            "manufacturer": "Angry Miao",
+            "canonicalProductUrl": "https://www.angrymiao.com/en/am-hatsu/",
+            "dimensionSourceUrl": "https://www.angrymiao.com/en/am-hatsu/",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_angry_miao_am_hatsu.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "CNC aluminum-style body and plastic keycaps",
+                "sourceUrl": "https://www.angrymiao.com/en/am-hatsu/",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 360,
+            "depth": 220,
+            "height": 75
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ANGRY-MIAO-AM-HATSU",
+      "manufacturer": "Angry Miao",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_elgato_stream_deck_neo",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_elgato_stream_deck_neo",
+      "manifestId": "p2s_video_so_ong_elgato_stream_deck_neo",
+      "label": "Reference prototype · Elgato Stream Deck Neo",
+      "assetId": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_elgato_stream_deck_neo.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb",
+        "productId": "p2s_video_so_ong_elgato_stream_deck_neo",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 107,
+          "depth": 78,
+          "height": 26
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Elgato",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_elgato_stream_deck_neo/p2s_video_so_ong_elgato_stream_deck_neo.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 107,
+              "depth": 78,
+              "height": 26
+            },
+            "centerMm": [
+              0,
+              13,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Elgato Stream Deck Neo",
+            "finishColor": "White body / black LCD key face",
+            "finishMaterial": "Matte plastic shell, LCD keys, rubber base",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-ELGATO-STREAM-DECK-NEO",
+          "manufacturer": "Elgato",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-ELGATO-STREAM-DECK-NEO",
+            "manufacturer": "Elgato",
+            "canonicalProductUrl": "https://link.coupang.com/a/bG32Rh",
+            "dimensionSourceUrl": "https://link.coupang.com/a/bG32Rh",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_elgato_stream_deck_neo.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Matte plastic shell, LCD keys, rubber base",
+                "sourceUrl": "https://link.coupang.com/a/bG32Rh",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 107,
+            "depth": 78,
+            "height": 26
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ELGATO-STREAM-DECK-NEO",
+      "manufacturer": "Elgato",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_reproducer_epic5",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_reproducer_epic5",
+      "manifestId": "p2s_video_so_ong_reproducer_epic5",
+      "label": "Reference prototype · reProducer Epic 5 studio monitor speaker",
+      "assetId": "/assets/models/p2s_video_so_ong_reproducer_epic5/p2s_video_so_ong_reproducer_epic5.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_reproducer_epic5.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_reproducer_epic5/p2s_video_so_ong_reproducer_epic5.glb",
+        "productId": "p2s_video_so_ong_reproducer_epic5",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 190,
+          "depth": 240,
+          "height": 310
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "reProducer Audio Labs",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_reproducer_epic5/p2s_video_so_ong_reproducer_epic5.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_reproducer_epic5/p2s_video_so_ong_reproducer_epic5.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 190,
+              "depth": 240,
+              "height": 310
+            },
+            "centerMm": [
+              0,
+              155,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · reProducer Epic 5 studio monitor speaker",
+            "finishColor": "White cabinet / black recessed drivers",
+            "finishMaterial": "Painted speaker cabinet, metal dome tweeter, rubber woofer",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-REPRODUCER-EPIC5",
+          "manufacturer": "reProducer Audio Labs",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-REPRODUCER-EPIC5",
+            "manufacturer": "reProducer Audio Labs",
+            "canonicalProductUrl": "https://bit.ly/4cePCNT",
+            "dimensionSourceUrl": "https://bit.ly/4cePCNT",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_reproducer_epic5.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Painted speaker cabinet, metal dome tweeter, rubber woofer",
+                "sourceUrl": "https://bit.ly/4cePCNT",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 190,
+            "depth": 240,
+            "height": 310
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-REPRODUCER-EPIC5",
+      "manufacturer": "reProducer Audio Labs",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_hyte_y70_snow_white",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_hyte_y70_snow_white",
+      "manifestId": "p2s_video_so_ong_hyte_y70_snow_white",
+      "label": "Reference prototype · HYTE Y70 Snow White PC case",
+      "assetId": "/assets/models/p2s_video_so_ong_hyte_y70_snow_white/p2s_video_so_ong_hyte_y70_snow_white.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_hyte_y70_snow_white.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_hyte_y70_snow_white/p2s_video_so_ong_hyte_y70_snow_white.glb",
+        "productId": "p2s_video_so_ong_hyte_y70_snow_white",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 470,
+          "depth": 320,
+          "height": 470
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "HYTE",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_hyte_y70_snow_white/p2s_video_so_ong_hyte_y70_snow_white.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_hyte_y70_snow_white/p2s_video_so_ong_hyte_y70_snow_white.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 470,
+              "depth": 320,
+              "height": 470
+            },
+            "centerMm": [
+              0,
+              235,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · HYTE Y70 Snow White PC case",
+            "finishColor": "Snow white frame / panoramic glass / lavender RGB fans",
+            "finishMaterial": "Steel/plastic frame, tempered glass, RGB fan lighting",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: manufacturer_or_vendor_page; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "metal",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-HYTE-Y70-SNOW-WHITE",
+          "manufacturer": "HYTE",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-HYTE-Y70-SNOW-WHITE",
+            "manufacturer": "HYTE",
+            "canonicalProductUrl": "https://link.coupang.com/a/bG34uy",
+            "dimensionSourceUrl": "https://link.coupang.com/a/bG34uy",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_hyte_y70_snow_white.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Steel/plastic frame, tempered glass, RGB fan lighting",
+                "sourceUrl": "https://link.coupang.com/a/bG34uy",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 470,
+            "depth": 320,
+            "height": 470
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-HYTE-Y70-SNOW-WHITE",
+      "manufacturer": "HYTE",
+      "releaseEligible": false
+    },
+    {
+      "key": "p2s_video_so_ong_atom_60th_figure",
+      "packageKind": "catalog_variant",
+      "baseAssetKey": "p2s_video_so_ong_atom_60th_figure",
+      "manifestId": "p2s_video_so_ong_atom_60th_figure",
+      "label": "Reference prototype · Itsub x Atom 60th anniversary Atom figure 28 cm",
+      "assetId": "/assets/models/p2s_video_so_ong_atom_60th_figure/p2s_video_so_ong_atom_60th_figure.glb",
+      "packagePath": "/assets/catalog/runtime-packages/p2s_video_so_ong_atom_60th_figure.json",
+      "runtimeAsset": {
+        "assetId": "/assets/models/p2s_video_so_ong_atom_60th_figure/p2s_video_so_ong_atom_60th_figure.glb",
+        "productId": "p2s_video_so_ong_atom_60th_figure",
+        "units": "mm",
+        "dimensionsMm": {
+          "width": 160,
+          "depth": 120,
+          "height": 280
+        },
+        "scaleLocked": true,
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "sourceProvenance": {
+          "method": "manual",
+          "sourceUrl": "https://www.youtube.com/watch?v=jHakJw40k58",
+          "manufacturer": "Itsub x Atom",
+          "license": "LicenseRef-Video-Reference-Prototype-Only",
+          "attributionRequired": true
+        },
+        "runtime": {
+          "lods": [
+            {
+              "id": "lod0",
+              "level": 0,
+              "model": "/assets/models/p2s_video_so_ong_atom_60th_figure/p2s_video_so_ong_atom_60th_figure.glb",
+              "triangleCount": 12000,
+              "drawCallBudget": 18
+            }
+          ],
+          "proxy": "/assets/models/p2s_video_so_ong_atom_60th_figure/p2s_video_so_ong_atom_60th_figure.proxy.glb",
+          "defaultLod": 0,
+          "triangleBudget": 12000,
+          "textureBudgetMb": 48
+        },
+        "colliders": [
+          {
+            "id": "bounds-box",
+            "kind": "box",
+            "sizeMm": {
+              "width": 160,
+              "depth": 120,
+              "height": 280
+            },
+            "centerMm": [
+              0,
+              140,
+              0
+            ]
+          }
+        ],
+        "supportSurfaces": [],
+        "attachmentPoints": [],
+        "materialVariants": [
+          {
+            "id": "default",
+            "label": "Reference prototype · Itsub x Atom 60th anniversary Atom figure 28 cm",
+            "finishColor": "Skin tone, black hair/body, red boots",
+            "finishMaterial": "Painted vinyl/plastic figure",
+            "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+            "slotMaterials": [
+              {
+                "slot": "default",
+                "materialType": "plastic",
+                "qaStatus": "pending",
+                "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+              }
+            ]
+          }
+        ],
+        "commercialReadiness": {
+          "tier": "generic_catalog",
+          "sku": "P2S-VIDEO-SO-ONG-ATOM-60TH-FIGURE",
+          "manufacturer": "Itsub x Atom",
+          "referencePack": {
+            "sku": "P2S-VIDEO-SO-ONG-ATOM-60TH-FIGURE",
+            "manufacturer": "Itsub x Atom",
+            "canonicalProductUrl": "https://bit.ly/3XBZ0GG",
+            "dimensionSourceUrl": "https://bit.ly/3XBZ0GG",
+            "referenceImages": [
+              {
+                "view": "front",
+                "url": "/assets/catalog/thumbnails/p2s_video_so_ong_atom_60th_figure.webp",
+                "required": false,
+                "license": "LicenseRef-Video-Reference-Prototype-Only"
+              }
+            ],
+            "finishReferences": [
+              {
+                "finishId": "default",
+                "label": "Painted vinyl/plastic figure",
+                "sourceUrl": "https://bit.ly/3XBZ0GG",
+                "materialType": "mixed"
+              }
+            ],
+            "license": {
+              "spdx": "LicenseRef-Video-Reference-Prototype-Only",
+              "label": "Prototype-only rebuild from public video/product references",
+              "requiresAttribution": true
+            },
+            "status": "reference_collected",
+            "notes": "Catalog variant is publishable as generic catalog content, but not paid-beta hero SKU eligible until 8-view manufacturer references are attached."
+          },
+          "visualFidelityScore": 0.78,
+          "dimensionToleranceMm": 0,
+          "dimensionTolerancePercent": 0,
+          "supportSurfaceToleranceMm": 3,
+          "footprintToleranceMm": 2,
+          "materialQaStatus": "pending",
+          "releaseEligible": false
+        },
+        "qaStatus": {
+          "status": "passed",
+          "measuredBoundsMm": {
+            "width": 160,
+            "depth": 120,
+            "height": 280
+          },
+          "dimensionErrorMm": {
+            "width": 0,
+            "depth": 0,
+            "height": 0
+          },
+          "validatorVersion": "asset-compiler-alpha-v3",
+          "commercialFidelity": {
+            "referencePackStatus": "reference_collected",
+            "visualFidelityScore": 0.78,
+            "dimensionToleranceMm": 0,
+            "dimensionTolerancePercent": 0,
+            "supportSurfaceToleranceMm": 3,
+            "footprintToleranceMm": 2,
+            "materialQaStatus": "pending",
+            "releaseEligible": false
+          }
+        }
+      },
+      "qaStatus": "passed",
+      "warningCount": 0,
+      "surfaceCount": 0,
+      "attachmentPointCount": 0,
+      "materialVariantCount": 1,
+      "commercialTier": "generic_catalog",
+      "sku": "P2S-VIDEO-SO-ONG-ATOM-60TH-FIGURE",
+      "manufacturer": "Itsub x Atom",
       "releaseEligible": false
     }
   ]

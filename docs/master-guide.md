@@ -136,11 +136,13 @@ Added:
 - `RuntimeAsset`와 asset compiler package descriptor는 `sku`, `manufacturer`, `referencePack`, `visualFidelityScore`, `dimensionToleranceMm`, `materialQaStatus`, `releaseEligible`를 포함한 `commercialReadiness` 계약을 유지한다.
 - 실제 SKU hero catalog는 `referencePack`과 slot-level material QA가 통과된 asset만 paid-beta release eligible로 승격한다.
 - 제품 URL은 실제 SKU prototype reference 수집의 입력이 될 수 있지만, `asset:analyze-url` 산출물은 `prototype_reference_only`와 `releaseEligible=false`를 유지해야 한다.
+- 제품 URL 기반 private asset 제작은 `asset:factory`의 plan/QA/repair/private catalog entry 산출물을 거쳐야 하며, 기본 출력은 `private_prototype`과 `releaseEligible=false`를 유지한다.
 - `/labs/qa` commercial snapshot은 actual SKU hero catalog gate, wall/floor texture library gate, SKU/reference/material QA row를 보여주는 운영 release dashboard 역할을 한다.
 - walkthrough/focus placement 기본 snap은 `5mm / 1deg`, fine override는 `1mm / 0.1deg`로 고정하며 HUD/저장 좌표는 placement kernel snap 결과를 따른다.
 
 Updated:
 - 상용 판단 기준을 “예뻐 보이는 GLB”에서 “검증된 제품 패키지(referencePack + mm tolerance + material QA + release eligibility)”로 확장한다.
+- prototype asset 판단 기준은 “혼자 테스트 가능한가”와 “상용 노출 가능한가”를 분리하고, factory QA의 `ready_for_private_use`와 commercial readiness를 별도 gate로 읽는다.
 - room shell wall/floor texture set은 12개 이하의 PBR preset, source resolution, KTX2 runtime target, AI 후보 여부를 함께 관리한다.
 - 조명 preset은 `neutral-studio`, `home-reference`, `soft-evening`별 QA profile(HDRI/exposure/white balance/contact shadow)을 가진다.
 

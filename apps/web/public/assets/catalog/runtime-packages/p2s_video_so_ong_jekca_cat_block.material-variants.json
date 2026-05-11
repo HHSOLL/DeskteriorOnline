@@ -1,0 +1,17 @@
+[
+  {
+    "id": "default",
+    "label": "Reference prototype · JEKCA cow tabby cat block",
+    "finishColor": "White and grey tabby blocks",
+    "finishMaterial": "Interlocking ABS blocks",
+    "detailNotes": "Source: https://www.youtube.com/watch?v=jHakJw40k58; source confidence: visual_estimate_pending_qa; commercial asset gate: blocked until rights and exact material references are secured.",
+    "slotMaterials": [
+      {
+        "slot": "default",
+        "materialType": "mixed",
+        "qaStatus": "pending",
+        "referenceNote": "Slot-level material QA must be replaced with manufacturer finish references before hero SKU release."
+      }
+    ]
+  }
+]
