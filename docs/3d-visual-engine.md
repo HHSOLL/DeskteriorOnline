@@ -264,6 +264,18 @@ Removed/Deprecated:
 - 제품 외형 치수 오차는 `<= 1%` 또는 `<= 5mm`, desk/대형 가구 support surface 오차는 `<= 3mm`, 소품 footprint 오차는 `<= 2mm`를 paid-beta 기준으로 본다.
 - 공개 제품 사진 기반 실제 SKU rebuild는 draft/prototype tier로만 두고, manufacturer CAD 또는 사용 허가가 확보되기 전에는 `releaseEligible=false`와 `materialQaStatus=pending`을 유지한다.
 
+## 2026-05-12 변경 동기화 (Reference-Still Fidelity Gate)
+Added:
+- private creator/video reference scene은 hero 제품별 `visual-fidelity-report.json`을 필수 산출물로 가진다. report는 reference target, required signature fragments, matched fragments, object count, model byte size, signature score를 기록한다.
+- screenshot-match smoke render는 제품 배치 비율까지 QA 대상으로 삼는다. white desktop, lavender wall wash, ultrawide clock monitor, glass PC tower, both speakers, portable monitor, split keyboard, desk mat, right-side planter가 한 프레임에서 읽혀야 한다.
+
+Updated:
+- procedural rebuild라도 hero 제품은 제품 고유 실루엣을 만드는 visible component를 가져야 한다. 예: HYTE Y70은 panoramic glass/fan stack/vertical GPU/AIO tubes, Epic 5는 recessed black baffle/tweeter/woofer/spike feet, AM HATSU는 split organic body/key matrix/palm rest를 포함한다.
+- reference-preview 조명은 hard rectangle glow plane보다 area/point light 기반 wall wash를 우선 사용해 제품 뒤에 임시 판처럼 보이는 artifact를 만들지 않는다.
+
+Removed/Deprecated:
+- hero 제품을 generic rounded cube 또는 simple panel로 남기고 “reference scene에 있다”는 이유만으로 visual QA를 통과시키는 방식.
+
 ## 2026-05-02 변경 동기화 (Interaction Preview Contract)
 Added:
 - `interaction-engine` 기반 preview/commit 분리 규칙을 시각 품질 기준에 추가한다.

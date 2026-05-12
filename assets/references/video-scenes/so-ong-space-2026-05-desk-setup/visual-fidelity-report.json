@@ -1,0 +1,606 @@
+{
+  "scene": "so-ong-space-2026-05-desk-setup",
+  "target": "Reference-still matching prototype render with product-specific hero silhouettes, lavender wall wash, white desktop, and primary visible SKU placement.",
+  "legalBoundary": "private/prototype only; not release eligible without licensed CAD/material references.",
+  "assetCount": 28,
+  "heroAssetCount": 8,
+  "minimumHeroSignatureScore": 1.0,
+  "assets": [
+    {
+      "assetKey": "p2s_video_so_ong_tfg40q14wp_monitor",
+      "label": "TFG40Q14WP",
+      "kind": "monitor_ultrawide",
+      "dimensionsM": {
+        "width": 0.944,
+        "depth": 0.287,
+        "height": 0.596
+      },
+      "objectCount": 25,
+      "modelSizeBytes": 417152,
+      "referenceTarget": "Huge white ultrawide display, black flip-clock wallpaper, thin silver lower bezel, black light bar clipped on top.",
+      "requiredSignatureFragments": [
+        "thin_display_shell",
+        "black_screen_glass",
+        "flip_clock_card",
+        "screen_clock_digits",
+        "thin_bottom_bezel",
+        "top_monitor_light_bar",
+        "light_bar_clip"
+      ],
+      "matchedSignatureFragments": [
+        "thin_display_shell",
+        "black_screen_glass",
+        "flip_clock_card",
+        "screen_clock_digits",
+        "thin_bottom_bezel",
+        "top_monitor_light_bar",
+        "light_bar_clip"
+      ],
+      "signatureScore": 1.0,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_cpm1610iq_portable_monitor",
+      "label": "CPM1610IQ",
+      "kind": "portable_monitor",
+      "dimensionsM": {
+        "width": 0.358,
+        "depth": 0.04,
+        "height": 0.235
+      },
+      "objectCount": 5,
+      "modelSizeBytes": 72244,
+      "referenceTarget": "Small angled portable monitor in front of the main screen with black display and bright FINE text.",
+      "requiredSignatureFragments": [
+        "portable_screen_body",
+        "portable_screen_face",
+        "portable_screen_word",
+        "folding_kickstand",
+        "lower_tablet_lip"
+      ],
+      "matchedSignatureFragments": [
+        "portable_screen_body",
+        "portable_screen_face",
+        "portable_screen_word",
+        "folding_kickstand",
+        "lower_tablet_lip"
+      ],
+      "signatureScore": 1.0,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_empathist_stand",
+      "label": "디 엠파시스트",
+      "kind": "riser_stand",
+      "dimensionsM": {
+        "width": 0.28,
+        "depth": 0.18,
+        "height": 0.12
+      },
+      "objectCount": 10,
+      "modelSizeBytes": 110528,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_ivy_planter",
+      "label": "IVY",
+      "kind": "ivy_planter",
+      "dimensionsM": {
+        "width": 0.11,
+        "depth": 0.09,
+        "height": 0.115
+      },
+      "objectCount": 14,
+      "modelSizeBytes": 461888,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_sml_spacecraft",
+      "label": "SML SS 001",
+      "kind": "spacecraft",
+      "dimensionsM": {
+        "width": 0.16,
+        "depth": 0.115,
+        "height": 0.13
+      },
+      "objectCount": 10,
+      "modelSizeBytes": 283460,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_divoom_times_gate",
+      "label": "Times Gate",
+      "kind": "times_gate",
+      "dimensionsM": {
+        "width": 0.283,
+        "depth": 0.047,
+        "height": 0.097
+      },
+      "objectCount": 23,
+      "modelSizeBytes": 338788,
+      "referenceTarget": "Divoom Times Gate: five separate LCD windows inside a long black cyberpunk capsule with smoked side caps.",
+      "requiredSignatureFragments": [
+        "times_gate_body",
+        "times_gate_clear_side_cap",
+        "ips_screen",
+        "digit_",
+        "screen_separator",
+        "tiny_clock_foot"
+      ],
+      "matchedSignatureFragments": [
+        "times_gate_body",
+        "times_gate_clear_side_cap",
+        "ips_screen",
+        "digit_",
+        "screen_separator",
+        "tiny_clock_foot"
+      ],
+      "signatureScore": 1.0,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_charging_reel_cable",
+      "label": "Reel cable",
+      "kind": "reel_cable",
+      "dimensionsM": {
+        "width": 0.075,
+        "depth": 0.075,
+        "height": 0.028
+      },
+      "objectCount": 6,
+      "modelSizeBytes": 197448,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_square1_power_cube",
+      "label": "Square1",
+      "kind": "power_cube",
+      "dimensionsM": {
+        "width": 0.076,
+        "depth": 0.076,
+        "height": 0.076
+      },
+      "objectCount": 7,
+      "modelSizeBytes": 65840,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_ecolor_power_strip",
+      "label": "Ecolor",
+      "kind": "power_strip",
+      "dimensionsM": {
+        "width": 0.27,
+        "depth": 0.08,
+        "height": 0.058
+      },
+      "objectCount": 11,
+      "modelSizeBytes": 139520,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_hue_infuse_ceiling_light",
+      "label": "Hue Infuse",
+      "kind": "ceiling_light",
+      "dimensionsM": {
+        "width": 0.381,
+        "depth": 0.381,
+        "height": 0.09
+      },
+      "objectCount": 4,
+      "modelSizeBytes": 156148,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_movlabs_stand",
+      "label": "Movlabs stand",
+      "kind": "mobile_stand",
+      "dimensionsM": {
+        "width": 0.52,
+        "depth": 0.52,
+        "height": 1.35
+      },
+      "objectCount": 12,
+      "modelSizeBytes": 433676,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_s32dg800_monitor",
+      "label": "S32DG800",
+      "kind": "monitor_32",
+      "dimensionsM": {
+        "width": 0.72,
+        "depth": 0.264,
+        "height": 0.585
+      },
+      "objectCount": 14,
+      "modelSizeBytes": 219004,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_bookshelf_planter",
+      "label": "Bookshelf plant",
+      "kind": "bookshelf_plant",
+      "dimensionsM": {
+        "width": 0.11,
+        "depth": 0.11,
+        "height": 0.19
+      },
+      "objectCount": 23,
+      "modelSizeBytes": 340408,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_arachne_wood_blind",
+      "label": "Arachne blind",
+      "kind": "wood_blind",
+      "dimensionsM": {
+        "width": 1.2,
+        "depth": 0.04,
+        "height": 1.0
+      },
+      "objectCount": 27,
+      "modelSizeBytes": 358812,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_jekca_cat_block",
+      "label": "JEKCA cat",
+      "kind": "block_cat",
+      "dimensionsM": {
+        "width": 0.22,
+        "depth": 0.105,
+        "height": 0.26
+      },
+      "objectCount": 10,
+      "modelSizeBytes": 144696,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_gravastar_mars_pro",
+      "label": "Mars Pro",
+      "kind": "mars_pro",
+      "dimensionsM": {
+        "width": 0.201,
+        "depth": 0.18,
+        "height": 0.191
+      },
+      "objectCount": 23,
+      "modelSizeBytes": 604992,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_plant_guardian_spray",
+      "label": "Plant spray",
+      "kind": "spray",
+      "dimensionsM": {
+        "width": 0.07,
+        "depth": 0.055,
+        "height": 0.21
+      },
+      "objectCount": 6,
+      "modelSizeBytes": 80076,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_sanro_switch_cover",
+      "label": "SANRO cover",
+      "kind": "switch_cover",
+      "dimensionsM": {
+        "width": 0.12,
+        "depth": 0.015,
+        "height": 0.12
+      },
+      "objectCount": 5,
+      "modelSizeBytes": 93676,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_diecast_car",
+      "label": "Diecast",
+      "kind": "diecast",
+      "dimensionsM": {
+        "width": 0.12,
+        "depth": 0.055,
+        "height": 0.045
+      },
+      "objectCount": 10,
+      "modelSizeBytes": 116376,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_arturia_minifuse2",
+      "label": "MiniFuse 2",
+      "kind": "audio_interface",
+      "dimensionsM": {
+        "width": 0.2,
+        "depth": 0.1,
+        "height": 0.043
+      },
+      "objectCount": 10,
+      "modelSizeBytes": 172284,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_offrame_dual_monitor_riser",
+      "label": "OFFRAME riser",
+      "kind": "offrame_riser",
+      "dimensionsM": {
+        "width": 1.0,
+        "depth": 0.25,
+        "height": 0.12
+      },
+      "objectCount": 9,
+      "modelSizeBytes": 101772,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_razer_cobra_pro_white",
+      "label": "Cobra Pro White",
+      "kind": "cobra_mouse",
+      "dimensionsM": {
+        "width": 0.1196,
+        "depth": 0.0625,
+        "height": 0.0381
+      },
+      "objectCount": 15,
+      "modelSizeBytes": 419748,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_zionworks_synchronize_mat",
+      "label": "SYNCHRONIZE mat",
+      "kind": "synchronize_mat",
+      "dimensionsM": {
+        "width": 0.9,
+        "depth": 0.4,
+        "height": 0.004
+      },
+      "objectCount": 98,
+      "modelSizeBytes": 324512,
+      "referenceTarget": "Large black woven SYNCHRONIZE desk mat with white stitched border, visible weave, label patch, and wordmark.",
+      "requiredSignatureFragments": [
+        "synchronize_rubber_base",
+        "synchronize_white_edge",
+        "woven_vertical_thread",
+        "woven_horizontal_thread",
+        "synchronize_wordmark",
+        "synchronize_label_patch"
+      ],
+      "matchedSignatureFragments": [
+        "synchronize_rubber_base",
+        "synchronize_white_edge",
+        "woven_vertical_thread",
+        "woven_horizontal_thread",
+        "synchronize_wordmark",
+        "synchronize_label_patch"
+      ],
+      "signatureScore": 1.0,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_angry_miao_am_hatsu",
+      "label": "AM HATSU",
+      "kind": "am_hatsu_keyboard",
+      "dimensionsM": {
+        "width": 0.36,
+        "depth": 0.22,
+        "height": 0.075
+      },
+      "objectCount": 70,
+      "modelSizeBytes": 1074216,
+      "referenceTarget": "Two separated organic white 3D keyboard halves with dark sculpted keys and white palm rests on the mat.",
+      "requiredSignatureFragments": [
+        "hatsu_left_organic_cnc_body",
+        "hatsu_right_organic_cnc_body",
+        "hatsu_left_key",
+        "hatsu_right_key",
+        "hatsu_left_floating_white_palm_rest",
+        "hatsu_right_floating_white_palm_rest",
+        "hatsu_left_white_light_strip",
+        "hatsu_right_white_light_strip"
+      ],
+      "matchedSignatureFragments": [
+        "hatsu_left_organic_cnc_body",
+        "hatsu_right_organic_cnc_body",
+        "hatsu_left_key",
+        "hatsu_right_key",
+        "hatsu_left_floating_white_palm_rest",
+        "hatsu_right_floating_white_palm_rest",
+        "hatsu_left_white_light_strip",
+        "hatsu_right_white_light_strip"
+      ],
+      "signatureScore": 1.0,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_elgato_stream_deck_neo",
+      "label": "Stream Deck Neo",
+      "kind": "stream_deck_neo",
+      "dimensionsM": {
+        "width": 0.107,
+        "depth": 0.078,
+        "height": 0.026
+      },
+      "objectCount": 23,
+      "modelSizeBytes": 306516,
+      "referenceTarget": "White wedge controller with black top face, eight LCD keys, infobar, and fixed white cable.",
+      "requiredSignatureFragments": [
+        "stream_deck_wedge_body",
+        "stream_deck_black_top_face",
+        "stream_deck_lcd_key",
+        "stream_deck_infobar",
+        "stream_deck_fixed_usb_cable"
+      ],
+      "matchedSignatureFragments": [
+        "stream_deck_wedge_body",
+        "stream_deck_black_top_face",
+        "stream_deck_lcd_key",
+        "stream_deck_infobar",
+        "stream_deck_fixed_usb_cable"
+      ],
+      "signatureScore": 1.0,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_reproducer_epic5",
+      "label": "Epic 5",
+      "kind": "epic5_speaker",
+      "dimensionsM": {
+        "width": 0.19,
+        "depth": 0.24,
+        "height": 0.31
+      },
+      "objectCount": 15,
+      "modelSizeBytes": 446260,
+      "referenceTarget": "White studio monitor with black recessed baffle, small tweeter, large woofer, blue status LED, and black spike feet.",
+      "requiredSignatureFragments": [
+        "epic5_tapered_white_cabinet",
+        "epic5_black_recessed_front",
+        "epic5_tweeter",
+        "epic5_woofer",
+        "epic5_status_led",
+        "epic5_spike_foot"
+      ],
+      "matchedSignatureFragments": [
+        "epic5_tapered_white_cabinet",
+        "epic5_black_recessed_front",
+        "epic5_tweeter",
+        "epic5_woofer",
+        "epic5_status_led",
+        "epic5_spike_foot"
+      ],
+      "signatureScore": 1.0,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_hyte_y70_snow_white",
+      "label": "HYTE Y70",
+      "kind": "hyte_y70_case",
+      "dimensionsM": {
+        "width": 0.47,
+        "depth": 0.32,
+        "height": 0.47
+      },
+      "objectCount": 84,
+      "modelSizeBytes": 1464816,
+      "referenceTarget": "Snow-white panoramic glass PC case with white frame, visible RGB fan stacks, vertical GPU, AIO tubes, and side/front glass.",
+      "requiredSignatureFragments": [
+        "hyte_front_glass",
+        "hyte_side_glass",
+        "hyte_front_stack_fan_ring",
+        "hyte_side_fan_ring",
+        "hyte_bottom_fan_ring",
+        "hyte_vertical_gpu",
+        "hyte_white_aio_tube",
+        "hyte_motherboard",
+        "hyte_corner_seam_black"
+      ],
+      "matchedSignatureFragments": [
+        "hyte_front_glass",
+        "hyte_side_glass",
+        "hyte_front_stack_fan_ring",
+        "hyte_side_fan_ring",
+        "hyte_bottom_fan_ring",
+        "hyte_vertical_gpu",
+        "hyte_white_aio_tube",
+        "hyte_motherboard",
+        "hyte_corner_seam_black"
+      ],
+      "signatureScore": 1.0,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    },
+    {
+      "assetKey": "p2s_video_so_ong_atom_60th_figure",
+      "label": "Atom 60th",
+      "kind": "atom_figure",
+      "dimensionsM": {
+        "width": 0.16,
+        "depth": 0.12,
+        "height": 0.28
+      },
+      "objectCount": 18,
+      "modelSizeBytes": 708640,
+      "referenceTarget": "listed/reference-only asset",
+      "requiredSignatureFragments": [],
+      "matchedSignatureFragments": [],
+      "signatureScore": null,
+      "prototypeStatus": "private_reference_rebuild_v2"
+    }
+  ]
+}

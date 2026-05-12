@@ -205,6 +205,8 @@ npm --workspace apps/web run primary:e2e:room-flow:full
 - `npm --workspace apps/web run verify:product-url-reference`가 URL-derived SKU/manufacturer/options/reference image/material hint/legal boundary를 fixture 기준으로 통과하는지 확인
 - `npm --workspace apps/web run asset:factory -- --reference-pack assets/references/product-pages/<assetKey>/reference-pack.json`가 private/prototype `asset-plan.json`, `factory-qa-report.json`, `repair-instructions.json`, `private-catalog-entry.json`, Blender scaffold를 생성하는지 확인
 - `npm --workspace apps/web run verify:product-asset-factory`가 FURSYS fixture의 runtime GLB/proxy/thumbnail/sidecar, private-only visibility, `releaseEligible=false`, material/visual repair loop를 통과하는지 확인
+- `npm --workspace apps/web run verify:video-scene-reference`가 So Ong private reference pack의 28개 제품, product URL 보존, Blender-rendered thumbnail, preview render, hero visual signature report를 통과하는지 확인
+- `assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-space-reference-preview.png`를 열어 ultrawide monitor, HYTE glass PC, Epic 5 speakers, AM HATSU keyboard, SYNCHRONIZE mat, Stream Deck Neo, Times Gate, planter가 한 프레임에서 reference still처럼 읽히는지 확인
 - shared viewer가 generic showcase viewer와 다른 경량 preset으로 동작해도 제품 hotspot / drawer 읽기 흐름은 유지되는지 확인
 - shared viewer walk HUD는 터치 조작용 요소만 남고 crosshair는 보이지 않는지 확인
 - shared viewer가 상단 light bar, 우측 zoom rail, 하단 readonly status pill 기준으로 노출되는지 확인
