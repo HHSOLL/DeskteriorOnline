@@ -9,6 +9,7 @@ editor, but it is not a manufacturer-licensed commercial asset set.
 from __future__ import annotations
 
 import math
+import json
 import shutil
 import subprocess
 from pathlib import Path
@@ -21,6 +22,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 MODELS_ROOT = REPO_ROOT / "apps/web/public/assets/models"
 THUMB_ROOT = REPO_ROOT / "apps/web/public/assets/catalog/thumbnails"
 PREVIEW_ROOT = REPO_ROOT / "assets/references/video-scenes/so-ong-space-2026-05-desk-setup"
+FIDELITY_REPORT_PATH = PREVIEW_ROOT / "visual-fidelity-report.json"
 
 
 ASSETS = [
@@ -53,6 +55,107 @@ ASSETS = [
     ("p2s_video_so_ong_hyte_y70_snow_white", "HYTE Y70", (0.47, 0.32, 0.47), "hyte_y70_case"),
     ("p2s_video_so_ong_atom_60th_figure", "Atom 60th", (0.16, 0.12, 0.28), "atom_figure"),
 ]
+
+
+# Product-detail and reference-still driven acceptance hints. These are not a
+# legal/commercial release gate; they make the private prototype factory fail
+# visibly when a hero item collapses back into a generic box.
+REFERENCE_STILL_SIGNATURES = {
+    "monitor_ultrawide": {
+        "target": "Huge white ultrawide display, black flip-clock wallpaper, thin silver lower bezel, black light bar clipped on top.",
+        "required": [
+            "thin_display_shell",
+            "black_screen_glass",
+            "flip_clock_card",
+            "screen_clock_digits",
+            "thin_bottom_bezel",
+            "top_monitor_light_bar",
+            "light_bar_clip",
+        ],
+    },
+    "hyte_y70_case": {
+        "target": "Snow-white panoramic glass PC case with white frame, visible RGB fan stacks, vertical GPU, AIO tubes, and side/front glass.",
+        "required": [
+            "hyte_front_glass",
+            "hyte_side_glass",
+            "hyte_front_stack_fan_ring",
+            "hyte_side_fan_ring",
+            "hyte_bottom_fan_ring",
+            "hyte_vertical_gpu",
+            "hyte_white_aio_tube",
+            "hyte_motherboard",
+            "hyte_corner_seam_black",
+        ],
+    },
+    "epic5_speaker": {
+        "target": "White studio monitor with black recessed baffle, small tweeter, large woofer, blue status LED, and black spike feet.",
+        "required": [
+            "epic5_tapered_white_cabinet",
+            "epic5_black_recessed_front",
+            "epic5_tweeter",
+            "epic5_woofer",
+            "epic5_status_led",
+            "epic5_spike_foot",
+        ],
+    },
+    "times_gate": {
+        "target": "Divoom Times Gate: five separate LCD windows inside a long black cyberpunk capsule with smoked side caps.",
+        "required": [
+            "times_gate_body",
+            "times_gate_clear_side_cap",
+            "ips_screen",
+            "digit_",
+            "screen_separator",
+            "tiny_clock_foot",
+        ],
+    },
+    "am_hatsu_keyboard": {
+        "target": "Two separated organic white 3D keyboard halves with dark sculpted keys and white palm rests on the mat.",
+        "required": [
+            "hatsu_left_organic_cnc_body",
+            "hatsu_right_organic_cnc_body",
+            "hatsu_left_key",
+            "hatsu_right_key",
+            "hatsu_left_floating_white_palm_rest",
+            "hatsu_right_floating_white_palm_rest",
+            "hatsu_left_white_light_strip",
+            "hatsu_right_white_light_strip",
+        ],
+    },
+    "synchronize_mat": {
+        "target": "Large black woven SYNCHRONIZE desk mat with white stitched border, visible weave, label patch, and wordmark.",
+        "required": [
+            "synchronize_rubber_base",
+            "synchronize_white_edge",
+            "woven_vertical_thread",
+            "woven_horizontal_thread",
+            "synchronize_wordmark",
+            "synchronize_label_patch",
+        ],
+    },
+    "portable_monitor": {
+        "target": "Small angled portable monitor in front of the main screen with black display and bright FINE text.",
+        "required": [
+            "portable_screen_body",
+            "portable_screen_face",
+            "portable_screen_word",
+            "folding_kickstand",
+            "lower_tablet_lip",
+        ],
+    },
+    "stream_deck_neo": {
+        "target": "White wedge controller with black top face, eight LCD keys, infobar, and fixed white cable.",
+        "required": [
+            "stream_deck_wedge_body",
+            "stream_deck_black_top_face",
+            "stream_deck_lcd_key",
+            "stream_deck_infobar",
+            "stream_deck_fixed_usb_cable",
+        ],
+    },
+}
+
+FIDELITY_REPORTS = []
 
 
 def reset_scene() -> None:
@@ -103,20 +206,24 @@ def ensure_materials() -> None:
             "black": material("soft_black_plastic", (0.015, 0.016, 0.018, 1), 0.48),
             "screen": material("glossy_black_screen", (0.001, 0.002, 0.005, 1), 0.12),
             "screen_raised": material("raised_charcoal_screen_glass", (0.007, 0.009, 0.015, 1), 0.16),
-            "glass": material("soft_blue_glass", (0.55, 0.72, 0.95, 0.36), 0.12),
+            "screen_card": material("slightly_lifted_clock_card", (0.018, 0.021, 0.031, 1), 0.18),
+            "screen_reflection": material("soft_screen_reflection", (0.22, 0.24, 0.31, 0.22), 0.08),
+            "glass": material("soft_blue_glass", (0.55, 0.72, 0.95, 0.24), 0.1),
             "lavender": material("lavender_screen_glow", (0.55, 0.48, 0.9, 1), 0.22),
             "wall_lavender": material("soft_lavender_wall_paint", (0.52, 0.48, 0.8, 1), 0.78),
             "white_lit": material(
                 "soft_off_white_desktop_laminate",
-                (0.70, 0.695, 0.66, 1),
+                (0.78, 0.775, 0.74, 1),
                 0.82,
-                emission=(0.70, 0.685, 0.64, 1),
+                emission=(0.78, 0.76, 0.72, 1),
                 emission_strength=0.0,
             ),
+            "desk_white_clean": material("clean_satin_white_desk", (0.88, 0.875, 0.84, 1), 0.78),
             "grey": material("warm_grey_rubber", (0.45, 0.46, 0.48, 1), 0.62),
             "silver": material("brushed_silver", (0.78, 0.77, 0.72, 1), 0.34, 0.55),
             "chrome": material("polished_chrome", (0.88, 0.88, 0.84, 1), 0.18, 0.9),
             "dark_metal": material("gunmetal_anodized", (0.08, 0.085, 0.095, 1), 0.38, 0.45),
+            "black_anodized": material("black_anodized_metal", (0.012, 0.013, 0.017, 1), 0.28, 0.55),
             "wood": material("pale_oak_slats", (0.72, 0.61, 0.48, 1), 0.7),
             "green": material("plant_leaf_green", (0.08, 0.34, 0.17, 1), 0.72),
             "skin": material("figure_warm_skin", (0.98, 0.72, 0.55, 1), 0.5),
@@ -124,14 +231,17 @@ def ensure_materials() -> None:
             "yellow": material("small_warm_led", (1.0, 0.76, 0.28, 1), 0.25, emission=(1.0, 0.62, 0.18, 1), emission_strength=0.7),
             "red": material("small_red_detail", (0.68, 0.08, 0.05, 1), 0.45),
             "blue_led": material("cool_status_led", (0.25, 0.52, 1.0, 1), 0.2, emission=(0.2, 0.45, 1.0, 1), emission_strength=0.8),
-            "rgb": material("soft_rgb_underglow", (0.45, 0.62, 1.0, 1), 0.18, emission=(0.25, 0.42, 1.0, 1), emission_strength=1.1),
+            "rgb": material("soft_rgb_underglow", (0.7, 0.78, 1.0, 1), 0.14, emission=(0.58, 0.7, 1.0, 1), emission_strength=2.05),
+            "rgb_white": material("white_rgb_fan_glow", (0.96, 0.98, 1.0, 1), 0.12, emission=(0.9, 0.95, 1.0, 1), emission_strength=2.8),
             "lavender_glow": material("lavender_area_glow", (0.56, 0.49, 0.96, 1), 0.25, emission=(0.44, 0.34, 1.0, 1), emission_strength=0.55),
             "strong_lavender_glow": material("strong_lavender_wall_wash", (0.58, 0.52, 0.92, 1), 0.3, emission=(0.48, 0.38, 0.9, 1), emission_strength=1.25),
+            "transparent_wall_bloom": material("transparent_lavender_wall_bloom", (0.72, 0.68, 1.0, 0.18), 0.35, emission=(0.5, 0.44, 0.9, 1), emission_strength=0.75),
+            "screen_white": material("screen_bright_white_pixels", (0.95, 0.95, 0.92, 1), 0.14, emission=(0.96, 0.96, 0.9, 1), emission_strength=1.35),
             "rubber": material("matte_black_rubber", (0.006, 0.006, 0.007, 1), 0.82),
             "woven_dark": material("woven_dark_cloth", (0.026, 0.028, 0.034, 1), 0.92),
             "thread_grey": material("subtle_woven_thread", (0.075, 0.08, 0.095, 1), 0.94),
             "dark_glass": material("smoked_dark_glass", (0.03, 0.04, 0.055, 0.55), 0.12),
-            "smoked_glass": material("clear_smoked_tempered_glass", (0.22, 0.28, 0.36, 0.38), 0.08),
+            "smoked_glass": material("clear_smoked_tempered_glass", (0.24, 0.3, 0.38, 0.26), 0.07),
             "mesh_shadow": material("black_perforated_mesh", (0.009, 0.01, 0.012, 1), 0.72),
             "keycap_black": material("slightly_glossy_black_keycap", (0.018, 0.018, 0.02, 1), 0.36),
             "cable_white": material("soft_white_cable_rubber", (0.78, 0.79, 0.78, 1), 0.62),
@@ -166,6 +276,23 @@ def cube(name, loc, scale, mat_name="warm_white", bevel=0.0):
 
 def cyl(name, loc, radius, depth, mat_name="warm_white", vertices=48, rot=(0, 0, 0)):
     bpy.ops.mesh.primitive_cylinder_add(vertices=vertices, radius=radius, depth=depth, location=loc, rotation=rot)
+    obj = bpy.context.object
+    obj.name = name
+    if mat_name:
+        obj.data.materials.append(MAT[mat_name])
+    obj.modifiers.new("weighted_normals", "WEIGHTED_NORMAL")
+    return obj
+
+
+def cone(name, loc, radius1, radius2, depth, mat_name="warm_white", vertices=32, rot=(0, 0, 0)):
+    bpy.ops.mesh.primitive_cone_add(
+        vertices=vertices,
+        radius1=radius1,
+        radius2=radius2,
+        depth=depth,
+        location=loc,
+        rotation=rot,
+    )
     obj = bpy.context.object
     obj.name = name
     if mat_name:
@@ -242,21 +369,25 @@ def add_monitor(width, height, depth, label="FINE", ultrawide=False):
     panel_w = width
     z = height * 0.62
     shell_mat = "cool_white" if ultrawide else "silver"
-    cube("thin_display_shell", (0, 0, z), (panel_w, depth * 0.12, panel_h), shell_mat, 0.01)
+    cube("thin_display_shell", (0, 0, z), (panel_w, depth * 0.12, panel_h), shell_mat, 0.012)
+    cube("inner_black_bezel_shadow", (0, -depth * 0.104, z), (panel_w * 0.965, depth * 0.018, panel_h * 0.89), "black", 0.006)
     screen_w = panel_w * (0.975 if ultrawide else 0.935)
     screen_h = panel_h * (0.88 if ultrawide else 0.82)
     cube("black_screen_glass", (0, -depth * 0.11, z + panel_h * 0.01), (screen_w, 0.006, screen_h), "screen", 0.006)
-    cube("thin_bottom_bezel", (0, -depth * 0.118, z - panel_h * 0.455), (panel_w * 0.985, 0.008, panel_h * 0.032), "silver", 0.003)
-    cube("rear_white_shell", (0, depth * 0.065, z), (panel_w * 0.88, depth * 0.032, panel_h * 0.7), "cool_white", 0.01)
+    cube("screen_upper_soft_reflection", (-panel_w * 0.18, -depth * 0.116, z + panel_h * 0.25), (screen_w * 0.46, 0.003, screen_h * 0.12), "screen_reflection", 0.008)
+    cube("thin_bottom_bezel", (0, -depth * 0.118, z - panel_h * 0.455), (panel_w * 0.985, 0.01, panel_h * 0.04), "silver", 0.003)
+    cube("rear_white_shell", (0, depth * 0.065, z), (panel_w * 0.88, depth * 0.035, panel_h * 0.7), "cool_white", 0.01)
     if label:
         if ultrawide and " " in label:
             parts = label.split(" ")
-            x_positions = [-panel_w * 0.26, 0.0, panel_w * 0.26]
+            x_positions = [-panel_w * 0.285, 0.0, panel_w * 0.285]
             for i, (part, x) in enumerate(zip(parts, x_positions)):
-                cube(f"flip_clock_card_{i}", (x, -depth * 0.116, z + panel_h * 0.02), (panel_w * 0.2, 0.003, panel_h * 0.36), "screen_raised", 0.014)
-                text_label(f"screen_clock_digits_{i}", part, (x, -depth * 0.125, z + panel_h * 0.02), panel_h * 0.29, "cool_white")
+                cube(f"flip_clock_card_{i}", (x, -depth * 0.117, z + panel_h * 0.025), (panel_w * 0.22, 0.004, panel_h * 0.48), "screen_card", 0.018)
+                cube(f"flip_clock_card_highlight_{i}", (x - panel_w * 0.025, -depth * 0.121, z + panel_h * 0.17), (panel_w * 0.15, 0.002, panel_h * 0.035), "screen_reflection", 0.006)
+                text_label(f"screen_clock_digits_{i}", part, (x, -depth * 0.128, z + panel_h * 0.01), panel_h * 0.39, "screen_white")
+            text_label("screen_pm_label", "PM", (-panel_w * 0.42, -depth * 0.128, z - panel_h * 0.15), panel_h * 0.09, "screen_white")
         else:
-            text_label("screen_label", label, (0, -depth * 0.13, z + panel_h * 0.02), panel_h * 0.22, "cool_white")
+            text_label("screen_label", label, (0, -depth * 0.13, z + panel_h * 0.02), panel_h * 0.22, "screen_white")
     cyl("height_adjust_column", (0, depth * 0.04, height * 0.28), width * 0.014, height * 0.36, "warm_white", vertices=28)
     cube("stand_neck_cover", (0, depth * 0.018, height * 0.39), (width * 0.055, depth * 0.14, height * 0.22), "warm_white", 0.012)
     cube("low_monitor_base", (0, 0, height * 0.035), (width * 0.22, depth * 0.66, height * 0.06), "warm_white", 0.014)
@@ -270,8 +401,8 @@ def build(kind: str, dims: tuple[float, float, float]) -> None:
         cyl("top_monitor_light_bar", (0, -d * 0.12, h * 0.985), h * 0.018, w * 0.42, "black", 32, rot=(0, math.radians(90), 0))
         cube("light_bar_clip", (0, -d * 0.08, h * 0.93), (w * 0.08, d * 0.08, h * 0.04), "black", 0.006)
         cube("white_lower_logo_bar", (0, -d * 0.112, h * 0.33), (w * 0.28, 0.006, h * 0.018), "cool_white", 0.003)
-        for x in (-w * 0.36, 0, w * 0.36):
-            cube("clock_flip_segment", (x, -d * 0.15, h * 0.63), (w * 0.15, 0.004, h * 0.17), "cool_white", 0.004)
+        for x in (-w * 0.22, w * 0.22):
+            cube("clock_card_vertical_gap", (x, -d * 0.151, h * 0.63), (w * 0.008, 0.004, h * 0.38), "screen_reflection", 0.003)
     elif kind == "monitor_32":
         add_monitor(w, h, d, "OLED", ultrawide=False)
         cube("odyssey_slim_neck", (0, d * 0.03, h * 0.38), (w * 0.045, d * 0.08, h * 0.28), "silver", 0.01)
@@ -449,12 +580,16 @@ def build(kind: str, dims: tuple[float, float, float]) -> None:
             cube("offrame_rubber_foot", (x, -d * 0.32, h * 0.04), (w * 0.1, d * 0.12, h * 0.08), "rubber", 0.004)
     elif kind == "cobra_mouse":
         sphere("cobra_white_shell", (0, 0, h * 0.48), w * 0.42, "cool_white", (0.74, 1.0, 0.34))
+        sphere("cobra_black_gloss_top_shell", (0, -d * 0.05, h * 0.58), w * 0.32, "screen", (0.58, 0.74, 0.18))
         cube("cobra_front_split", (0, -d * 0.39, h * 0.55), (w * 0.06, d * 0.26, h * 0.18), "screen", 0.002)
         cyl("cobra_scroll_wheel", (0, -d * 0.42, h * 0.72), w * 0.045, d * 0.14, "rubber", 20, rot=(math.radians(90), 0, 0))
         for x in (-w * 0.2, w * 0.2):
             cube("cobra_side_grip", (x, 0, h * 0.38), (w * 0.06, d * 0.78, h * 0.2), "grey", 0.006)
         for x in (-w * 0.17, w * 0.17):
             cube("cobra_front_button", (x, -d * 0.22, h * 0.78), (w * 0.22, d * 0.46, h * 0.08), "cool_white", 0.006)
+            cube("cobra_bright_button_slot", (x, -d * 0.35, h * 0.825), (w * 0.12, d * 0.08, h * 0.022), "rgb_white", 0.002)
+        for x in (-w * 0.17, 0, w * 0.17):
+            cube("cobra_reference_light_cut", (x, -d * 0.04, h * 0.79), (w * 0.055, d * 0.13, h * 0.026), "rgb_white", 0.003)
         torus("cobra_rgb_underglow", (0, 0, h * 0.2), w * 0.31, w * 0.008, "rgb", segments=72)
         cube("razer_logo_mark", (0, d * 0.3, h * 0.7), (w * 0.12, 0.004, h * 0.035), "rgb", 0.001)
     elif kind == "synchronize_mat":
@@ -619,6 +754,18 @@ def export_asset(asset_key: str, label: str, dims: tuple[float, float, float], k
     reset_scene()
     ensure_materials()
     build(kind, dims)
+    object_names = sorted(obj.name for obj in bpy.context.scene.objects if obj.type not in {"CAMERA", "LIGHT"})
+    signature = REFERENCE_STILL_SIGNATURES.get(kind)
+    if signature:
+        matched = [
+            fragment
+            for fragment in signature["required"]
+            if any(fragment in name for name in object_names)
+        ]
+        signature_score = round(len(matched) / len(signature["required"]), 3)
+    else:
+        matched = []
+        signature_score = None
     out_dir = MODELS_ROOT / asset_key
     out_dir.mkdir(parents=True, exist_ok=True)
     bpy.ops.export_scene.gltf(
@@ -629,6 +776,22 @@ def export_asset(asset_key: str, label: str, dims: tuple[float, float, float], k
     )
     shutil.copyfile(out_dir / f"{asset_key}.glb", out_dir / f"{asset_key}.proxy.glb")
     render_thumbnail(asset_key, dims)
+    model_size = (out_dir / f"{asset_key}.glb").stat().st_size
+    FIDELITY_REPORTS.append(
+        {
+            "assetKey": asset_key,
+            "label": label,
+            "kind": kind,
+            "dimensionsM": {"width": dims[0], "depth": dims[1], "height": dims[2]},
+            "objectCount": len(object_names),
+            "modelSizeBytes": model_size,
+            "referenceTarget": signature["target"] if signature else "listed/reference-only asset",
+            "requiredSignatureFragments": signature["required"] if signature else [],
+            "matchedSignatureFragments": matched,
+            "signatureScore": signature_score,
+            "prototypeStatus": "private_reference_rebuild_v2",
+        }
+    )
 
 
 def render_thumbnail(asset_key: str, dims: tuple[float, float, float]) -> None:
@@ -696,86 +859,99 @@ def build_preview() -> None:
         if hasattr(eevee, "gtao_factor"):
             eevee.gtao_factor = 1.45
 
-    def place_kind(kind: str, loc: tuple[float, float, float], yaw: float = 0.0) -> None:
+    def place_kind(kind: str, loc: tuple[float, float, float], yaw: float = 0.0, scale: float = 1.0) -> None:
         before = set(bpy.context.scene.objects)
         dims = next(d for _, _, d, k in ASSETS if k == kind)
         build(kind, dims)
         for obj in set(bpy.context.scene.objects) - before:
-            obj.location.x += loc[0]
-            obj.location.y += loc[1]
-            obj.location.z += loc[2]
+            obj.location.x = obj.location.x * scale + loc[0]
+            obj.location.y = obj.location.y * scale + loc[1]
+            obj.location.z = obj.location.z * scale + loc[2]
+            obj.scale.x *= scale
+            obj.scale.y *= scale
+            obj.scale.z *= scale
             obj.rotation_euler[2] += yaw
 
-    cube("white_desktop", (0, -0.18, 0.02), (2.92, 1.22, 0.04), "white_lit", 0.018)
-    cube("subtle_front_shadow_line", (0, -0.755, 0.044), (2.76, 0.012, 0.012), "warm_white", 0.002)
-    cube("white_front_apron", (0, -0.795, -0.08), (2.92, 0.035, 0.22), "white_lit", 0.012)
-    cube("lavender_wall", (0, 0.48, 0.74), (3.08, 0.035, 1.38), "wall_lavender", 0.0)
-    cube("soft_left_wall_return", (-1.55, -0.12, 0.68), (0.035, 1.2, 1.28), "wall_lavender", 0.0)
-    cube("soft_right_wall_return", (1.55, -0.12, 0.68), (0.035, 1.2, 1.28), "wall_lavender", 0.0)
-    cube("left_wall_wash_strip", (-0.96, 0.455, 0.73), (0.11, 0.008, 1.2), "strong_lavender_glow", 0.012)
-    cube("right_wall_wash_strip", (0.98, 0.455, 0.76), (0.06, 0.008, 1.05), "lavender_glow", 0.01)
-    place_kind("synchronize_mat", (0.04, -0.205, 0.046), 0)
+    cube("white_desktop", (0, -0.18, 0.02), (3.0, 1.08, 0.045), "desk_white_clean", 0.018)
+    cube("subtle_front_shadow_line", (0, -0.705, 0.047), (2.86, 0.012, 0.012), "warm_white", 0.002)
+    cube("white_front_apron", (0, -0.735, -0.08), (3.0, 0.035, 0.22), "desk_white_clean", 0.012)
+    cube("lavender_wall", (0, 0.43, 0.72), (3.12, 0.035, 1.38), "wall_lavender", 0.0)
+    cube("soft_left_wall_return", (-1.56, -0.08, 0.68), (0.035, 1.04, 1.28), "wall_lavender", 0.0)
+    cube("soft_right_wall_return", (1.56, -0.08, 0.68), (0.035, 1.04, 1.28), "wall_lavender", 0.0)
+    cube("thin_black_back_edge", (0, 0.065, 0.065), (3.0, 0.018, 0.035), "black", 0.001)
+    cube("left_wall_wash_strip", (-1.12, 0.405, 0.75), (0.18, 0.008, 1.28), "strong_lavender_glow", 0.012)
+    place_kind("synchronize_mat", (0.055, -0.245, 0.048), 0)
     # Main display composition.
     before_monitor = set(bpy.context.scene.objects)
-    add_monitor(1.16, 0.56, 0.23, "3 26 40", ultrawide=True)
+    add_monitor(1.34, 0.62, 0.24, "3 26 40", ultrawide=True)
     for obj in set(bpy.context.scene.objects) - before_monitor:
-        obj.location.x += 0.18
-        obj.location.y += 0.085
-        obj.location.z += 0.015
-    cyl("preview_light_bar", (0.18, -0.055, 0.62), 0.014, 0.55, "black", 32, rot=(0, math.radians(90), 0))
+        obj.location.x += 0.2
+        obj.location.y += 0.065
+        obj.location.z += 0.0
+    cyl("preview_light_bar", (0.2, -0.074, 0.645), 0.014, 0.62, "black_anodized", 32, rot=(0, math.radians(90), 0))
+    cube("preview_light_bar_clip", (0.2, -0.045, 0.615), (0.095, 0.045, 0.035), "black_anodized", 0.006)
     # Product-specific tower/shelf/speaker layer.
-    place_kind("offrame_riser", (-0.82, 0.08, 0.038), 0)
-    place_kind("hyte_y70_case", (-0.82, 0.02, 0.14), 0)
-    place_kind("epic5_speaker", (-0.48, -0.06, 0.055), math.radians(-2))
-    place_kind("epic5_speaker", (0.94, -0.06, 0.055), math.radians(2))
+    place_kind("offrame_riser", (-0.88, 0.005, 0.042), 0, 0.9)
+    place_kind("hyte_y70_case", (-0.88, -0.025, 0.082), 0, 0.92)
+    place_kind("epic5_speaker", (-0.34, -0.145, 0.055), math.radians(-2), 0.9)
+    place_kind("epic5_speaker", (1.02, -0.145, 0.055), math.radians(2), 0.9)
     # Product accents.
     locs = {
-        "times_gate": (-0.69, -0.03, 0.62),
-        "spacecraft": (-1.0, 0.02, 0.61),
-        "mars_pro": (-0.58, -0.28, 0.06),
-        "portable_monitor": (0.24, -0.285, 0.06),
-        "ivy_planter": (0.68, -0.23, 0.06),
-        "audio_interface": (0.0, -0.345, 0.06),
-        "diecast": (0.1, -0.215, 0.065),
-        "reel_cable": (-0.43, -0.36, 0.055),
+        "times_gate": (-0.65, -0.042, 0.55),
+        "spacecraft": (-1.08, -0.035, 0.54),
+        "mars_pro": (-0.58, -0.365, 0.058),
+        "portable_monitor": (0.22, -0.318, 0.064),
+        "ivy_planter": (0.72, -0.27, 0.058),
+        "audio_interface": (0.015, -0.383, 0.06),
+        "diecast": (0.1, -0.25, 0.065),
+        "reel_cable": (-0.43, -0.395, 0.055),
     }
     for kind, loc in locs.items():
-        place_kind(kind, loc)
+        scale = {
+            "times_gate": 0.96,
+            "spacecraft": 1.02,
+            "mars_pro": 0.72,
+            "portable_monitor": 1.12,
+            "ivy_planter": 0.88,
+            "diecast": 0.9,
+            "reel_cable": 0.82,
+        }.get(kind, 1.0)
+        place_kind(kind, loc, 0, scale)
 
     # Front work surface details from the reference still: split keyboard,
     # black gaming mouse, and the printed desk mat composition.
-    place_kind("am_hatsu_keyboard", (0.02, -0.35, 0.058), 0)
-    place_kind("cobra_mouse", (0.5, -0.36, 0.058), math.radians(6))
-    place_kind("stream_deck_neo", (-0.36, -0.315, 0.058), math.radians(-5))
-    place_kind("atom_figure", (-1.08, 0.03, 0.61), math.radians(8))
+    place_kind("am_hatsu_keyboard", (0.02, -0.39, 0.058), 0, 1.08)
+    place_kind("cobra_mouse", (0.54, -0.402, 0.058), math.radians(6), 0.98)
+    place_kind("stream_deck_neo", (-0.37, -0.36, 0.058), math.radians(-5), 0.95)
+    place_kind("power_cube", (-1.17, -0.42, 0.054), 0, 0.86)
 
-    bpy.ops.object.light_add(type="AREA", location=(0, -1.05, 1.18))
+    bpy.ops.object.light_add(type="AREA", location=(0, -0.95, 1.08))
     light = bpy.context.object
     light.name = "large_softbox_reflection"
-    light.data.energy = 95
-    light.data.size = 2.1
+    light.data.energy = 128
+    light.data.size = 2.35
     bpy.ops.object.light_add(type="AREA", location=(0, -0.8, 0.35))
     fill = bpy.context.object
     fill.name = "desk_front_fill"
-    fill.data.energy = 8
+    fill.data.energy = 12
     fill.data.size = 2.2
     bpy.ops.object.light_add(type="POINT", location=(-0.55, 0.22, 0.75))
     accent = bpy.context.object
     accent.name = "lavender_pc_wall_bounce"
-    accent.data.energy = 195
+    accent.data.energy = 260
     accent.data.color = (0.62, 0.56, 1.0)
     bpy.ops.object.light_add(type="POINT", location=(0.58, 0.16, 0.62))
     right_accent = bpy.context.object
     right_accent.name = "lavender_monitor_right_bounce"
-    right_accent.data.energy = 78
+    right_accent.data.energy = 82
     right_accent.data.color = (0.58, 0.52, 1.0)
-    bpy.ops.object.camera_add(location=(0.04, -1.78, 0.74))
+    bpy.ops.object.camera_add(location=(-0.035, -1.64, 0.62))
     camera = bpy.context.object
-    look_at(camera, (0.04, -0.05, 0.44))
+    look_at(camera, (-0.02, -0.08, 0.39))
     bpy.context.scene.camera = camera
-    camera.data.lens = 26.5
-    bpy.context.scene.render.resolution_x = 1400
-    bpy.context.scene.render.resolution_y = 820
+    camera.data.lens = 20.8
+    bpy.context.scene.render.resolution_x = 2048
+    bpy.context.scene.render.resolution_y = 1152
     bpy.context.scene.eevee.taa_render_samples = 64
     bpy.context.scene.view_settings.view_transform = "Filmic"
     bpy.context.scene.view_settings.look = "Medium High Contrast"
@@ -783,6 +959,27 @@ def build_preview() -> None:
     bpy.context.scene.view_settings.gamma = 1.0
     bpy.ops.render.render(write_still=True)
     bpy.data.images["Render Result"].save_render(str(PREVIEW_ROOT / "so-ong-space-reference-preview.png"))
+    FIDELITY_REPORT_PATH.write_text(
+        json.dumps(
+            {
+                "scene": "so-ong-space-2026-05-desk-setup",
+                "target": "Reference-still matching prototype render with product-specific hero silhouettes, lavender wall wash, white desktop, and primary visible SKU placement.",
+                "legalBoundary": "private/prototype only; not release eligible without licensed CAD/material references.",
+                "assetCount": len(FIDELITY_REPORTS),
+                "heroAssetCount": sum(1 for report in FIDELITY_REPORTS if report["requiredSignatureFragments"]),
+                "minimumHeroSignatureScore": min(
+                    report["signatureScore"]
+                    for report in FIDELITY_REPORTS
+                    if report["signatureScore"] is not None
+                ),
+                "assets": FIDELITY_REPORTS,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
 
 
 def main() -> None:

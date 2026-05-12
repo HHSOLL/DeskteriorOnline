@@ -81,3 +81,15 @@ Updated:
 
 Removed/Deprecated:
 - 제품 링크 하나를 분석했다는 이유만으로 runtime asset을 상용 노출 가능한 catalog asset으로 취급하는 방식.
+
+## 2026-05-12 변경 동기화 (Private Reference Fidelity Report)
+Added:
+- Creator/video reference pack factory는 GLB 생성 후 `visual-fidelity-report.json`을 남겨 hero asset별 required signature fragments, matched fragments, object count, model size, prototype status를 기록한다.
+- So Ong reference pack의 hero 제품은 monitor screen/card/light bar, HYTE glass/fan/GPU/tube, Epic 5 baffle/driver/LED/spike, AM HATSU split body/key/palm rest, SYNCHRONIZE mat weave/wordmark, Times Gate five-screen body, Stream Deck Neo key/infobar/cable 같은 제품별 signature를 통과해야 한다.
+
+Updated:
+- “상품 상세 페이지 분석 -> 에셋 생성” 루프는 링크 요약만으로 종료하지 않고, reference still에서 사용자가 식별하는 제품 고유 실루엣이 GLB object 이름과 preview render에 남는지 확인한다.
+- private/prototype asset은 visual signature pass를 통과해도 상용 승격이 아니며, CAD/라이선스/material QA가 붙기 전까지 `releaseEligible=false`와 prototype-only license를 유지한다.
+
+Removed/Deprecated:
+- 제품별 고유 요소 없이 generic monitor/keyboard/speaker/box를 배치하고, 파일 존재만으로 reference pack QA를 통과시키는 방식.

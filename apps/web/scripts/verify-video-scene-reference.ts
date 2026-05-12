@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_CATALOG } from "../src/lib/builder/catalog";
@@ -83,6 +83,60 @@ for (const [productId, dimensions] of expectedReconciledDimensions) {
 const previewPath = join(referenceRoot, "so-ong-space-reference-preview.png");
 assert.ok(existsSync(previewPath), "So Ong reference preview render should exist");
 assert.ok(statSync(previewPath).size > 100_000, "So Ong reference preview render should be a real visual artifact");
+
+const fidelityReportPath = join(referenceRoot, "visual-fidelity-report.json");
+assert.ok(existsSync(fidelityReportPath), "So Ong visual fidelity report should exist");
+const fidelityReport = JSON.parse(readFileSync(fidelityReportPath, "utf8")) as {
+  legalBoundary: string;
+  assetCount: number;
+  heroAssetCount: number;
+  minimumHeroSignatureScore: number;
+  assets: Array<{
+    assetKey: string;
+    kind: string;
+    objectCount: number;
+    modelSizeBytes: number;
+    requiredSignatureFragments: string[];
+    signatureScore: number | null;
+    prototypeStatus: string;
+  }>;
+};
+assert.equal(fidelityReport.assetCount, 28, "visual fidelity report should cover every So Ong product asset");
+assert.ok(
+  fidelityReport.legalBoundary.includes("private/prototype"),
+  "visual fidelity report should preserve private/prototype legal boundary"
+);
+assert.ok(fidelityReport.heroAssetCount >= 8, "visual fidelity report should enforce hero product signature checks");
+assert.ok(
+  fidelityReport.minimumHeroSignatureScore >= 1,
+  "every hero product should contain all required signature geometry fragments"
+);
+
+const fidelityById = new Map(fidelityReport.assets.map((asset) => [asset.assetKey, asset]));
+const requiredHeroFidelity = [
+  ["p2s_video_so_ong_tfg40q14wp_monitor", 24],
+  ["p2s_video_so_ong_hyte_y70_snow_white", 38],
+  ["p2s_video_so_ong_reproducer_epic5", 10],
+  ["p2s_video_so_ong_angry_miao_am_hatsu", 70],
+  ["p2s_video_so_ong_zionworks_synchronize_mat", 80],
+  ["p2s_video_so_ong_divoom_times_gate", 18],
+  ["p2s_video_so_ong_elgato_stream_deck_neo", 16]
+] as const;
+
+for (const [assetId, minimumObjectCount] of requiredHeroFidelity) {
+  const report = fidelityById.get(assetId);
+  assert.ok(report, `${assetId} should be present in the visual fidelity report`);
+  assert.equal(report?.prototypeStatus, "private_reference_rebuild_v2");
+  assert.ok(
+    report!.objectCount >= minimumObjectCount,
+    `${assetId} should have enough product-specific geometry to avoid placeholder quality`
+  );
+  assert.ok(
+    report!.modelSizeBytes > 12_000,
+    `${assetId} should be a detailed GLB and not a tiny placeholder export`
+  );
+  assert.equal(report!.signatureScore, 1, `${assetId} should pass all required signature fragments`);
+}
 
 const requiredCompositionObjects = [
   "main-monitor",

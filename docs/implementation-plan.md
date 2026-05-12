@@ -1594,3 +1594,18 @@ Updated:
 Removed/Deprecated:
 - inventory thumbnail을 generic SVG/card로 대체해 사용자가 제품 생김새를 이름으로만 추론하게 만드는 방식.
 - smoke render가 제품 배치 대신 파일 존재 검증만 통과하는 상태.
+
+## 2026-05-12 변경 동기화 (Creator Reference Signature Rebuild)
+Added:
+- So Ong reference pack 생성 스크립트가 hero asset별 product-signature fragments를 정의하고 `visual-fidelity-report.json`에 signature score, object count, GLB size, private prototype status를 기록한다.
+- reference smoke render는 product-only GLB existence가 아니라 실제 still에서 식별되는 요소를 기준으로 보정한다: TFG ultrawide clock cards/light bar, HYTE Y70 glass/fans/GPU/AIO, Epic 5 baffle/driver/feet, AM HATSU split sculpted keyboard, Stream Deck Neo keys/infobar/cable, SYNCHRONIZE mat weave/wordmark, Times Gate five screens.
+- preview-only placement scale을 지원해 실제 제품 치수는 유지하되 reference still smoke render에서는 카메라/배치 비율을 별도로 보정한다.
+
+Updated:
+- `verify:video-scene-reference`는 visual fidelity report existence, private/prototype legal boundary, hero signature score, hero object count, non-placeholder GLB size를 검증한다.
+- So Ong preview render는 hard rectangular glow panel을 제거하고 lighting/wall wash, camera framing, PC/speaker/mouse scale을 reference still에 맞게 재조정한다.
+- Razer Cobra Pro White prototype은 reference still에서 읽히는 dark top shell과 bright cut lines를 추가해 흰색 blob처럼 보이는 상태를 막는다.
+
+Removed/Deprecated:
+- reference still 품질을 사람이 보는 composition과 무관한 “파일 수/썸네일 수 통과”로 완료 처리하는 방식.
+- 제품 고유 signature 없이 procedural primitive만 쌓아 90% reference target이라고 주장하는 방식.
