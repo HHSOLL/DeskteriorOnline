@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:42.792Z",
+  "assetKey": "angry",
+  "sourceUrl": "https://www.angrymiao.com/en/am-hatsu/",
+  "product": {
+    "title": "Angry Miao",
+    "sku": null,
+    "manufacturer": "Angry Miao",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": null
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-Angry-Miao-Prototype-Reference",
+      "label": "Angry Miao public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "Angry Miao",
+    "canonicalProductUrl": "https://www.angrymiao.com/en/am-hatsu/",
+    "dimensionSourceUrl": null,
+    "referenceImages": [],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://www.angrymiao.com/en/am-hatsu/",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-Angry-Miao-Prototype-Reference",
+      "label": "Angry Miao public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "Angry Miao",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "Angry Miao",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "Angry Miao",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 0,
+    "selectedImageCount": 0,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No high-confidence product reference images found.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

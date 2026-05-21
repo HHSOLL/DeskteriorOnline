@@ -1,0 +1,52 @@
+{
+  "asset": "p2s_commercial_desk_hero_v1",
+  "status": "desk-only-commercial-candidate-review-required",
+  "reviewDate": "2026-05-20",
+  "sourceBlend": "assets/blender/deskterior/p2s_commercial_desk_hero_v1.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_commercial_desk_hero_v1/p2s_commercial_desk_hero_v1.glb",
+  "previewImages": [
+    "assets/references/blender-authored/commercial-desk-hero-v1/previews/commercial-desk-v1-isometric.png",
+    "assets/references/blender-authored/commercial-desk-hero-v1/previews/commercial-desk-v1-surface-closeup.png",
+    "assets/references/blender-authored/commercial-desk-hero-v1/previews/commercial-desk-v1-left-frame-closeup.png"
+  ],
+  "textureArtifacts": {
+    "baseColor": "apps/web/public/assets/models/p2s_commercial_desk_hero_v1/textures/commercial_desk_walnut_basecolor_2k.png",
+    "roughness": "apps/web/public/assets/models/p2s_commercial_desk_hero_v1/textures/commercial_desk_walnut_roughness_1k.png",
+    "height": "apps/web/public/assets/models/p2s_commercial_desk_hero_v1/textures/commercial_desk_walnut_height_1k.png",
+    "source": "assets/references/blender-authored/commercial-desk-hero-v1/imagegen/walnut-desktop-source-imagegen-20260520.png"
+  },
+  "runtimeSidecars": {
+    "colliders": "apps/web/public/assets/models/p2s_commercial_desk_hero_v1/p2s_commercial_desk_hero_v1.colliders.json",
+    "supportSurfaces": "apps/web/public/assets/models/p2s_commercial_desk_hero_v1/p2s_commercial_desk_hero_v1.support-surfaces.json"
+  },
+  "metrics": {
+    "nodes": 80,
+    "meshesAndCurves": 74,
+    "materials": 10,
+    "images": 4,
+    "triangles": 22092,
+    "smartUvMeshObjects": 73,
+    "glbBytes": 5063976
+  },
+  "glbAudit": {
+    "nodes": 74,
+    "meshes": 74,
+    "materials": 6,
+    "images": 3,
+    "textures": 3,
+    "extensionsUsed": []
+  },
+  "visualChecklist": [
+    "single-piece thick wood slab with bevels instead of flat cuboid top",
+    "image-model walnut basecolor with derived roughness/height maps packed into GLB when source is available",
+    "continuous image-textured walnut bullnose/side bands with surface plank tone variation",
+    "black powder-coated metal frame, mounting plates, brass screw heads, rubber leveling feet",
+    "integrated cable raceway, grommet, power strip, managed lead",
+    "drawer module removed after visual rejection; desk now uses a simpler open frame silhouette"
+  ],
+  "stillRequires": [
+    "human art review against commercial reference imagery",
+    "possible second pass after runtime screenshot if scale collides with existing desktop props",
+    "LOD/proxy package before global catalog promotion"
+  ]
+}

@@ -157,7 +157,7 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     bumpScale: 0.008,
     normalScale: 0.18,
     envMapIntensity: 0.42,
-    previewThumbnail: "/assets/textures/white_plaster_02_2k.blend/textures/white_plaster_02_diff_2k.jpg",
+    previewThumbnail: "/assets/textures/clean-defaults/matte-white-paint.svg",
     repeatScaleMeters: [2.4, 2.4]
   }),
   defineRoomShellTexturePreset({
@@ -175,6 +175,7 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     bumpScale: 0.012,
     normalScale: 0.3,
     envMapIntensity: 0.4,
+    previewThumbnail: "/assets/textures/clean-defaults/warm-white-paint.svg",
     repeatScaleMeters: [2.2, 2.2]
   }),
   defineRoomShellTexturePreset({
@@ -192,6 +193,7 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     bumpScale: 0.008,
     normalScale: 0.18,
     envMapIntensity: 0.38,
+    previewThumbnail: "/assets/textures/clean-defaults/beige-plaster.svg",
     repeatScaleMeters: [2.4, 2.4]
   }),
   defineRoomShellTexturePreset({
@@ -209,6 +211,7 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     bumpScale: 0.012,
     normalScale: 0.26,
     envMapIntensity: 0.42,
+    previewThumbnail: "/assets/textures/clean-defaults/light-grey-plaster.svg",
     repeatScaleMeters: [2.5, 2.5]
   }),
   defineRoomShellTexturePreset({
@@ -226,6 +229,7 @@ export const WALL_TEXTURE_PRESETS: RoomShellTexturePreset[] = [
     bumpScale: 0.01,
     normalScale: 0.22,
     envMapIntensity: 0.38,
+    previewThumbnail: "/assets/textures/clean-defaults/greige-clean-plaster.svg",
     repeatScaleMeters: [2.5, 2.5]
   }),
   defineRoomShellTexturePreset({

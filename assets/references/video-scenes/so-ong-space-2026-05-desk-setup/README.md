@@ -2,11 +2,12 @@
 
 Source video: <https://www.youtube.com/watch?v=jHakJw40k58>
 
-This pack rebuilds the visible/comment-listed products from the So Ong desk setup
-as DeskteriorOnline `prototype_reference_only` catalog assets. The goal is to let
-the editor, inventory, placement kernel, save/reload/share paths, and product
-hotspot UX exercise a full creator-inspired desk setup before manufacturer CAD,
-licensed reference images, and final PBR material scans are available.
+This pack tracks the supplied So Ong desk setup product references, but only the
+products actually visible in the supplied reference still are generated and
+exposed as DeskteriorOnline `prototype_reference_only` catalog assets. The goal
+is to let the editor, inventory, placement kernel, save/reload/share paths, and
+product hotspot UX exercise a creator-inspired desk setup before manufacturer
+CAD, licensed reference images, and final PBR material scans are available.
 
 ## Commercial Boundary
 
@@ -117,6 +118,24 @@ exist.
 This remains a prototype reference pack. The models are recognizable procedural
 rebuilds for product-flow testing, not production SKU twins.
 
+## 2026-05-13 Visible Crop Scope Pass
+
+The latest pass narrows generated catalog exposure to the products visible in
+the supplied still instead of generating every product from the full comment
+list. The full 28-item reference list is still kept as source metadata, but
+`listed_only` entries are not exported as catalog assets and do not appear in
+the preview layout.
+
+Generated/exposed visible-crop products now cover 17 product references:
+TFG40Q14WP, CPM1610IQ, the portable monitor stand, IVY, SML spacecraft, Times
+Gate, charging reel cable, Square1, Mars Pro, diecast, MiniFuse 2, OFRAME riser,
+Cobra Pro White, SYNCHRONIZE mat, AM HATSU, reProducer Epic 5, and HYTE Y70.
+
+The visible scene keeps the separate white desk and monitor light bar as
+composition fixtures. Stream Deck Neo, ceiling light, room blind, wall switch,
+Movlabs/S32DG800 side setup, Atom figure, and other non-crop references are
+metadata-only until a screenshot/frame actually requires them.
+
 ## Verification
 
 Run:
@@ -125,6 +144,7 @@ Run:
 npm --workspace apps/web run verify:video-scene-reference
 ```
 
-The verification checks that all 28 supplied unique product references have catalog entries,
-source URLs, prototype-only licensing, GLB files, thumbnails, reference layout
-coverage, and a visual preview artifact.
+The verification checks that all 28 supplied unique product references remain
+tracked as metadata, only the 17 visible-crop references are generated/exposed
+as catalog entries, `listed_only` entries stay out of the layout and fidelity
+report, and the visual preview artifact exists.

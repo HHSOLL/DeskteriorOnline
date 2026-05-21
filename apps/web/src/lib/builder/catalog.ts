@@ -91,6 +91,7 @@ export type LibraryCatalogItem = {
   options: string | null;
   externalUrl: string | null;
   brand: string | null;
+  qualityScore?: number | null;
   supportProfile?: AssetSupportProfile | null;
 } & ProductPhysicalMetadata &
   ProductContractMetadata;
@@ -138,7 +139,89 @@ export type LibraryCatalogCategory = {
   count: number;
 };
 
+export type CatalogGenerationBadge = {
+  label: string;
+  reviewLabel: string;
+  providerLabel: string;
+  tone: "ready" | "review";
+};
+
 const DEFAULT_SCALE: [number, number, number] = [1, 1, 1];
+
+function normalizeCatalogPreviewSource(value: string | null | undefined) {
+  return (value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "_");
+}
+
+export function hasSpecificCatalogThumbnail(
+  item: Pick<LibraryCatalogItem, "assetId" | "id">,
+  thumbnail: string | null | undefined
+) {
+  const filename = thumbnail?.split("/").pop()?.split(".")[0] ?? "";
+  const thumbnailKey = normalizeCatalogPreviewSource(filename);
+  if (!thumbnailKey) return false;
+
+  const assetSource = normalizeCatalogPreviewSource(`${item.assetId} ${item.id}`);
+  return assetSource.includes(thumbnailKey);
+}
+
+function getCatalogGenerationText(
+  item: Pick<
+    LibraryCatalogItem,
+    "brand" | "detailNotes" | "license" | "qualityScore" | "source" | "textureSet"
+  >
+) {
+  return [
+    item.brand,
+    item.detailNotes,
+    item.source?.name,
+    item.source?.path,
+    item.source?.url,
+    item.license?.spdx,
+    item.license?.label,
+    item.textureSet?.authored,
+    typeof item.qualityScore === "number" ? "qualityScore" : null
+  ]
+    .filter((value): value is string => Boolean(value))
+    .join(" ")
+    .toLowerCase();
+}
+
+export function isGeneratedCatalogItem(
+  item: Pick<
+    LibraryCatalogItem,
+    "brand" | "detailNotes" | "license" | "qualityScore" | "source" | "textureSet"
+  >
+) {
+  const text = getCatalogGenerationText(item);
+  return (
+    text.includes("meshy") ||
+    text.includes("text-to-3d") ||
+    text.includes("image-to-3d") ||
+    text.includes("generated") ||
+    (item.textureSet?.authored === "image_based" && typeof item.qualityScore === "number")
+  );
+}
+
+export function getCatalogGenerationBadge(
+  item: Pick<
+    LibraryCatalogItem,
+    "brand" | "detailNotes" | "license" | "qualityScore" | "source" | "textureSet"
+  >
+): CatalogGenerationBadge | null {
+  if (!isGeneratedCatalogItem(item)) return null;
+
+  const text = getCatalogGenerationText(item);
+  const providerLabel = text.includes("meshy") ? "Meshy" : text.includes("tripo") ? "TripoSR" : "AI";
+  const qualityScore = typeof item.qualityScore === "number" ? item.qualityScore : null;
+  const ready = qualityScore !== null && qualityScore >= 0.82;
+
+  return {
+    label: providerLabel === "AI" ? "AI 생성" : providerLabel,
+    reviewLabel: ready ? `QA ${Math.round(qualityScore * 100)}` : "검수 필요",
+    providerLabel,
+    tone: ready ? "ready" : "review"
+  };
+}
 
 const CATEGORY_META: Record<
   Exclude<LibraryCatalogCategoryId, "all">,
@@ -503,6 +586,150 @@ const COMMERCIAL_CATALOG_VARIANTS = [
     scaleLocked: true,
     ...P2S_PRODUCT_CONTRACT
   },
+  {
+    id: "sofa-03",
+    label: "모듈러 라운지 소파",
+    category: "Seating",
+    assetId: "/assets/models/sofa_03_2k.gltf/sofa_03_2k.gltf",
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "작은 방 라운지 존을 만드는 낮은 패브릭 소파입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩389,000",
+    options: "1900x860x780 mm",
+    dimensionsMm: { width: 1900, depth: 860, height: 780 },
+    finishColor: "Deep charcoal",
+    finishMaterial: "Textured fabric over foam cushion",
+    detailNotes: "Reference-room starter sofa; floor placement only.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "modern_coffee_table_01",
+    label: "모던 우드 커피 테이블",
+    category: "Tables",
+    assetId: "/assets/models/modern_coffee_table_01/modern_coffee_table_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.desk,
+    scale: [1, 1, 1],
+    description: "라운지 중앙에 배치하는 낮은 원목 커피 테이블입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩129,000",
+    options: "920x540x380 mm · tabletop",
+    dimensionsMm: { width: 920, depth: 540, height: 380 },
+    finishColor: "Warm walnut / matte white",
+    finishMaterial: "Wood veneer and painted base",
+    detailNotes: "Low table with usable top surface for small decor props.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "modern_wooden_cabinet",
+    label: "낮은 미디어 콘솔",
+    category: "Storage",
+    assetId: "/assets/models/modern_wooden_cabinet/modern_wooden_cabinet_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.stand,
+    scale: [1, 1, 1],
+    description: "TV와 게임 콘솔을 받치는 낮은 수납장입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩219,000",
+    options: "1600x420x520 mm · furniture_surface",
+    dimensionsMm: { width: 1600, depth: 420, height: 520 },
+    finishColor: "Walnut / off-white",
+    finishMaterial: "Wood veneer cabinet with painted drawer fronts",
+    detailNotes: "Media-zone support surface for TV, console, and decor placement.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "Television_01",
+    label: "슬림 월 미디어 디스플레이",
+    category: "Electronics",
+    assetId: "/assets/models/Television_01/Television_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.stand,
+    scale: [1, 1, 1],
+    description: "미디어 콘솔 위에 올리는 큰 화면 디스플레이입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩699,000",
+    options: "1320x80x760 mm",
+    dimensionsMm: { width: 1320, depth: 80, height: 760 },
+    finishColor: "Black glass",
+    finishMaterial: "Gloss display panel with matte plastic rear shell",
+    detailNotes: "Large screen prop used by the workspace-flex media cluster.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "gaming_console",
+    label: "컴팩트 게임 콘솔",
+    category: "Electronics",
+    assetId: "/assets/models/gaming_console/gaming_console_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.stand,
+    scale: [1, 1, 1],
+    description: "미디어 콘솔 위에 놓는 소형 게임 콘솔입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩399,000",
+    options: "300x260x75 mm",
+    dimensionsMm: { width: 300, depth: 260, height: 75 },
+    finishColor: "Matte black",
+    finishMaterial: "Plastic shell with subtle emissive accent",
+    detailNotes: "Small media-cluster device; furniture surface placement only.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "side_table_01",
+    label: "라운드 사이드 테이블",
+    category: "Tables",
+    assetId: "/assets/models/side_table_01/side_table_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.stand,
+    scale: [1, 1, 1],
+    description: "라운지 옆 조명과 컵을 받치는 작은 원형 테이블입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩79,000",
+    options: "430x430x500 mm · tabletop",
+    dimensionsMm: { width: 430, depth: 430, height: 500 },
+    finishColor: "Warm oak",
+    finishMaterial: "Wood top with compact pedestal base",
+    detailNotes: "Side-table support surface for lamp and small decor.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "anthurium_botany_01",
+    label: "아늑한 대형 화분",
+    category: "Plants",
+    assetId: "/assets/models/anthurium_botany_01/anthurium_botany_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.plant,
+    scale: [1, 1, 1],
+    description: "창가와 선반 근처에 생기를 더하는 큰 잎 식물입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩89,000",
+    options: "620x620x940 mm",
+    dimensionsMm: { width: 620, depth: 620, height: 940 },
+    finishColor: "Deep green",
+    finishMaterial: "Leaf geometry with ceramic planter",
+    detailNotes: "Large plant prop for creator-room silhouette and shadow breakup.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
+  {
+    id: "book_encyclopedia_set_01",
+    label: "엔사이클로피디아 북 세트",
+    category: "Decor",
+    assetId: "/assets/models/book_encyclopedia_set_01/book_encyclopedia_set_01_1k.gltf",
+    thumbnail: P2S_THUMBNAILS.books,
+    scale: [1, 1, 1],
+    description: "선반을 채우는 컬러 북 세트입니다.",
+    brand: "DeskteriorOnline Studio",
+    price: "₩39,000",
+    options: "320x220x300 mm",
+    dimensionsMm: { width: 320, depth: 220, height: 300 },
+    finishColor: "Mixed muted colors",
+    finishMaterial: "Paper covers with subtle roughness",
+    detailNotes: "Shelf-surface decor used to increase reference-room density.",
+    scaleLocked: true,
+    ...P2S_PRODUCT_CONTRACT
+  },
   ...([
     ["p2s_monitor_24_ips_black", "P2S 24형 IPS 모니터", "540x180x410 mm", { width: 540, depth: 180, height: 410 }],
     ["p2s_monitor_27_4k_silver", "P2S 27형 4K 모니터", "615x205x455 mm", { width: 615, depth: 205, height: 455 }],
@@ -838,6 +1065,61 @@ const COMMERCIAL_CATALOG_VARIANTS = [
   }))
 ] as const;
 
+const MESHY_ROOM_DECOR_CATALOG_VARIANTS = [
+  {
+    id: "p2s_meshy_pastel_mascot_stack",
+    label: "Meshy 파스텔 마스코트 스택",
+    category: "Decor",
+    assetId: "/assets/models/p2s_meshy_pastel_mascot_stack/p2s_meshy_pastel_mascot_stack.glb",
+    thumbnail: "/assets/catalog/thumbnails/p2s_meshy_pastel_mascot_stack.webp",
+    scale: [1, 1, 1],
+    description:
+      "Meshy text-to-3D로 만든 데스크/디스플레이용 collectible decor prototype입니다. Cozy room starter의 소품 밀도를 보강합니다.",
+    brand: "DeskteriorOnline / Meshy",
+    price: null,
+    options: "180x120x150 mm · text-to-3D prototype · shelf/desktop decor",
+    externalUrl: "https://docs.meshy.ai/en/api/text-to-3d",
+    qualityScore: 0.76,
+    dimensionsMm: { width: 180, depth: 120, height: 150 },
+    finishColor: "Pastel multicolor",
+    finishMaterial: "PBR glossy vinyl plastic",
+    detailNotes:
+      "Generated on 2026-05-16 with Meshy text-to-3D preview/refine. Prototype-only until human visual QA and license/release review are complete.",
+    scaleLocked: true,
+    source: {
+      kind: "deskterioronline_blender",
+      name: "DeskteriorOnline Meshy text-to-3D decor prototype",
+      path: "assets/references/meshy-room-decor/meshy-room-decor-report.json",
+      url: "https://docs.meshy.ai/en/api/text-to-3d"
+    },
+    license: {
+      spdx: "LicenseRef-Meshy-Text-To-3D-Prototype",
+      label: "Meshy-generated prototype for DeskteriorOnline visual QA",
+      requiresAttribution: false
+    },
+    pivot: {
+      x: "center",
+      y: "floor",
+      z: "center"
+    },
+    collisionProxy: {
+      kind: "box",
+      derivesFrom: "dimensionsMm"
+    },
+    textureSet: {
+      workflow: "pbr_metallic_roughness",
+      authored: "image_based",
+      ktx2Ready: false
+    },
+    lodProfile: {
+      strategy: "single_mesh",
+      levelCount: 1,
+      maxDrawCalls: 8,
+      maxTriangleCount: 100000
+    }
+  }
+] as const;
+
 function isSupportedCatalogAssetId(assetId: string) {
   const normalized = assetId.trim();
   return (
@@ -1131,6 +1413,8 @@ function normalizeCatalogItem(item: unknown): LibraryCatalogItem | null {
     options: normalizeCatalogText(record.options) ?? normalizeCatalogText(record.variant),
     externalUrl: normalizeCatalogUrl(record.externalUrl) ?? normalizeCatalogUrl(record.productUrl),
     brand: normalizeCatalogText(record.brand) ?? normalizeCatalogText(record.vendor),
+    qualityScore:
+      typeof record.qualityScore === "number" && Number.isFinite(record.qualityScore) ? record.qualityScore : null,
     dimensionsMm,
     finishColor: normalizeCatalogText(record.finishColor),
     finishMaterial: normalizeCatalogText(record.finishMaterial),
@@ -1158,6 +1442,7 @@ function normalizeCatalogItem(item: unknown): LibraryCatalogItem | null {
 export const DEFAULT_CATALOG: LibraryCatalogItem[] = [
   ...DEFAULT_CATALOG_SOURCE,
   ...COMMERCIAL_CATALOG_VARIANTS,
+  ...MESHY_ROOM_DECOR_CATALOG_VARIANTS,
   ...SO_ONG_VIDEO_CATALOG_VARIANTS
 ]
   .map((item) => normalizeCatalogItem(item))

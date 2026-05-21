@@ -1,0 +1,47 @@
+{
+  "asset": "p2s_premium_workstation_hero_v3",
+  "status": "standalone-generated-review-required",
+  "sourceBlend": "assets/blender/deskterior/p2s_premium_workstation_hero_v3.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_premium_workstation_hero_v3/p2s_premium_workstation_hero_v3.glb",
+  "previewImages": [
+    "assets/references/blender-authored/premium-workstation-hero/v3-previews/workstation-v3-isometric.png",
+    "assets/references/blender-authored/premium-workstation-hero/v3-previews/workstation-v3-pc-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v3-previews/workstation-v3-tabletop-closeup.png"
+  ],
+  "metrics": {
+    "nodes": 377,
+    "meshes": 372,
+    "materials": 44,
+    "triangles": 94684,
+    "textureImages": 2,
+    "glbBytes": 4906364
+  },
+  "iterationNotes": {
+    "v2RejectedBecause": [
+      "magenta fallback-like large planes",
+      "over-saturated toy-like PC front and desk mat",
+      "screen texture too dominant"
+    ],
+    "v3Changes": [
+      "removed generated texture materials from large visible planes",
+      "switched PC front to satin white frame plus graphite mesh insert",
+      "changed desk mat to charcoal with geometry stitch detail",
+      "replaced screen texture dependence with explicit muted UI geometry"
+    ]
+  },
+  "stillRequires": [
+    "human visual approval against references",
+    "true UV atlas and authored PBR texture pass",
+    "baked AO/GI/lightmap",
+    "LOD/proxy/collider/support package",
+    "scene integration only after standalone approval"
+  ],
+  "postExportAudit": {
+    "blendReopenPath": "assets/blender/deskterior/p2s_premium_workstation_hero_v3.blend",
+    "meshOrCurveObjects": 372,
+    "materialsAfterReopen": 40,
+    "textureImagesAfterReopen": 2,
+    "unmaterialedObjects": 0,
+    "missingExternalImages": 0
+  }
+}

@@ -1,9 +1,9 @@
 {
   "scene": "so-ong-space-2026-05-desk-setup",
-  "target": "Reference-still matching prototype render with product-specific hero silhouettes, lavender wall wash, white desktop, and primary visible SKU placement.",
+  "target": "Reference-still visible-crop prototype render with product-specific hero silhouettes, lavender wall wash, white desktop, and only the products visible in the supplied crop placed in the scene.",
   "legalBoundary": "private/prototype only; not release eligible without licensed CAD/material references.",
-  "assetCount": 28,
-  "heroAssetCount": 8,
+  "assetCount": 17,
+  "heroAssetCount": 10,
   "minimumHeroSignatureScore": 1.0,
   "assets": [
     {
@@ -95,11 +95,27 @@
         "height": 0.115
       },
       "objectCount": 14,
-      "modelSizeBytes": 461888,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
+      "modelSizeBytes": 448408,
+      "referenceTarget": "Small white IVY robot planter at the right of the portable display with black face, two eyes, smile, rim, and green plant leaves.",
+      "requiredSignatureFragments": [
+        "rounded_ai_planter",
+        "planter_rim",
+        "black_face_display",
+        "left_eye",
+        "right_eye",
+        "ivy_smile",
+        "ivy_leaf"
+      ],
+      "matchedSignatureFragments": [
+        "rounded_ai_planter",
+        "planter_rim",
+        "black_face_display",
+        "left_eye",
+        "right_eye",
+        "ivy_smile",
+        "ivy_leaf"
+      ],
+      "signatureScore": 1.0,
       "prototypeStatus": "private_reference_rebuild_v2"
     },
     {
@@ -112,7 +128,7 @@
         "height": 0.13
       },
       "objectCount": 10,
-      "modelSizeBytes": 283460,
+      "modelSizeBytes": 296812,
       "referenceTarget": "listed/reference-only asset",
       "requiredSignatureFragments": [],
       "matchedSignatureFragments": [],
@@ -185,125 +201,6 @@
       "prototypeStatus": "private_reference_rebuild_v2"
     },
     {
-      "assetKey": "p2s_video_so_ong_ecolor_power_strip",
-      "label": "Ecolor",
-      "kind": "power_strip",
-      "dimensionsM": {
-        "width": 0.27,
-        "depth": 0.08,
-        "height": 0.058
-      },
-      "objectCount": 11,
-      "modelSizeBytes": 139520,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_hue_infuse_ceiling_light",
-      "label": "Hue Infuse",
-      "kind": "ceiling_light",
-      "dimensionsM": {
-        "width": 0.381,
-        "depth": 0.381,
-        "height": 0.09
-      },
-      "objectCount": 4,
-      "modelSizeBytes": 156148,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_movlabs_stand",
-      "label": "Movlabs stand",
-      "kind": "mobile_stand",
-      "dimensionsM": {
-        "width": 0.52,
-        "depth": 0.52,
-        "height": 1.35
-      },
-      "objectCount": 12,
-      "modelSizeBytes": 433676,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_s32dg800_monitor",
-      "label": "S32DG800",
-      "kind": "monitor_32",
-      "dimensionsM": {
-        "width": 0.72,
-        "depth": 0.264,
-        "height": 0.585
-      },
-      "objectCount": 14,
-      "modelSizeBytes": 219004,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_bookshelf_planter",
-      "label": "Bookshelf plant",
-      "kind": "bookshelf_plant",
-      "dimensionsM": {
-        "width": 0.11,
-        "depth": 0.11,
-        "height": 0.19
-      },
-      "objectCount": 23,
-      "modelSizeBytes": 340408,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_arachne_wood_blind",
-      "label": "Arachne blind",
-      "kind": "wood_blind",
-      "dimensionsM": {
-        "width": 1.2,
-        "depth": 0.04,
-        "height": 1.0
-      },
-      "objectCount": 27,
-      "modelSizeBytes": 358812,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_jekca_cat_block",
-      "label": "JEKCA cat",
-      "kind": "block_cat",
-      "dimensionsM": {
-        "width": 0.22,
-        "depth": 0.105,
-        "height": 0.26
-      },
-      "objectCount": 10,
-      "modelSizeBytes": 144696,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
       "assetKey": "p2s_video_so_ong_gravastar_mars_pro",
       "label": "Mars Pro",
       "kind": "mars_pro",
@@ -314,44 +211,26 @@
       },
       "objectCount": 23,
       "modelSizeBytes": 604992,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_plant_guardian_spray",
-      "label": "Plant spray",
-      "kind": "spray",
-      "dimensionsM": {
-        "width": 0.07,
-        "depth": 0.055,
-        "height": 0.21
-      },
-      "objectCount": 6,
-      "modelSizeBytes": 80076,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_sanro_switch_cover",
-      "label": "SANRO cover",
-      "kind": "switch_cover",
-      "dimensionsM": {
-        "width": 0.12,
-        "depth": 0.015,
-        "height": 0.12
-      },
-      "objectCount": 5,
-      "modelSizeBytes": 93676,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
+      "referenceTarget": "Small black GravaStar Mars Pro speaker in front of the left speaker, with robot shell, yellow driver core, tripod feet, and side pods.",
+      "requiredSignatureFragments": [
+        "mars_spherical_body",
+        "mars_outer_cage",
+        "mars_flat_front_plate",
+        "speaker_core_ring",
+        "speaker_yellow_core",
+        "tripod_leg",
+        "mars_side_pod"
+      ],
+      "matchedSignatureFragments": [
+        "mars_spherical_body",
+        "mars_outer_cage",
+        "mars_flat_front_plate",
+        "speaker_core_ring",
+        "speaker_yellow_core",
+        "tripod_leg",
+        "mars_side_pod"
+      ],
+      "signatureScore": 1.0,
       "prototypeStatus": "private_reference_rebuild_v2"
     },
     {
@@ -382,10 +261,24 @@
       },
       "objectCount": 10,
       "modelSizeBytes": 172284,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
+      "referenceTarget": "White Arturia MiniFuse 2 under the portable monitor with black front panel, two combo inputs, silver knobs, blue LEDs, and front label.",
+      "requiredSignatureFragments": [
+        "minifuse_body",
+        "minifuse_dark_front_panel",
+        "combo_input",
+        "silver_knob",
+        "blue_status_led",
+        "arturia_mark"
+      ],
+      "matchedSignatureFragments": [
+        "minifuse_body",
+        "minifuse_dark_front_panel",
+        "combo_input",
+        "silver_knob",
+        "blue_status_led",
+        "arturia_mark"
+      ],
+      "signatureScore": 1.0,
       "prototypeStatus": "private_reference_rebuild_v2"
     },
     {
@@ -489,35 +382,6 @@
       "prototypeStatus": "private_reference_rebuild_v2"
     },
     {
-      "assetKey": "p2s_video_so_ong_elgato_stream_deck_neo",
-      "label": "Stream Deck Neo",
-      "kind": "stream_deck_neo",
-      "dimensionsM": {
-        "width": 0.107,
-        "depth": 0.078,
-        "height": 0.026
-      },
-      "objectCount": 23,
-      "modelSizeBytes": 306516,
-      "referenceTarget": "White wedge controller with black top face, eight LCD keys, infobar, and fixed white cable.",
-      "requiredSignatureFragments": [
-        "stream_deck_wedge_body",
-        "stream_deck_black_top_face",
-        "stream_deck_lcd_key",
-        "stream_deck_infobar",
-        "stream_deck_fixed_usb_cable"
-      ],
-      "matchedSignatureFragments": [
-        "stream_deck_wedge_body",
-        "stream_deck_black_top_face",
-        "stream_deck_lcd_key",
-        "stream_deck_infobar",
-        "stream_deck_fixed_usb_cable"
-      ],
-      "signatureScore": 1.0,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
       "assetKey": "p2s_video_so_ong_reproducer_epic5",
       "label": "Epic 5",
       "kind": "epic5_speaker",
@@ -527,7 +391,7 @@
         "height": 0.31
       },
       "objectCount": 15,
-      "modelSizeBytes": 446260,
+      "modelSizeBytes": 432876,
       "referenceTarget": "White studio monitor with black recessed baffle, small tweeter, large woofer, blue status LED, and black spike feet.",
       "requiredSignatureFragments": [
         "epic5_tapered_white_cabinet",
@@ -583,23 +447,6 @@
         "hyte_corner_seam_black"
       ],
       "signatureScore": 1.0,
-      "prototypeStatus": "private_reference_rebuild_v2"
-    },
-    {
-      "assetKey": "p2s_video_so_ong_atom_60th_figure",
-      "label": "Atom 60th",
-      "kind": "atom_figure",
-      "dimensionsM": {
-        "width": 0.16,
-        "depth": 0.12,
-        "height": 0.28
-      },
-      "objectCount": 18,
-      "modelSizeBytes": 708640,
-      "referenceTarget": "listed/reference-only asset",
-      "requiredSignatureFragments": [],
-      "matchedSignatureFragments": [],
-      "signatureScore": null,
       "prototypeStatus": "private_reference_rebuild_v2"
     }
   ]

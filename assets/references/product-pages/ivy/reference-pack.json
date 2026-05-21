@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:04:20.590Z",
+  "assetKey": "ivy",
+  "sourceUrl": "https://ko.aliexpress.com/item/1005007011637292.html?aff_fcid=8b616dece0214e9599508b59c5eedd64-1778673860040-03535-_oBRDB0x&tt=CPS_NORMAL&aff_fsk=_oBRDB0x&aff_platform=shareComponent-detail&sk=_oBRDB0x&aff_trace_key=8b616dece0214e9599508b59c5eedd64-1778673860040-03535-_oBRDB0x&terminal_id=767f0d0dab224259b3b10fc88b63d9de&afSmartRedirect=y&gatewayAdapt=glo2kor",
+  "product": {
+    "title": "투야 1세대 아이비 스마트 플랜터, 49가지 풍부한 표현으로 끝없는 재미, 7개의 스마트 센서, AI 칩으로 식물 재배가 쉽고 재미있게 진행됩니다. - AliExpress 13",
+    "sku": null,
+    "manufacturer": "투야 1세대 아이비 스마트 플랜터, 49가지 풍부한 표현으로 끝없는 재미, 7개의 스마트 센서, AI 칩으로 식물 재배가 쉽고 재미있게 진행됩니다. - AliExpress 13",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": [
+      2010,
+      2025
+    ]
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef--1-49-7-AI-AliExpress-13-Prototype-Reference",
+      "label": "투야 1세대 아이비 스마트 플랜터, 49가지 풍부한 표현으로 끝없는 재미, 7개의 스마트 센서, AI 칩으로 식물 재배가 쉽고 재미있게 진행됩니다. - AliExpress 13 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "투야 1세대 아이비 스마트 플랜터, 49가지 풍부한 표현으로 끝없는 재미, 7개의 스마트 센서, AI 칩으로 식물 재배가 쉽고 재미있게 진행됩니다. - AliExpress 13",
+    "canonicalProductUrl": "https://ko.aliexpress.com/item/1005007011637292.html?aff_fcid=8b616dece0214e9599508b59c5eedd64-1778673860040-03535-_oBRDB0x&tt=CPS_NORMAL&aff_fsk=_oBRDB0x&aff_platform=shareComponent-detail&sk=_oBRDB0x&aff_trace_key=8b616dece0214e9599508b59c5eedd64-1778673860040-03535-_oBRDB0x&terminal_id=767f0d0dab224259b3b10fc88b63d9de&afSmartRedirect=y&gatewayAdapt=glo2kor",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://ae01.alicdn.com/kf/Sa3c58dda3e84425d8a009573fcfc2237l.jpg",
+        "required": false,
+        "license": "LicenseRef--1-49-7-AI-AliExpress-13-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://ko.aliexpress.com/item/1005007011637292.html?aff_fcid=8b616dece0214e9599508b59c5eedd64-1778673860040-03535-_oBRDB0x&tt=CPS_NORMAL&aff_fsk=_oBRDB0x&aff_platform=shareComponent-detail&sk=_oBRDB0x&aff_trace_key=8b616dece0214e9599508b59c5eedd64-1778673860040-03535-_oBRDB0x&terminal_id=767f0d0dab224259b3b10fc88b63d9de&afSmartRedirect=y&gatewayAdapt=glo2kor",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef--1-49-7-AI-AliExpress-13-Prototype-Reference",
+      "label": "투야 1세대 아이비 스마트 플랜터, 49가지 풍부한 표현으로 끝없는 재미, 7개의 스마트 센서, AI 칩으로 식물 재배가 쉽고 재미있게 진행됩니다. - AliExpress 13 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://ae01.alicdn.com/kf/Sa3c58dda3e84425d8a009573fcfc2237l.jpg",
+      "view": "front",
+      "source": "open_graph",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "투야 1세대 아이비 스마트 플랜터, 49가지 풍부한 표현으로 끝없는 재미, 7개의 스마트 센서, AI 칩으로 식물 재배가 쉽고 재미있게 진행됩니다. - AliExpress 13",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "투야 1세대 아이비 스마트 플랜터, 49가지 풍부한 표현으로 끝없는 재미, 7개의 스마트 센서, AI 칩으로 식물 재배가 쉽고 재미있게 진행됩니다. - AliExpress 13",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "투야 1세대 아이비 스마트 플랜터, 49가지 풍부한 표현으로 끝없는 재미, 7개의 스마트 센서, AI 칩으로 식물 재배가 쉽고 재미있게 진행됩니다. - AliExpress 13",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 0,
+    "selectedImageCount": 1,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

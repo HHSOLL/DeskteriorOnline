@@ -84,10 +84,38 @@ function main() {
     );
 
     if (testCase.interactionMode === "preview" || testCase.viewMode === "builder-preview") {
-      assert.equal(quality.enableContactShadows, false, "builder preview must not render contact shadow planes");
-      assert.equal(quality.enableShadows, false, "builder preview must keep dynamic shadow work disabled");
+      assert.equal(quality.enableContactShadows, true, "builder preview should render contact shadows for furnished diorama legibility");
+      assert.equal(quality.enableShadows, true, "builder preview should keep lightweight dynamic shadows for furnished room quality");
       assert.equal(quality.enablePostEffects, false, "builder preview must keep heavy post effects disabled");
-      assert.equal(quality.dpr[1] <= 1.15, true, "builder preview DPR ceiling should stay lightweight");
+      assert.equal(quality.dpr[1] <= 1.24, true, "builder preview DPR ceiling should stay bounded");
+      assert.deepEqual(
+        quality.contactShadowScale,
+        [22, 20],
+        "builder preview should use a bounded diorama contact shadow footprint"
+      );
+      assert.equal(quality.contactShadowFar <= 8, true, "builder preview contact shadow capture should stay bounded");
+      assert.equal(
+        quality.contactShadowColor,
+        "#21160f",
+        "builder preview contact shadow should use a warm baked-style tint"
+      );
+    }
+
+    if (testCase.interactionMode === "editor" && testCase.viewMode === "top") {
+      assert.equal(
+        quality.enableContactShadows,
+        true,
+        `${testCase.label}: editor top-view should keep lightweight contact grounding`
+      );
+      assert.equal(
+        quality.enablePostEffects,
+        false,
+        `${testCase.label}: editor top-view should keep post effects disabled`
+      );
+    }
+
+    if (testCase.interactionMode === "viewer-shared" && testCase.viewMode === "top") {
+      assert.equal(quality.enableContactShadows, false, "shared top viewer should keep contact shadows disabled");
     }
 
     return {

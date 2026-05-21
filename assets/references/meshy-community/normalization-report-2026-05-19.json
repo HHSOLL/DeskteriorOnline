@@ -1,0 +1,416 @@
+{
+  "schemaVersion": "deskterior-meshy-community-normalization-report-v1",
+  "sourceRegistry": "assets/references/meshy-community/qa-registry-2026-05-18.json",
+  "outputRoot": "assets/runtime-candidates/meshy-community",
+  "candidateCount": 4,
+  "errorCount": 0,
+  "candidates": [
+    {
+      "schemaVersion": "deskterior-runtime-candidate-v1",
+      "assetPack": "meshy-community-cc0-selected",
+      "slug": "chair-rodiondbulatoff",
+      "label": "Chair Rodiondbulatoff",
+      "source": {
+        "kind": "meshy_community_public_cc0",
+        "sourceGlb": "assets/sources/meshy-community/selected-glb/chair-rodiondbulatoff.glb",
+        "pageUrl": "https://www.meshy.ai/3d-models/019676c5-3501-72f7-b7de-88f2e8a0b264",
+        "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019676c5-3501-72f7-b7de-88f2e8a0b264",
+        "license": "CC0-1.0"
+      },
+      "files": {
+        "normalizedGlb": "assets/runtime-candidates/meshy-community/chair-rodiondbulatoff/chair-rodiondbulatoff.normalized.glb",
+        "thumbnail": "assets/runtime-candidates/meshy-community/chair-rodiondbulatoff/chair-rodiondbulatoff.thumbnail.webp",
+        "sidecar": "assets/runtime-candidates/meshy-community/chair-rodiondbulatoff/chair-rodiondbulatoff.runtime-candidate.json"
+      },
+      "dimensionsMm": {
+        "width": 867.551,
+        "depth": 905.449,
+        "height": 1993.955
+      },
+      "scaleLocked": true,
+      "contractMetadata": {
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "collisionProxy": {
+          "kind": "box",
+          "derivesFrom": "dimensionsMm"
+        },
+        "textureSet": {
+          "workflow": "pbr_metallic_roughness",
+          "authored": "image_based",
+          "ktx2Ready": false
+        },
+        "lodProfile": {
+          "strategy": "single_mesh",
+          "levelCount": 1,
+          "maxDrawCalls": 1,
+          "maxTriangleCount": 9997
+        }
+      },
+      "qa": {
+        "status": "candidate_requires_human_visual_review",
+        "warnings": [],
+        "beforeDimensionsMm": {
+          "width": 867.551,
+          "depth": 905.449,
+          "height": 1993.955
+        },
+        "afterDimensionsMm": {
+          "width": 867.551,
+          "depth": 905.449,
+          "height": 1993.955
+        },
+        "triangles": 9997,
+        "vertices": 9330,
+        "materials": 1,
+        "images": [
+          {
+            "name": "Image_0",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Viewer Node",
+            "width": 256,
+            "height": 256
+          }
+        ],
+        "normalizedExportBytesBeforeMeshopt": 1448572,
+        "thumbnailBytes": 4878
+      }
+    },
+    {
+      "schemaVersion": "deskterior-runtime-candidate-v1",
+      "assetPack": "meshy-community-cc0-selected",
+      "slug": "rustic-table",
+      "label": "Rustic Table",
+      "source": {
+        "kind": "meshy_community_public_cc0",
+        "sourceGlb": "assets/sources/meshy-community/selected-glb/rustic-table.glb",
+        "pageUrl": "https://www.meshy.ai/3d-models/019b215f-1b40-75b2-b039-bfbca510845b",
+        "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019b215c-907c-76e5-adf6-c115cfd71a1d",
+        "license": "CC0-1.0"
+      },
+      "files": {
+        "normalizedGlb": "assets/runtime-candidates/meshy-community/rustic-table/rustic-table.normalized.glb",
+        "thumbnail": "assets/runtime-candidates/meshy-community/rustic-table/rustic-table.thumbnail.webp",
+        "sidecar": "assets/runtime-candidates/meshy-community/rustic-table/rustic-table.runtime-candidate.json"
+      },
+      "dimensionsMm": {
+        "width": 1838.231,
+        "depth": 1916.871,
+        "height": 852.607
+      },
+      "scaleLocked": true,
+      "contractMetadata": {
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "collisionProxy": {
+          "kind": "box",
+          "derivesFrom": "dimensionsMm"
+        },
+        "textureSet": {
+          "workflow": "pbr_metallic_roughness",
+          "authored": "image_based",
+          "ktx2Ready": false
+        },
+        "lodProfile": {
+          "strategy": "single_mesh",
+          "levelCount": 1,
+          "maxDrawCalls": 1,
+          "maxTriangleCount": 9998
+        }
+      },
+      "qa": {
+        "status": "candidate_requires_human_visual_review",
+        "warnings": [],
+        "beforeDimensionsMm": {
+          "width": 1838.231,
+          "depth": 1916.871,
+          "height": 852.607
+        },
+        "afterDimensionsMm": {
+          "width": 1838.231,
+          "depth": 1916.871,
+          "height": 852.607
+        },
+        "triangles": 9998,
+        "vertices": 9221,
+        "materials": 1,
+        "images": [
+          {
+            "name": "Image_0",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_0.001",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_1",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_2",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Viewer Node",
+            "width": 256,
+            "height": 256
+          }
+        ],
+        "normalizedExportBytesBeforeMeshopt": 7957364,
+        "thumbnailBytes": 8498
+      }
+    },
+    {
+      "schemaVersion": "deskterior-runtime-candidate-v1",
+      "assetPack": "meshy-community-cc0-selected",
+      "slug": "rack-golden-arch",
+      "label": "Rack Golden Arch",
+      "source": {
+        "kind": "meshy_community_public_cc0",
+        "sourceGlb": "assets/sources/meshy-community/selected-glb/rack-golden-arch.glb",
+        "pageUrl": "https://www.meshy.ai/3d-models/019b38d7-2c17-7e67-a949-17a00786dcdc",
+        "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019b38cf-8c16-70cf-9482-bb7c24237f5c",
+        "license": "CC0-1.0"
+      },
+      "files": {
+        "normalizedGlb": "assets/runtime-candidates/meshy-community/rack-golden-arch/rack-golden-arch.normalized.glb",
+        "thumbnail": "assets/runtime-candidates/meshy-community/rack-golden-arch/rack-golden-arch.thumbnail.webp",
+        "sidecar": "assets/runtime-candidates/meshy-community/rack-golden-arch/rack-golden-arch.runtime-candidate.json"
+      },
+      "dimensionsMm": {
+        "width": 1916.446,
+        "depth": 992.28,
+        "height": 1800.096
+      },
+      "scaleLocked": true,
+      "contractMetadata": {
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "collisionProxy": {
+          "kind": "box",
+          "derivesFrom": "dimensionsMm"
+        },
+        "textureSet": {
+          "workflow": "pbr_metallic_roughness",
+          "authored": "image_based",
+          "ktx2Ready": false
+        },
+        "lodProfile": {
+          "strategy": "single_mesh",
+          "levelCount": 1,
+          "maxDrawCalls": 1,
+          "maxTriangleCount": 10000
+        }
+      },
+      "qa": {
+        "status": "candidate_requires_human_visual_review",
+        "warnings": [],
+        "beforeDimensionsMm": {
+          "width": 1916.446,
+          "depth": 992.28,
+          "height": 1800.096
+        },
+        "afterDimensionsMm": {
+          "width": 1916.446,
+          "depth": 992.28,
+          "height": 1800.096
+        },
+        "triangles": 10000,
+        "vertices": 7717,
+        "materials": 1,
+        "images": [
+          {
+            "name": "Baked_BaseColor",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Baked_MetallicRoughness",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Baked_Normal",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_0",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_0.001",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_1",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_2",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Viewer Node",
+            "width": 256,
+            "height": 256
+          }
+        ],
+        "normalizedExportBytesBeforeMeshopt": 6479128,
+        "thumbnailBytes": 11440
+      }
+    },
+    {
+      "schemaVersion": "deskterior-runtime-candidate-v1",
+      "assetPack": "meshy-community-cc0-selected",
+      "slug": "colorful-brick-wall",
+      "label": "Colorful Brick Wall",
+      "source": {
+        "kind": "meshy_community_public_cc0",
+        "sourceGlb": "assets/sources/meshy-community/selected-glb/colorful-brick-wall.glb",
+        "pageUrl": "https://www.meshy.ai/3d-models/019adb1c-3540-7272-86c5-d4d05a56ffbc",
+        "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019adb19-b5f2-774d-84dc-d032d1031d5e",
+        "license": "CC0-1.0"
+      },
+      "files": {
+        "normalizedGlb": "assets/runtime-candidates/meshy-community/colorful-brick-wall/colorful-brick-wall.normalized.glb",
+        "thumbnail": "assets/runtime-candidates/meshy-community/colorful-brick-wall/colorful-brick-wall.thumbnail.webp",
+        "sidecar": "assets/runtime-candidates/meshy-community/colorful-brick-wall/colorful-brick-wall.runtime-candidate.json"
+      },
+      "dimensionsMm": {
+        "width": 1893.859,
+        "depth": 307.578,
+        "height": 1912.407
+      },
+      "scaleLocked": true,
+      "contractMetadata": {
+        "pivot": {
+          "x": "center",
+          "y": "floor",
+          "z": "center"
+        },
+        "collisionProxy": {
+          "kind": "box",
+          "derivesFrom": "dimensionsMm"
+        },
+        "textureSet": {
+          "workflow": "pbr_metallic_roughness",
+          "authored": "image_based",
+          "ktx2Ready": false
+        },
+        "lodProfile": {
+          "strategy": "single_mesh",
+          "levelCount": 1,
+          "maxDrawCalls": 1,
+          "maxTriangleCount": 21035
+        }
+      },
+      "qa": {
+        "status": "candidate_requires_human_visual_review",
+        "warnings": [
+          "TRIANGLE_COUNT_OVER_REVIEW_BUDGET"
+        ],
+        "beforeDimensionsMm": {
+          "width": 1893.859,
+          "depth": 307.578,
+          "height": 1912.407
+        },
+        "afterDimensionsMm": {
+          "width": 1893.859,
+          "depth": 307.578,
+          "height": 1912.407
+        },
+        "triangles": 21035,
+        "vertices": 14384,
+        "materials": 1,
+        "images": [
+          {
+            "name": "Baked_BaseColor",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Baked_MetallicRoughness",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Baked_Normal",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_0",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_0.001",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_0.002",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_1",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_1.001",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_2",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Image_2.001",
+            "width": 2048,
+            "height": 2048
+          },
+          {
+            "name": "Viewer Node",
+            "width": 256,
+            "height": 256
+          }
+        ],
+        "normalizedExportBytesBeforeMeshopt": 2031160,
+        "thumbnailBytes": 15196
+      }
+    }
+  ],
+  "errors": [],
+  "promotionStatus": "not-published",
+  "nextRequiredChecks": [
+    "Run glTF Transform meshopt/dedup/prune on normalized outputs.",
+    "Review thumbnails and final room screenshot for visual fit.",
+    "Create production catalog metadata only after human QA accepts style, scale, and material response."
+  ]
+}

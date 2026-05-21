@@ -1,0 +1,39 @@
+{
+  "assetKey": "p2s_abko_ar108g_sage_green_keyboard_v1",
+  "reviewDate": "2026-05-21",
+  "productUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1297630&BigDivNo=8&MediumDivNo=1018&DivNo=4425",
+  "referenceImages": [
+    "https://image3.compuzone.co.kr/img/product_img/2025/1117/1297630/1297630_600.jpg",
+    "https://image3.compuzone.co.kr/img/product_img/2025/1117/1297630/1297630_2_600.jpg",
+    "https://image3.compuzone.co.kr/img/product_img/2025/1117/1297630/1297630_3_600.jpg",
+    "https://image3.compuzone.co.kr/img/product_img/2025/1117/1297630/1297630_4_600.jpg"
+  ],
+  "referenceSummary": {
+    "title": "[ABKO] 유,무선,블루투스 기계식, 앱코 AR108G 알루미늄 [세이지 그린]개구리",
+    "spec": "유선/무선/블루투스, 키압 50G, 기계식(청축), Type-C, RGB LED 백라이트",
+    "observedVisualFeatures": [
+      "full-size 108-key layout with separate function/nav/arrow/numpad clusters",
+      "cream/champagne rounded aluminum chassis",
+      "sage green modifier keycaps and coral-pink accent keycaps",
+      "low front RGB lightbar",
+      "underside rubber feet, fold-out tilt legs, receiver bay, mode slider"
+    ]
+  },
+  "qualityTargets": [
+    "replace the old exposed-switch demo with a product-specific full-size keyboard silhouette",
+    "close-up keycap proportions should use tapered keycap geometry rather than flat cubes",
+    "procedural keycap color map and raised legend geometry should keep the sage/cream/coral ABKO AR108G identity visible without relying on a flat product-photo decal",
+    "runtime press targets should cover actual keys rather than floating exposed switch samples",
+    "asset remains private/prototype until manufacturer/license clearance"
+  ],
+  "knownGaps": [
+    "exact official dimensions were not available from the product page HTML; dimensions are inferred from full-size keyboard norms and reference proportions",
+    "top legends are procedural raised text rather than licensed production UV decals, so exact font/spacing is still approximate",
+    "brand/model markings are prototype metadata and must be disabled or licensed before public catalog release",
+    "sound is still WebAudio synthesized until recorded switch samples are licensed"
+  ],
+  "files": {
+    "glb": "apps/web/public/assets/models/p2s_abko_ar108g_sage_green_keyboard_v1/p2s_abko_ar108g_sage_green_keyboard_v1.glb",
+    "runtimePackage": "apps/web/public/assets/models/p2s_abko_ar108g_sage_green_keyboard_v1/runtime-package.json"
+  }
+}

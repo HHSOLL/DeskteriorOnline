@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:43.702Z",
+  "assetKey": "square1",
+  "sourceUrl": "https://store.ohou.se/goods/3145460?airbridge_referrer=airbridge%3Dtrue%26client_id%3Df6180a7a-b92a-4f7e-bddf-b56e90ef6287%26event_uuid%3Df79396db-ceb1-48b2-bc32-289f119434fa%26referrer_timestamp%3D1778673822983%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D1878589%26ad_creative%3D7681%26content%3Dproduction_3145460%26term%3D20241219%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20241219&utm_content=production_3145460&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20241219&ad_creative=7681&ad_group=1878589&content=production_3145460&deeplink_url=ohouseapp%3A%2F%2Fohou.se%2Fproductions%2F3145460%2Fselling&fallback_desktop=https%3A%2F%2Fohou.se%2Fproductions%2F3145460%2Fselling",
+  "product": {
+    "title": "Square1 아볼트x마르티넬리루체 콜라보 (케이블 1.8m, 콘센트3구+C타입 2구)",
+    "sku": null,
+    "manufacturer": "Square1 아볼트x마르티넬리루체 콜라보 (케이블 1.8m, 콘센트3구+C타입 2구)",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": null
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-Square1-x-1-8m-3-C-2--Prototype-Reference",
+      "label": "Square1 아볼트x마르티넬리루체 콜라보 (케이블 1.8m, 콘센트3구+C타입 2구) public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "Square1 아볼트x마르티넬리루체 콜라보 (케이블 1.8m, 콘센트3구+C타입 2구)",
+    "canonicalProductUrl": "https://store.ohou.se/goods/3145460?airbridge_referrer=airbridge%3Dtrue%26client_id%3Df6180a7a-b92a-4f7e-bddf-b56e90ef6287%26event_uuid%3Df79396db-ceb1-48b2-bc32-289f119434fa%26referrer_timestamp%3D1778673822983%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D1878589%26ad_creative%3D7681%26content%3Dproduction_3145460%26term%3D20241219%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20241219&utm_content=production_3145460&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20241219&ad_creative=7681&ad_group=1878589&content=production_3145460&deeplink_url=ohouseapp%3A%2F%2Fohou.se%2Fproductions%2F3145460%2Fselling&fallback_desktop=https%3A%2F%2Fohou.se%2Fproductions%2F3145460%2Fselling",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-300964187131968.png?w=720&h=480",
+        "required": false,
+        "license": "LicenseRef-Square1-x-1-8m-3-C-2--Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964412076096.png?w=640&h=640&c=c",
+        "required": false,
+        "license": "LicenseRef-Square1-x-1-8m-3-C-2--Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-300964187131968.png?w=640&h=640&c=c",
+        "required": false,
+        "license": "LicenseRef-Square1-x-1-8m-3-C-2--Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964220616768.png?w=640&h=640&c=c",
+        "required": false,
+        "license": "LicenseRef-Square1-x-1-8m-3-C-2--Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-300964187131968.png?w=72&h=72&c=c",
+        "required": false,
+        "license": "LicenseRef-Square1-x-1-8m-3-C-2--Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://store.ohou.se/goods/3145460?airbridge_referrer=airbridge%3Dtrue%26client_id%3Df6180a7a-b92a-4f7e-bddf-b56e90ef6287%26event_uuid%3Df79396db-ceb1-48b2-bc32-289f119434fa%26referrer_timestamp%3D1778673822983%26channel%3Daffiliate%26campaign%3Dbrand_affiliate%26ad_group%3D1878589%26ad_creative%3D7681%26content%3Dproduction_3145460%26term%3D20241219%26sub_id_2%3Daffiliate%26sub_id_3%3Dinorganic&utm_source=affiliate&utm_campaign=brand_affiliate&utm_term=20241219&utm_content=production_3145460&channel=affiliate&sub_id_2=affiliate&sub_id_3=inorganic&campaign=brand_affiliate&term=20241219&ad_creative=7681&ad_group=1878589&content=production_3145460&deeplink_url=ohouseapp%3A%2F%2Fohou.se%2Fproductions%2F3145460%2Fselling&fallback_desktop=https%3A%2F%2Fohou.se%2Fproductions%2F3145460%2Fselling",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-Square1-x-1-8m-3-C-2--Prototype-Reference",
+      "label": "Square1 아볼트x마르티넬리루체 콜라보 (케이블 1.8m, 콘센트3구+C타입 2구) public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-300964187131968.png?w=720&h=480",
+      "view": "front",
+      "source": "open_graph",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964412076096.png?w=640&h=640&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-300964187131968.png?w=640&h=640&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964220616768.png?w=640&h=640&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-300964187131968.png?w=72&h=72&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964220616768.png?w=72&h=72&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964253802560.png?w=72&h=72&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964280012928.png?w=72&h=72&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964313276544.png?w=72&h=72&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964359856192.png?w=72&h=72&c=c",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "Square1 아볼트x마르티넬리루체 콜라보 (케이블 1.8m, 콘센트3구+C타입 2구)",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "Square1 아볼트x마르티넬리루체 콜라보 (케이블 1.8m, 콘센트3구+C타입 2구)",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "Square1 아볼트x마르티넬리루체 콜라보 (케이블 1.8m, 콘센트3구+C타입 2구)",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 31,
+    "selectedImageCount": 10,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

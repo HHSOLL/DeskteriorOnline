@@ -1,0 +1,188 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:40.141Z",
+  "assetKey": "gravastar",
+  "sourceUrl": "https://www.gravastar.com/products/mars-pro-black?country=US&currency=USD&variant=44328385839349",
+  "product": {
+    "title": "Mars Pro - Black",
+    "sku": null,
+    "manufacturer": "Mars Pro - Black",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": null
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-Mars-Pro-Black-Prototype-Reference",
+      "label": "Mars Pro - Black public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "Mars Pro - Black",
+    "canonicalProductUrl": "https://www.gravastar.com/products/mars-pro-black?country=US&currency=USD&variant=44328385839349",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "http://www.gravastar.com/cdn/shop/files/gravastarmarsprobluetoothspeakerbestdesign.webp?v=1776237811&width=2048",
+        "required": false,
+        "license": "LicenseRef-Mars-Pro-Black-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://www.gravastar.com/cdn/shop/files/gravastarmarsprobluetoothspeakerbestdesign.webp?v=1776237811&width=1200",
+        "required": false,
+        "license": "LicenseRef-Mars-Pro-Black-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://www.gravastar.com/cdn/shop/files/G1.webp?v=1776237811&width=1200",
+        "required": false,
+        "license": "LicenseRef-Mars-Pro-Black-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://www.gravastar.com/cdn/shop/files/1_97b90c3c-1e9e-413f-a994-2f4c538303ad.webp?v=1776237811&width=1500",
+        "required": false,
+        "license": "LicenseRef-Mars-Pro-Black-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://www.gravastar.com/cdn/shop/files/2_52a2e631-9224-473e-8dbe-5d1055e146d2.webp?v=1776237811&width=1500",
+        "required": false,
+        "license": "LicenseRef-Mars-Pro-Black-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://www.gravastar.com/products/mars-pro-black?country=US&currency=USD&variant=44328385839349",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-Mars-Pro-Black-Prototype-Reference",
+      "label": "Mars Pro - Black public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "http://www.gravastar.com/cdn/shop/files/gravastarmarsprobluetoothspeakerbestdesign.webp?v=1776237811&width=2048",
+      "view": "front",
+      "source": "open_graph",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/gravastarmarsprobluetoothspeakerbestdesign.webp?v=1776237811&width=1200",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/G1.webp?v=1776237811&width=1200",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/1_97b90c3c-1e9e-413f-a994-2f4c538303ad.webp?v=1776237811&width=1500",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/2_52a2e631-9224-473e-8dbe-5d1055e146d2.webp?v=1776237811&width=1500",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/3_d1bd732b-74eb-4ed2-a58b-8c0abe95be12.webp?v=1776237811&width=1500",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/6a3f480827c1bd233a25320b219f5a22.webp?v=1776237839&width=1200",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/mars_pro_black2.webp?v=1739866455&width=1500",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/mars_pro_black3.webp?v=1716283152&width=1500",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.gravastar.com/cdn/shop/files/mars_pro_black4.webp?v=1716283152&width=2500",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "Mars Pro - Black",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "Mars Pro - Black",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "Mars Pro - Black",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 46,
+    "selectedImageCount": 10,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

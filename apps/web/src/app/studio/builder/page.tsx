@@ -44,7 +44,14 @@ import {
   builderWallFinishes,
   type BuilderTemplateId
 } from "../../../lib/builder/templates";
-import { buildSeededSceneAssets } from "../../../lib/builder/seeded-assets";
+import {
+  areDefaultWorkspaceFlexClusterIds,
+  buildSeededSceneAssets,
+  DEFAULT_WORKSPACE_FLEX_CLUSTER_IDS,
+  parseWorkspaceFlexClusterIds,
+  serializeWorkspaceFlexClusterIds,
+  type WorkspaceFlexClusterId
+} from "../../../lib/builder/seeded-assets";
 import {
   isFurnishedRoomTemplateId,
   type FurnishedRoomTemplateId,
@@ -58,6 +65,13 @@ import {
   resolveLightingFixtures,
   type LightingFixture
 } from "../../../lib/scene/lighting-layout";
+import { getLightingPreset, type LightingPresetId } from "../../../lib/scene/lighting-presets";
+import {
+  ROOM_MOOD_RECIPES,
+  resolveRoomMoodRecipeApplication,
+  type RoomMoodRecipeApplication,
+  type RoomMoodRecipeId
+} from "../../../lib/scene/room-mood-recipes";
 import type { Opening } from "../../../lib/stores/useSceneStore";
 import { useAuthStore } from "../../../lib/stores/useAuthStore";
 import type { EditorViewMode } from "../../../lib/stores/useEditorStore";
@@ -76,7 +90,9 @@ type RouteOverrides = {
   projectName: string | null;
   seedPreset: TemplateSeedPreset;
   seedTemplateId: FurnishedRoomTemplateId | null;
+  workspaceClusterIds: WorkspaceFlexClusterId[];
   lightingMode: BuilderLightingMode | null;
+  moodRecipeId: RoomMoodRecipeId | null;
   doorStyle: DoorStyle | null;
   windowStyle: WindowStyle | null;
   addSecondaryWindow: boolean | null;
@@ -93,6 +109,7 @@ type BuilderAuthDraft = {
   wallMaterialIndex: number;
   floorMaterialIndex: number;
   lightingMode: BuilderLightingMode;
+  moodRecipeId: RoomMoodRecipeId | null;
   lightingFixtures: LightingFixture[];
   projectName: string;
   projectDescription: string;
@@ -101,6 +118,7 @@ type BuilderAuthDraft = {
   addSecondaryWindow: boolean;
   starterSetPreset: TemplateSeedPreset;
   starterTemplateId: FurnishedRoomTemplateId | null;
+  workspaceClusterIds: WorkspaceFlexClusterId[];
   openings: Opening[];
 };
 
@@ -148,6 +166,24 @@ function parseLightingMode(value: string | null): BuilderLightingMode {
   return "direct";
 }
 
+function parseRoomMoodRecipeId(value: string | null): RoomMoodRecipeId | null {
+  if (ROOM_MOOD_RECIPES.some((recipe) => recipe.id === value)) {
+    return value as RoomMoodRecipeId;
+  }
+  return null;
+}
+
+function getRoomMoodRecipeApplicationById(recipeId: RoomMoodRecipeId | null) {
+  if (!recipeId) return null;
+  const recipe = ROOM_MOOD_RECIPES.find((item) => item.id === recipeId);
+  if (!recipe) return null;
+  return resolveRoomMoodRecipeApplication(recipe);
+}
+
+function resolveBuilderLightingModeForMoodRecipe(lightingPresetId: LightingPresetId): BuilderLightingMode {
+  return lightingPresetId === "soft-evening" ? "indirect" : "direct";
+}
+
 function StudioBuilderPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -166,6 +202,7 @@ function StudioBuilderPageContent() {
   const [wallMaterialIndex, setWallMaterialIndex] = useState(0);
   const [floorMaterialIndex, setFloorMaterialIndex] = useState(0);
   const [lightingMode, setLightingMode] = useState<BuilderLightingMode>("direct");
+  const [moodRecipeId, setMoodRecipeId] = useState<RoomMoodRecipeId | null>(null);
   const [lightingFixtures, setLightingFixtures] = useState<LightingFixture[]>(() =>
     createDefaultDirectLightingFixtures(DEFAULT_LIGHTING_LAYOUT_BOUNDS_MM, 3)
   );
@@ -180,6 +217,9 @@ function StudioBuilderPageContent() {
   const [floorFinishOptions, setFloorFinishOptions] = useState<BuilderFinishOption[]>([...builderFloorFinishes]);
   const [starterSetPreset, setStarterSetPreset] = useState<TemplateSeedPreset>("none");
   const [starterTemplateId, setStarterTemplateId] = useState<FurnishedRoomTemplateId | null>(null);
+  const [workspaceClusterIds, setWorkspaceClusterIds] = useState<WorkspaceFlexClusterId[]>(
+    DEFAULT_WORKSPACE_FLEX_CLUSTER_IDS
+  );
   const [catalogSnapshot, setCatalogSnapshot] = useState(DEFAULT_CATALOG);
   const [pendingOpeningRestore, setPendingOpeningRestore] = useState<Opening[] | null>(null);
   const [authRestoreResolved, setAuthRestoreResolved] = useState(false);
@@ -195,8 +235,10 @@ function StudioBuilderPageContent() {
     projectName: null,
     seedPreset: "none",
     seedTemplateId: null,
+    workspaceClusterIds: DEFAULT_WORKSPACE_FLEX_CLUSTER_IDS,
     doorStyle: null,
     windowStyle: null,
+    moodRecipeId: null,
     addSecondaryWindow: null
   });
 
@@ -214,9 +256,11 @@ function StudioBuilderPageContent() {
     const nextWallMaterialIndex = parseIntegerValue(query.get("wall"));
     const nextFloorMaterialIndex = parseIntegerValue(query.get("floor"));
     const nextLightingMode = parseLightingMode(query.get("lighting"));
+    const nextMoodRecipeId = parseRoomMoodRecipeId(query.get("mood"));
     const nextSeedPreset = parseSeedPreset(query.get("seed"));
     const requestedSeedTemplateId = query.get("scenePreset");
     const nextSeedTemplateId = isFurnishedRoomTemplateId(requestedSeedTemplateId) ? requestedSeedTemplateId : null;
+    const nextWorkspaceClusterIds = parseWorkspaceFlexClusterIds(query.get("clusters"));
     const nextDoorStyle = parseDoorStyle(query.get("doorStyle"));
     const nextWindowStyle = parseWindowStyle(query.get("windowStyle"));
     const nextAddSecondaryWindow = query.get("secondaryWindow") === "1";
@@ -233,6 +277,8 @@ function StudioBuilderPageContent() {
       projectName: nextProjectName,
       seedPreset: nextSeedPreset,
       seedTemplateId: nextSeedTemplateId,
+      workspaceClusterIds: nextWorkspaceClusterIds,
+      moodRecipeId: nextMoodRecipeId,
       doorStyle: nextDoorStyle,
       windowStyle: nextWindowStyle,
       addSecondaryWindow: nextAddSecondaryWindow
@@ -242,6 +288,7 @@ function StudioBuilderPageContent() {
     setStepIndex(nextStepIndex);
     setStarterSetPreset(nextSeedPreset);
     setStarterTemplateId(nextSeedTemplateId);
+    setWorkspaceClusterIds(nextWorkspaceClusterIds);
     setDoorStyle(nextDoorStyle);
     setWindowStyle(nextWindowStyle);
     setAddSecondaryWindow(nextAddSecondaryWindow);
@@ -256,6 +303,7 @@ function StudioBuilderPageContent() {
     if (nextWallMaterialIndex !== null) setWallMaterialIndex(nextWallMaterialIndex);
     if (nextFloorMaterialIndex !== null) setFloorMaterialIndex(nextFloorMaterialIndex);
     setLightingMode(nextLightingMode);
+    setMoodRecipeId(nextMoodRecipeId);
     setProjectName(nextProjectName ?? (nextIntent === "custom" ? "맞춤 공간 디자인" : "새 공간 디자인"));
   }, [searchParams]);
 
@@ -407,6 +455,11 @@ function StudioBuilderPageContent() {
       const restoredSeedPreset = draft.starterSetPreset ? parseSeedPreset(draft.starterSetPreset) : "none";
       const restoredSeedTemplateId =
         draft.starterTemplateId && isFurnishedRoomTemplateId(draft.starterTemplateId) ? draft.starterTemplateId : null;
+      const restoredMoodRecipeId =
+        typeof draft.moodRecipeId === "string" ? parseRoomMoodRecipeId(draft.moodRecipeId) : null;
+      const restoredWorkspaceClusterIds = parseWorkspaceFlexClusterIds(
+        Array.isArray(draft.workspaceClusterIds) ? draft.workspaceClusterIds.join(",") : null
+      );
 
       routeOverridesRef.current = {
         templateId: restoredTemplateId,
@@ -426,6 +479,8 @@ function StudioBuilderPageContent() {
         projectName: typeof draft.projectName === "string" ? draft.projectName : routeOverridesRef.current.projectName,
         seedPreset: restoredSeedPreset,
         seedTemplateId: restoredSeedTemplateId,
+        workspaceClusterIds: restoredWorkspaceClusterIds,
+        moodRecipeId: restoredMoodRecipeId,
         doorStyle: restoredDoorStyle,
         windowStyle: restoredWindowStyle,
         addSecondaryWindow:
@@ -450,6 +505,7 @@ function StudioBuilderPageContent() {
       if (typeof draft.wallMaterialIndex === "number") setWallMaterialIndex(draft.wallMaterialIndex);
       if (typeof draft.floorMaterialIndex === "number") setFloorMaterialIndex(draft.floorMaterialIndex);
       if (draft.lightingMode) setLightingMode(parseLightingMode(draft.lightingMode));
+      setMoodRecipeId(restoredMoodRecipeId);
       if (Array.isArray(draft.lightingFixtures)) {
         setLightingFixtures(draft.lightingFixtures);
       }
@@ -459,6 +515,7 @@ function StudioBuilderPageContent() {
       if (restoredWindowStyle) setWindowStyle(restoredWindowStyle);
       if (typeof draft.addSecondaryWindow === "boolean") setAddSecondaryWindow(draft.addSecondaryWindow);
       setStarterSetPreset(restoredSeedPreset);
+      setWorkspaceClusterIds(restoredWorkspaceClusterIds);
       if (restoredSeedTemplateId) {
         setStarterTemplateId(restoredSeedTemplateId);
       }
@@ -515,15 +572,37 @@ function StudioBuilderPageContent() {
     () => computeLightingBoundsMm(scene.walls, scene.scale),
     [scene.scale, scene.walls]
   );
+  const activeRoomMoodRecipeApplication = useMemo(
+    () => getRoomMoodRecipeApplicationById(moodRecipeId),
+    [moodRecipeId]
+  );
+  const builderLightingPresetSettings = useMemo(() => {
+    if (!activeRoomMoodRecipeApplication) return null;
+    return getLightingPreset(activeRoomMoodRecipeApplication.lightingPresetId)?.settings ?? null;
+  }, [activeRoomMoodRecipeApplication]);
   const builderLighting = useMemo(
-    () => ({
-      ...BUILDER_LIGHTING_SCENE[lightingMode],
-      fixtures:
-        lightingMode === "direct"
-          ? resolveLightingFixtures(lightingFixtures, lightingBoundsMm, 3)
-          : []
-    }),
-    [lightingBoundsMm, lightingFixtures, lightingMode]
+    () => {
+      const baseLighting = {
+        ...BUILDER_LIGHTING_SCENE[lightingMode],
+        ...(builderLightingPresetSettings ?? {})
+      };
+
+      return {
+        ...baseLighting,
+        fixtures:
+          lightingMode === "direct"
+            ? resolveLightingFixtures(lightingFixtures, lightingBoundsMm, 3)
+            : []
+      };
+    },
+    [builderLightingPresetSettings, lightingBoundsMm, lightingFixtures, lightingMode]
+  );
+  const previewAssets = useMemo(
+    () =>
+      buildSeededSceneAssets(catalogSnapshot, derivedRoomShell, starterSetPreset, starterTemplateId, {
+        enabledWorkspaceFlexClusterIds: workspaceClusterIds
+      }),
+    [catalogSnapshot, derivedRoomShell, starterSetPreset, starterTemplateId, workspaceClusterIds]
   );
   const previewWallMaterialIndex = activeStep.id === "style" || activeStep.id === "lighting" ? wallMaterialIndex : -1;
   const previewFloorMaterialIndex = activeStep.id === "style" || activeStep.id === "lighting" ? floorMaterialIndex : -1;
@@ -533,7 +612,8 @@ function StudioBuilderPageContent() {
     derivedRoomShell,
     wallMaterialIndex: previewWallMaterialIndex,
     floorMaterialIndex: previewFloorMaterialIndex,
-    lighting: builderLighting
+    lighting: builderLighting,
+    assets: previewAssets
   });
 
   useEffect(() => {
@@ -548,6 +628,9 @@ function StudioBuilderPageContent() {
     nextQuery.set("wall", String(wallMaterialIndex));
     nextQuery.set("floor", String(floorMaterialIndex));
     nextQuery.set("lighting", lightingMode);
+    if (moodRecipeId) {
+      nextQuery.set("mood", moodRecipeId);
+    }
     nextQuery.set("projectName", projectName);
     nextQuery.set("doorStyle", doorStyle);
     nextQuery.set("windowStyle", windowStyle);
@@ -563,6 +646,9 @@ function StudioBuilderPageContent() {
     }
     if (starterTemplateId) {
       nextQuery.set("scenePreset", starterTemplateId);
+    }
+    if (starterTemplateId === "workspace-flex" && !areDefaultWorkspaceFlexClusterIds(workspaceClusterIds)) {
+      nextQuery.set("clusters", serializeWorkspaceFlexClusterIds(workspaceClusterIds));
     }
     if (addSecondaryWindow) {
       nextQuery.set("secondaryWindow", "1");
@@ -584,6 +670,7 @@ function StudioBuilderPageContent() {
     floorMaterialIndex,
     lightingMode,
     intent,
+    moodRecipeId,
     nookDepth,
     nookWidth,
     normalizedBuilderInput,
@@ -592,6 +679,7 @@ function StudioBuilderPageContent() {
     searchParams,
     starterSetPreset,
     starterTemplateId,
+    workspaceClusterIds,
     stepIndex,
     templateId,
     wallMaterialIndex,
@@ -647,6 +735,28 @@ function StudioBuilderPageContent() {
     []
   );
 
+  const handleWallMaterialIndexChange = useCallback((index: number) => {
+    setWallMaterialIndex(index);
+    setMoodRecipeId(null);
+  }, []);
+
+  const handleFloorMaterialIndexChange = useCallback((index: number) => {
+    setFloorMaterialIndex(index);
+    setMoodRecipeId(null);
+  }, []);
+
+  const handleLightingModeChange = useCallback((mode: BuilderLightingMode) => {
+    setLightingMode(mode);
+    setMoodRecipeId(null);
+  }, []);
+
+  const handleRoomMoodRecipeApply = useCallback((recipe: RoomMoodRecipeApplication) => {
+    setWallMaterialIndex(recipe.wallMaterialIndex);
+    setFloorMaterialIndex(recipe.floorMaterialIndex);
+    setLightingMode(resolveBuilderLightingModeForMoodRecipe(recipe.lightingPresetId));
+    setMoodRecipeId(recipe.id);
+  }, []);
+
   const setStepWithRoute = useCallback(
     (nextStepIndex: number) => {
       const clamped = Math.max(0, Math.min(BUILDER_STEPS.length - 1, nextStepIndex));
@@ -665,6 +775,9 @@ function StudioBuilderPageContent() {
     query.set("wall", String(wallMaterialIndex));
     query.set("floor", String(floorMaterialIndex));
     query.set("lighting", lightingMode);
+    if (moodRecipeId) {
+      query.set("mood", moodRecipeId);
+    }
     query.set("projectName", projectName);
     query.set("doorStyle", doorStyle);
     query.set("windowStyle", windowStyle);
@@ -681,6 +794,9 @@ function StudioBuilderPageContent() {
     if (starterTemplateId) {
       query.set("scenePreset", starterTemplateId);
     }
+    if (starterTemplateId === "workspace-flex" && !areDefaultWorkspaceFlexClusterIds(workspaceClusterIds)) {
+      query.set("clusters", serializeWorkspaceFlexClusterIds(workspaceClusterIds));
+    }
     if (addSecondaryWindow) {
       query.set("secondaryWindow", "1");
     }
@@ -693,12 +809,14 @@ function StudioBuilderPageContent() {
     floorMaterialIndex,
     lightingMode,
     intent,
+    moodRecipeId,
     nookDepth,
     nookWidth,
     normalizedBuilderInput,
     projectName,
     starterSetPreset,
     starterTemplateId,
+    workspaceClusterIds,
     stepIndex,
     templateId,
     wallMaterialIndex,
@@ -721,6 +839,7 @@ function StudioBuilderPageContent() {
       wallMaterialIndex,
       floorMaterialIndex,
       lightingMode,
+      moodRecipeId,
       lightingFixtures,
       projectName,
       projectDescription,
@@ -729,6 +848,7 @@ function StudioBuilderPageContent() {
       addSecondaryWindow,
       starterSetPreset,
       starterTemplateId,
+      workspaceClusterIds,
       openings
     };
 
@@ -738,6 +858,7 @@ function StudioBuilderPageContent() {
     doorStyle,
     floorMaterialIndex,
     lightingMode,
+    moodRecipeId,
     lightingFixtures,
     intent,
     nookDepth,
@@ -748,6 +869,7 @@ function StudioBuilderPageContent() {
     projectName,
     starterSetPreset,
     starterTemplateId,
+    workspaceClusterIds,
     stepIndex,
     templateId,
     wallMaterialIndex,
@@ -768,7 +890,7 @@ function StudioBuilderPageContent() {
 
     setIsCreating(true);
     try {
-      const seededAssets = buildSeededSceneAssets(catalogSnapshot, derivedRoomShell, starterSetPreset, starterTemplateId);
+      const seededAssets = previewAssets;
       const project = await createStudioProject({
         name: projectName.trim(),
         description: projectDescription.trim() || "빌더에서 생성한 기본 공간",
@@ -878,8 +1000,14 @@ function StudioBuilderPageContent() {
                     floorFinishOptions={floorFinishOptions}
                     wallFinishSwatch={WALL_FINISH_SWATCH}
                     floorFinishSwatch={FLOOR_FINISH_SWATCH}
-                    onWallMaterialIndexChange={setWallMaterialIndex}
-                    onFloorMaterialIndexChange={setFloorMaterialIndex}
+                    starterSetPreset={starterSetPreset}
+                    starterTemplateId={starterTemplateId}
+                    workspaceClusterIds={workspaceClusterIds}
+                    activeRoomMoodRecipeId={moodRecipeId}
+                    onWallMaterialIndexChange={handleWallMaterialIndexChange}
+                    onFloorMaterialIndexChange={handleFloorMaterialIndexChange}
+                    onRoomMoodRecipeApply={handleRoomMoodRecipeApply}
+                    onWorkspaceClusterIdsChange={setWorkspaceClusterIds}
                   />
                 ) : null}
 
@@ -888,7 +1016,7 @@ function StudioBuilderPageContent() {
                     lightingMode={lightingMode}
                     fixtures={builderLighting.fixtures ?? []}
                     roomBoundsMm={lightingBoundsMm}
-                    onLightingModeChange={setLightingMode}
+                    onLightingModeChange={handleLightingModeChange}
                     onFixturesChange={setLightingFixtures}
                   />
                 ) : null}

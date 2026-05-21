@@ -1,0 +1,34 @@
+{
+  "assetId": "p2s_commercial_desk_hero_v1",
+  "model": "apps/web/public/assets/models/p2s_commercial_desk_hero_v1/p2s_commercial_desk_hero_v1.glb",
+  "colliders": [
+    {
+      "id": "desktop_surface",
+      "type": "box",
+      "center": [
+        0,
+        0.105,
+        0
+      ],
+      "size": [
+        3.06,
+        0.17,
+        0.98
+      ]
+    },
+    {
+      "id": "leg_frame",
+      "type": "box",
+      "center": [
+        0,
+        -0.43,
+        0
+      ],
+      "size": [
+        2.74,
+        0.9,
+        0.78
+      ]
+    }
+  ]
+}

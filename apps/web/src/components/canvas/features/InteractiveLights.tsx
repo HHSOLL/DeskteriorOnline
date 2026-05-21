@@ -8,6 +8,7 @@ import {
   resolveLightingFixtureColor,
   resolveLightingFixtures
 } from "../../../lib/scene/lighting-layout";
+import { useEditorStore } from "../../../lib/stores/useEditorStore";
 import { useShellSelector } from "../../../lib/stores/scene-slices";
 import { useInteractionRegistry } from "../interaction/InteractionManager";
 
@@ -118,6 +119,47 @@ function createIndirectGlowMaterial(opacity: number) {
         float edgeGlow = 1.0 - smoothstep(0.0, 0.18, edge);
         float centerLift = 1.0 - smoothstep(0.0, 0.72, distance(vUv, vec2(0.5)));
         float alpha = max(edgeGlow * 0.92, centerLift * 0.18) * uOpacity;
+        gl_FragColor = vec4(uColor, alpha);
+      }
+    `
+  });
+}
+
+function createDioramaWashMaterial(opacity: number, color: string, aspect: [number, number], depthTest = true) {
+  return new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    depthTest,
+    side: THREE.DoubleSide,
+    blending: THREE.NormalBlending,
+    polygonOffset: true,
+    polygonOffsetFactor: -2,
+    polygonOffsetUnits: -2,
+    uniforms: {
+      uOpacity: { value: opacity },
+      uColor: { value: new THREE.Color(color) },
+      uAspect: { value: new THREE.Vector2(...aspect) }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform float uOpacity;
+      uniform vec3 uColor;
+      uniform vec2 uAspect;
+
+      void main() {
+        vec2 centered = (vUv - vec2(0.5)) * uAspect;
+        float radial = length(centered);
+        float halo = 1.0 - smoothstep(0.08, 0.58, radial);
+        float core = 1.0 - smoothstep(0.0, 0.26, radial);
+        float alpha = (halo * halo * 0.76 + core * 0.18) * uOpacity;
         gl_FragColor = vec4(uColor, alpha);
       }
     `
@@ -252,6 +294,83 @@ function LightFixture({
   );
 }
 
+function DioramaAccentWash({
+  centerX,
+  centerZ,
+  width,
+  depth,
+  height,
+  accentIntensity
+}: {
+  centerX: number;
+  centerZ: number;
+  width: number;
+  depth: number;
+  height: number;
+  accentIntensity: number;
+}) {
+  const warmFloorMaterial = useMemo(
+    () => createDioramaWashMaterial(Math.min(0.44, accentIntensity * 0.42), "#ff7a54", [1.02, 0.58]),
+    [accentIntensity]
+  );
+  const coolFloorMaterial = useMemo(
+    () => createDioramaWashMaterial(Math.min(0.36, accentIntensity * 0.34), "#587cff", [0.94, 0.64]),
+    [accentIntensity]
+  );
+  const warmWallMaterial = useMemo(
+    () => createDioramaWashMaterial(Math.min(0.5, accentIntensity * 0.48), "#ff5f7a", [0.62, 0.92], false),
+    [accentIntensity]
+  );
+  const sideWarmWallMaterial = useMemo(
+    () => createDioramaWashMaterial(Math.min(0.44, accentIntensity * 0.42), "#ff6f54", [0.72, 0.92], false),
+    [accentIntensity]
+  );
+  const coolWallMaterial = useMemo(
+    () => createDioramaWashMaterial(Math.min(0.46, accentIntensity * 0.44), "#6aa7ff", [0.68, 0.92], false),
+    [accentIntensity]
+  );
+
+  useEffect(() => {
+    return () => {
+      warmFloorMaterial.dispose();
+      coolFloorMaterial.dispose();
+      warmWallMaterial.dispose();
+      sideWarmWallMaterial.dispose();
+      coolWallMaterial.dispose();
+    };
+  }, [coolFloorMaterial, coolWallMaterial, sideWarmWallMaterial, warmFloorMaterial, warmWallMaterial]);
+
+  const floorY = 0.026;
+  const wallY = Math.max(0.9, height * 0.48);
+  const wallHeight = Math.max(1.55, height * 0.88);
+  const wallOffset = 0.18;
+
+  return (
+    <group name="builder-preview-mood-wash">
+      <mesh position={[centerX + width * 0.28, floorY, centerZ + depth * 0.18]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={5}>
+        <planeGeometry args={[Math.max(1.9, width * 0.62), Math.max(1.45, depth * 0.64), 1, 1]} />
+        <primitive object={warmFloorMaterial} attach="material" />
+      </mesh>
+      <mesh position={[centerX - width * 0.27, floorY + 0.003, centerZ - depth * 0.14]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={5}>
+        <planeGeometry args={[Math.max(1.75, width * 0.58), Math.max(1.35, depth * 0.58), 1, 1]} />
+        <primitive object={coolFloorMaterial} attach="material" />
+      </mesh>
+      <mesh position={[centerX + width / 2 - wallOffset, wallY, centerZ + depth * 0.06]} rotation={[0, -Math.PI / 2, 0]} renderOrder={5}>
+        <planeGeometry args={[Math.max(1.95, depth * 0.78), wallHeight, 1, 1]} />
+        <primitive object={warmWallMaterial} attach="material" />
+      </mesh>
+      <mesh position={[centerX + width * 0.2, wallY, centerZ + depth / 2 - wallOffset]} renderOrder={5}>
+        <planeGeometry args={[Math.max(1.9, width * 0.58), wallHeight, 1, 1]} />
+        <primitive object={sideWarmWallMaterial} attach="material" />
+      </mesh>
+      <mesh position={[centerX - width * 0.22, wallY, centerZ - depth / 2 + wallOffset]} renderOrder={5}>
+        <planeGeometry args={[Math.max(2, width * 0.72), wallHeight, 1, 1]} />
+        <primitive object={coolWallMaterial} attach="material" />
+      </mesh>
+    </group>
+  );
+}
+
 function IndirectCeilingGlow({
   centerX,
   centerZ,
@@ -329,6 +448,8 @@ export default function InteractiveLights() {
   const walls = useShellSelector((slice) => slice.walls);
   const scale = useShellSelector((slice) => slice.scale);
   const lighting = useShellSelector((slice) => slice.lighting);
+  const viewMode = useEditorStore((state) => state.viewMode);
+  const isDioramaPreview = viewMode === "builder-preview";
 
   const layout = useMemo(() => {
     const bounds = computeLightingBoundsMm(walls, scale);
@@ -378,10 +499,20 @@ export default function InteractiveLights() {
     );
   }
 
-  if (layout.fixtures.length === 0) return null;
+  if (layout.fixtures.length === 0 && !isDioramaPreview) return null;
 
   return (
     <group>
+      {isDioramaPreview ? (
+        <DioramaAccentWash
+          centerX={layout.centerX}
+          centerZ={layout.centerZ}
+          width={layout.width}
+          depth={layout.depth}
+          height={layout.height}
+          accentIntensity={lighting.accentIntensity}
+        />
+      ) : null}
       {layout.fixtures.map((spec) => (
         <LightFixture
           key={spec.id}

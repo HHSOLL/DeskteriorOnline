@@ -69,6 +69,28 @@ async function fetchCatalogPage(offset: number) {
   };
 }
 
+async function fetchGeneratedAssetCatalog() {
+  const response = await fetch("/api/v1/assets", {
+    method: "GET",
+    headers: {
+      Accept: "application/json"
+    },
+    cache: "no-store",
+    credentials: "include"
+  });
+
+  if (response.status === 401) {
+    return [];
+  }
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    return [];
+  }
+
+  return normalizeCatalog(extractCatalogInput(payload));
+}
+
 export async function fetchAssetCatalog(): Promise<LibraryCatalogItem[]> {
   const merged: LibraryCatalogItem[] = [];
   const seenItemIds = new Set<string>();
@@ -93,6 +115,13 @@ export async function fetchAssetCatalog(): Promise<LibraryCatalogItem[]> {
     }
     offset = nextOffset;
   }
+
+  const generatedItems = await fetchGeneratedAssetCatalog();
+  generatedItems.forEach((item) => {
+    if (seenItemIds.has(item.id)) return;
+    seenItemIds.add(item.id);
+    merged.push(item);
+  });
 
   return normalizeCatalog(merged);
 }

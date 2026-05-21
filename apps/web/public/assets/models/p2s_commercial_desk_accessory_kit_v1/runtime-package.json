@@ -1,0 +1,58 @@
+{
+  "assetKey": "p2s_commercial_desk_accessory_kit_v1",
+  "version": "2026-05-21",
+  "source": {
+    "kind": "blender_authored_generic",
+    "license": "self-authored; public product pages used only as non-copied references",
+    "releaseEligible": false,
+    "reviewRequired": true
+  },
+  "dimensionsMm": {
+    "width": 2350,
+    "depth": 910,
+    "height": 1120
+  },
+  "pivot": {
+    "origin": "desk-center-authored",
+    "unit": "meters"
+  },
+  "collisionProxy": {
+    "type": "box",
+    "sizeMm": [
+      2350,
+      910,
+      1120
+    ]
+  },
+  "textureSet": {
+    "authored": "procedural_pbr_from_blender",
+    "maps": {
+      "speakerFabricBaseColor": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_speaker_fabric_basecolor_1k.png",
+      "speakerFabricRoughness": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_speaker_fabric_roughness_1k.png",
+      "speakerFabricHeight": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_speaker_fabric_height_1k.png",
+      "deskMatBaseColor": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_black_deskmat_basecolor_1k.png",
+      "deskMatRoughness": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_black_deskmat_roughness_1k.png",
+      "deskMatHeight": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_black_deskmat_height_1k.png",
+      "keycapBaseColor": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_pbt_keycap_basecolor_1k.png",
+      "keycapRoughness": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_pbt_keycap_roughness_1k.png",
+      "screenGlassBaseColor": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_screen_glass_basecolor_1k.png",
+      "screenGlassRoughness": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_screen_glass_roughness_1k.png"
+    },
+    "imageModelStatus": "not-used-in-this-run-openai-api-key-not-present-in-local-env",
+    "ktx2Ready": false,
+    "stillRequiresKtx2Transcode": true
+  },
+  "lodProfile": {
+    "complexity": "medium-high",
+    "maxTriangleCount": 90000,
+    "targetDrawCalls": 18
+  },
+  "runtimeUrl": "/assets/models/p2s_commercial_desk_accessory_kit_v1/p2s_commercial_desk_accessory_kit_v1.glb",
+  "optimization": {
+    "applied": true,
+    "method": "gltf-transform dedup + prune + meshopt",
+    "glbBytesBefore": 11944744,
+    "glbBytesAfter": 9232916,
+    "skipTextures": true
+  }
+}

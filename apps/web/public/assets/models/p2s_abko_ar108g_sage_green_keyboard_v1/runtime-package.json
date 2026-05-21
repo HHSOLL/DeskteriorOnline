@@ -1,0 +1,1554 @@
+{
+  "assetKey": "p2s_abko_ar108g_sage_green_keyboard_v1",
+  "revision": "abko-ar108g-sage-green-keyboard-v1",
+  "product": {
+    "brand": "ABKO",
+    "model": "AR108G",
+    "variant": "Sage Green / frog keycap theme",
+    "productNo": "1297630",
+    "productUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1297630&BigDivNo=8&MediumDivNo=1018&DivNo=4425",
+    "referenceDate": "2026-05-21",
+    "source": "Compuzone product page reference images",
+    "releaseEligible": false,
+    "legalUse": "private_reference_only_until_brand_or_model_license_is_cleared"
+  },
+  "dimensionsMm": {
+    "width": 468,
+    "depth": 148,
+    "height": 36
+  },
+  "placement": {
+    "unit": "meters",
+    "supportSurface": "desk_top",
+    "pivot": "center_bottom",
+    "recommendedDeskOffset": {
+      "x": -0.285,
+      "y": 0.214,
+      "z": 0.155
+    }
+  },
+  "switchProfiles": {
+    "clicky-blue": {
+      "label": "청축 Clicky",
+      "forceG": 50,
+      "sound": "high click jacket with plastic bottom-out",
+      "defaultForThisSku": true
+    },
+    "linear-red": {
+      "label": "적축 Linear",
+      "defaultForThisSku": false
+    },
+    "tactile-brown": {
+      "label": "갈축 Tactile",
+      "defaultForThisSku": false
+    }
+  },
+  "pressTargets": [
+    {
+      "id": "abko-ar108g-key-esc",
+      "label": "Esc",
+      "position": [
+        -0.5,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f1",
+      "label": "F1",
+      "position": [
+        -0.4616,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f2",
+      "label": "F2",
+      "position": [
+        -0.4424,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f3",
+      "label": "F3",
+      "position": [
+        -0.4232,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f4",
+      "label": "F4",
+      "position": [
+        -0.404,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f5",
+      "label": "F5",
+      "position": [
+        -0.3656,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f6",
+      "label": "F6",
+      "position": [
+        -0.3464,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f7",
+      "label": "F7",
+      "position": [
+        -0.3272,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f8",
+      "label": "F8",
+      "position": [
+        -0.308,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f9",
+      "label": "F9",
+      "position": [
+        -0.2696,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f10",
+      "label": "F10",
+      "position": [
+        -0.2504,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f11",
+      "label": "F11",
+      "position": [
+        -0.2312,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-f12",
+      "label": "F12",
+      "position": [
+        -0.212,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-prt",
+      "label": "Prt",
+      "position": [
+        -0.1736,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-scr",
+      "label": "Scr",
+      "position": [
+        -0.1544,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-pause",
+      "label": "Pause",
+      "position": [
+        -0.1352,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-mute",
+      "label": "Mute",
+      "position": [
+        -0.0968,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-vol-",
+      "label": "-",
+      "position": [
+        -0.0776,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-vol+",
+      "label": "+",
+      "position": [
+        -0.0584,
+        0.2462,
+        0.204
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_0",
+      "label": "`",
+      "position": [
+        -0.5,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_1",
+      "label": "1",
+      "position": [
+        -0.4808,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_2",
+      "label": "2",
+      "position": [
+        -0.4616,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_3",
+      "label": "3",
+      "position": [
+        -0.4424,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_4",
+      "label": "4",
+      "position": [
+        -0.4232,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_5",
+      "label": "5",
+      "position": [
+        -0.404,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_6",
+      "label": "6",
+      "position": [
+        -0.3848,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_7",
+      "label": "7",
+      "position": [
+        -0.3656,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_8",
+      "label": "8",
+      "position": [
+        -0.3464,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_9",
+      "label": "9",
+      "position": [
+        -0.3272,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_10",
+      "label": "0",
+      "position": [
+        -0.308,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_11",
+      "label": "-",
+      "position": [
+        -0.2888,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numrow_12",
+      "label": "=",
+      "position": [
+        -0.2696,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-backspace",
+      "label": "Backspace",
+      "position": [
+        -0.2408,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0298,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-tab",
+      "label": "Tab",
+      "position": [
+        -0.4952,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.022,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_q",
+      "label": "Q",
+      "position": [
+        -0.4712,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_w",
+      "label": "W",
+      "position": [
+        -0.452,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_e",
+      "label": "E",
+      "position": [
+        -0.4328,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_r",
+      "label": "R",
+      "position": [
+        -0.4136,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_t",
+      "label": "T",
+      "position": [
+        -0.3944,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_y",
+      "label": "Y",
+      "position": [
+        -0.3752,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_u",
+      "label": "U",
+      "position": [
+        -0.356,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_i",
+      "label": "I",
+      "position": [
+        -0.3368,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_o",
+      "label": "O",
+      "position": [
+        -0.3176,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_p",
+      "label": "P",
+      "position": [
+        -0.2984,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_[",
+      "label": "[",
+      "position": [
+        -0.2792,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_]",
+      "label": "]",
+      "position": [
+        -0.26,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-qrow_\\",
+      "label": "\\",
+      "position": [
+        -0.2408,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-caps",
+      "label": "Caps",
+      "position": [
+        -0.4928,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0259,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_a",
+      "label": "A",
+      "position": [
+        -0.4664,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_s",
+      "label": "S",
+      "position": [
+        -0.4472,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_d",
+      "label": "D",
+      "position": [
+        -0.428,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_f",
+      "label": "F",
+      "position": [
+        -0.4088,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_g",
+      "label": "G",
+      "position": [
+        -0.3896,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_h",
+      "label": "H",
+      "position": [
+        -0.3704,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_j",
+      "label": "J",
+      "position": [
+        -0.3512,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_k",
+      "label": "K",
+      "position": [
+        -0.332,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_l",
+      "label": "L",
+      "position": [
+        -0.3128,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_;",
+      "label": ";",
+      "position": [
+        -0.2936,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-arow_'",
+      "label": "'",
+      "position": [
+        -0.2744,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-enter",
+      "label": "Enter",
+      "position": [
+        -0.2432,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0338,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-lshift",
+      "label": "Shift",
+      "position": [
+        -0.488,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0338,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_z",
+      "label": "Z",
+      "position": [
+        -0.4568,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_x",
+      "label": "X",
+      "position": [
+        -0.4376,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_c",
+      "label": "C",
+      "position": [
+        -0.4184,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_v",
+      "label": "V",
+      "position": [
+        -0.3992,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_b",
+      "label": "B",
+      "position": [
+        -0.38,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_n",
+      "label": "N",
+      "position": [
+        -0.3608,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_m",
+      "label": "M",
+      "position": [
+        -0.3416,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_,",
+      "label": ",",
+      "position": [
+        -0.3224,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_.",
+      "label": ".",
+      "position": [
+        -0.3032,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-zrow_/",
+      "label": "/",
+      "position": [
+        -0.284,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-rshift",
+      "label": "Shift",
+      "position": [
+        -0.248,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0417,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-lctrl",
+      "label": "Ctrl",
+      "position": [
+        -0.4976,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.018,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-lwin",
+      "label": "Win",
+      "position": [
+        -0.4736,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.018,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-lalt",
+      "label": "Alt",
+      "position": [
+        -0.4496,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.018,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-space",
+      "label": "",
+      "position": [
+        -0.3776,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.0968,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-ralt",
+      "label": "Alt",
+      "position": [
+        -0.3056,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.018,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-fn",
+      "label": "Fn",
+      "position": [
+        -0.2816,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.018,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-menu",
+      "label": "Menu",
+      "position": [
+        -0.2576,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.018,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-rctrl",
+      "label": "Ctrl",
+      "position": [
+        -0.2336,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.018,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-ins",
+      "label": "Ins",
+      "position": [
+        -0.189,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-home",
+      "label": "Home",
+      "position": [
+        -0.1698,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-pgup",
+      "label": "PgUp",
+      "position": [
+        -0.1506,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-del",
+      "label": "Del",
+      "position": [
+        -0.189,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-end",
+      "label": "End",
+      "position": [
+        -0.1698,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-pgdn",
+      "label": "PgDn",
+      "position": [
+        -0.1506,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-up",
+      "label": "↑",
+      "position": [
+        -0.1698,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-left",
+      "label": "←",
+      "position": [
+        -0.189,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-down",
+      "label": "↓",
+      "position": [
+        -0.1698,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-right",
+      "label": "→",
+      "position": [
+        -0.1506,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-num",
+      "label": "Num",
+      "position": [
+        -0.115,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-/",
+      "label": "/",
+      "position": [
+        -0.0958,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-*",
+      "label": "*",
+      "position": [
+        -0.0766,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key--",
+      "label": "-",
+      "position": [
+        -0.0574,
+        0.2462,
+        0.1838
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np7",
+      "label": "7",
+      "position": [
+        -0.115,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np8",
+      "label": "8",
+      "position": [
+        -0.0958,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np9",
+      "label": "9",
+      "position": [
+        -0.0766,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np4",
+      "label": "4",
+      "position": [
+        -0.115,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np5",
+      "label": "5",
+      "position": [
+        -0.0958,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np6",
+      "label": "6",
+      "position": [
+        -0.0766,
+        0.2462,
+        0.1434
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np1",
+      "label": "1",
+      "position": [
+        -0.115,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np2",
+      "label": "2",
+      "position": [
+        -0.0958,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np3",
+      "label": "3",
+      "position": [
+        -0.0766,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-+",
+      "label": "+",
+      "position": [
+        -0.0574,
+        0.2462,
+        0.1636
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0307
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-numenter",
+      "label": "Enter",
+      "position": [
+        -0.0574,
+        0.2462,
+        0.1232
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0307
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-np0",
+      "label": "0",
+      "position": [
+        -0.1054,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.0298,
+        0.02,
+        0.0141
+      ]
+    },
+    {
+      "id": "abko-ar108g-key-npdot",
+      "label": ".",
+      "position": [
+        -0.0766,
+        0.2462,
+        0.103
+      ],
+      "size": [
+        0.0141,
+        0.02,
+        0.0141
+      ]
+    }
+  ],
+  "materialSlots": [
+    "brushed_sage_champagne_aluminum_body",
+    "warm_cream_pbt_keycaps",
+    "sage_green_modifier_pbt",
+    "coral_pink_accent_pbt",
+    "frosted_front_rgb_lightbar",
+    "soft_white_rubber_feet"
+  ]
+}

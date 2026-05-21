@@ -1,0 +1,88 @@
+{
+  "assetKey": "p2s_commercial_task_chair_hero_v1",
+  "status": "generic-chair-commercial-candidate-review-required",
+  "generatedAt": "2026-05-21",
+  "output": {
+    "glb": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/p2s_commercial_task_chair_hero_v1.glb",
+    "blend": "assets/blender/deskterior/p2s_commercial_task_chair_hero_v1.blend",
+    "runtimePackage": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/runtime-package.json",
+    "previews": [
+      "assets/references/blender-authored/commercial-task-chair-hero-v1/previews/commercial-task-chair-v1-isometric.png",
+      "assets/references/blender-authored/commercial-task-chair-hero-v1/previews/commercial-task-chair-v1-back-mesh-closeup.png",
+      "assets/references/blender-authored/commercial-task-chair-hero-v1/previews/commercial-task-chair-v1-base-caster-closeup.png"
+    ],
+    "textures": {
+      "fabricBaseColor": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_charcoal_fabric_basecolor_1k.png",
+      "fabricRoughness": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_charcoal_fabric_roughness_1k.png",
+      "fabricHeight": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_charcoal_fabric_height_1k.png",
+      "meshBaseColor": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_black_mesh_basecolor_1k.png",
+      "meshRoughness": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_black_mesh_roughness_1k.png",
+      "meshHeight": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_black_mesh_height_1k.png"
+    }
+  },
+  "metrics": {
+    "meshesAndCurves": 78,
+    "triangles": 30708,
+    "glbBytes": 5525212,
+    "glbBytesBeforeMeshopt": 7149788,
+    "runtimeOptimization": "gltf-transform dedup + prune + meshopt"
+  },
+  "referenceStudy": [
+    {
+      "label": "Herman Miller Aeron specs",
+      "url": "https://www.hermanmiller.com/products/seating/office-chairs/aeron-chair/specs/",
+      "usedFor": [
+        "overall width/depth/height envelope",
+        "mesh suspension/back support signals",
+        "adjustable arm and lumbar construction cues"
+      ],
+      "copied": false
+    },
+    {
+      "label": "Steelcase Gesture product page",
+      "url": "https://www.steelcase.com/products/office-chairs/gesture/",
+      "usedFor": [
+        "thin ergonomic back silhouette",
+        "arm support concept",
+        "commercial task-chair material hierarchy"
+      ],
+      "copied": false
+    },
+    {
+      "label": "Kenney Furniture Kit license",
+      "url": "https://kenney.nl/assets/furniture-kit",
+      "usedFor": [
+        "open-license baseline comparison only"
+      ],
+      "copied": false
+    }
+  ],
+  "commercialComparisonChecklist": [
+    "replaced single-block seat/back with separate waterfall cushion, mesh panel, perimeter frame, lumbar pad, adjustable arms, gas lift, five-star base, and casters",
+    "procedural PBR fabric/mesh maps are packed into the GLB and also emitted as runtime texture evidence",
+    "mesh back uses surface curvature plus individual weave tubes instead of a flat rectangle",
+    "all styling is generic; no brand logos, exact product silhouettes, or third-party model/image data copied",
+    "still requires human visual approval and optional Meshy candidate comparison before public catalog promotion"
+  ],
+  "licenseReview": {
+    "selfAuthored": true,
+    "thirdPartyModelCopied": false,
+    "thirdPartyImageCopied": false,
+    "releaseEligible": false,
+    "notes": "Commercial pages are references only. The generated GLB is generic prototype QA content."
+  },
+  "meshApi": {
+    "status": "review_pending_no_meshy_post_sent",
+    "reason": "User previously requested prompt/reference review before Meshy text-to-3D or image-to-3D generation.",
+    "textTo3dPromptCandidate": "Generic ergonomic task chair for a high-end deskterior room, no logos, black graphite mesh back, charcoal woven fabric cushion, thin matte black perimeter frame, adjustable armrests, gas lift, five-star caster base, realistic PBR materials, product visualization, clean topology, glb asset.",
+    "negativePrompt": "brand logo, exact replica, cartoon, melted geometry, extra legs, text labels, watermark",
+    "intendedUse": "generate a comparison candidate only; not direct catalog promotion",
+    "referencePolicy": "Use public product pages for proportion study only; do not upload or copy protected product images without review.",
+    "meshApiPreflight": {
+      "checkedAt": "2026-05-21",
+      "balanceEndpointReachable": true,
+      "balanceAvailable": true,
+      "providerPostSent": false
+    }
+  }
+}

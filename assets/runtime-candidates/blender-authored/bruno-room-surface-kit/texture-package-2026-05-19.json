@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "deskterior-texture-package-v1",
+  "assetSlug": "p2s-bruno-room-surface-kit",
+  "packageStatus": "orm-png-sidecar-ready-ktx2-pending",
+  "packedOrmMapCount": 3,
+  "packedOrmChannels": {
+    "r": "ambientOcclusion",
+    "g": "roughness",
+    "b": "metallic",
+    "a": "constantOne"
+  },
+  "ormSidecarFormat": "PNG",
+  "ktx2Ready": false,
+  "ktx2TranscodeAttempted": false,
+  "ktx2Blocker": "toktx encoder was not available in the local environment",
+  "toktxAvailable": false,
+  "stillRequiresRuntimeKtx2Transcode": true,
+  "stillRequiresFinalUvBake": true,
+  "manifest": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/texture-package-2026-05-19.json",
+  "packedOrmMaps": [
+    {
+      "role": "floorWoodOrm",
+      "path": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_floor_plank_orm_1k.png",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color",
+      "metallic": 0.02
+    },
+    {
+      "role": "plasterWallOrm",
+      "path": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_plaster_warm_cool_orm_1k.png",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color",
+      "metallic": 0.0
+    },
+    {
+      "role": "trimOrm",
+      "path": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_trim_warm_orm_512.png",
+      "resolution": [
+        512,
+        512
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color",
+      "metallic": 0.02
+    }
+  ],
+  "promotionBoundary": "ORM sidecar package evidence only; KTX2 transcode, final UV bake, and release catalog packaging remain blocked"
+}

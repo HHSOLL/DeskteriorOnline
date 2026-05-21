@@ -11,6 +11,12 @@ import {
   summarizeRoomShellTextureQuality,
   type RoomShellTexturePreset
 } from "../src/lib/textures/room-shell-textures";
+import { resolveSceneRenderQuality } from "../src/lib/scene/render-quality";
+import {
+  ROOM_MOOD_RECIPES,
+  getRoomMoodRecipeSwatches,
+  resolveRoomMoodRecipeApplication
+} from "../src/lib/scene/room-mood-recipes";
 
 function assertPublicAssetExists(pathValue: string, label: string) {
   assert.equal(
@@ -114,6 +120,13 @@ const expectedDefaultWallIds = [
   "light-oak-wall-panel",
   "clean-subtle-concrete"
 ].sort();
+const cleanPaintPreviewIds = [
+  "matte-white-paint",
+  "warm-white-paint",
+  "beige-plaster",
+  "light-grey-plaster",
+  "greige-clean-plaster"
+];
 
 assert(
   defaultWallPresets.length >= 5,
@@ -135,6 +148,13 @@ assert.equal(
 );
 assert.equal(WALL_TEXTURE_PRESETS[0]?.id, "matte-white-paint", "default wall must be a clean matte paint");
 assert.equal(FLOOR_TEXTURE_PRESETS[0]?.id, "light-oak-boards", "default floor must be clean light oak boards");
+cleanPaintPreviewIds.forEach((presetId) => {
+  assert.equal(
+    WALL_TEXTURE_PRESETS.find((preset) => preset.id === presetId)?.previewThumbnail.includes("/clean-defaults/"),
+    true,
+    `${presetId} should use a clean runtime-matched thumbnail instead of a dirty source texture`
+  );
+});
 
 assertNoForbiddenDefaultNames(
   defaultWallPresets,
@@ -164,11 +184,41 @@ assert(
 const qualitySummary = summarizeRoomShellTextureQuality();
 assert.equal(qualitySummary.commercialReady, true, "room shell texture summary should remain commercial ready");
 
+assert(
+  ROOM_MOOD_RECIPES.length >= 4,
+  "editor room mood recipes should offer multiple finish and lighting combinations"
+);
+ROOM_MOOD_RECIPES.forEach((recipe) => {
+  const application = resolveRoomMoodRecipeApplication(recipe);
+  assert(
+    WALL_TEXTURE_PRESETS[application.wallMaterialIndex],
+    `${recipe.id} room mood recipe should resolve a wall preset`
+  );
+  assert(
+    FLOOR_TEXTURE_PRESETS[application.floorMaterialIndex],
+    `${recipe.id} room mood recipe should resolve a floor preset`
+  );
+  assert(
+    getRoomMoodRecipeSwatches(recipe).every((color) => /^#[0-9a-f]{6}$/i.test(color)),
+    `${recipe.id} room mood recipe should expose stable material swatches`
+  );
+});
+
 const builderStyleSource = readSource("src/features/builder/steps/BuilderStyleStep.tsx");
 assert.match(
   builderStyleSource,
   /defaultWallPalette\s*=\s*useMemo\([\s\S]*defaultExposure === "default"/,
   "BuilderStyleStep should derive the default wall grid from defaultExposure only"
+);
+assert.match(
+  builderStyleSource,
+  /data-testid="builder-room-mood-recipes"/,
+  "BuilderStyleStep should expose bundled room mood recipes in the style step"
+);
+assert.match(
+  builderStyleSource,
+  /getRoomMoodRecipeSwatches\(recipe\)/,
+  "BuilderStyleStep should show material swatches for each room mood recipe"
 );
 assert.equal(
   /WALL_TEXTURE_PRESETS/.test(builderStyleSource),
@@ -176,21 +226,34 @@ assert.equal(
   "BuilderStyleStep must not blindly expose WALL_TEXTURE_PRESETS"
 );
 
-const renderQualitySource = readSource("src/lib/scene/render-quality.ts");
-assert.match(
-  renderQualitySource,
-  /if \(isBuilderPreview\)[\s\S]*enableContactShadows:\s*false/,
-  "builder-preview render quality should disable contact shadows"
+const builderPreviewQuality = resolveSceneRenderQuality({
+  interactionMode: "preview",
+  viewMode: "builder-preview",
+  topMode: "room",
+  coarsePointer: false,
+  devicePixelRatio: 1,
+  hardwareConcurrency: 10,
+  viewportWidth: 1440
+});
+assert.equal(
+  builderPreviewQuality.enableContactShadows,
+  true,
+  "builder-preview render quality should keep bounded contact shadows for diorama grounding"
 );
-assert.match(
-  renderQualitySource,
-  /if \(isBuilderPreview\)[\s\S]*enableShadows:\s*false/,
-  "builder-preview render quality should disable dynamic shadows"
+assert.equal(
+  builderPreviewQuality.enableShadows,
+  true,
+  "builder-preview render quality should keep bounded dynamic shadows for furnished room quality"
+);
+assert.equal(
+  builderPreviewQuality.enablePostEffects,
+  false,
+  "builder-preview render quality should keep heavy post effects disabled"
 );
 const sceneEnvironmentSource = readSource("src/components/canvas/core/SceneEnvironment.tsx");
 assert.match(
   sceneEnvironmentSource,
-  /quality\.enableContactShadows\s*\?/,
+  /if \(!quality\.enableContactShadows\)[\s\S]*return null/,
   "SceneEnvironment should only render ContactShadows when the render-quality policy allows it"
 );
 const proceduralWallSource = readSource("src/components/canvas/features/ProceduralWall.tsx");
@@ -199,6 +262,11 @@ assert.match(
   proceduralWallSource,
   /useRetainedTextureSet/,
   "wall texture swaps should retain the previous material while the next texture set loads"
+);
+assert.match(
+  proceduralWallSource,
+  /useCleanPaintMaterial[\s\S]*clean \(paint\|plaster\)/,
+  "clean paint/plaster wall defaults should render as clean color material instead of dirty source texture maps"
 );
 assert.match(
   proceduralFloorSource,

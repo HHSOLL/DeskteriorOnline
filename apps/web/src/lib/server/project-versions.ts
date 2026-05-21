@@ -21,6 +21,7 @@ import {
   serializeScenePlacement
 } from "../domain/scene-placement";
 import { deriveBlankRoomShell } from "../domain/room-shell";
+import { HOME_REFERENCE_LIGHTING } from "../scene/lighting-presets";
 import type { Floor, Opening, ScaleInfo, Wall } from "../stores/useSceneStore";
 
 const ASSET_ANCHOR_TYPES = new Set([
@@ -579,8 +580,8 @@ function resolveLightingSettings(lighting?: Partial<LightingPayload>): LightingP
     hemisphereIntensity: 0.54,
     directionalIntensity: 1.24,
     environmentBlur: 0.14,
-    accentIntensity: 0.82,
-    beamOpacity: 0.18,
+    accentIntensity: HOME_REFERENCE_LIGHTING.accentIntensity,
+    beamOpacity: HOME_REFERENCE_LIGHTING.beamOpacity,
     fixtures: []
   };
 

@@ -1,0 +1,60 @@
+{
+  "id": "kenney-furniture-kit",
+  "title": "Kenney Furniture Kit 2.0",
+  "sourceUrl": "https://kenney.nl/assets/furniture-kit",
+  "publisher": "Kenney",
+  "license": {
+    "spdx": "CC0-1.0",
+    "name": "Creative Commons Zero",
+    "url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "evidence": [
+      "assets/sources/open-license/kenney-furniture-kit/License.txt",
+      "https://kenney.nl/assets/furniture-kit"
+    ],
+    "commercialUse": true,
+    "attributionRequired": false,
+    "attributionPreferred": "Kenney or www.kenney.nl"
+  },
+  "sourceArchive": "assets/sources/open-license/kenney-furniture-kit/kenney_furniture-kit.zip",
+  "selectedGlbRoot": "assets/sources/open-license/kenney-furniture-kit/selected-glb",
+  "status": "source-acquired",
+  "runtimeStatus": "qa-api-staged-not-published",
+  "selectionReason": "CC0, directly downloadable official source, includes ready GLB assets suitable for stylized room/decor fallback and proxy layers.",
+  "selectedAssets": [
+    { "file": "bookcaseClosedWide.glb", "usage": "room-storage", "quality": "proxy-or-style-fallback" },
+    { "file": "bookcaseOpen.glb", "usage": "room-storage", "quality": "proxy-or-style-fallback" },
+    { "file": "books.glb", "usage": "decor", "quality": "use-after-scale-pivot-check" },
+    { "file": "desk.glb", "usage": "desk", "quality": "proxy-or-style-fallback" },
+    { "file": "deskCorner.glb", "usage": "desk", "quality": "proxy-or-style-fallback" },
+    { "file": "lampRoundTable.glb", "usage": "lighting-decor", "quality": "use-after-light-authoring" },
+    { "file": "lampWall.glb", "usage": "lighting-decor", "quality": "use-after-light-authoring" },
+    { "file": "loungeDesignSofa.glb", "usage": "seating", "quality": "style-fallback" },
+    { "file": "loungeSofaLong.glb", "usage": "seating", "quality": "style-fallback" },
+    { "file": "paneling.glb", "usage": "wall-treatment", "quality": "use-after-material-pass" },
+    { "file": "pillow.glb", "usage": "soft-decor", "quality": "use-after-material-pass" },
+    { "file": "pillowBlueLong.glb", "usage": "soft-decor", "quality": "use-after-material-pass" },
+    { "file": "plantSmall1.glb", "usage": "plant-decor", "quality": "use-after-scale-pivot-check" },
+    { "file": "plantSmall2.glb", "usage": "plant-decor", "quality": "use-after-scale-pivot-check" },
+    { "file": "pottedPlant.glb", "usage": "plant-decor", "quality": "use-after-scale-pivot-check" },
+    { "file": "rugRectangle.glb", "usage": "rug", "quality": "style-fallback" },
+    { "file": "rugRounded.glb", "usage": "rug", "quality": "style-fallback" },
+    { "file": "sideTable.glb", "usage": "table", "quality": "style-fallback" },
+    { "file": "sideTableDrawers.glb", "usage": "storage", "quality": "style-fallback" },
+    { "file": "speaker.glb", "usage": "desk-audio", "quality": "proxy-or-style-fallback" },
+    { "file": "speakerSmall.glb", "usage": "desk-audio", "quality": "proxy-or-style-fallback" },
+    { "file": "tableCoffee.glb", "usage": "table", "quality": "style-fallback" },
+    { "file": "tableCoffeeGlass.glb", "usage": "table", "quality": "style-fallback" },
+    { "file": "televisionModern.glb", "usage": "media-zone", "quality": "proxy-or-style-fallback" }
+  ],
+  "validation": {
+    "glbHeaderCheck": "24/24 selected GLB files passed glTF 2.0 binary header and length checks.",
+    "qaIntegration": "6 selected GLBs are served through the QA-only route /api/qa-assets/open-license/kenney-furniture-kit/[file] for pc-assembly-workbench visual validation.",
+    "qaAudit": "assets/references/open-license-assets/kenney-furniture-kit/qa-audit-2026-05-18.json",
+    "nextRequiredChecks": [
+      "Open in Blender or glTF inspector for scale/origin/material review.",
+      "Create proxy/full runtime package only after visual fit is approved.",
+      "Do not publish directly to public catalog without runtime metadata and QA report."
+    ]
+  },
+  "meshyPolicy": "No Meshy generation was run for this pack. Meshy prompts and reference images require user review before execution."
+}

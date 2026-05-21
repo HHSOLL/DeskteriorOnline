@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { deriveBlankRoomShell } from "../../../lib/domain/room-shell";
 import { useCameraStore, useShellStore } from "../../../lib/stores/scene-slices";
 import { useEditorStore, type EditorViewMode } from "../../../lib/stores/useEditorStore";
+import type { LightingSettings, SceneAsset } from "../../../lib/stores/useSceneStore";
 
 type BuilderPreviewMode = Extract<EditorViewMode, "top" | "builder-preview">;
 
@@ -10,15 +11,8 @@ type UseBuilderSceneSyncInput = {
   derivedRoomShell: ReturnType<typeof deriveBlankRoomShell>;
   wallMaterialIndex: number;
   floorMaterialIndex: number;
-  lighting: {
-    mode: "direct" | "indirect";
-    ambientIntensity: number;
-    hemisphereIntensity: number;
-    directionalIntensity: number;
-    environmentBlur: number;
-    accentIntensity: number;
-    beamOpacity: number;
-  };
+  lighting: LightingSettings;
+  assets?: SceneAsset[];
 };
 
 export function useBuilderSceneSync({
@@ -26,7 +20,8 @@ export function useBuilderSceneSync({
   derivedRoomShell,
   wallMaterialIndex,
   floorMaterialIndex,
-  lighting
+  lighting,
+  assets = []
 }: UseBuilderSceneSyncInput) {
   const { setScene, resetScene } = useShellStore();
   const { setEntranceId } = useCameraStore();
@@ -60,12 +55,12 @@ export function useBuilderSceneSync({
       rooms: derivedRoomShell.rooms,
       cameraAnchors: derivedRoomShell.cameraAnchors,
       navGraph: derivedRoomShell.navGraph,
-      assets: [],
+      assets,
       wallMaterialIndex,
       floorMaterialIndex,
       lighting
     });
 
     setEntranceId(derivedRoomShell.entranceId);
-  }, [derivedRoomShell, floorMaterialIndex, lighting, setEntranceId, setScene, wallMaterialIndex]);
+  }, [assets, derivedRoomShell, floorMaterialIndex, lighting, setEntranceId, setScene, wallMaterialIndex]);
 }

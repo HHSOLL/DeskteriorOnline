@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "deskterior-runtime-candidate-v1",
+  "assetPack": "meshy-community-cc0-selected",
+  "slug": "chair-rodiondbulatoff",
+  "label": "Chair Rodiondbulatoff",
+  "source": {
+    "kind": "meshy_community_public_cc0",
+    "sourceGlb": "assets/sources/meshy-community/selected-glb/chair-rodiondbulatoff.glb",
+    "pageUrl": "https://www.meshy.ai/3d-models/019676c5-3501-72f7-b7de-88f2e8a0b264",
+    "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019676c5-3501-72f7-b7de-88f2e8a0b264",
+    "license": "CC0-1.0"
+  },
+  "files": {
+    "normalizedGlb": "assets/runtime-candidates/meshy-community/chair-rodiondbulatoff/chair-rodiondbulatoff.normalized.glb",
+    "thumbnail": "assets/runtime-candidates/meshy-community/chair-rodiondbulatoff/chair-rodiondbulatoff.thumbnail.webp",
+    "sidecar": "assets/runtime-candidates/meshy-community/chair-rodiondbulatoff/chair-rodiondbulatoff.runtime-candidate.json"
+  },
+  "dimensionsMm": {
+    "width": 867.551,
+    "depth": 905.449,
+    "height": 1993.955
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "image_based",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 1,
+      "maxTriangleCount": 9997
+    }
+  },
+  "qa": {
+    "status": "candidate_requires_human_visual_review",
+    "warnings": [],
+    "beforeDimensionsMm": {
+      "width": 867.551,
+      "depth": 905.449,
+      "height": 1993.955
+    },
+    "afterDimensionsMm": {
+      "width": 867.551,
+      "depth": 905.449,
+      "height": 1993.955
+    },
+    "triangles": 9997,
+    "vertices": 9330,
+    "materials": 1,
+    "images": [
+      {
+        "name": "Image_0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Viewer Node",
+        "width": 256,
+        "height": 256
+      }
+    ],
+    "normalizedExportBytesBeforeMeshopt": 1448572,
+    "thumbnailBytes": 4878
+  }
+}

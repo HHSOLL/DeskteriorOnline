@@ -1,0 +1,46 @@
+{
+  "asset": "p2s_premium_workstation_hero_v4",
+  "status": "standalone-generated-review-required",
+  "sourceBlend": "assets/blender/deskterior/p2s_premium_workstation_hero_v4.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_premium_workstation_hero_v4/p2s_premium_workstation_hero_v4.glb",
+  "previewImages": [
+    "assets/references/blender-authored/premium-workstation-hero/v4-previews/workstation-v4-isometric.png",
+    "assets/references/blender-authored/premium-workstation-hero/v4-previews/workstation-v4-pc-internals-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v4-previews/workstation-v4-tabletop-closeup.png"
+  ],
+  "atlasArtifacts": {
+    "basecolor": "assets/references/blender-authored/premium-workstation-hero/workstation-v4-basecolor-atlas.png",
+    "orm": "assets/references/blender-authored/premium-workstation-hero/workstation-v4-orm-atlas.png"
+  },
+  "metrics": {
+    "nodes": 425,
+    "meshes": 420,
+    "materials": 47,
+    "triangles": 116580,
+    "textureImages": 4,
+    "glbBytes": 6335804,
+    "atlasAssignedMeshObjects": 212,
+    "bakedContactAoDecals": 8,
+    "lightmapUv2ReadyMeshObjects": 212
+  },
+  "iterationNotes": {
+    "v3RemainingDefectsTargeted": [
+      "true UV atlas and packed PBR map",
+      "baked AO/GI/lightmap signal",
+      "more product-accurate PC internals"
+    ],
+    "v4Changes": [
+      "shared basecolor atlas plus ORM atlas generated and packed",
+      "UVAtlas and LightmapUV2 assigned to primary mesh objects",
+      "baked-style contact AO decals added under visible desktop objects",
+      "PC internals expanded with AM5 socket frame, DDR5 slots, white RGB RAM, M.2 heatsink, VRM blocks, large white RTX-style GPU, LCD pump, AIO tubes/radiator, PSU shroud, and individually routed cable sleeves"
+    ]
+  },
+  "stillRequires": [
+    "human visual approval against commercial references",
+    "true hand-authored texture polish beyond generated atlas",
+    "real renderer-baked lightmap if promotion requires static GI",
+    "LOD/proxy/collider/support package",
+    "scene integration only after standalone approval"
+  ]
+}

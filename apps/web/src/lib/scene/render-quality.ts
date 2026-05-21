@@ -28,9 +28,65 @@ export type SceneRenderQuality = {
   contactShadowResolution: number;
   contactShadowBlur: number;
   contactShadowOpacity: number;
+  contactShadowScale: number | [number, number];
+  contactShadowFar: number;
+  contactShadowColor: string;
+  contactShadowY: number;
   allowDynamicLights: boolean;
   enableFillLight: boolean;
 };
+
+type ContactShadowQuality = Pick<
+  SceneRenderQuality,
+  | "enableContactShadows"
+  | "contactShadowResolution"
+  | "contactShadowBlur"
+  | "contactShadowOpacity"
+  | "contactShadowScale"
+  | "contactShadowFar"
+  | "contactShadowColor"
+  | "contactShadowY"
+>;
+
+const CONTACT_SHADOWS_DISABLED: ContactShadowQuality = {
+  enableContactShadows: false,
+  contactShadowResolution: 0,
+  contactShadowBlur: 0,
+  contactShadowOpacity: 0,
+  contactShadowScale: 0,
+  contactShadowFar: 0,
+  contactShadowColor: "#000000",
+  contactShadowY: -0.04
+};
+
+function dioramaContactShadow({
+  resolution,
+  blur,
+  opacity,
+  scale,
+  far,
+  color = "#21160f",
+  y = -0.035
+}: {
+  resolution: number;
+  blur: number;
+  opacity: number;
+  scale: number | [number, number];
+  far: number;
+  color?: string;
+  y?: number;
+}): ContactShadowQuality {
+  return {
+    enableContactShadows: true,
+    contactShadowResolution: resolution,
+    contactShadowBlur: blur,
+    contactShadowOpacity: opacity,
+    contactShadowScale: scale,
+    contactShadowFar: far,
+    contactShadowColor: color,
+    contactShadowY: y
+  };
+}
 
 type SceneRenderQualityInput = {
   interactionMode: SceneInteractionMode;
@@ -85,10 +141,7 @@ export function resolveSceneRenderQuality({
         ssrMaxRoughness: 0,
         ssrThickness: 0,
         composerMultisampling: 0,
-        enableContactShadows: false,
-        contactShadowResolution: 0,
-        contactShadowBlur: 0,
-        contactShadowOpacity: 0,
+        ...CONTACT_SHADOWS_DISABLED,
         allowDynamicLights: false,
         enableFillLight: false
       };
@@ -113,10 +166,7 @@ export function resolveSceneRenderQuality({
         ssrMaxRoughness: constrainedDevice ? 0 : 0.62,
         ssrThickness: constrainedDevice ? 0 : 6,
         composerMultisampling: 0,
-        enableContactShadows: false,
-        contactShadowResolution: 0,
-        contactShadowBlur: 0,
-        contactShadowOpacity: 0,
+        ...CONTACT_SHADOWS_DISABLED,
         allowDynamicLights: true,
         enableFillLight: false
       };
@@ -141,10 +191,13 @@ export function resolveSceneRenderQuality({
         ssrMaxRoughness: 0,
         ssrThickness: 0,
         composerMultisampling: 0,
-        enableContactShadows: true,
-        contactShadowResolution: constrainedDevice ? 192 : 320,
-        contactShadowBlur: 1.5,
-        contactShadowOpacity: constrainedDevice ? 0.18 : 0.28,
+        ...dioramaContactShadow({
+          resolution: constrainedDevice ? 192 : 320,
+          blur: 1.48,
+          opacity: constrainedDevice ? 0.2 : 0.3,
+          scale: constrainedDevice ? 18 : 20,
+          far: 7.5
+        }),
         allowDynamicLights: true,
         enableFillLight: true
       };
@@ -168,10 +221,13 @@ export function resolveSceneRenderQuality({
       ssrMaxRoughness: 0,
       ssrThickness: 0,
       composerMultisampling: 0,
-      enableContactShadows: true,
-      contactShadowResolution: constrainedDevice ? 176 : 288,
-      contactShadowBlur: 1.45,
-      contactShadowOpacity: constrainedDevice ? 0.16 : 0.24,
+      ...dioramaContactShadow({
+        resolution: constrainedDevice ? 176 : 288,
+        blur: constrainedDevice ? 1.35 : 1.55,
+        opacity: constrainedDevice ? 0.18 : 0.27,
+        scale: constrainedDevice ? 20 : 22,
+        far: 8
+      }),
       allowDynamicLights: true,
       enableFillLight: true
     };
@@ -180,11 +236,11 @@ export function resolveSceneRenderQuality({
   if (isBuilderPreview) {
     return {
       frameLoop: "demand",
-      dpr: constrainedDevice ? clampRange(0.8, 1) : clampRange(0.9, 1.15),
+      dpr: constrainedDevice ? clampRange(0.88, 1.04) : clampRange(1, 1.24),
       toneMapping: "neutral",
-      toneMappingExposure: constrainedDevice ? 0.98 : 1.01,
-      enableShadows: false,
-      shadowMapSize: 0,
+      toneMappingExposure: constrainedDevice ? 1 : 1.04,
+      enableShadows: true,
+      shadowMapSize: constrainedDevice ? 640 : 896,
       enablePostEffects: false,
       enableBloom: false,
       bloomIntensity: 0,
@@ -196,12 +252,15 @@ export function resolveSceneRenderQuality({
       ssrMaxRoughness: 0,
       ssrThickness: 0,
       composerMultisampling: 0,
-      enableContactShadows: false,
-      contactShadowResolution: 0,
-      contactShadowBlur: 0,
-      contactShadowOpacity: 0,
+      ...dioramaContactShadow({
+        resolution: constrainedDevice ? 192 : 320,
+        blur: constrainedDevice ? 1.28 : 1.58,
+        opacity: constrainedDevice ? 0.18 : 0.3,
+        scale: constrainedDevice ? [20, 18] : [22, 20],
+        far: constrainedDevice ? 7 : 8
+      }),
       allowDynamicLights: true,
-      enableFillLight: false
+      enableFillLight: true
     };
   }
 
@@ -224,10 +283,16 @@ export function resolveSceneRenderQuality({
       ssrMaxRoughness: 0,
       ssrThickness: 0,
       composerMultisampling: 0,
-      enableContactShadows: constrainedDevice ? false : true,
-      contactShadowResolution: constrainedDevice ? 0 : 224,
-      contactShadowBlur: 1.45,
-      contactShadowOpacity: 0.24,
+      ...(constrainedDevice
+        ? CONTACT_SHADOWS_DISABLED
+        : dioramaContactShadow({
+            resolution: 224,
+            blur: 1.45,
+            opacity: 0.24,
+            scale: 22,
+            far: 8.5,
+            color: "#1f1711"
+          })),
       allowDynamicLights: true,
       enableFillLight: false
     };
@@ -252,10 +317,14 @@ export function resolveSceneRenderQuality({
       ssrMaxRoughness: constrainedDevice ? 0 : 0.68,
       ssrThickness: constrainedDevice ? 0 : 7.5,
       composerMultisampling: constrainedDevice ? 0 : 2,
-      enableContactShadows: true,
-      contactShadowResolution: constrainedDevice ? 256 : 416,
-      contactShadowBlur: constrainedDevice ? 1.55 : 1.8,
-      contactShadowOpacity: constrainedDevice ? 0.24 : 0.32,
+      ...dioramaContactShadow({
+        resolution: constrainedDevice ? 256 : 416,
+        blur: constrainedDevice ? 1.55 : 1.8,
+        opacity: constrainedDevice ? 0.24 : 0.32,
+        scale: constrainedDevice ? 23 : 25,
+        far: 9,
+        color: "#1f1711"
+      }),
       allowDynamicLights: true,
       enableFillLight: true
     };
@@ -279,10 +348,14 @@ export function resolveSceneRenderQuality({
     ssrMaxRoughness: 0,
     ssrThickness: 0,
     composerMultisampling: 0,
-    enableContactShadows: true,
-    contactShadowResolution: constrainedDevice ? 256 : 448,
-    contactShadowBlur: constrainedDevice ? 1.6 : 1.9,
-    contactShadowOpacity: constrainedDevice ? 0.28 : 0.36,
+    ...dioramaContactShadow({
+      resolution: constrainedDevice ? 256 : 448,
+      blur: constrainedDevice ? 1.6 : 1.9,
+      opacity: constrainedDevice ? 0.28 : 0.36,
+      scale: constrainedDevice ? 24 : 26,
+      far: 10,
+      color: "#1f1711"
+    }),
     allowDynamicLights: true,
     enableFillLight: true
   };

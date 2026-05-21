@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:04:21.617Z",
+  "assetKey": "diecast",
+  "sourceUrl": "https://ko.aliexpress.com/item/1005003654777012.html?aff_fcid=5d53630f2ff04856812cb05f322ff9b1-1778673861175-09852-_oo9b0Jz&tt=CPS_NORMAL&aff_fsk=_oo9b0Jz&aff_platform=shareComponent-detail&sk=_oo9b0Jz&aff_trace_key=5d53630f2ff04856812cb05f322ff9b1-1778673861175-09852-_oo9b0Jz&terminal_id=b87f5d45375443dd88386be741772d26&afSmartRedirect=y&gatewayAdapt=glo2kor",
+  "product": {
+    "title": "1/32 이니셜 D AE86 장난감 자동차 다이캐스트 도요타 미니어처 모델 풀백 사운드 라이트 도어 개방형 교육 컬렉션 선물 키드 - AliExpress 26",
+    "sku": "AE86",
+    "manufacturer": "1/32 이니셜 D AE86 장난감 자동차 다이캐스트 도요타 미니어처 모델 풀백 사운드 라이트 도어 개방형 교육 컬렉션 선물 키드 - AliExpress 26",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": [
+      2010,
+      2025
+    ]
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-1-32-D-AE86-AliExpress-26-Prototype-Reference",
+      "label": "1/32 이니셜 D AE86 장난감 자동차 다이캐스트 도요타 미니어처 모델 풀백 사운드 라이트 도어 개방형 교육 컬렉션 선물 키드 - AliExpress 26 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "AE86",
+    "manufacturer": "1/32 이니셜 D AE86 장난감 자동차 다이캐스트 도요타 미니어처 모델 풀백 사운드 라이트 도어 개방형 교육 컬렉션 선물 키드 - AliExpress 26",
+    "canonicalProductUrl": "https://ko.aliexpress.com/item/1005003654777012.html?aff_fcid=5d53630f2ff04856812cb05f322ff9b1-1778673861175-09852-_oo9b0Jz&tt=CPS_NORMAL&aff_fsk=_oo9b0Jz&aff_platform=shareComponent-detail&sk=_oo9b0Jz&aff_trace_key=5d53630f2ff04856812cb05f322ff9b1-1778673861175-09852-_oo9b0Jz&terminal_id=b87f5d45375443dd88386be741772d26&afSmartRedirect=y&gatewayAdapt=glo2kor",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://ae01.alicdn.com/kf/S99ef3169be8442aa91a0aaeaa2523297J.jpg",
+        "required": false,
+        "license": "LicenseRef-1-32-D-AE86-AliExpress-26-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://ko.aliexpress.com/item/1005003654777012.html?aff_fcid=5d53630f2ff04856812cb05f322ff9b1-1778673861175-09852-_oo9b0Jz&tt=CPS_NORMAL&aff_fsk=_oo9b0Jz&aff_platform=shareComponent-detail&sk=_oo9b0Jz&aff_trace_key=5d53630f2ff04856812cb05f322ff9b1-1778673861175-09852-_oo9b0Jz&terminal_id=b87f5d45375443dd88386be741772d26&afSmartRedirect=y&gatewayAdapt=glo2kor",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-1-32-D-AE86-AliExpress-26-Prototype-Reference",
+      "label": "1/32 이니셜 D AE86 장난감 자동차 다이캐스트 도요타 미니어처 모델 풀백 사운드 라이트 도어 개방형 교육 컬렉션 선물 키드 - AliExpress 26 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://ae01.alicdn.com/kf/S99ef3169be8442aa91a0aaeaa2523297J.jpg",
+      "view": "front",
+      "source": "open_graph",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "1/32 이니셜 D AE86 장난감 자동차 다이캐스트 도요타 미니어처 모델 풀백 사운드 라이트 도어 개방형 교육 컬렉션 선물 키드 - AliExpress 26",
+        "AE86",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "1/32 이니셜 D AE86 장난감 자동차 다이캐스트 도요타 미니어처 모델 풀백 사운드 라이트 도어 개방형 교육 컬렉션 선물 키드 - AliExpress 26",
+        "AE86",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "1/32 이니셜 D AE86 장난감 자동차 다이캐스트 도요타 미니어처 모델 풀백 사운드 라이트 도어 개방형 교육 컬렉션 선물 키드 - AliExpress 26",
+        "AE86",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 0,
+    "selectedImageCount": 1,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release."
+    ]
+  }
+}

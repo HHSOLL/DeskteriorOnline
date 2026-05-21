@@ -1,0 +1,291 @@
+{
+  "schemaVersion": "deskterior-blender-authored-asset-review-v2",
+  "asset": {
+    "slug": "p2s-bruno-furniture-hero-kit-v2",
+    "assetKey": "p2s_bruno_furniture_hero_kit_v2",
+    "intent": "whole-room large furniture commercial-pass candidate for the Bruno-inspired room QA scene",
+    "source": "Blender procedural authoring by Codex layered over the project-owned V1 furniture generator; no Bruno Simon or paid asset copied",
+    "license": "project-owned prototype asset pending commercial catalog approval",
+    "currentGrade": "commercial-pass review candidate, not final approved catalog asset",
+    "promotionBoundary": [
+      "geometry and visible detail are improved across all large room furniture groups",
+      "final commercial claim still requires human art direction approval, split object catalog metadata, collider/LOD package, and final UV/light bake"
+    ]
+  },
+  "outputs": {
+    "blend": "assets/blender/deskterior/p2s_bruno_furniture_hero_kit_v2.blend",
+    "runtimeGlb": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/p2s_bruno_furniture_hero_kit_v2.glb",
+    "publicGlb": "apps/web/public/assets/models/p2s_bruno_furniture_hero_kit_v2/p2s_bruno_furniture_hero_kit_v2.glb",
+    "texturePackageManifest": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/texture-package-2026-05-20.json",
+    "publicTexturePackageManifest": "apps/web/public/assets/models/p2s_bruno_furniture_hero_kit_v2/texture-package-2026-05-20.json",
+    "previews": {
+      "overall": "assets/references/blender-authored/bruno-furniture-hero-kit-v2/furniture-v2-overall.png",
+      "deskShelf": "assets/references/blender-authored/bruno-furniture-hero-kit-v2/furniture-v2-desk-shelf-closeup.png",
+      "loungeMedia": "assets/references/blender-authored/bruno-furniture-hero-kit-v2/furniture-v2-lounge-media-closeup.png"
+    }
+  },
+  "metrics": {
+    "dimensionsM": [
+      6.3606,
+      3.797,
+      2.5033
+    ],
+    "objectCount": 518,
+    "meshObjectCount": 518,
+    "curveObjectCount": 0,
+    "materialCount": 28,
+    "textureCount": 22,
+    "triangleCount": 85188,
+    "triangleBudget": 120000,
+    "triangleBudgetStatus": "pass",
+    "v2DetailObjectCount": 190,
+    "runtimeBytes": 12289048,
+    "publicBytes": 12289048,
+    "unmaterialedObjectCount": 0,
+    "missingExternalImageCount": 0
+  },
+  "texturePackagingPass": {
+    "runtime": {
+      "packageStatus": "orm-sidecar-ready-ktx2-copied",
+      "packedOrmMapCount": 4,
+      "packedOrmChannels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "ormSidecarFormat": "PNG",
+      "ktx2Ready": true,
+      "ktx2TranscodeAttempted": false,
+      "toktxAvailable": false,
+      "basisuAvailable": true,
+      "stillRequiresRuntimeKtx2Transcode": false,
+      "stillRequiresFinalUvBake": true,
+      "manifest": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/texture-package-2026-05-20.json",
+      "packedOrmMaps": [
+        {
+          "role": "furnitureWoodOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/textures/hero_uv_oiled_walnut_orm_1k.png",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.02
+        },
+        {
+          "role": "furnitureFabricOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/textures/hero_uv_bluegrey_fabric_orm_1k.png",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.0
+        },
+        {
+          "role": "furnitureLacquerOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/textures/hero_uv_warm_lacquer_orm_512.png",
+          "resolution": [
+            512,
+            512
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.03
+        },
+        {
+          "role": "furnitureSpeakerOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/textures/hero_uv_speaker_grille_orm_512.png",
+          "resolution": [
+            512,
+            512
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.04
+        }
+      ],
+      "promotionBoundary": "V2 furniture pass improves visible geometry/material coverage; final catalog promotion still requires final UV bake, LOD/collider split, and human art approval."
+    },
+    "public": {
+      "schemaVersion": "deskterior-runtime-texture-package-v1",
+      "generatedAt": "2026-05-20T00:00:00.000Z",
+      "assetKey": "p2s_bruno_furniture_hero_kit_v2",
+      "sourceManifestPath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/texture-package-2026-05-20.json",
+      "packageStatus": "orm-sidecar-ready-ktx2-copied",
+      "ktx2Ready": true,
+      "ktx2TranscodeAttempted": false,
+      "toktxAvailable": false,
+      "basisuAvailable": true,
+      "stillRequiresRuntimeKtx2Transcode": false,
+      "stillRequiresFinalUvBake": true,
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "maps": [
+        {
+          "role": "furnitureWoodOrm",
+          "sourcePath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/textures/hero_uv_oiled_walnut_orm_1k.png",
+          "publicPath": "/assets/models/p2s_bruno_furniture_hero_kit_v2/textures/hero_uv_oiled_walnut_orm_1k.png",
+          "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit_v2/textures/hero_uv_oiled_walnut_orm_1k.ktx2",
+          "required": true,
+          "exists": true,
+          "ktx2Exists": true,
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color"
+        },
+        {
+          "role": "furnitureFabricOrm",
+          "sourcePath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/textures/hero_uv_bluegrey_fabric_orm_1k.png",
+          "publicPath": "/assets/models/p2s_bruno_furniture_hero_kit_v2/textures/hero_uv_bluegrey_fabric_orm_1k.png",
+          "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit_v2/textures/hero_uv_bluegrey_fabric_orm_1k.ktx2",
+          "required": true,
+          "exists": true,
+          "ktx2Exists": true,
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color"
+        },
+        {
+          "role": "furnitureLacquerOrm",
+          "sourcePath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/textures/hero_uv_warm_lacquer_orm_512.png",
+          "publicPath": "/assets/models/p2s_bruno_furniture_hero_kit_v2/textures/hero_uv_warm_lacquer_orm_512.png",
+          "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit_v2/textures/hero_uv_warm_lacquer_orm_512.ktx2",
+          "required": true,
+          "exists": true,
+          "ktx2Exists": true,
+          "resolution": [
+            512,
+            512
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color"
+        },
+        {
+          "role": "furnitureSpeakerOrm",
+          "sourcePath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit-v2/textures/hero_uv_speaker_grille_orm_512.png",
+          "publicPath": "/assets/models/p2s_bruno_furniture_hero_kit_v2/textures/hero_uv_speaker_grille_orm_512.png",
+          "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit_v2/textures/hero_uv_speaker_grille_orm_512.ktx2",
+          "required": true,
+          "exists": true,
+          "ktx2Exists": true,
+          "resolution": [
+            512,
+            512
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color"
+        }
+      ],
+      "promotionBoundary": "Commercial-pass candidate package. KTX2 sidecars are copied when available; final UV bake and catalog approval still required."
+    }
+  },
+  "commercialPassCoverage": {
+    "desk": [
+      "solid wood edge bands and underlip shadow seams",
+      "drawer cavity, endcaps, leg sockets, levelers, cable arc, felt mat stitching, keyboard caps"
+    ],
+    "shelf": [
+      "rear backstops, shelf pins, offset book spines, page lines, cabinet hinges, woven basket crosshatch, leaf midribs"
+    ],
+    "mediaConsole": [
+      "shadowed inner shelf, slat occlusion/highlights, cable ports, speaker grille threads, levelers, TV hinge pin"
+    ],
+    "lounge": [
+      "bound rug edges and diagonal weave",
+      "visible sofa seams, tag, button depressions, throw threads, pillow edging",
+      "coffee table fasteners, glass streaks, cable, controller caps, lower shelf occlusion"
+    ]
+  },
+  "comparisonReview": {
+    "commercialBenchmarkRubric": [
+      {
+        "gate": "foreground furniture silhouette",
+        "candidateStatus": "pass-candidate",
+        "evidence": "all major furniture groups now include rounded authored geometry plus secondary construction details, not only large cuboids",
+        "remainingGap": "still not hand-sculpted/retopologized individual SKU models"
+      },
+      {
+        "gate": "material response",
+        "candidateStatus": "partial-pass",
+        "evidence": "V1 PBR helper maps are retained, KTX2 sidecars are copied when present, and V2 adds localized material-specific details",
+        "remainingGap": "final UV bake and high-poly derived normals are still missing"
+      },
+      {
+        "gate": "runtime visibility",
+        "candidateStatus": "requires-integration-check",
+        "evidence": "versioned public GLB and manifest are emitted",
+        "remainingGap": "QA route must be pointed to V2 and sofa hiding logic must not mask reviewed furniture detail"
+      },
+      {
+        "gate": "catalog readiness",
+        "candidateStatus": "fail-for-final-commercial",
+        "evidence": "asset provenance, metrics, preview renders, and texture package manifests are emitted",
+        "remainingGap": "needs object split, colliders, LODs, meshopt, final bake, and human art approval"
+      }
+    ]
+  },
+  "knownGapsBeforeCommercialPromotion": [
+    "not a purchased/photogrammetry commercial furniture pack",
+    "not split into individually selectable furniture catalog SKUs",
+    "final UV/light bake and meshopt/LOD/collider package are still pending",
+    "visual review must compare the rendered candidate against the QA scene after integration"
+  ],
+  "reopenAuditSeed": {
+    "unmaterialedObjects": [],
+    "missingExternalImages": []
+  }
+}

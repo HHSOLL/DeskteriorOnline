@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:35.685Z",
+  "assetKey": "hyte",
+  "sourceUrl": "https://hyte.com/en-GB/store/y70/cs-hyte-y70-ww?zCountry=AU",
+  "product": {
+    "title": "Y70 - Our New ATX PC Case - Snow White",
+    "sku": null,
+    "manufacturer": "HYTE",
+    "brand": "HYTE",
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": {
+      "width": 470,
+      "depth": 320,
+      "height": 470
+    },
+    "heightRangeMm": null
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-HYTE-Prototype-Reference",
+      "label": "HYTE public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "HYTE",
+    "canonicalProductUrl": "https://hyte.com/en-GB/store/y70/cs-hyte-y70-ww?zCountry=AU",
+    "dimensionSourceUrl": "https://hyte.com/en-GB/store/y70/cs-hyte-y70-ww?zCountry=AU",
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://cdn11.bigcommerce.com/s-k28u1tc9ki/product_images/attribute_rule_images/82_source_1708009941.jpg",
+        "required": false,
+        "license": "LicenseRef-HYTE-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://cdn.sanity.io/images/mqc7p4g4/production/917e2c8c8e179426269b209c2c979e8a43a1a471-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+        "required": false,
+        "license": "LicenseRef-HYTE-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://cdn.sanity.io/images/mqc7p4g4/production/406d8757be8f1e18fd59af3072dcd94a9607a71e-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+        "required": false,
+        "license": "LicenseRef-HYTE-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://cdn.sanity.io/images/mqc7p4g4/production/bdc2aadcc158e44f077c3d44556cfa0910c8a410-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+        "required": false,
+        "license": "LicenseRef-HYTE-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://cdn.sanity.io/images/mqc7p4g4/production/73f4541fc758d663d0c36f27dda446a859f9678b-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+        "required": false,
+        "license": "LicenseRef-HYTE-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://hyte.com/en-GB/store/y70/cs-hyte-y70-ww?zCountry=AU",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-HYTE-Prototype-Reference",
+      "label": "HYTE public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "dimension_verified",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://cdn11.bigcommerce.com/s-k28u1tc9ki/product_images/attribute_rule_images/82_source_1708009941.jpg",
+      "view": "front",
+      "source": "json_ld",
+      "score": 40
+    },
+    {
+      "url": "https://cdn.sanity.io/images/mqc7p4g4/production/917e2c8c8e179426269b209c2c979e8a43a1a471-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://cdn.sanity.io/images/mqc7p4g4/production/406d8757be8f1e18fd59af3072dcd94a9607a71e-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://cdn.sanity.io/images/mqc7p4g4/production/bdc2aadcc158e44f077c3d44556cfa0910c8a410-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://cdn.sanity.io/images/mqc7p4g4/production/73f4541fc758d663d0c36f27dda446a859f9678b-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://cdn.sanity.io/images/mqc7p4g4/production/1fadc9a19385819bd657abe25a6b24b503fd52e3-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://cdn.sanity.io/images/mqc7p4g4/production/1fc06ed6edd162cde432925ba4cf411c51938511-3480x2460.jpg?w=3840&q=75&fit=clip&auto=format",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://hyte.com/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-k28u1tc9ki%2Fproducts%2F209%2Fimages%2F874%2FHYTE-hub-0__85142.1736205095.386.513.jpg%3Fc%3D1&w=256&q=75",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://hyte.com/_next/image?url=https%3A%2F%2Fcdn11.bigcommerce.com%2Fs-k28u1tc9ki%2Fproducts%2F174%2Fimages%2F817%2FHYTE-keeb-TKL-0__99318.1704755991.386.513.jpg%3Fc%3D1&w=256&q=75",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://content.ibuypower.com/hyte/Y70/y70_ventilation_copy-3x.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "Y70 - Our New ATX PC Case - Snow White",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "Y70 - Our New ATX PC Case - Snow White",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "Y70 - Our New ATX PC Case - Snow White",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": true,
+    "openGraphImageFound": true,
+    "htmlImageCount": 37,
+    "selectedImageCount": 10,
+    "dimensionSource": "html_text",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No SKU/model identifier found."
+    ]
+  }
+}

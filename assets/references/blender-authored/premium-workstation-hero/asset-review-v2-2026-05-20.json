@@ -1,0 +1,32 @@
+{
+  "asset": "p2s_premium_workstation_hero_v2",
+  "status": "standalone-generated-review-required",
+  "sourceBlend": "assets/blender/deskterior/p2s_premium_workstation_hero_v2.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_premium_workstation_hero_v2/p2s_premium_workstation_hero_v2.glb",
+  "previewImages": [
+    "assets/references/blender-authored/premium-workstation-hero/v2-previews/workstation-v2-isometric.png",
+    "assets/references/blender-authored/premium-workstation-hero/v2-previews/workstation-v2-pc-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v2-previews/workstation-v2-tabletop-closeup.png"
+  ],
+  "metrics": {
+    "nodes": 327,
+    "meshes": 322,
+    "materials": 43,
+    "triangles": 87052,
+    "textureImages": 2,
+    "glbBytes": 4534040
+  },
+  "improvementsOverV1": [
+    "separate v2 path, not scene-promoted",
+    "more layered PC case frame/glass/mesh/internal component detail",
+    "additional packed basecolor textures for screen, desk mat, and perforated mesh",
+    "visible cable tray, cable bundle, monitor arm, fan blades, cable combs, keyboard legends, and tabletop micro props"
+  ],
+  "stillRequires": [
+    "human visual approval against references",
+    "UV unwrap and authored texture atlas cleanup",
+    "baked AO/GI/lightmap",
+    "LOD/proxy/collider/support package",
+    "runtime material normalization before catalog reuse"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "status": "review_pending_no_meshy_post_sent",
+  "reason": "User requested prompt/reference review before Meshy text-to-3D or image-to-3D generation.",
+  "textTo3dPromptCandidate": "Generic high-end desk accessory kit for a cozy 3D deskterior room, no logos, thin black OLED monitor with light bar, low profile aluminum keyboard with individual keycaps, sculpted white wireless mouse, compact white desktop speakers with black fabric grilles, slim adjustable desk lamp, broadcast microphone arm, cable dressing, realistic PBR materials, clean GLB topology.",
+  "negativePrompt": "brand logos, exact replica, unreadable melted details, warped keyboard rows, extra monitors, watermark, product text labels",
+  "intendedUse": "comparison candidate only before any public catalog promotion",
+  "referencePolicy": "Use public product pages for proportion and material study only; do not upload protected product imagery without review.",
+  "meshApiPreflight": {
+    "balanceEndpointReachable": true,
+    "balanceAvailable": true,
+    "providerPostSent": false,
+    "status": 200,
+    "reason": "Balance endpoint checked only; no paid generation POST sent."
+  }
+}

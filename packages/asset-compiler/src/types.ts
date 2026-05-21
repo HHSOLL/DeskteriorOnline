@@ -48,6 +48,43 @@ export type AssetTextureSetMetadata = {
   ktx2Ready: boolean;
 };
 
+export type RuntimeTexturePackageMapRef = {
+  role: string;
+  sourcePath: string;
+  publicPath: string;
+  ktx2Path: string | null;
+  required: boolean;
+  exists: boolean;
+  resolution?: [number, number];
+  channels?: {
+    r: string;
+    g: string;
+    b: string;
+    a: string;
+  };
+  colorSpace?: string;
+};
+
+export type RuntimeTexturePackageMetadata = {
+  kind: "packed_orm";
+  status: "orm-png-sidecar-ready-ktx2-pending" | "ktx2-ready";
+  manifestPath: string;
+  sourceManifestPath: string;
+  ktx2Ready: boolean;
+  ktx2TranscodeAttempted: boolean;
+  toktxAvailable: boolean;
+  stillRequiresRuntimeKtx2Transcode: boolean;
+  stillRequiresFinalUvBake: boolean;
+  channels: {
+    r: "ambientOcclusion";
+    g: "roughness";
+    b: "metallic";
+    a: "constantOne";
+  };
+  maps: RuntimeTexturePackageMapRef[];
+  promotionBoundary: string;
+};
+
 export type AssetLodProfileMetadata = {
   strategy: "single_mesh" | "manual_lod";
   levelCount: number;
@@ -142,6 +179,9 @@ export type RuntimePackageIndexEntry = {
   surfaceCount: number;
   attachmentPointCount: number;
   materialVariantCount: number;
+  texturePackageStatus?: RuntimeTexturePackageMetadata["status"];
+  texturePackageCount?: number;
+  ktx2Ready?: boolean;
   commercialTier?: RuntimeCommercialReadiness["tier"];
   sku?: string;
   manufacturer?: string;
@@ -184,6 +224,7 @@ export type RuntimePackageDescriptor = {
     materialVariants: RuntimePackageFileRef;
     qaReport: RuntimePackageFileRef;
     thumbnail: RuntimePackageFileRef;
+    texturePackageManifest?: RuntimePackageFileRef;
   };
   runtime: {
     lods: Array<{
@@ -198,6 +239,7 @@ export type RuntimePackageDescriptor = {
     qaReportPath: string;
     thumbnailPath: string | null;
   };
+  texturePackages?: RuntimeTexturePackageMetadata[];
   qa: {
     status: AssetQaReport["status"];
     warnings: string[];

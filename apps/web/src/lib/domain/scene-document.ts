@@ -11,6 +11,7 @@ import {
 } from "./scene-placement";
 import type { PlacementRecord } from "@deskterioronline/scene-schema";
 import { normalizeLightingFixtures, type LightingFixture } from "../scene/lighting-layout";
+import { HOME_REFERENCE_LIGHTING } from "../scene/lighting-presets";
 import type {
   ProductCollisionProxyMetadata,
   ProductContractMetadata,
@@ -493,8 +494,8 @@ function parseSceneDocumentFromVersion(version: Record<string, unknown>): SceneD
       hemisphereIntensity: toSafeNumber(rawLighting?.hemisphereIntensity, 0.54),
       directionalIntensity: toSafeNumber(rawLighting?.directionalIntensity, 1.24),
       environmentBlur: toSafeNumber(rawLighting?.environmentBlur, 0.14),
-      accentIntensity: toSafeNumber(rawLighting?.accentIntensity, 0.82),
-      beamOpacity: toSafeNumber(rawLighting?.beamOpacity, 0.18),
+      accentIntensity: toSafeNumber(rawLighting?.accentIntensity, HOME_REFERENCE_LIGHTING.accentIntensity),
+      beamOpacity: toSafeNumber(rawLighting?.beamOpacity, HOME_REFERENCE_LIGHTING.beamOpacity),
       fixtures: toLightingFixtures(rawLighting?.fixtures)
     }
   };

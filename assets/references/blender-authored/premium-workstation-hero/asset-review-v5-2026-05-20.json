@@ -1,0 +1,75 @@
+{
+  "asset": "p2s_premium_workstation_hero_v5",
+  "status": "standalone-generated-review-required",
+  "sourceBlend": "assets/blender/deskterior/p2s_premium_workstation_hero_v5.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_premium_workstation_hero_v5/p2s_premium_workstation_hero_v5.glb",
+  "previewImages": [
+    "assets/references/blender-authored/premium-workstation-hero/v5-previews/workstation-v5-isometric.png",
+    "assets/references/blender-authored/premium-workstation-hero/v5-previews/workstation-v5-pc-internals-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v5-previews/workstation-v5-tabletop-closeup.png"
+  ],
+  "atlasArtifacts": {
+    "basecolor": "assets/references/blender-authored/premium-workstation-hero/workstation-v5-basecolor-atlas.png",
+    "orm": "assets/references/blender-authored/premium-workstation-hero/workstation-v5-orm-atlas.png"
+  },
+  "metrics": {
+    "nodes": 425,
+    "meshes": 420,
+    "materials": 47,
+    "triangles": 116580,
+    "textureImages": 4,
+    "glbBytes": 6335884,
+    "atlasAssignedMeshObjects": 212,
+    "activeUvAtlasMeshObjects": 212,
+    "bakedContactAoDecals": 8,
+    "lightmapUv2ReadyMeshObjects": 212
+  },
+  "postExportAudit": {
+    "objects": 422,
+    "meshOrCurveObjects": 420,
+    "materials": 28,
+    "textureImages": 4,
+    "uvAtlasObjects": 212,
+    "activeUvAtlasObjects": 212,
+    "lightmapUv2Objects": 212,
+    "unmaterialedObjects": [],
+    "missingExternalImages": []
+  },
+  "glbAudit": {
+    "nodes": 420,
+    "meshes": 420,
+    "materials": 27,
+    "images": 2,
+    "textures": 2,
+    "samplers": 1,
+    "embeddedImages": [
+      "workstation-v5-basecolor-atlas",
+      "workstation-v5-orm-atlas"
+    ],
+    "extensionsUsed": [
+      "KHR_materials_emissive_strength"
+    ]
+  },
+  "pixelRegressionCheck": {
+    "v4IsometricCyanRatio": 0.0384,
+    "v5IsometricCyanRatio": 0.0009,
+    "v5MagentaRatio": 0.0,
+    "note": "Cyan ratio is used here as a proxy for the V4 atlas patchwork artifact visible on large surfaces."
+  },
+  "iterationNotes": {
+    "v4DefectTargeted": "V4 generated UV/PBR artifacts but did not force the shader to sample UVAtlas, causing visible atlas patchwork.",
+    "v5Changes": [
+      "Shader now uses an explicit UV Map node bound to UVAtlas.",
+      "UVAtlas is marked active/render-active on all assigned meshes.",
+      "Atlas palette was reduced to product-like white, graphite, oak, paper, and subtle UI tones.",
+      "V4 PC internals, LightmapUV2 coverage, and baked-style AO decals are preserved."
+    ]
+  },
+  "stillRequires": [
+    "human visual approval against commercial references",
+    "true hand-authored texture polish beyond generated atlas",
+    "real renderer-baked lightmap if promotion requires static GI",
+    "LOD/proxy/collider/support metadata before catalog promotion",
+    "scene integration only after standalone approval"
+  ]
+}

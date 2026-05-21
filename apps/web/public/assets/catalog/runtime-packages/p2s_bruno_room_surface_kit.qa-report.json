@@ -1,0 +1,21 @@
+{
+  "status": "warning",
+  "measuredBoundsMm": {
+    "width": 7054,
+    "depth": 4142,
+    "height": 2680
+  },
+  "dimensionErrorMm": {
+    "width": 0,
+    "depth": 0,
+    "height": 0
+  },
+  "validatorVersion": "bruno-room-runtime-package-alpha-v1",
+  "issues": [
+    {
+      "code": "FINAL_UV_BAKE_PENDING",
+      "severity": "warning",
+      "message": "Surface material package still requires final UV-authored AO/GI/ORM atlases."
+    }
+  ]
+}

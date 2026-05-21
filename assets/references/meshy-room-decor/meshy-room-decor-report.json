@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "meshy-room-decor-asset-v1",
+  "generatedAt": "2026-05-16T02:04:55.564Z",
+  "asset": {
+    "catalogItemId": "p2s_meshy_pastel_mascot_stack",
+    "label": "Meshy Pastel Mascot Stack",
+    "prompt": "A single original web-ready GLB asset for a cozy isometric creator room. Design a compact pyramid stack of small rounded vinyl desk mascot figures on a low display base. Soft toy-like shapes, pastel mint coral yellow blue lavender colors, glossy plastic with PBR roughness variation. Readable from an isometric camera as shelf decor, Bruno-Simon-inspired diorama mood but no copied character, no logo, no text. One clean object only, upright on the floor plane, centered pivot, no room, no shelf, no background, no hands, no packaging. Add small bevels and material separation so it catches warm and cool room lighting.",
+    "dimensionsMm": {
+      "width": 180,
+      "depth": 120,
+      "height": 150
+    },
+    "previewTaskId": "019e2e84-7663-7ccc-a887-c944abe709ea",
+    "refineTaskId": "019e2e85-ef31-7cf9-ae38-5d23c5c41329",
+    "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2e85-ef31-7cf9-ae38-5d23c5c41329/output/model.glb?Expires=4932489600&Signature=aax2SOU06CjeKWmXLbEPrSbCme4n6iAWpmuJag6qpQ-HIkQYLzAoNDBJzK-EPthRHuyzebl0WSIx8OjSn~5eSi4KVq1gT40MksX~JLbRB~LrxbPjC0CnNFhmLrNDLXZARfBCeIx1NxCvIRv6GzXEhSPEzIzNzGNopUgF3y2pMshneTnPAU-escBFCQ3KRzr8iA05q8JjpNtr90cIV7SFl5Jb9VEhlCdYFvAVVdZejwwRnO5a-hitQQUNFftDj5ahtt59EUWCPf5hDLR66yevUVfcD29DjgbKFtcfVate9y0lbTuB6dJP-CE4dYqNaG3vBK-ATBM3wS7TRm6apRdERw__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_meshy_pastel_mascot_stack/p2s_meshy_pastel_mascot_stack.glb",
+    "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_meshy_pastel_mascot_stack/p2s_meshy_pastel_mascot_stack.proxy.glb",
+    "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_meshy_pastel_mascot_stack.webp",
+    "finalizerStatus": "finalized",
+    "warnings": []
+  },
+  "budget": {
+    "source": "mesh_balance_api",
+    "remaining": 1160,
+    "costPerTask": 30,
+    "maxBudgetPerJob": 60,
+    "reservedEstimate": 60
+  }
+}

@@ -161,3 +161,51 @@ MESHY_STATUS_URL=
 ## 최적화 (Draco)
 
 대용량 GLB는 로딩 지연이 크므로 worker가 생성한 자산도 후속 Draco 압축 파이프라인을 추가하는 것이 좋습니다. 현재 v1 구현은 provider 결과 GLB를 그대로 저장합니다.
+
+## 2026-05-18 공개 에셋 수집 메모
+
+Added:
+- Kenney Furniture Kit 2.0 공식 ZIP을 공개 라이선스 소스 후보로 확보했다.
+- 소스 위치: `assets/sources/open-license/kenney-furniture-kit/`
+- provenance 위치: `assets/references/open-license-assets/kenney-furniture-kit/reference-pack.json`
+- 검수용으로 24개 GLB를 `selected-glb/`에 추출했고, GLB binary header/length 검사는 `24/24` 통과했다.
+- QA route visual pass용으로 6개 GLB를 `/api/qa-assets/open-license/kenney-furniture-kit/[file]`에서 source staging 기반으로 서빙한다. 사용 목록과 수치는 `assets/references/open-license-assets/kenney-furniture-kit/qa-audit-2026-05-18.json`에 기록한다.
+- Meshy 커뮤니티 공개 모델은 생성 job 없이 public v1 task metadata의 `model.glb` signed URL에서 CC0 모델만 확보한다.
+- Meshy 커뮤니티 소스 위치: `assets/sources/meshy-community/selected-glb/`
+- Meshy 커뮤니티 provenance/audit 위치: `assets/references/meshy-community/download-audit-2026-05-18.json`
+- Meshy 커뮤니티 QA registry 위치: `assets/references/meshy-community/qa-registry-2026-05-18.json`
+- 앱 구현의 단일 파일 목록/배치 source는 `apps/web/src/lib/qa/meshy-community-assets.ts`로 둔다.
+- QA route visual pass용으로 4개 GLB를 `/api/qa-assets/meshy-community/[file]`에서 source staging 기반으로 서빙한다: `chair-rodiondbulatoff`, `rustic-table`, `rack-golden-arch`, `colorful-brick-wall`.
+
+Updated:
+- 해당 GLB들은 아직 runtime catalog에 publish하지 않는다. 신규 curated binary를 `apps/web/public/assets/*`에 직접 추가하지 않는 기존 규칙을 유지한다.
+- 다음 단계는 Blender/glTF inspector에서 scale, origin, pivot, material count, visual fit을 검수한 뒤 proxy/full runtime package와 catalog metadata를 만든다.
+- QA-only API는 public catalog나 storage-backed release URL을 대체하지 않는다. 시각 검증을 통과한 자산만 별도 runtime package 메타데이터와 최적화 산출물로 승격한다.
+- Meshy community route, workbench placement, verifier는 같은 TS registry에서 파일 목록을 읽어 allowlist drift를 막는다.
+- Meshy에서 사용자가 새로 생성하는 text-to-3D/image-to-3D는 사전 prompt/reference 검수를 유지하지만, 이미 공개된 커뮤니티 CC0 GLB 다운로드는 provenance와 metadata 확인 후 QA staging에 넣을 수 있다.
+
+Removed/Deprecated:
+- 라이선스와 provenance가 기록되지 않은 GLB를 final-room QA나 public catalog에 바로 연결하는 방식.
+- Meshy text-to-3D 또는 image-to-3D job을 사용자 검수 없이 실행하는 방식. Meshy 후보 프롬프트와 reference image 정책은 `assets/references/meshy-preapproval/deskterior-pc-room-assets-2026-05-18.md`에서 먼저 검토한다.
+- `assets/sources/open-license`의 원본 GLB를 정식 runtime asset처럼 취급하는 방식. 이 경로는 source/provenance staging이다.
+- Meshy public page의 `.meshy` viewer binary를 GLB로 오인하거나 runtime asset으로 직접 로드하는 방식.
+
+## 2026-05-19 Meshy Community Runtime Candidate 메모
+
+Added:
+- Meshy community source-staged GLB 4개를 Blender 정규화 + Meshopt 후보 패키지로 변환했다.
+- 정규화 스크립트: `scripts/blender/normalize-meshy-community-assets.py`
+- 후보 위치: `assets/runtime-candidates/meshy-community/<slug>/`
+- 후보별 산출물: `<slug>.normalized.glb`, `<slug>.thumbnail.webp`, `<slug>.runtime-candidate.json`
+- 정규화 report: `assets/references/meshy-community/normalization-report-2026-05-19.json`
+- Meshopt report: `assets/references/meshy-community/optimization-report-2026-05-19.json`
+- 자동 검증: `npm --workspace apps/web run verify:meshy-community-assets`
+
+Updated:
+- 후보 GLB는 center/floor/center pivot, normalized mesh/material name, image-based PBR metadata, box collision proxy, `single_mesh` LOD contract를 sidecar에 기록한다.
+- Meshopt 압축은 적용됐지만 KTX2 texture 승격은 아직 보류한다. visual promotion 전까지 `textureSet.ktx2Ready=false`를 유지한다.
+- `colorful-brick-wall`은 `TRIANGLE_COUNT_OVER_REVIEW_BUDGET` 경고가 있어 QA accent 후보로만 유지한다.
+
+Removed/Deprecated:
+- source-staged Meshy GLB를 pivot/material/optimization sidecar 없이 runtime candidate로 부르는 방식.
+- Meshopt extension 존재만으로 public catalog promotion을 승인하는 방식. human visual QA와 package metadata gate가 여전히 필요하다.

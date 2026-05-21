@@ -299,8 +299,8 @@ const DEFAULT_LIGHTING: LightingSettings = {
   hemisphereIntensity: 0.54,
   directionalIntensity: 1.24,
   environmentBlur: 0.14,
-  accentIntensity: 0.82,
-  beamOpacity: 0.18,
+  accentIntensity: 0.96,
+  beamOpacity: 0.24,
   fixtures: []
 };
 

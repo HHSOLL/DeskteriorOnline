@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "deskterior-runtime-texture-package-v1",
+  "generatedAt": "2026-05-19T12:44:56.710Z",
+  "assetKey": "p2s_bruno_room_surface_kit",
+  "sourceManifestPath": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/texture-package-2026-05-19.json",
+  "packageStatus": "ktx2-ready",
+  "ktx2Ready": true,
+  "ktx2TranscodeAttempted": true,
+  "toktxAvailable": false,
+  "stillRequiresRuntimeKtx2Transcode": false,
+  "stillRequiresFinalUvBake": true,
+  "channels": {
+    "r": "ambientOcclusion",
+    "g": "roughness",
+    "b": "metallic",
+    "a": "constantOne"
+  },
+  "maps": [
+    {
+      "role": "floorWoodOrm",
+      "sourcePath": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_floor_plank_orm_1k.png",
+      "publicPath": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_floor_plank_orm_1k.png",
+      "ktx2Path": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_floor_plank_orm_1k.ktx2",
+      "required": true,
+      "exists": true,
+      "resolution": [
+        1024,
+        1024
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color"
+    },
+    {
+      "role": "plasterWallOrm",
+      "sourcePath": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_plaster_warm_cool_orm_1k.png",
+      "publicPath": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_plaster_warm_cool_orm_1k.png",
+      "ktx2Path": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_plaster_warm_cool_orm_1k.ktx2",
+      "required": true,
+      "exists": true,
+      "resolution": [
+        1024,
+        1024
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color"
+    },
+    {
+      "role": "trimOrm",
+      "sourcePath": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_trim_warm_orm_512.png",
+      "publicPath": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_trim_warm_orm_512.png",
+      "ktx2Path": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_trim_warm_orm_512.ktx2",
+      "required": true,
+      "exists": true,
+      "resolution": [
+        512,
+        512
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color"
+    }
+  ],
+  "promotionBoundary": "KTX2 runtime ORM sidecars are present; final UV bake and release catalog approval remain blocked."
+}

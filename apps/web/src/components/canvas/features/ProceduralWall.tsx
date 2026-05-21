@@ -26,6 +26,11 @@ import {
 
 const BASEBOARD_HEIGHT = 0.11;
 const BASEBOARD_DEPTH = 0.035;
+const CROWN_TRIM_HEIGHT = 0.07;
+const CROWN_TRIM_DEPTH = 0.032;
+const DIORAMA_PANEL_DEPTH = 0.026;
+const DIORAMA_PANEL_MARGIN = 0.22;
+const DIORAMA_PANEL_MIN_SEGMENT = 0.84;
 const TRIM_OVERLAP = 0.006;
 
 type LoadedTextureSet = {
@@ -99,6 +104,24 @@ function hasRenderableTexture(texture: THREE.Texture | undefined) {
   return Boolean((texture as { image?: unknown }).image ?? sourceData);
 }
 
+function resolveBuilderCutawayWalls(walls: Wall[]) {
+  if (walls.length <= 2) return walls;
+
+  const points = walls.flatMap((wall) => [wall.start, wall.end]);
+  const maxX = Math.max(...points.map(([x]) => x));
+  const maxZ = Math.max(...points.map(([, z]) => z));
+  const minX = Math.min(...points.map(([x]) => x));
+  const minZ = Math.min(...points.map(([, z]) => z));
+  const epsilon = Math.max(0.06, Math.max(maxX - minX, maxZ - minZ) * 0.01);
+  const cutawayWalls = walls.filter((wall) => {
+    const midpointX = (wall.start[0] + wall.end[0]) / 2;
+    const midpointZ = (wall.start[1] + wall.end[1]) / 2;
+    return midpointX < maxX - epsilon && midpointZ < maxZ - epsilon;
+  });
+
+  return cutawayWalls.length >= 2 ? cutawayWalls : walls;
+}
+
 function cloneTextureSet(textures: LoadedTextureSet): LoadedTextureSet {
   return {
     map: textures.map.clone(),
@@ -159,6 +182,8 @@ function WallMesh({
   const wall = useMemo(() => walls.find((item) => item.id === wallId), [wallId, walls]);
 
   const wallOpenings = useMemo(() => openings.filter((opening) => opening.wallId === wallId), [openings, wallId]);
+  const useCleanPaintMaterial =
+    textureConfig.useCategory === "commercial_default" && /clean (paint|plaster)/i.test(textureConfig.category);
 
   const wallRender = useMemo(() => {
     if (!wall) {
@@ -207,7 +232,7 @@ function WallMesh({
   const materialBundle = useMemo(() => {
     if (!wallRender) return null;
 
-    if (isWhitePreview || !textures || !hasRenderableTextureSet) {
+    if (isWhitePreview || useCleanPaintMaterial || !textures || !hasRenderableTextureSet) {
       return {
         material: new THREE.MeshStandardMaterial({
           color: textureConfig.color ?? textureConfig.topColor,
@@ -238,7 +263,7 @@ function WallMesh({
       }),
       textures: Object.values(clonedTextures)
     };
-  }, [hasRenderableTextureSet, isWhitePreview, textureConfig, textures, wallRender]);
+  }, [hasRenderableTextureSet, isWhitePreview, textureConfig, textures, useCleanPaintMaterial, wallRender]);
 
   useEffect(() => {
     return () => {
@@ -371,8 +396,153 @@ function BaseboardTrim({
   );
 }
 
-function CornerCapColumns({ color }: { color: string }) {
+function CrownTrim({
+  wallId,
+  color
+}: {
+  wallId: string;
+  color: string;
+}) {
   const walls = useShellSelector((slice) => slice.walls);
+  const floors = useShellSelector((slice) => slice.floors);
+  const scale = useShellSelector((slice) => slice.scale);
+  const wall = useMemo(() => walls.find((item) => item.id === wallId), [wallId, walls]);
+
+  const trim = useMemo(() => {
+    if (!wall) return null;
+
+    const placement = getWallRenderPlacement(wall, floors, scale);
+    const length = Math.max(0.05, placement.length);
+    const thickness = Math.max(0.02, wall.thickness * scale);
+    const height = (wall.height > 0 ? wall.height : 2.8) * scale;
+    const interiorSide = resolveWallInteriorSide(wall, placement, scale);
+
+    return {
+      position: [placement.start[0], 0, placement.start[1]] as [number, number, number],
+      rotation: [0, -placement.angle, 0] as [number, number, number],
+      localY: Math.max(BASEBOARD_HEIGHT + CROWN_TRIM_HEIGHT, height - CROWN_TRIM_HEIGHT / 2 - 0.025),
+      localZ: interiorSide * (thickness / 2 + CROWN_TRIM_DEPTH / 2 - TRIM_OVERLAP),
+      length
+    };
+  }, [floors, scale, wall]);
+
+  if (!trim) return null;
+
+  return (
+    <group name={`crown-trim:${wallId}`} position={trim.position} rotation={trim.rotation}>
+      <mesh position={[trim.length / 2, trim.localY, trim.localZ]} castShadow receiveShadow>
+        <boxGeometry args={[trim.length, CROWN_TRIM_HEIGHT, CROWN_TRIM_DEPTH]} />
+        <meshStandardMaterial color={color} roughness={0.7} metalness={0.02} envMapIntensity={0.34} />
+      </mesh>
+    </group>
+  );
+}
+
+function DioramaWallPanels({
+  wallId,
+  wallIndex
+}: {
+  wallId: string;
+  wallIndex: number;
+}) {
+  const walls = useShellSelector((slice) => slice.walls);
+  const openings = useShellSelector((slice) => slice.openings);
+  const floors = useShellSelector((slice) => slice.floors);
+  const scale = useShellSelector((slice) => slice.scale);
+  const wall = useMemo(() => walls.find((item) => item.id === wallId), [wallId, walls]);
+  const wallOpenings = useMemo(() => openings.filter((opening) => opening.wallId === wallId), [openings, wallId]);
+
+  const panelGroup = useMemo(() => {
+    if (!wall) return null;
+
+    const placement = getWallRenderPlacement(wall, floors, scale);
+    const length = Math.max(0.05, placement.length);
+    const thickness = Math.max(0.02, wall.thickness * scale);
+    const height = (wall.height > 0 ? wall.height : 2.8) * scale;
+    const interiorSide = resolveWallInteriorSide(wall, placement, scale);
+    const blockedRanges = wallOpenings
+      .map((opening) => resolveOpeningRange(opening, placement, scale))
+      .filter((range): range is { start: number; end: number } => Boolean(range));
+    const panelSegments = resolveTrimSegments(length, blockedRanges)
+      .map((segment) => ({
+        start: segment.start + DIORAMA_PANEL_MARGIN,
+        length: segment.length - DIORAMA_PANEL_MARGIN * 2
+      }))
+      .filter((segment) => segment.length >= DIORAMA_PANEL_MIN_SEGMENT)
+      .sort((a, b) => b.length - a.length)
+      .slice(0, length > 2.4 ? 2 : 1);
+
+    const panelY = Math.min(Math.max(1.12, height * 0.52), Math.max(1.12, height - 0.58));
+    const faceOffset = interiorSide * (DIORAMA_PANEL_DEPTH / 2 + 0.006);
+    const panels = panelSegments.map((segment, index) => {
+      const panelWidth = Math.min(index === 0 ? 0.68 : 0.48, Math.max(0.42, segment.length * 0.42));
+      const panelHeight = Math.min(0.48, Math.max(0.3, panelWidth * 0.7));
+      const preferredX = segment.start + segment.length * (index === 0 ? 0.44 : 0.64);
+      const localX = Math.min(
+        segment.start + segment.length - panelWidth / 2,
+        Math.max(segment.start + panelWidth / 2, preferredX)
+      );
+
+      return {
+        id: `${wallId}-panel-${index}`,
+        localX,
+        panelWidth,
+        panelHeight,
+        paletteIndex: (wallIndex + index) % 3
+      };
+    });
+
+    return {
+      position: [placement.start[0], 0, placement.start[1]] as [number, number, number],
+      rotation: [0, -placement.angle, 0] as [number, number, number],
+      localY: panelY,
+      localZ: interiorSide * (thickness / 2 + DIORAMA_PANEL_DEPTH / 2 - TRIM_OVERLAP),
+      faceOffset,
+      panels
+    };
+  }, [floors, scale, wall, wallId, wallIndex, wallOpenings]);
+
+  if (!panelGroup || panelGroup.panels.length === 0) return null;
+
+  const palettes = [
+    { frame: "#7a5a46", matte: "#f1e5d4", art: "#e77453", accent: "#2f4f65" },
+    { frame: "#3d4754", matte: "#e8eef1", art: "#6fa6ad", accent: "#d9a451" },
+    { frame: "#73545f", matte: "#f0dfdf", art: "#c95f80", accent: "#36406b" }
+  ];
+
+  return (
+    <group name={`diorama-wall-panels:${wallId}`} position={panelGroup.position} rotation={panelGroup.rotation}>
+      {panelGroup.panels.map((panel) => {
+        const palette = palettes[panel.paletteIndex] ?? palettes[0];
+        return (
+          <group
+            key={panel.id}
+            position={[panel.localX, panelGroup.localY, panelGroup.localZ]}
+          >
+            <mesh castShadow receiveShadow>
+              <boxGeometry args={[panel.panelWidth + 0.07, panel.panelHeight + 0.07, DIORAMA_PANEL_DEPTH]} />
+              <meshStandardMaterial color={palette.frame} roughness={0.58} metalness={0.04} envMapIntensity={0.28} />
+            </mesh>
+            <mesh position={[0, 0, panelGroup.faceOffset * 0.92]} castShadow={false} receiveShadow>
+              <boxGeometry args={[panel.panelWidth, panel.panelHeight, 0.008]} />
+              <meshStandardMaterial color={palette.matte} roughness={0.86} metalness={0.01} envMapIntensity={0.18} />
+            </mesh>
+            <mesh position={[panel.panelWidth * 0.08, panel.panelHeight * 0.06, panelGroup.faceOffset * 1.12]} castShadow={false}>
+              <boxGeometry args={[panel.panelWidth * 0.66, panel.panelHeight * 0.52, 0.01]} />
+              <meshStandardMaterial color={palette.art} roughness={0.68} metalness={0.02} envMapIntensity={0.22} />
+            </mesh>
+            <mesh position={[-panel.panelWidth * 0.2, -panel.panelHeight * 0.18, panelGroup.faceOffset * 1.18]} castShadow={false}>
+              <boxGeometry args={[panel.panelWidth * 0.2, panel.panelHeight * 0.16, 0.012]} />
+              <meshStandardMaterial color={palette.accent} roughness={0.62} metalness={0.02} envMapIntensity={0.24} />
+            </mesh>
+          </group>
+        );
+      })}
+    </group>
+  );
+}
+
+function CornerCapColumns({ color, walls }: { color: string; walls: Wall[] }) {
   const scale = useShellSelector((slice) => slice.scale);
   const caps = useMemo(() => resolveWallCornerCaps(walls, scale), [scale, walls]);
 
@@ -397,7 +567,15 @@ function CornerCapColumns({ color }: { color: string }) {
   );
 }
 
-function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number; walls: Wall[] }) {
+function DetailedWalls({
+  wallMaterialIndex,
+  walls,
+  showDioramaDetails
+}: {
+  wallMaterialIndex: number;
+  walls: Wall[];
+  showDioramaDetails: boolean;
+}) {
   const isWhitePreview = wallMaterialIndex < 0;
   const gl = useThree((state) => state.gl);
   const textureConfig =
@@ -437,12 +615,30 @@ function DetailedWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
       {walls.map((wall) => (
         <BaseboardTrim key={`${wall.id}-baseboard`} wallId={wall.id} color={baseboardColor} />
       ))}
-      <CornerCapColumns color={cornerCapColor} />
+      {showDioramaDetails
+        ? walls.map((wall) => (
+            <CrownTrim key={`${wall.id}-crown-trim`} wallId={wall.id} color="#eee4d8" />
+          ))
+        : null}
+      {showDioramaDetails
+        ? walls.map((wall, index) => (
+            <DioramaWallPanels key={`${wall.id}-diorama-panels`} wallId={wall.id} wallIndex={index} />
+          ))
+        : null}
+      <CornerCapColumns color={cornerCapColor} walls={walls} />
     </group>
   );
 }
 
-function FallbackWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number; walls: Wall[] }) {
+function FallbackWalls({
+  wallMaterialIndex,
+  walls,
+  showDioramaDetails
+}: {
+  wallMaterialIndex: number;
+  walls: Wall[];
+  showDioramaDetails: boolean;
+}) {
   const isWhitePreview = wallMaterialIndex < 0;
   const textureConfig =
     WALL_TEXTURE_PRESETS[wallMaterialIndex % WALL_TEXTURE_PRESETS.length] ?? WALL_TEXTURE_PRESETS[0];
@@ -464,7 +660,15 @@ function FallbackWalls({ wallMaterialIndex, walls }: { wallMaterialIndex: number
       {walls.map((wall) => (
         <BaseboardTrim key={`${wall.id}-baseboard`} wallId={wall.id} color={baseboardColor} />
       ))}
-      <CornerCapColumns color={cornerCapColor} />
+      {showDioramaDetails
+        ? walls.map((wall) => <CrownTrim key={`${wall.id}-crown-trim`} wallId={wall.id} color="#eee4d8" />)
+        : null}
+      {showDioramaDetails
+        ? walls.map((wall, index) => (
+            <DioramaWallPanels key={`${wall.id}-diorama-panels`} wallId={wall.id} wallIndex={index} />
+          ))
+        : null}
+      <CornerCapColumns color={cornerCapColor} walls={walls} />
     </group>
   );
 }
@@ -473,6 +677,11 @@ function ProceduralWallBase({ useTextureFallback }: { useTextureFallback: boolea
   const viewMode = useEditorStore((state) => state.viewMode);
   const wallMaterialIndex = useShellSelector((slice) => slice.wallMaterialIndex);
   const walls = useShellSelector((slice) => slice.walls);
+  const visibleWalls = useMemo(
+    () => (viewMode === "builder-preview" ? resolveBuilderCutawayWalls(walls) : walls),
+    [viewMode, walls]
+  );
+  const showDioramaDetails = viewMode === "builder-preview";
   const topWallColor =
     wallMaterialIndex < 0
       ? "#f2efea"
@@ -482,9 +691,9 @@ function ProceduralWallBase({ useTextureFallback }: { useTextureFallback: boolea
     return (
       <group>
         {useTextureFallback ? (
-          <FallbackWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+          <FallbackWalls wallMaterialIndex={wallMaterialIndex} walls={walls} showDioramaDetails={false} />
         ) : (
-          <DetailedWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+          <DetailedWalls wallMaterialIndex={wallMaterialIndex} walls={walls} showDioramaDetails={false} />
         )}
         {walls.map((wall) => (
           <TopWallFootprint key={wall.id} wallId={wall.id} color={topWallColor} />
@@ -494,9 +703,17 @@ function ProceduralWallBase({ useTextureFallback }: { useTextureFallback: boolea
   }
 
   return useTextureFallback ? (
-    <FallbackWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+    <FallbackWalls
+      wallMaterialIndex={wallMaterialIndex}
+      walls={visibleWalls}
+      showDioramaDetails={showDioramaDetails}
+    />
   ) : (
-    <DetailedWalls wallMaterialIndex={wallMaterialIndex} walls={walls} />
+    <DetailedWalls
+      wallMaterialIndex={wallMaterialIndex}
+      walls={visibleWalls}
+      showDioramaDetails={showDioramaDetails}
+    />
   );
 }
 

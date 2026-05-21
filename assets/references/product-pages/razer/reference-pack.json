@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:36.801Z",
+  "assetKey": "razer",
+  "sourceUrl": "https://www.razer.com/gaming-mice/razer-cobra-pro/RZ01-04660200-R3U1",
+  "product": {
+    "title": "Buy Razer Cobra Pro - White | Gaming Mice | Razer.com",
+    "sku": null,
+    "manufacturer": "Buy Razer Cobra Pro - White | Gaming Mice | Razer.com",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": [
+      9706,
+      9707
+    ]
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-Buy-Razer-Cobra-Pro-White-Gaming-Mice-Razer-com-Prototype-Reference",
+      "label": "Buy Razer Cobra Pro - White | Gaming Mice | Razer.com public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "Buy Razer Cobra Pro - White | Gaming Mice | Razer.com",
+    "canonicalProductUrl": "https://www.razer.com/gaming-mice/razer-cobra-pro/RZ01-04660200-R3U1",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://assets3.razerzone.com/7jAX1nBELS4fVOqVN0eELINdGVY=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhf7%2Fh05%2F9774771273758%2Fcobra-pro-white-500x500.png",
+        "required": false,
+        "license": "LicenseRef-Buy-Razer-Cobra-Pro-White-Gaming-Mice-Razer-com-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://www.razer.com/gaming-mice/assets/images/mega-menu/menu-open.png",
+        "required": false,
+        "license": "LicenseRef-Buy-Razer-Cobra-Pro-White-Gaming-Mice-Razer-com-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://www.razer.com/gaming-mice/assets/images/mega-menu/menu-close.png",
+        "required": false,
+        "license": "LicenseRef-Buy-Razer-Cobra-Pro-White-Gaming-Mice-Razer-com-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://assets3.razerzone.com/kvAfwuie2Itt07fg9RNTXTG_TKg=/78x78/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh15%2Fh90%2F9776036315166%2F240509-cobra-pro-white-2-1500x1000-1.png",
+        "required": false,
+        "license": "LicenseRef-Buy-Razer-Cobra-Pro-White-Gaming-Mice-Razer-com-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://assets3.razerzone.com/q3MH6aCWcpgJfr3tRw2tl8cc2RE=/78x78/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhd6%2Fh90%2F9776036380702%2F240509-cobra-pro-white-2-1500x1000-2.jpg",
+        "required": false,
+        "license": "LicenseRef-Buy-Razer-Cobra-Pro-White-Gaming-Mice-Razer-com-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://www.razer.com/gaming-mice/razer-cobra-pro/RZ01-04660200-R3U1",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-Buy-Razer-Cobra-Pro-White-Gaming-Mice-Razer-com-Prototype-Reference",
+      "label": "Buy Razer Cobra Pro - White | Gaming Mice | Razer.com public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://assets3.razerzone.com/7jAX1nBELS4fVOqVN0eELINdGVY=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhf7%2Fh05%2F9774771273758%2Fcobra-pro-white-500x500.png",
+      "view": "front",
+      "source": "open_graph",
+      "score": 20
+    },
+    {
+      "url": "https://www.razer.com/gaming-mice/assets/images/mega-menu/menu-open.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.razer.com/gaming-mice/assets/images/mega-menu/menu-close.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://assets3.razerzone.com/kvAfwuie2Itt07fg9RNTXTG_TKg=/78x78/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh15%2Fh90%2F9776036315166%2F240509-cobra-pro-white-2-1500x1000-1.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://assets3.razerzone.com/q3MH6aCWcpgJfr3tRw2tl8cc2RE=/78x78/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhd6%2Fh90%2F9776036380702%2F240509-cobra-pro-white-2-1500x1000-2.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://assets3.razerzone.com/c_qlf_37RKvzIL3mey8dKNmlcZY=/78x78/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh6c%2Fh90%2F9776036347934%2F240509-cobra-pro-white-2-1500x1000-3.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://assets3.razerzone.com/JnBZT3VcXKZeUHZfV4U_vLrGzPE=/78x78/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh7d%2Fh93%2F9776036413470%2F240509-cobra-pro-white-2-1500x1000-4.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://assets3.razerzone.com/4Gz0kNW_T58IkBppuC6K-042vr4=/78x78/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh2c%2Fh94%2F9776036479006%2F240509-cobra-pro-white-2-1500x1000-5.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://assets3.razerzone.com/cSB-bn2-4Mp39fMXVRUp6yNqUto=/78x78/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhd5%2Fh93%2F9776036446238%2F240509-cobra-pro-white-2-1500x1000-6.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://assets3.razerzone.com/rYcsfvPLZRXSQ9NSxJXMRqBQpUs=/767x511/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh15%2Fh90%2F9776036315166%2F240509-cobra-pro-white-2-1500x1000-1.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "Buy Razer Cobra Pro - White | Gaming Mice | Razer.com",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "Buy Razer Cobra Pro - White | Gaming Mice | Razer.com",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "Buy Razer Cobra Pro - White | Gaming Mice | Razer.com",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 44,
+    "selectedImageCount": 10,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

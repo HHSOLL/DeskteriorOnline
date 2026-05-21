@@ -189,17 +189,17 @@ export const FURNISHED_ROOM_TEMPLATE_CARDS: FurnishedRoomTemplateCard[] = [
   },
   {
     id: "workspace-flex",
-    title: "모던하고 유쾌한 작업공간",
-    areaLabel: "23 m²",
+    title: "나만의 3D 작업방",
+    areaLabel: "19 m²",
     category: "workspace",
-    density: "partial",
+    density: "full",
     thumbnailSrc: "/home/img2.jpg",
     templateId: "rect-studio",
-    width: 6.4,
-    depth: 4.8,
+    width: 5.2,
+    depth: 3.6,
     wallMaterialIndex: 1,
-    floorMaterialIndex: 1,
-    projectName: "모던하고 유쾌한 작업공간"
+    floorMaterialIndex: 0,
+    projectName: "나만의 3D 작업방"
   },
   {
     id: "living-playful",

@@ -1,6 +1,6 @@
 import { claimNextJobs, type JobRow } from "../repositories/jobs-repo";
 
-const JOB_TYPES = ["ASSET_GENERATION"] as const;
+const JOB_TYPES = ["ASSET_GENERATION", "PRODUCT_ASSET_GENERATION"] as const;
 
 export async function claimNextAvailableJobs(workerId: string, limit: number) {
   const jobs: JobRow[] = [];

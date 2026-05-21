@@ -1,0 +1,316 @@
+{
+  "schemaVersion": "so-ong-meshy-generation-report-v1",
+  "generatedAt": "2026-05-13T13:29:21.428Z",
+  "itemCount": 17,
+  "generatedCount": 17,
+  "skippedExistingCount": 0,
+  "failedCount": 0,
+  "items": [
+    {
+      "catalogItemId": "p2s_video_so_ong_angry_miao_am_hatsu",
+      "label": "Angry Miao AM HATSU keyboard",
+      "sourceUrl": "https://www.angrymiao.com/en/am-hatsu/",
+      "referenceImageUrl": "https://www.yankodesign.com/images/design_news/2021/05/auto-draft/am_hatsu_keyboard_1.jpg",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2181-b0dc-7767-97a6-7e414880c573",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2181-b0dc-7767-97a6-7e414880c573/output/model.glb?Expires=4932230400&Signature=mqVYD5zA~kp~BZue3WKmvRJukcYD8miOSKdVGkHeT0FbkM7LTrvXXro953FnySGs55cHZ3h7qAOYrp7JqiOuhmf9dt7i2Ek-8uaRDqRSlbpYrZNYCNIDUvo5SNwJNW5smnlB2ax~MS8s63-47twGeINTwfES0St6CMNMDH7eZCiuF6wf6SZkGhK0Bqjh2HRG22p1L1O0LY0hIRtBwVIQ3SeNChu6m-iG5SrZ-B3JDKZrd5KCXUUETlvZCRRqeuV7PbzUUFW-tuYHjDTzcJsBV~tXn1Kc~Lz-lmRcpJ99qijjcHLWEKP81TVu7Y9ZIGPWZ~UOS9bhM2vrTfmG-iGrcQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_angry_miao_am_hatsu/p2s_video_so_ong_angry_miao_am_hatsu.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_angry_miao_am_hatsu/p2s_video_so_ong_angry_miao_am_hatsu.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_angry_miao_am_hatsu.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:23:26.637Z",
+      "completedAt": "2026-05-13T13:24:30.575Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_arturia_minifuse2",
+      "label": "Arturia MiniFuse 2 audio interface",
+      "sourceUrl": "https://link.coupang.com/a/b5Hayv",
+      "referenceImageUrl": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/01.png",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e217a-0484-761a-938a-8adcdcd641c7",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e217a-0484-761a-938a-8adcdcd641c7/output/model.glb?Expires=4932230400&Signature=hV74kJ86jVbFswNN1z~ouorInU4~sNZFrXMiO6Zt8eYpmlPph5DsZ4M3NLCo-JJtkuTTp-GVomyGYPLvNwU3TUrFFXphNec6Pse4ft9EkSnYfLRVqL2Vuqv0lSlMml6HDyhZWLr4I1TWVBZdJLqpP35Dch~74H0Rn6CgXrJDkHFLkPS8zWiMcUwJclDGcr~hMWPOpUXbkdBDu6kFTTxgEGqTspYpN1AKhIJyeUJ5RrQezN38N3eHiplTtLSN9VYgfTxiKwMyCJUUEAl~181nrINHXkzpmlB7mNQBitKjd-N4SyDRnq4RabZ3BEAKUEC9Che3hN45Zwe-TF-mLpQHiQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_arturia_minifuse2/p2s_video_so_ong_arturia_minifuse2.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_arturia_minifuse2.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:15:03.729Z",
+      "completedAt": "2026-05-13T13:16:55.416Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_charging_reel_cable",
+      "label": "charging reel cable",
+      "sourceUrl": "https://s.click.aliexpress.com/e/_onOxqJd",
+      "referenceImageUrl": "https://ae01.alicdn.com/kf/S6ecffd6d18c44816803f94738821032fJ.jpg",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e216e-9951-7cc9-a6af-0cffb4745552",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e216e-9951-7cc9-a6af-0cffb4745552/output/model.glb?Expires=4932230400&Signature=jaSpxbzwVRYsxLdMtS-K6vAxYWBxLiPtt2LzJa601FlrlGELdvEX77NajQTtNmpsYl9j4Zg0Of-q1oTTEDt~sWCnraUhnuYL4d3v--d54O4eys2nDMvV~~StTJyE1ah4slh1LCGqGDZ6T~eA0DjvR7FnohmZTwqE3jW95rOYoo-m2FAcSTtLQzRYpC68nVFvRadvyHTljYa-vtr-6aNp5ZBRLDYfmgOSOUY7dH5T4ToIUFI-yvQx6ZT3gqf835hvJXGYhed1JxmaEI4tb7jj77Y3dHRYh~ocwKoQgKPIPNVE0lCFFv0~N5gfoOcVnc9AnBGHFxdM4KJIRoTvNkRKPQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_charging_reel_cable/p2s_video_so_ong_charging_reel_cable.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_charging_reel_cable/p2s_video_so_ong_charging_reel_cable.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_charging_reel_cable.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:02:36.708Z",
+      "completedAt": "2026-05-13T13:04:19.826Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_cpm1610iq_portable_monitor",
+      "label": "CPM1610IQ secondary portable monitor",
+      "sourceUrl": "https://link.coupang.com/a/b5HcjV",
+      "referenceImageUrl": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_00.jpg",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2167-a6b1-705e-97df-882a7fb92b03",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2167-a6b1-705e-97df-882a7fb92b03/output/model.glb?Expires=4932230400&Signature=YTe3kdH8-85E-X~4d6ZlaeSI7tE-qUn43Dgc0C95LJUXm6PNhZVNa4XBPAUlLhs60O04qVVjbT3bE1ECfW~nO3INHOInYx2S9kKQRs6s3cEjTKH87RgTRtCESjY3Eo8S~g99fujhb1NDD9v99CbDAs73TvzFSlMxSQLA9DyJqoneqV-jUQaBMQJIau~dZdzsImJp3mmkSpBB6yCNm-NVoNCz9~2G-k3VR9H-NO-G8ZaBsRwOtsZrSFykyrpjPRDetvgrLNIAnEBJre5fZwsTvqw5oSNAgrz2MjZSkTiF9e1Ihte76edYWuiZghg7pNcgRHlIjJiiikh~wE19e6t~Vg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_cpm1610iq_portable_monitor/p2s_video_so_ong_cpm1610iq_portable_monitor.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_cpm1610iq_portable_monitor/p2s_video_so_ong_cpm1610iq_portable_monitor.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_cpm1610iq_portable_monitor.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T12:55:01.407Z",
+      "completedAt": "2026-05-13T12:56:33.653Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_diecast_car",
+      "label": "diecast car",
+      "sourceUrl": "https://s.click.aliexpress.com/e/_oo9b0Jz",
+      "referenceImageUrl": "https://ae01.alicdn.com/kf/S99ef3169be8442aa91a0aaeaa2523297J.jpg",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2177-d586-7ffd-85d5-4bc3251d2483",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2177-d586-7ffd-85d5-4bc3251d2483/output/model.glb?Expires=4932230400&Signature=W3uldncZHgbMIuwL9CxqP758Ck9T37ZLCSRXzQ0-qwvvsKmifEuwc8ICS~aEMXUdD2z2zYgppaq4OMCvGA9gzo4xPs1wwOr1pftZopFbx3Q1h5zoMsUWupVzt9IQiNtni2mNFXpE6PlCY3-di0-T0ECS24-LCM1GiioLsBpugGfpbYhnCMAcmy4v3KTIHoTAvqOezSmo6hcNKnJ2fc9XwgKB0eaIvcJsKZpfvp2h~yHAGsTbEHioa1vrS5Px2gmxEtNLOYfFiJyp4X3hIgFbhNNNxvxjo7AWQUTgAMo05aVXs9-8p-KVB3x5QLyXc4bC4PTJdqbFP5u37rXoCeVa3Q__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_diecast_car/p2s_video_so_ong_diecast_car.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_diecast_car/p2s_video_so_ong_diecast_car.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_diecast_car.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:12:41.586Z",
+      "completedAt": "2026-05-13T13:15:03.698Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_divoom_times_gate",
+      "label": "Divoom Times Gate clock",
+      "sourceUrl": "https://link.coupang.com/a/b5EMZs",
+      "referenceImageUrl": "https://divoom.com/cdn/shop/files/ebf94caeef5f4c89422c6c9bb7aa53a8_786ac76e-8737-4c03-ade6-d97192c18bbb.png?v=1775554152",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e216c-ca7f-71fa-9c5b-2a2cd92015ec",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e216c-ca7f-71fa-9c5b-2a2cd92015ec/output/model.glb?Expires=4932230400&Signature=G1bd6iXk5rkgpkUR4RB57rMGCoF711167FEqAT9mXPvcdUaWYHSeD4LQDkhQFiTu7spizDUg7sVshQ-kjxYUT7~EsQOaFbCh9EaHEWa3hkUPGl2vnNmXzgH1VDsE7cKMvBe-fRaX4MBQrZckbW75hg344352pFU~GLVvIGaxL6chyN3Mzez1vNbbgVUqbxKafZVABhp4tCp85Hf4sWcQ3I3AF0dyTlkCRWMkQ9h2W6ehgP3cLu1QJ9eGtXNeSi1RregokwXDCcAZx-zg77VpSkzOoE-Mi1fTPzyntfsYZ3tTLlJhQzR6uHFPW-2sg4FR9j5v3g4G2AQcKcF~CH6CmA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_divoom_times_gate/p2s_video_so_ong_divoom_times_gate.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_divoom_times_gate/p2s_video_so_ong_divoom_times_gate.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_divoom_times_gate.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:00:36.697Z",
+      "completedAt": "2026-05-13T13:02:36.699Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_empathist_stand",
+      "label": "The Empathist secondary monitor stand",
+      "sourceUrl": "https://29cm.onelink.me/1080201211/y72msqrw",
+      "referenceImageUrl": "https://asset.29cm.co.kr/next-contents/2023/06/08/3f8131682d124d16b336774ba51c4a3e_20230608162823.png",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2169-0eed-71dd-a921-e03a5f9268c1",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2169-0eed-71dd-a921-e03a5f9268c1/output/model.glb?Expires=4932230400&Signature=XQ6tnJgHvmlQJUtJMHwmFUICtl2DHZjn8ekVUjW6GTdoam5l~SPWu~E0xKwJrXDjZ2D4AchMag7tDsBei~99LtdifJX45kGDqiLPqixLIt2kM0G8DhNptsMkj5OTN6KnMnftlOWDzOFkskjdsMeQCCPErcmlKk-NL1f7CkVObeOdTW~LaI6MF58MelTVnPo54uzG5kIYGDkvmgIXnVzXkxbe3mJL5wOl30N3tG2-IvsZSa67wPmvJgHv94CZnbBpZl0GRjf1KkyYNp3adg3F4waRaYy4cwEM~9pDrL4vlsCZaTCY9obmsrpDaXB1RyECwtftUR9Gtn6JS2ejytlGnA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_empathist_stand/p2s_video_so_ong_empathist_stand.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_empathist_stand/p2s_video_so_ong_empathist_stand.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_empathist_stand.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T12:56:33.654Z",
+      "completedAt": "2026-05-13T12:58:04.902Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_gravastar_mars_pro",
+      "label": "Gravastar Mars Pro speaker",
+      "sourceUrl": "https://link.coupang.com/a/b5EypD",
+      "referenceImageUrl": "https://www.gravastar.com/cdn/shop/files/gravastarmarsprobluetoothspeakerbestdesign.webp?v=1776237811&width=1200",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2173-7e63-73e7-bacf-baa7a58d9e43",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2173-7e63-73e7-bacf-baa7a58d9e43/output/model.glb?Expires=4932230400&Signature=BQRP2WKmOlurFgRAiKYsR-WE2GzVEZXLuQLxLIh-n6~C5y-GYEngC6VCf6qIqkxyrL0HIeHZf50TQqArm48LJyIHyZulNA1FDXW3UoOk6ekLa71UY~LZ1c8Cx6YPxcRLKSqxpXpwtNyZ5HvxWf3uP0qEZVtPTLL4K3CsL3O~0y64RkB-133PRvwpH-0pQ-wuqR5SyqbOB8tRZs1EZTAqm3xQ2DvBuL-JnWG3PpJFL43APvsCL843j5EYv~D5i2GP5IaJyLGs-Q0FNor0ksz2-7FzC752qoxP4K5QSXbQmszPg0l2YCqqsEOG057Ar65ojCwJW7M6vA0T1gfPvbeNMA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_gravastar_mars_pro/p2s_video_so_ong_gravastar_mars_pro.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_gravastar_mars_pro/p2s_video_so_ong_gravastar_mars_pro.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_gravastar_mars_pro.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:07:56.744Z",
+      "completedAt": "2026-05-13T13:12:10.784Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_hyte_y70_snow_white",
+      "label": "HYTE Y70 Snow White PC case",
+      "sourceUrl": "https://link.coupang.com/a/bG34uy",
+      "referenceImageUrl": "https://cdn11.bigcommerce.com/s-k28u1tc9ki/product_images/attribute_rule_images/82_source_1708009941.jpg",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2183-fc9b-78a8-a7f5-80a3da563db5",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2183-fc9b-78a8-a7f5-80a3da563db5/output/model.glb?Expires=4932230400&Signature=jD-QtKKHhMYXaM0DB4Je2LjgcHnF9nZFAGe9iITlipTkWX7VJYbB4XKQkxScbQgDQ2RlZNMuRLRLYXd5cQG6jhPN9u~ooBl3VzYjNwZZtwyNFZaO7paNP4kal9jr~6RLebiILBflL3ax1tultgPM4bXXu9XU91FDQhxHqaGqC96mglrJVyUoHX1dfs6HN501LeF2hQPKDMzY2M5D2lJOL7ulXKTSjOzuPLm5ePxfgbD-rY2PnH~RMB0wIktxDgls8UuC6InVKsh7ETi7xIRwWwknYhTf01rDDWrlxah001aSUZFJQDCXlcmenHx2rgDIcTnDYIOMqxxEFa-NjOp2Vg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_hyte_y70_snow_white/p2s_video_so_ong_hyte_y70_snow_white.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_hyte_y70_snow_white/p2s_video_so_ong_hyte_y70_snow_white.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_hyte_y70_snow_white.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:25:58.195Z",
+      "completedAt": "2026-05-13T13:29:21.424Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_ivy_planter",
+      "label": "IVY AI smart planter",
+      "sourceUrl": "https://s.click.aliexpress.com/e/_oBRDB0x",
+      "referenceImageUrl": "https://ae01.alicdn.com/kf/Sa3c58dda3e84425d8a009573fcfc2237l.jpg",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e216b-0892-7c1e-9a00-a8a128551fe6",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e216b-0892-7c1e-9a00-a8a128551fe6/output/model.glb?Expires=4932230400&Signature=M81RyC-va~leQgNq7n9dS5N7eQKinEDAuJ4Vo-4mo~3gDJVNp9SoXVEGFrWbvEcMKXowCI8QdzsskZXKWs0iuBpnWz0GGqUtNHlHeR2KB-SFypfqVFDYESklEtobSWLb5RHcBeNOgPuEneF27SaItofRXXQmec9EohBzVYbeHGRPI~r-goj3FdlVu3oUSerOmPPhiJLj5h3VUmrDzDOjUwrnNBui6h9r6CxrK7AY6FDe9QyiS2MKaDutkfFcAb0Ck31opuwg-nr3IgV9bO411lu34~6tlXCNw2Gnle8F5pcwR~jhFwTFRw9B-83TutqRcq8pAMYk9QKIeCHl4gX9NA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_ivy_planter/p2s_video_so_ong_ivy_planter.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_ivy_planter/p2s_video_so_ong_ivy_planter.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_ivy_planter.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T12:58:42.641Z",
+      "completedAt": "2026-05-13T13:00:36.660Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_offrame_dual_monitor_riser",
+      "label": "OFRAME dual monitor desk riser",
+      "sourceUrl": "https://naver.me/xSFLRV8T",
+      "referenceImageUrl": "https://cdn.imweb.me/thumbnail/20250914/0ff41eaf2138a.png",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e217b-b4c1-75b0-b7e4-898ff71a8eeb",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e217b-b4c1-75b0-b7e4-898ff71a8eeb/output/model.glb?Expires=4932230400&Signature=DibxJyIdELtEYgQIDW7nOAsuYGYNq1hpskGzhx2VCv-x6DTpqSvF4MMHtq7rJzaW0bQ-KWJOXQRGpgaRH~IorRJICeuWAJThJB4u5B-A1Jz-yHPFDiX8RwXoAjyukY1cc6aGmgmu8mBmNWtl6U8iCrmrhpME6MSIU~IzB9h~Ihe3wWWWDH25do8BY27NrrNcC6AN1tx8zKdhEsHvDMgMJs9PNUx0yoDcfM0SCjlLoK-12RJT8IKJiMeCoar5DHlCSOVjIKzPui9lt~U6xdoAPHDwXbYiXJ2KbmbHcyiU~OyF5JF7H1zy2f3gisbcJyj4IUIa0dam2zGUUD72TGjBdg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_offrame_dual_monitor_riser/p2s_video_so_ong_offrame_dual_monitor_riser.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_offrame_dual_monitor_riser/p2s_video_so_ong_offrame_dual_monitor_riser.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_offrame_dual_monitor_riser.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:16:55.421Z",
+      "completedAt": "2026-05-13T13:18:00.665Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_razer_cobra_pro_white",
+      "label": "Razer Cobra Pro White mouse",
+      "sourceUrl": "https://link.coupang.com/a/bG31KL",
+      "referenceImageUrl": "https://medias-p1.phoenix.razer.com/sys-master-phoenix-images-container/h15/h90/9776036315166/240509-cobra-pro-white-2-1500x1000-1.png",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2180-45dd-77fc-8d01-f966aefeda5c",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2180-45dd-77fc-8d01-f966aefeda5c/output/model.glb?Expires=4932230400&Signature=QiEjSTG9LzCp02YhZT~Pzw~te~CpZzK2eRCPfEnpbXuD8h-WFQEy36AGtGinTGcj3lXI8LZyru3eJklcuTaC4pCGWE0nAjoBPflZp6NOOEB6pliwamSOzMcg12fI07Z5i75ie8MfGfrLIhOBxjbSpgTFlUdozjJW0EiFtWYtiQLTjaIFDO0i6cx1RUP3tBIlmGQ7oo~3zzSVKh2dse4cm6LpnKja5YFmUioeDVbWxyGFS-rBwHiL05zYk7f63n89Uu3YSK~4CoVxoFzj3VM1t7Wmdk0jG29F0ag1oiI0RlyQ0o6O-BZoLfMD~H7RXwYJp50M5vSQMzOxT3RFjV1uPA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_razer_cobra_pro_white/p2s_video_so_ong_razer_cobra_pro_white.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_razer_cobra_pro_white/p2s_video_so_ong_razer_cobra_pro_white.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_razer_cobra_pro_white.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:21:54.654Z",
+      "completedAt": "2026-05-13T13:23:02.598Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_reproducer_epic5",
+      "label": "reProducer Epic 5 studio monitor speaker",
+      "sourceUrl": "https://bit.ly/4cePCNT",
+      "referenceImageUrl": "https://www.reproduceraudiolabs.com/uploads/1/3/2/5/132534932/published/1199691953108760-3gtwgchhiyqjinnntnbv-height640.png?1610123227",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2182-a7e4-73a6-a49d-6113658e3148",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2182-a7e4-73a6-a49d-6113658e3148/output/model.glb?Expires=4932230400&Signature=M2th1sKuyK5jYrRimSLoeaXgS6stztaJaBggsqINuLC8ajYaiK4GodYJKctzxEqKdRCYCzqT5lV12krBKDmk5x-8o6qJSF43j3N7vhZys5sgn98tCZ9~mcSeAUpYR4nuNtDNp89SIKAyJbxZ53QwPlg-XBmZQFXeniBFnHVusxZSjXzHPZWcvsqNX8HYNM6iw7PmtUzABJsfOxcQM9KcouBW7h~iGB7eTr93sknSqEpP9PqvIiHnqo4gUE4-M3JSZ6fZb9nP6AklNN2-NEeiW8hD9X4KK8MleSjAa~ttMdbqVkh7z0ka8CemsSb53~p7KlNC2riWU~TRJfVzZJnE1g__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_reproducer_epic5/p2s_video_so_ong_reproducer_epic5.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_reproducer_epic5/p2s_video_so_ong_reproducer_epic5.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_reproducer_epic5.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:24:30.609Z",
+      "completedAt": "2026-05-13T13:25:58.174Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_sml_spacecraft",
+      "label": "SML WARS SS 001 Spacecraft",
+      "sourceUrl": "http://shop.stickymonsterlab.com/shop/shopdetail.html?branduid=1303229",
+      "referenceImageUrl": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(1).jpg",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2160-84a6-7e2f-b6b3-7dc72e1fd16f",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2160-84a6-7e2f-b6b3-7dc72e1fd16f/output/model.glb?Expires=4932230400&Signature=itBIpDJWegQYrNRmDREtBLtOxYgM-vWZSe7naY-MZj0KHcXP8iaUkrc-ZmNqiLKkHCDsgSaP4I0ZeSMZ0P7W6P45PqPlaejxltz12AWNmrJ-crh~i1NKSU-~LPKGiD4jrkMtwKwvUZcBgRj1PbEqOeUlFX-D09gi1-yGggSdrmvmWC3NV7ut1-E3CBme9SrSpqv6aTHGRXcRwFNHmlUWZcFUfFl18k2CCs79B-FxLeKDWhSrGkHcuRVaYNoDkq49yob42rpGtMr2QjcEOqJ3V2FTCGHEFc3wbiRqCL3yLPw5zjMyTmEq~pKuYyMsjXSnaxdVGsm1dTY55v2n4RXd5w__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_sml_spacecraft/p2s_video_so_ong_sml_spacecraft.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_sml_spacecraft/p2s_video_so_ong_sml_spacecraft.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_sml_spacecraft.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_FAILED_USING_PREVIEW: Meshy text-to-3D task 019e2161-f099-7e9e-9da9-00d6f4b2e4fd ended with status FAILED: {\"type\":\"service_unavailable\",\"message\":\"The generation service is temporarily unavailable. Please retry.\"}."
+      ],
+      "startedAt": "2026-05-13T12:47:05.461Z",
+      "completedAt": "2026-05-13T12:50:13.368Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_square1_power_cube",
+      "label": "Avolt x Martinelli Luce Square1 power cube",
+      "sourceUrl": "https://ozip.me/mAWYfhB?af",
+      "referenceImageUrl": "https://prs.ohousecdn.com/apne2/any/uploads/productions/images/v1-300964412076096.png?w=640&h=640&c=c",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2170-2de8-7374-8d65-d98aae8aaa5a",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2170-2de8-7374-8d65-d98aae8aaa5a/output/model.glb?Expires=4932230400&Signature=A5yDoT9FXTQC8WrxSnuMo4HKxXpxvWXG7aWAr9vOoo6oQDy4REWpCiw2X59h7jOdOe292fD8ycflINMXGRE26MdWfCEPROD~4wvCfOeKn8LsYuYtcmxQ4Pc8zmxl1PsbLGS5Dl4UJJp4qRz9q4UMPhbzoPoKDruhs2nU1m-O3bEERViEpoL8bRwZSmL0ZmJZgfulXD0Cfz9oNeodp8j4fYzLakuR7xFDHrLGOAZViv6L3SxgcXi6c~5oZRxrHQRszSXpq79wUNPxu1UNA1DO1iScDzsrLRglMsGdCp0ssDI1tGTWj9F8z35Ftpm931tQbdBQjp09VQj1iS9gq5jxEQ__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_square1_power_cube/p2s_video_so_ong_square1_power_cube.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_square1_power_cube.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:04:19.829Z",
+      "completedAt": "2026-05-13T13:07:56.735Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_tfg40q14wp_monitor",
+      "label": "TFG40Q14WP main ultrawide monitor",
+      "sourceUrl": "https://link.coupang.com/a/b5EVrY",
+      "referenceImageUrl": "https://photo3.enuri.info/data/images/service/middle/79398000/79398839.jpg",
+      "referenceSource": "product_page_or_official",
+      "taskId": "019e2164-c427-79fb-964c-1725438666cc",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e2164-c427-79fb-964c-1725438666cc/output/model.glb?Expires=4932230400&Signature=O4hHOz7f610dZ1SDdC9Zjuirq2qPU~F0yX2z7X2LjgvI~qnBXSNXQC2fqmKlaPwqxJJgFmc8ptSoW5qxpe3X3VMhrjJCb6RZI~kK27bZRfk1J6D~-A8DvdgzoNp~GU1RlFWvyiN4rqnD~sa4TcCYgtKnnb-rha3e9mgMdRPO6ks07JA40rHQtcwSUz~t-wlFNHtik7SkFxb7n0mRolWBG2iPXejG8Gjq~Yw365q5OyGtNPS4CH8G8WUCqVCYHhi-rtgdKnMHhY61-psta3CUufrurtFpK7ZCYfbBgLmoAlGJ~7vEynWAdeh2tguk1iwDgNt-Dnpvbwe4vXovHPMdXg__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_tfg40q14wp_monitor/p2s_video_so_ong_tfg40q14wp_monitor.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_tfg40q14wp_monitor/p2s_video_so_ong_tfg40q14wp_monitor.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_tfg40q14wp_monitor.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T12:51:51.957Z",
+      "completedAt": "2026-05-13T12:55:01.385Z"
+    },
+    {
+      "catalogItemId": "p2s_video_so_ong_zionworks_synchronize_mat",
+      "label": "Zionworks SYNCHRONIZE desk mat",
+      "sourceUrl": "https://naver.me/GipWYdYt",
+      "referenceImageUrl": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_zionworks_synchronize_mat.webp",
+      "referenceSource": "reference_photo_fallback",
+      "taskId": "019e217c-b267-7722-9a06-9bcc53751328",
+      "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e217c-b267-7722-9a06-9bcc53751328/output/model.glb?Expires=4932230400&Signature=Xw0fCaDgkAbBsmoCceSKyviRZSUOdVkR~k2ZzAzNVCenA~gxt3MCu8Y7l8EtCwZg5j3iAyoSkboSd9m5bQkl35~cX8vb6H6v60pPQd0HEmXh639ibEzwAmziJXqw2-~cIAyU5dzdlSRMevfQMVVaTVlfD72H2-LsDVZxZUWqckAZ5AKwjVdsifXeMzG2EtZDeg~RENXB1WplSv0kTlIFPQZpakrpgEoarSlMVOYjVKsUb7uZAw0cq12WanftHcLI19XPhZ25GdxbsG2gc~Dujte87A1sp~I7VpRdb6fYKFA23m3fmB01OHXnGyP9vxWmthXHWMVxFxv~9fmc-DZuuA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+      "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_zionworks_synchronize_mat/p2s_video_so_ong_zionworks_synchronize_mat.glb",
+      "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_video_so_ong_zionworks_synchronize_mat/p2s_video_so_ong_zionworks_synchronize_mat.proxy.glb",
+      "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/p2s_video_so_ong_zionworks_synchronize_mat.webp",
+      "finalizerStatus": "finalized",
+      "warnings": [
+        "TEXT_REFINE_SKIPPED_BY_ENV_USING_PREVIEW"
+      ],
+      "startedAt": "2026-05-13T13:18:00.750Z",
+      "completedAt": "2026-05-13T13:18:56.056Z"
+    }
+  ]
+}

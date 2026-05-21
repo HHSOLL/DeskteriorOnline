@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "meshy-compuzone-pc-build-kit-v1",
+  "generatedAt": "2026-05-16T16:32:25.853Z",
+  "source": {
+    "productUrl": "https://www.compuzone.co.kr/product/product_detail.htm?ProductNo=1336041",
+    "productNo": "1336041",
+    "listingTitle": "[컴퓨존] 프리미엄 조립PC_P2364W (9800X3D/5080)",
+    "commercialUse": "private_prototype_requires_review"
+  },
+  "asset": {
+    "catalogItemId": "compuzone_p2364w_pc_build_kit",
+    "label": "Compuzone P2364W White PC Build Kit",
+    "prompt": "Private prototype web-ready GLB for a PC assembly simulator. Make one clean white exploded desktop PC build kit, no logos, trademarks, text, packaging, people, or background. Include compact white glass case, white M-ATX motherboard, AM5 CPU, 2 white DDR5 RGB sticks, black M.2 SSD, large white triple-fan RTX 5080-class GPU, white PSU, one white 120mm fan, white 360mm AIO radiator with 3 fans and round LCD pump. Keep parts slightly separated near final slots for isometric assembly reading. Toy-like bevels, PBR white plastic, frosted glass, brushed metal, subtle cyan/pink RGB, centered pivot, upright floor plane.",
+    "dimensionsMm": {
+      "width": 420,
+      "depth": 270,
+      "height": 390
+    },
+    "previewTaskId": "019e319c-5943-70b0-ba23-8c0178333314",
+    "refineTaskId": "019e319f-e954-724a-be65-c254aa947b35",
+    "modelUrl": "https://assets.meshy.ai/3d9fba70-ef7c-422b-9885-f0180f8bd135/tasks/019e319f-e954-724a-be65-c254aa947b35/output/model.glb?Expires=4932489600&Signature=YH~bq5z82c1D-kIHGX0jmKk9UahzlIP8hLCOY7Wxo~8aEriHaPep6IxYW3ev6Gjh-poE~0kGNkm8PbzRYHl0G3VrPhfLxIMJvGsQmwyIJlgl4cfHk8sjvQQUd-jV~5269MD-cbHMTQA3J9SufA4Q6aXyGvvbWs3govhEn8Dr05h1RY2szMGcTOLZ~jLYXhE8DHFwo4gVY4cFJLdFlHu8Q1QAq8soUkqlAqQH8EkQoV9VrTxC3gwDoc1toBzo2lu8RgXIH7yFZe~g0gJ44xS2WQA4~ZA13dwI1v6-dIu8RRG7U3MwLNsBq0c5fzIGVEQbLANMrAZMKTK9PmeYvV-oHA__&Key-Pair-Id=K1VGYTHIYLM9UM",
+    "outputGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/compuzone_p2364w_pc_build_kit/compuzone_p2364w_pc_build_kit.glb",
+    "outputProxyGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/compuzone_p2364w_pc_build_kit/compuzone_p2364w_pc_build_kit.proxy.glb",
+    "outputThumbnail": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/catalog/thumbnails/compuzone_p2364w_pc_build_kit.webp",
+    "finalizerStatus": "finalized",
+    "warnings": []
+  },
+  "parts": [
+    {
+      "category": "CPU",
+      "label": "[AMD] 라이젠7 그래니트 9800X3D (8코어/16스레드/4.7GHz/쿨러미포함) [멀티팩]",
+      "slot": "AM5 CPU socket"
+    },
+    {
+      "category": "그래픽카드",
+      "label": "[ASUS] ROG Astral 지포스 RTX 5080 OC D7 16GB white 인텍앤컴퍼니",
+      "slot": "PCIe 5.0 x16 slot"
+    },
+    {
+      "category": "메인보드",
+      "label": "[GIGABYTE] B850M AORUS ELITE WIFI6E ICE 피씨디렉트 (AMD B850/M-ATX)",
+      "slot": "case motherboard tray"
+    },
+    {
+      "category": "메모리",
+      "label": "[에센코어] KLEVV DDR5 PC5-48000 CL30 URBANE V RGB WHITE 서린 [32GB (16GB*2)] (6000)",
+      "slot": "DDR5 DIMM slots A2/B2"
+    },
+    {
+      "category": "SSD",
+      "label": "[에센코어] KLEVV CRAS C930 M.2 NVMe 2280 [1TB] 히트싱크 PC",
+      "slot": "M.2 2280 slot"
+    },
+    {
+      "category": "케이스",
+      "label": "[LIAN-LI] O11D MINI V2 FLOW [미들타워] [화이트]",
+      "slot": "case shell"
+    },
+    {
+      "category": "파워",
+      "label": "[LIAN-LI] EDGE GOLD 1000 ATX3.1 1000W [화이트]",
+      "slot": "PSU bay"
+    },
+    {
+      "category": "케이스쿨러",
+      "label": "[LIAN-LI] UNI FAN TL Wireless 120 [시스템쿨러/120mm] [1PACK] [화이트]",
+      "slot": "case fan mount"
+    },
+    {
+      "category": "쿨러",
+      "label": "[LIAN-LI] Hydroshift II LCD-C 360TL [CPU쿨러] [화이트]",
+      "slot": "CPU cold plate and 360mm radiator mount"
+    }
+  ],
+  "budget": {
+    "source": "mesh_balance_api",
+    "remaining": 1130,
+    "costPerTask": 30,
+    "maxBudgetPerJob": 60,
+    "reservedEstimate": 60
+  }
+}

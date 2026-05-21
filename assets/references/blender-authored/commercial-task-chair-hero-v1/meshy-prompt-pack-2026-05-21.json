@@ -1,0 +1,14 @@
+{
+  "status": "review_pending_no_meshy_post_sent",
+  "reason": "User previously requested prompt/reference review before Meshy text-to-3D or image-to-3D generation.",
+  "textTo3dPromptCandidate": "Generic ergonomic task chair for a high-end deskterior room, no logos, black graphite mesh back, charcoal woven fabric cushion, thin matte black perimeter frame, adjustable armrests, gas lift, five-star caster base, realistic PBR materials, product visualization, clean topology, glb asset.",
+  "negativePrompt": "brand logo, exact replica, cartoon, melted geometry, extra legs, text labels, watermark",
+  "intendedUse": "generate a comparison candidate only; not direct catalog promotion",
+  "referencePolicy": "Use public product pages for proportion study only; do not upload or copy protected product images without review.",
+  "meshApiPreflight": {
+    "checkedAt": "2026-05-21",
+    "balanceEndpointReachable": true,
+    "balanceAvailable": true,
+    "providerPostSent": false
+  }
+}

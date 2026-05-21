@@ -1,0 +1,62 @@
+{
+  "assetId": "p2s_premium_workstation_hero_v6",
+  "model": "apps/web/public/assets/models/p2s_premium_workstation_hero_v6/p2s_premium_workstation_hero_v6.glb",
+  "colliders": [
+    {
+      "id": "desk_volume",
+      "type": "box",
+      "center": [
+        -0.18,
+        0.11,
+        0.1
+      ],
+      "size": [
+        2.32,
+        0.28,
+        0.78
+      ]
+    },
+    {
+      "id": "pc_tower_volume",
+      "type": "box",
+      "center": [
+        1.24,
+        0.39,
+        -0.08
+      ],
+      "size": [
+        0.62,
+        0.82,
+        0.48
+      ]
+    },
+    {
+      "id": "monitor_volume",
+      "type": "box",
+      "center": [
+        -0.48,
+        0.56,
+        -0.24
+      ],
+      "size": [
+        1.18,
+        0.74,
+        0.13
+      ]
+    },
+    {
+      "id": "tabletop_prop_volume",
+      "type": "box",
+      "center": [
+        -0.3,
+        0.2,
+        0.12
+      ],
+      "size": [
+        1.75,
+        0.22,
+        0.58
+      ]
+    }
+  ]
+}

@@ -56,6 +56,28 @@ ASSETS = [
     ("p2s_video_so_ong_atom_60th_figure", "Atom 60th", (0.16, 0.12, 0.28), "atom_figure"),
 ]
 
+VISIBLE_ASSET_KEYS = {
+    "p2s_video_so_ong_tfg40q14wp_monitor",
+    "p2s_video_so_ong_cpm1610iq_portable_monitor",
+    "p2s_video_so_ong_empathist_stand",
+    "p2s_video_so_ong_ivy_planter",
+    "p2s_video_so_ong_sml_spacecraft",
+    "p2s_video_so_ong_divoom_times_gate",
+    "p2s_video_so_ong_charging_reel_cable",
+    "p2s_video_so_ong_square1_power_cube",
+    "p2s_video_so_ong_gravastar_mars_pro",
+    "p2s_video_so_ong_diecast_car",
+    "p2s_video_so_ong_arturia_minifuse2",
+    "p2s_video_so_ong_offrame_dual_monitor_riser",
+    "p2s_video_so_ong_razer_cobra_pro_white",
+    "p2s_video_so_ong_zionworks_synchronize_mat",
+    "p2s_video_so_ong_angry_miao_am_hatsu",
+    "p2s_video_so_ong_reproducer_epic5",
+    "p2s_video_so_ong_hyte_y70_snow_white",
+}
+
+ASSETS_TO_GENERATE = [asset for asset in ASSETS if asset[0] in VISIBLE_ASSET_KEYS]
+
 
 # Product-detail and reference-still driven acceptance hints. These are not a
 # legal/commercial release gate; they make the private prototype factory fail
@@ -143,14 +165,39 @@ REFERENCE_STILL_SIGNATURES = {
             "lower_tablet_lip",
         ],
     },
-    "stream_deck_neo": {
-        "target": "White wedge controller with black top face, eight LCD keys, infobar, and fixed white cable.",
+    "mars_pro": {
+        "target": "Small black GravaStar Mars Pro speaker in front of the left speaker, with robot shell, yellow driver core, tripod feet, and side pods.",
         "required": [
-            "stream_deck_wedge_body",
-            "stream_deck_black_top_face",
-            "stream_deck_lcd_key",
-            "stream_deck_infobar",
-            "stream_deck_fixed_usb_cable",
+            "mars_spherical_body",
+            "mars_outer_cage",
+            "mars_flat_front_plate",
+            "speaker_core_ring",
+            "speaker_yellow_core",
+            "tripod_leg",
+            "mars_side_pod",
+        ],
+    },
+    "audio_interface": {
+        "target": "White Arturia MiniFuse 2 under the portable monitor with black front panel, two combo inputs, silver knobs, blue LEDs, and front label.",
+        "required": [
+            "minifuse_body",
+            "minifuse_dark_front_panel",
+            "combo_input",
+            "silver_knob",
+            "blue_status_led",
+            "arturia_mark",
+        ],
+    },
+    "ivy_planter": {
+        "target": "Small white IVY robot planter at the right of the portable display with black face, two eyes, smile, rim, and green plant leaves.",
+        "required": [
+            "rounded_ai_planter",
+            "planter_rim",
+            "black_face_display",
+            "left_eye",
+            "right_eye",
+            "ivy_smile",
+            "ivy_leaf",
         ],
     },
 }
@@ -880,49 +927,49 @@ def build_preview() -> None:
     cube("soft_right_wall_return", (1.56, -0.08, 0.68), (0.035, 1.04, 1.28), "wall_lavender", 0.0)
     cube("thin_black_back_edge", (0, 0.065, 0.065), (3.0, 0.018, 0.035), "black", 0.001)
     cube("left_wall_wash_strip", (-1.12, 0.405, 0.75), (0.18, 0.008, 1.28), "strong_lavender_glow", 0.012)
-    place_kind("synchronize_mat", (0.055, -0.245, 0.048), 0)
+    place_kind("synchronize_mat", (0.08, -0.265, 0.048), 0, 1.06)
     # Main display composition.
     before_monitor = set(bpy.context.scene.objects)
-    add_monitor(1.34, 0.62, 0.24, "3 26 40", ultrawide=True)
+    add_monitor(1.48, 0.65, 0.24, "3 26 40", ultrawide=True)
     for obj in set(bpy.context.scene.objects) - before_monitor:
-        obj.location.x += 0.2
-        obj.location.y += 0.065
+        obj.location.x += 0.31
+        obj.location.y += 0.073
         obj.location.z += 0.0
-    cyl("preview_light_bar", (0.2, -0.074, 0.645), 0.014, 0.62, "black_anodized", 32, rot=(0, math.radians(90), 0))
-    cube("preview_light_bar_clip", (0.2, -0.045, 0.615), (0.095, 0.045, 0.035), "black_anodized", 0.006)
+    cyl("preview_light_bar", (0.31, -0.068, 0.675), 0.014, 0.70, "black_anodized", 32, rot=(0, math.radians(90), 0))
+    cube("preview_light_bar_clip", (0.31, -0.039, 0.642), (0.1, 0.045, 0.035), "black_anodized", 0.006)
     # Product-specific tower/shelf/speaker layer.
-    place_kind("offrame_riser", (-0.88, 0.005, 0.042), 0, 0.9)
-    place_kind("hyte_y70_case", (-0.88, -0.025, 0.082), 0, 0.92)
-    place_kind("epic5_speaker", (-0.34, -0.145, 0.055), math.radians(-2), 0.9)
-    place_kind("epic5_speaker", (1.02, -0.145, 0.055), math.radians(2), 0.9)
+    place_kind("offrame_riser", (-0.93, 0.005, 0.042), 0, 0.95)
+    place_kind("hyte_y70_case", (-0.93, -0.024, 0.083), 0, 0.98)
+    place_kind("epic5_speaker", (-0.43, -0.155, 0.055), math.radians(-2), 0.92)
+    place_kind("epic5_speaker", (1.14, -0.15, 0.055), math.radians(2), 0.92)
     # Product accents.
     locs = {
-        "times_gate": (-0.65, -0.042, 0.55),
-        "spacecraft": (-1.08, -0.035, 0.54),
-        "mars_pro": (-0.58, -0.365, 0.058),
-        "portable_monitor": (0.22, -0.318, 0.064),
-        "ivy_planter": (0.72, -0.27, 0.058),
-        "audio_interface": (0.015, -0.383, 0.06),
-        "diecast": (0.1, -0.25, 0.065),
-        "reel_cable": (-0.43, -0.395, 0.055),
+        "times_gate": (-0.68, -0.045, 0.548),
+        "spacecraft": (-1.12, -0.038, 0.545),
+        "mars_pro": (-0.58, -0.36, 0.058),
+        "portable_monitor": (0.27, -0.32, 0.064),
+        "ivy_planter": (0.78, -0.27, 0.058),
+        "audio_interface": (-0.16, -0.37, 0.066),
+        "diecast": (-0.02, -0.265, 0.118),
+        "reel_cable": (-0.44, -0.405, 0.055),
     }
     for kind, loc in locs.items():
         scale = {
             "times_gate": 0.96,
             "spacecraft": 1.02,
-            "mars_pro": 0.72,
+            "mars_pro": 0.7,
             "portable_monitor": 1.12,
             "ivy_planter": 0.88,
-            "diecast": 0.9,
+            "audio_interface": 1.2,
+            "diecast": 0.95,
             "reel_cable": 0.82,
         }.get(kind, 1.0)
         place_kind(kind, loc, 0, scale)
 
     # Front work surface details from the reference still: split keyboard,
     # black gaming mouse, and the printed desk mat composition.
-    place_kind("am_hatsu_keyboard", (0.02, -0.39, 0.058), 0, 1.08)
-    place_kind("cobra_mouse", (0.54, -0.402, 0.058), math.radians(6), 0.98)
-    place_kind("stream_deck_neo", (-0.37, -0.36, 0.058), math.radians(-5), 0.95)
+    place_kind("am_hatsu_keyboard", (0.04, -0.405, 0.058), 0, 1.08)
+    place_kind("cobra_mouse", (0.59, -0.405, 0.058), math.radians(6), 0.98)
     place_kind("power_cube", (-1.17, -0.42, 0.054), 0, 0.86)
 
     bpy.ops.object.light_add(type="AREA", location=(0, -0.95, 1.08))
@@ -963,7 +1010,7 @@ def build_preview() -> None:
         json.dumps(
             {
                 "scene": "so-ong-space-2026-05-desk-setup",
-                "target": "Reference-still matching prototype render with product-specific hero silhouettes, lavender wall wash, white desktop, and primary visible SKU placement.",
+                "target": "Reference-still visible-crop prototype render with product-specific hero silhouettes, lavender wall wash, white desktop, and only the products visible in the supplied crop placed in the scene.",
                 "legalBoundary": "private/prototype only; not release eligible without licensed CAD/material references.",
                 "assetCount": len(FIDELITY_REPORTS),
                 "heroAssetCount": sum(1 for report in FIDELITY_REPORTS if report["requiredSignatureFragments"]),
@@ -983,11 +1030,11 @@ def build_preview() -> None:
 
 
 def main() -> None:
-    for asset in ASSETS:
+    for asset in ASSETS_TO_GENERATE:
         export_asset(*asset)
     convert_thumbnails_to_webp()
     build_preview()
-    print(f"Generated {len(ASSETS)} So Ong prototype assets and preview.")
+    print(f"Generated {len(ASSETS_TO_GENERATE)} visible-crop So Ong prototype assets and preview.")
 
 
 if __name__ == "__main__":

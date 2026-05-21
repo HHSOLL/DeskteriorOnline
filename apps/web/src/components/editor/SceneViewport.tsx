@@ -108,7 +108,8 @@ export function SceneViewport({
   const renderInteractiveShellControls =
     resolvedInteractionMode === "editor" || resolvedInteractionMode === "preview";
   const renderOpeningDecor = true;
-  const renderLightingDecor = renderInteractiveShellControls && viewMode !== "top";
+  const renderLightingDecor =
+    renderInteractiveShellControls && (viewMode !== "top" || topMode === "room");
   const isLightTone = chromeTone === "light";
   const quality = useMemo(() => {
     const coarsePointer =

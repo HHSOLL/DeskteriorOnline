@@ -1,0 +1,126 @@
+{
+  "assetKey": "p2s_commercial_desk_accessory_kit_v1",
+  "status": "generic-desk-accessory-commercial-candidate-review-required",
+  "generatedAt": "2026-05-21",
+  "output": {
+    "glb": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/p2s_commercial_desk_accessory_kit_v1.glb",
+    "blend": "assets/blender/deskterior/p2s_commercial_desk_accessory_kit_v1.blend",
+    "runtimePackage": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/runtime-package.json",
+    "previews": [
+      "assets/references/blender-authored/commercial-desk-accessory-kit-v1/previews/commercial-desk-accessory-kit-v1-isometric.png",
+      "assets/references/blender-authored/commercial-desk-accessory-kit-v1/previews/commercial-desk-accessory-kit-v1-keyboard-closeup.png",
+      "assets/references/blender-authored/commercial-desk-accessory-kit-v1/previews/commercial-desk-accessory-kit-v1-speaker-monitor-closeup.png"
+    ],
+    "textures": {
+      "speakerFabricBaseColor": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_speaker_fabric_basecolor_1k.png",
+      "speakerFabricRoughness": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_speaker_fabric_roughness_1k.png",
+      "speakerFabricHeight": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_speaker_fabric_height_1k.png",
+      "deskMatBaseColor": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_black_deskmat_basecolor_1k.png",
+      "deskMatRoughness": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_black_deskmat_roughness_1k.png",
+      "deskMatHeight": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_black_deskmat_height_1k.png",
+      "keycapBaseColor": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_pbt_keycap_basecolor_1k.png",
+      "keycapRoughness": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_pbt_keycap_roughness_1k.png",
+      "screenGlassBaseColor": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_screen_glass_basecolor_1k.png",
+      "screenGlassRoughness": "apps/web/public/assets/models/p2s_commercial_desk_accessory_kit_v1/textures/desk_accessory_screen_glass_roughness_1k.png"
+    }
+  },
+  "metrics": {
+    "objectCount": 107,
+    "materialCount": 19,
+    "textureCount": 12,
+    "triangles": 44256,
+    "glbBytes": 11944744,
+    "glbBytesBefore": 11944744,
+    "glbBytesAfter": 9232916,
+    "runtimeOptimization": "gltf-transform dedup + prune + meshopt"
+  },
+  "referenceStudy": [
+    {
+      "label": "BenQ ScreenBar Halo product page",
+      "url": "https://www.benq.com/en-us/lighting/monitor-light/screenbar-halo.html",
+      "usedFor": [
+        "monitor light bar silhouette",
+        "warm diffuser material split",
+        "desk lighting role"
+      ],
+      "copied": false
+    },
+    {
+      "label": "Logitech MX Mechanical Mini product page",
+      "url": "https://www.logitech.com/en-us/products/keyboards/mx-mechanical-mini.920-010550.html",
+      "usedFor": [
+        "low-profile keyboard proportion",
+        "individual keycap density",
+        "aluminum keyboard material hierarchy"
+      ],
+      "copied": false
+    },
+    {
+      "label": "Logitech MX Master 3S product page",
+      "url": "https://www.logitech.com/en-us/products/mice/mx-master-3s.910-006556.html",
+      "usedFor": [
+        "sculpted productivity mouse proportions",
+        "scroll wheel/detail hierarchy"
+      ],
+      "copied": false
+    },
+    {
+      "label": "Kanto ORA desktop speakers product page",
+      "url": "https://www.kantoaudio.com/powered-speakers/ora/",
+      "usedFor": [
+        "compact desktop speaker footprint",
+        "white cabinet and black grille contrast",
+        "driver face hierarchy"
+      ],
+      "copied": false
+    },
+    {
+      "label": "ASUS ROG OLED monitor product family page",
+      "url": "https://rog.asus.com/monitors/32-to-34-inches/rog-swift-oled-pg32ucdm/",
+      "usedFor": [
+        "thin black OLED display massing",
+        "large monitor as desk anchor",
+        "subtle screen glass response"
+      ],
+      "copied": false
+    }
+  ],
+  "commercialComparisonChecklist": [
+    "replaces scattered proxy models and rounded block overlays with one scale-consistent authored workstation kit",
+    "keyboard uses individual sculpted keycaps plus tiny legends instead of a single keyboard slab",
+    "speaker cabinets include separate lacquer body, fabric grille map, driver rings, dome material, stands, and rubber feet",
+    "monitor includes curved screen surface, rear shell, light bar, diffuser, stand neck, base inset, and screen smudge PBR material",
+    "desk lamp, microphone boom, cables, mouse, tray, and mug add believable work-surface density without copying brand geometry",
+    "procedural PBR texture maps are packed into the GLB and surfaced in the runtime package",
+    "still requires human art review, Meshy candidate comparison after prompt approval, and final browser framing review"
+  ],
+  "licenseReview": {
+    "selfAuthored": true,
+    "thirdPartyModelCopied": false,
+    "thirdPartyImageCopied": false,
+    "releaseEligible": false,
+    "notes": "Public product pages are references only. The GLB is generic prototype QA content."
+  },
+  "meshApi": {
+    "status": "review_pending_no_meshy_post_sent",
+    "reason": "User requested prompt/reference review before Meshy text-to-3D or image-to-3D generation.",
+    "textTo3dPromptCandidate": "Generic high-end desk accessory kit for a cozy 3D deskterior room, no logos, thin black OLED monitor with light bar, low profile aluminum keyboard with individual keycaps, sculpted white wireless mouse, compact white desktop speakers with black fabric grilles, slim adjustable desk lamp, broadcast microphone arm, cable dressing, realistic PBR materials, clean GLB topology.",
+    "negativePrompt": "brand logos, exact replica, unreadable melted details, warped keyboard rows, extra monitors, watermark, product text labels",
+    "intendedUse": "comparison candidate only before any public catalog promotion",
+    "referencePolicy": "Use public product pages for proportion and material study only; do not upload protected product imagery without review.",
+    "meshApiPreflight": {
+      "balanceEndpointReachable": true,
+      "balanceAvailable": true,
+      "providerPostSent": false,
+      "status": 200,
+      "reason": "Balance endpoint checked only; no paid generation POST sent."
+    }
+  },
+  "runtimePackaging": {
+    "applied": true,
+    "method": "gltf-transform dedup + prune + meshopt",
+    "glbBytesBefore": 11944744,
+    "glbBytesAfter": 9232916,
+    "skipTextures": true
+  }
+}

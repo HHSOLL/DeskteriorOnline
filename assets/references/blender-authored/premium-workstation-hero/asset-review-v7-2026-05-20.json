@@ -1,0 +1,75 @@
+{
+  "asset": "p2s_premium_workstation_hero_v7",
+  "status": "standalone-generated-review-required",
+  "sourceBlend": "assets/blender/deskterior/p2s_premium_workstation_hero_v7.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_premium_workstation_hero_v7/p2s_premium_workstation_hero_v7.glb",
+  "previewImages": [
+    "assets/references/blender-authored/premium-workstation-hero/v7-previews/workstation-v7-isometric.png",
+    "assets/references/blender-authored/premium-workstation-hero/v7-previews/workstation-v7-tabletop-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v7-previews/workstation-v7-input-devices-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v7-previews/workstation-v7-monitor-audio-closeup.png"
+  ],
+  "atlasArtifacts": {
+    "basecolor": "assets/references/blender-authored/premium-workstation-hero/workstation-v7-basecolor-atlas.png",
+    "orm": "assets/references/blender-authored/premium-workstation-hero/workstation-v7-orm-atlas.png"
+  },
+  "runtimeSidecars": {
+    "colliders": "apps/web/public/assets/models/p2s_premium_workstation_hero_v7/p2s_premium_workstation_hero_v7.colliders.json",
+    "supportSurfaces": "apps/web/public/assets/models/p2s_premium_workstation_hero_v7/p2s_premium_workstation_hero_v7.support-surfaces.json"
+  },
+  "metrics": {
+    "nodes": 610,
+    "meshes": 604,
+    "materials": 67,
+    "triangles": 141260,
+    "textureImages": 4,
+    "glbBytes": 7984280,
+    "atlasAssignedMeshObjects": 212,
+    "activeUvAtlasMeshObjects": 212,
+    "bakedContactAoDecals": 8,
+    "detailUvMeshObjects": 177,
+    "lightmapUv2ReadyMeshObjects": 389
+  },
+  "glbAudit": {
+    "nodes": 604,
+    "meshes": 604,
+    "materials": 42,
+    "images": 2,
+    "textures": 2,
+    "extensionsUsed": [
+      "KHR_materials_emissive_strength"
+    ]
+  },
+  "desktopDetailPass": {
+    "detailObjectCount": 184,
+    "categories": {
+      "cables": 22,
+      "desk": 12,
+      "display": 7,
+      "keyboard": 49,
+      "lamp": 7,
+      "mic": 12,
+      "monitor": 16,
+      "mouse": 6,
+      "mug": 4,
+      "paper": 15,
+      "plant": 14,
+      "speaker": 20
+    }
+  },
+  "iterationNotes": {
+    "v6DefectTargeted": "V6 improved object detail but made the tabletop seams too bright and grid-like.",
+    "v7Changes": [
+      "Removed cross-grid desktop seams.",
+      "Lowered plank seam contrast and width.",
+      "Kept V6 per-object micro-detail, V5 UVAtlas fix, runtime sidecars, and PC internal detail."
+    ]
+  },
+  "stillRequires": [
+    "human visual approval against commercial references",
+    "hand-authored texture polish beyond generated/procedural maps",
+    "true renderer-baked GI/lightmap pass",
+    "runtime LOD/proxy GLB package before live catalog promotion",
+    "scene integration only after standalone approval"
+  ]
+}

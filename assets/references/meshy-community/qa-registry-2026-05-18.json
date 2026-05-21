@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "deskterior-meshy-community-qa-registry-v1",
+  "assetPack": "meshy-community-cc0-selected",
+  "auditedAt": "2026-05-18",
+  "sourceRoot": "assets/sources/meshy-community/selected-glb",
+  "runtimeMode": "qa-api-staging",
+  "runtimeRoute": "/api/qa-assets/meshy-community/[file]",
+  "publicCatalogStatus": "not-published",
+  "licensePolicy": "Only Meshy public records with metadata license=cc0 are allowed in this QA route.",
+  "sourceAudit": "assets/references/meshy-community/download-audit-2026-05-18.json",
+  "implementationRegistry": "apps/web/src/lib/qa/meshy-community-assets.ts",
+  "summary": {
+    "selectedForScene": 4,
+    "glbHeaderChecks": "4/4 passed",
+    "qaVerifier": "npm --workspace apps/web run verify:pc-assembly-workbench",
+    "promotionStatus": "candidate-only",
+    "promotionBlockers": [
+      "Blender pivot/origin normalization has not been completed.",
+      "Texture compression and runtime package export have not been completed.",
+      "Human screenshot review is still required before public catalog promotion."
+    ]
+  },
+  "assets": [
+    {
+      "slug": "chair-rodiondbulatoff",
+      "file": "chair-rodiondbulatoff.glb",
+      "runtimeUrl": "/api/qa-assets/meshy-community/chair-rodiondbulatoff.glb",
+      "usage": "accent lounge chair / room seating density",
+      "author": "rodiondbulatoff",
+      "pageUrl": "https://www.meshy.ai/3d-models/019676c5-3501-72f7-b7de-88f2e8a0b264",
+      "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019676c5-3501-72f7-b7de-88f2e8a0b264",
+      "license": "CC0-1.0",
+      "sizeKb": 1473,
+      "triangles": 9997,
+      "vertices": 9330,
+      "boundsM": [0.86755, 1.99395, 0.90545],
+      "status": "qa-layer"
+    },
+    {
+      "slug": "rustic-table",
+      "file": "rustic-table.glb",
+      "runtimeUrl": "/api/qa-assets/meshy-community/rustic-table.glb",
+      "usage": "lounge side table / foreground decor surface",
+      "author": "Warface",
+      "pageUrl": "https://www.meshy.ai/3d-models/019b215f-1b40-75b2-b039-bfbca510845b",
+      "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019b215c-907c-76e5-adf6-c115cfd71a1d",
+      "license": "CC0-1.0",
+      "sizeKb": 7829,
+      "triangles": 9998,
+      "vertices": 9221,
+      "boundsM": [1.83823, 0.85261, 1.91687],
+      "status": "qa-layer"
+    },
+    {
+      "slug": "rack-golden-arch",
+      "file": "rack-golden-arch.glb",
+      "runtimeUrl": "/api/qa-assets/meshy-community/rack-golden-arch.glb",
+      "usage": "right-side storage and display density",
+      "author": "epix.asmr",
+      "pageUrl": "https://www.meshy.ai/3d-models/019b38d7-2c17-7e67-a949-17a00786dcdc",
+      "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019b38cf-8c16-70cf-9482-bb7c24237f5c",
+      "license": "CC0-1.0",
+      "sizeKb": 6327,
+      "triangles": 10000,
+      "vertices": 7717,
+      "boundsM": [1.91645, 1.8001, 0.99228],
+      "status": "qa-layer"
+    },
+    {
+      "slug": "colorful-brick-wall",
+      "file": "colorful-brick-wall.glb",
+      "runtimeUrl": "/api/qa-assets/meshy-community/colorful-brick-wall.glb",
+      "usage": "rear wall accent material layer",
+      "author": "crit",
+      "pageUrl": "https://www.meshy.ai/3d-models/019adb1c-3540-7272-86c5-d4d05a56ffbc",
+      "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019adb19-b5f2-774d-84dc-d032d1031d5e",
+      "license": "CC0-1.0",
+      "sizeKb": 1982,
+      "triangles": 21035,
+      "vertices": 14384,
+      "boundsM": [1.89385, 1.91241, 0.30758],
+      "status": "qa-layer"
+    }
+  ],
+  "scenePlacements": [
+    {
+      "slug": "colorful-brick-wall",
+      "layer": "wall-accent",
+      "position": [0.86, 1.18, -1.986],
+      "rotation": [0, 0.02, 0],
+      "scale": [0.96, 0.78, 0.09]
+    },
+    {
+      "slug": "rack-golden-arch",
+      "layer": "storage-density",
+      "position": [2.34, 0.82, -1.55],
+      "rotation": [0, -0.58, 0],
+      "scale": [0.38, 0.44, 0.38]
+    },
+    {
+      "slug": "rustic-table",
+      "layer": "lounge-surface",
+      "position": [1.05, 0.28, 1.44],
+      "rotation": [0, -0.38, 0],
+      "scale": [0.34, 0.34, 0.34]
+    },
+    {
+      "slug": "chair-rodiondbulatoff",
+      "layer": "lounge-seat",
+      "position": [1.02, 0.54, 1.24],
+      "rotation": [0, -0.92, 0],
+      "scale": [0.48, 0.48, 0.48]
+    }
+  ],
+  "nextRequiredChecks": [
+    "Run Blender/glTF normalization pass for origins, pivots, material names, and floor contact.",
+    "Create optimized runtime package outputs only after visual fit is accepted.",
+    "Keep the QA route allowlist and verifier sourced from apps/web/src/lib/qa/meshy-community-assets.ts.",
+    "Do not publish these files to the public catalog until human visual QA and runtime package metadata are complete."
+  ]
+}

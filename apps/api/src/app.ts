@@ -4,6 +4,7 @@ import { env, isCorsOriginAllowed } from "./config/env";
 import { requireAuth } from "./middleware/auth";
 import { assetsRouter } from "./routes/assets";
 import { healthRouter } from "./routes/health";
+import { productAssetsRouter } from "./routes/product-assets";
 import { ApiError } from "./services/errors";
 
 function serializeUnknownError(error: unknown) {
@@ -45,6 +46,7 @@ export function createApp() {
 
   app.use("/v1", healthRouter);
   app.use("/v1/assets", requireAuth, assetsRouter);
+  app.use("/v1/product-assets", requireAuth, productAssetsRouter);
 
   app.use((_request, response) => {
     response.status(404).json({ error: "Not found" });

@@ -114,7 +114,7 @@ export async function getJobForOwner(
     return null;
   }
 
-  if (lookup.data.type !== "ASSET_GENERATION") {
+  if (lookup.data.type !== "ASSET_GENERATION" && lookup.data.type !== "PRODUCT_ASSET_GENERATION") {
     return null;
   }
 

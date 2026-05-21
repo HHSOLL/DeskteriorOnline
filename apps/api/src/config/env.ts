@@ -6,6 +6,7 @@ const EnvSchema = z.object({
   SUPABASE_URL: z.string().url(),
   SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  ASSET_STORAGE_BUCKET: z.string().default("assets-glb"),
   CORS_ORIGINS: z.string().default("http://127.0.0.1:3100,http://localhost:3100")
 });
 

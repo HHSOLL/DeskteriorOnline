@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "deskterior-blender-authored-asset-review-v1",
+  "asset": {
+    "slug": "p2s-bruno-room-surface-kit",
+    "intent": "large-surface material depth kit for Bruno-inspired cutaway room mood",
+    "source": "Blender procedural authoring by Codex with generated UV diffuse atlases; no Bruno Simon source asset copied",
+    "license": "project-owned prototype asset pending product license review",
+    "textureSet": {
+      "authoredMaps": [
+        "baseColor",
+        "normal",
+        "roughness",
+        "ambientOcclusion",
+        "contactShadowLightmap",
+        "artDirectedBounceLightmap",
+        "cyclesAoBakeLightmap",
+        "packedOrm"
+      ],
+      "generatedPbrMapCount": 19,
+      "ktx2Ready": false,
+      "packedOrmMapCount": 3,
+      "packedOrmReady": true
+    },
+    "bakedContactShadowPass": {
+      "method": "procedural Blender-authored RGBA contact-shadow cards with zone metadata; not path-traced GI",
+      "floorZones": [
+        "desk",
+        "desk_accessories",
+        "pc_tower",
+        "sofa",
+        "coffee_table",
+        "media_console",
+        "shelf"
+      ],
+      "wallZones": [
+        "desk_back_wall",
+        "shelf_back_wall",
+        "media_side_wall",
+        "sofa_side_wall"
+      ],
+      "runtimeOverlayReplacement": false
+    },
+    "wallRevealCleanupPass": {
+      "method": "hard plaster reveal lines reduced below 0.1 alpha and softened with four tinted RGBA wall-wash cards",
+      "lineOpacityBefore": 0.34,
+      "lineOpacityAfter": 0.085,
+      "softWashZones": [
+        "back_lower_material_shadow",
+        "back_upper_cool_warm_bounce",
+        "right_lower_front_material_shadow",
+        "right_lower_back_material_shadow",
+        "right_upper_front_pink_cool_bounce",
+        "right_upper_back_pink_cool_bounce"
+      ],
+      "gridOverlayRisk": "reduced-not-eliminated",
+      "stillRequiresBrowserHumanReview": true
+    },
+    "artDirectedGiPass": {
+      "method": "hand-authored RGBA bounce and low-occlusion lightmap cards for desk, sofa, PC, media, shelf, and window-adjacent wall zones; not a path-traced irradiance bake",
+      "floorBounceZones": [
+        "desk_warm_screen_pool",
+        "pc_tower_cool_edge",
+        "sofa_amber_low_fill",
+        "coffee_table_soft_occlusion",
+        "media_pink_floor_spill"
+      ],
+      "wallBounceZones": [
+        "desk_screen_back_wall",
+        "shelf_low_occlusion_back_wall",
+        "window_cool_side_falloff",
+        "media_pink_side_wall"
+      ],
+      "physicallyBaked": false,
+      "runtimeOverlayReplacement": false,
+      "stillRequiresPathTracedBake": true
+    },
+    "cyclesAoBakePass": {
+      "method": "Blender Cycles AO bake from temporary room/furniture blocker proxies, converted into a transparent floor lightmap card",
+      "engine": "CYCLES",
+      "bakeType": "AO",
+      "samples": 48,
+      "resolution": [
+        512,
+        512
+      ],
+      "receiverSurfaces": [
+        "floor"
+      ],
+      "blockerProxies": [
+        "desk",
+        "pc_tower",
+        "task_chair",
+        "sofa",
+        "coffee_table",
+        "media_console",
+        "shelf"
+      ],
+      "uvBakedProxy": true,
+      "finalAssetProjection": "single transparent floor lightmap card",
+      "physicallyBakedAo": true,
+      "pathTracedGi": false,
+      "stillRequiresPathTracedGi": true,
+      "stillRequiresFinalUvBake": true
+    },
+    "texturePackagingPass": {
+      "packageStatus": "orm-png-sidecar-ready-ktx2-pending",
+      "packedOrmMapCount": 3,
+      "packedOrmChannels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "ormSidecarFormat": "PNG",
+      "ktx2Ready": false,
+      "ktx2TranscodeAttempted": false,
+      "ktx2Blocker": "toktx encoder was not available in the local environment",
+      "toktxAvailable": false,
+      "stillRequiresRuntimeKtx2Transcode": true,
+      "stillRequiresFinalUvBake": true,
+      "manifest": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/texture-package-2026-05-19.json",
+      "packedOrmMaps": [
+        {
+          "role": "floorWoodOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_floor_plank_orm_1k.png",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.02
+        },
+        {
+          "role": "plasterWallOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_plaster_warm_cool_orm_1k.png",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.0
+        },
+        {
+          "role": "trimOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_trim_warm_orm_512.png",
+          "resolution": [
+            512,
+            512
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.02
+        }
+      ],
+      "promotionBoundary": "ORM sidecar package evidence only; KTX2 transcode, final UV bake, and release catalog packaging remain blocked"
+    }
+  },
+  "outputs": {
+    "blend": "assets/blender/deskterior/p2s_bruno_room_surface_kit.blend",
+    "runtimeGlb": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/p2s_bruno_room_surface_kit.glb",
+    "publicGlb": "apps/web/public/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+    "thumbnail": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/p2s_bruno_room_surface_kit.thumbnail.webp",
+    "cyclesAoBakePreview": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/p2s_bruno_room_surface_kit.cycles-floor-ao-bake.png",
+    "texturePackageManifest": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/texture-package-2026-05-19.json",
+    "texturePackageDirectory": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures"
+  },
+  "metrics": {
+    "dimensionsM": [
+      7.054,
+      4.142,
+      2.68
+    ],
+    "objectCount": 152,
+    "materialCount": 18,
+    "textureCount": 21,
+    "triangleCount": 13554,
+    "runtimeBytes": 12095920,
+    "publicBytes": 12095920
+  },
+  "comparisonReview": {
+    "commercialPatternsApplied": [
+      "generated baseColor, normal, roughness, and AO helper maps for wood planks, plaster, and trim instead of flat colors",
+      "individual bevelled floor planks with staggered seams and endgrain shadow strips",
+      "warm floor substrate and tighter plank spacing to avoid black grid artifacts in the final cinematic camera",
+      "layered plaster panels, baseboards, crown trim, cove light bars, and cutaway edge trim",
+      "layered plywood/dark reveal cutaway edges so the room shell reads as constructed thickness instead of one flat slab",
+      "segmented side-wall plaster around a real window opening, with authored recess, glass, sill, trim, and cool blind slats inside the GLB",
+      "zone-tagged RGBA contact-shadow lightmap cards under desk, sofa, PC, coffee-table, shelf, and media zones",
+      "wall contact-shadow lightmap cards for desk, shelf, media, and sofa adjacency",
+      "hard wall reveal grid opacity reduced and replaced with broad tinted wall-wash cards so the wall reads more like plaster depth than UI guide lines",
+      "hand-authored colored bounce lightmap cards for desk glow, sofa floor fill, PC edge fill, media wall spill, shelf occlusion, and window-side cool falloff",
+      "Cycles AO bake probe rendered from temporary blocker proxies and embedded back into the GLB as a transparent floor lightmap card",
+      "packed ORM PNG sidecar package authored for wood, plaster, and trim materials with AO in R, roughness in G, metallic in B, and KTX2 readiness kept false"
+    ],
+    "knownGapsBeforeCommercialPromotion": [
+      "helper normal/roughness/AO/ORM maps are procedural and need real UV unwrap and art-directed texture bake",
+      "contact-shadow and colored bounce lightmap cards are authored evidence; the Cycles AO probe is physically baked AO but not a path-traced global-illumination bake",
+      "geometry is still stylized and must be compared against commercial diorama room packs",
+      "ORM sidecar PNG package exists, but there is still no KTX2 texture transcode, LOD/proxy package, collider sidecar, or release metadata"
+    ],
+    "currentGrade": "runtime QA candidate, not final commercial catalog asset"
+  }
+}

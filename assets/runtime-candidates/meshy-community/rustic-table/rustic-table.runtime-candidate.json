@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "deskterior-runtime-candidate-v1",
+  "assetPack": "meshy-community-cc0-selected",
+  "slug": "rustic-table",
+  "label": "Rustic Table",
+  "source": {
+    "kind": "meshy_community_public_cc0",
+    "sourceGlb": "assets/sources/meshy-community/selected-glb/rustic-table.glb",
+    "pageUrl": "https://www.meshy.ai/3d-models/019b215f-1b40-75b2-b039-bfbca510845b",
+    "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019b215c-907c-76e5-adf6-c115cfd71a1d",
+    "license": "CC0-1.0"
+  },
+  "files": {
+    "normalizedGlb": "assets/runtime-candidates/meshy-community/rustic-table/rustic-table.normalized.glb",
+    "thumbnail": "assets/runtime-candidates/meshy-community/rustic-table/rustic-table.thumbnail.webp",
+    "sidecar": "assets/runtime-candidates/meshy-community/rustic-table/rustic-table.runtime-candidate.json"
+  },
+  "dimensionsMm": {
+    "width": 1838.231,
+    "depth": 1916.871,
+    "height": 852.607
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "image_based",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 1,
+      "maxTriangleCount": 9998
+    }
+  },
+  "qa": {
+    "status": "candidate_requires_human_visual_review",
+    "warnings": [],
+    "beforeDimensionsMm": {
+      "width": 1838.231,
+      "depth": 1916.871,
+      "height": 852.607
+    },
+    "afterDimensionsMm": {
+      "width": 1838.231,
+      "depth": 1916.871,
+      "height": 852.607
+    },
+    "triangles": 9998,
+    "vertices": 9221,
+    "materials": 1,
+    "images": [
+      {
+        "name": "Image_0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_0.001",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_1",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_2",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Viewer Node",
+        "width": 256,
+        "height": 256
+      }
+    ],
+    "normalizedExportBytesBeforeMeshopt": 7957364,
+    "thumbnailBytes": 8498
+  }
+}

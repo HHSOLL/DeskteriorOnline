@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:04:22.884Z",
+  "assetKey": "empathist",
+  "sourceUrl": "https://www.29cm.co.kr/product-discontinued?status=STOP_SELLING",
+  "product": {
+    "title": "감도 깊은 취향 셀렉트샵 29CM",
+    "sku": null,
+    "manufacturer": "감도 깊은 취향 셀렉트샵 29CM",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": null
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef--29CM-Prototype-Reference",
+      "label": "감도 깊은 취향 셀렉트샵 29CM public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "감도 깊은 취향 셀렉트샵 29CM",
+    "canonicalProductUrl": "https://www.29cm.co.kr/product-discontinued?status=STOP_SELLING",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://img.29cm.co.kr/mall/og_image.png",
+        "required": false,
+        "license": "LicenseRef--29CM-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://asset.29cm.co.kr/next-contents/2023/06/08/3f8131682d124d16b336774ba51c4a3e_20230608162823.png",
+        "required": false,
+        "license": "LicenseRef--29CM-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://www.29cm.co.kr/product-discontinued?status=STOP_SELLING",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef--29CM-Prototype-Reference",
+      "label": "감도 깊은 취향 셀렉트샵 29CM public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://img.29cm.co.kr/mall/og_image.png",
+      "view": "front",
+      "source": "open_graph",
+      "score": 20
+    },
+    {
+      "url": "https://asset.29cm.co.kr/next-contents/2023/06/08/3f8131682d124d16b336774ba51c4a3e_20230608162823.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "감도 깊은 취향 셀렉트샵 29CM",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "감도 깊은 취향 셀렉트샵 29CM",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "감도 깊은 취향 셀렉트샵 29CM",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 1,
+    "selectedImageCount": 2,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

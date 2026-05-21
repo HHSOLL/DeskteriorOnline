@@ -4,7 +4,11 @@ import path from "node:path";
 const ROOT = process.cwd();
 const TARGET_DIRS = ["apps/web/src"];
 const ALLOWLIST_BY_LABEL = {
-  "process.env.RAILWAY_API_URL": new Set(["apps/web/src/app/api/v1/assets/generate/route.ts"])
+  "process.env.RAILWAY_API_URL": new Set([
+    "apps/web/src/app/api/v1/assets/generate/route.ts",
+    "apps/web/src/app/api/v1/assets/route.ts",
+    "apps/web/src/app/api/v1/product-assets/generate/route.ts"
+  ])
 };
 const FORBIDDEN_RULES = [
   {

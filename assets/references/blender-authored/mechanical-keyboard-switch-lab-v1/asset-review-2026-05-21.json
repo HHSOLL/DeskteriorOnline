@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "deskterior-blender-authored-asset-review-v1",
+  "assetKey": "p2s_mechanical_keyboard_switch_lab_v1",
+  "revision": "mechanical-keyboard-switch-lab-v1",
+  "reviewDate": "2026-05-21",
+  "sourcePolicy": {
+    "license": "self-authored procedural model",
+    "referenceOnlyUrls": [
+      "https://kbddiary.tistory.com/50",
+      "https://www.cherry.de/en-us/product/mx2a-red",
+      "https://www.cherry.de/en-us/product/mx2a-blue",
+      "https://www.cherry.de/en-us/product/mx2a-brown"
+    ],
+    "brandUse": "No logo, no trademarked product silhouette, no vendor CAD data."
+  },
+  "qualityTargets": [
+    "Individual keycap geometry, not a flat keyboard texture",
+    "Visible PCB/plate/gasket layer stack",
+    "Spacebar stabilizer wire and inserts",
+    "Three exposed switch samples with housing, stem, spring, and contacts",
+    "PBR keycap/aluminum/polycarbonate materials",
+    "Runtime press target metadata and switch audio profiles"
+  ],
+  "switchProfiles": {
+    "linear-red": {
+      "label": "Linear Red",
+      "stemColor": "#d3413f",
+      "forceCN": 45,
+      "preTravelMm": 2.0,
+      "totalTravelMm": 4.0,
+      "sound": "soft linear bottom-out, no click leaf"
+    },
+    "clicky-blue": {
+      "label": "Clicky Blue",
+      "stemColor": "#3c7edb",
+      "forceCN": 60,
+      "preTravelMm": 2.2,
+      "totalTravelMm": 4.0,
+      "sound": "sharp click jacket plus bottom-out"
+    },
+    "tactile-brown": {
+      "label": "Tactile Brown",
+      "stemColor": "#a96e43",
+      "forceCN": 55,
+      "preTravelMm": 2.0,
+      "totalTravelMm": 4.0,
+      "sound": "soft tactile bump with muted bottom-out"
+    }
+  },
+  "runtimePressTargetCount": 67,
+  "outputs": {
+    "publicGlb": "/Users/sol/Desktop/deskteriorOnline/apps/web/public/assets/models/p2s_mechanical_keyboard_switch_lab_v1/p2s_mechanical_keyboard_switch_lab_v1.glb",
+    "runtimePackage": "apps/web/public/assets/models/p2s_mechanical_keyboard_switch_lab_v1/runtime-package.json"
+  },
+  "knownGaps": [
+    "Procedural geometry still approximates injection-molded switch internals; manufacturer-accurate mold parting lines are intentionally omitted.",
+    "Per-key sound is synthesized in WebAudio; later pass should support recorded WAV layers for commercial audio realism."
+  ]
+}

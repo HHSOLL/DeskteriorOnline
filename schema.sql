@@ -417,6 +417,7 @@ create table if not exists public.jobs (
   provider_status jsonb,
   provider_errors jsonb,
   details text,
+  result jsonb,
   error_code text,
   error text,
   created_at timestamptz not null default now(),
@@ -438,8 +439,10 @@ create policy "Jobs are viewable by owner payload"
 on public.jobs for select
 using (
   auth.uid() is not null
-  and payload ? 'owner_id'
-  and payload->>'owner_id' = auth.uid()::text
+  and (
+    (payload ? 'ownerId' and payload->>'ownerId' = auth.uid()::text)
+    or (payload ? 'owner_id' and payload->>'owner_id' = auth.uid()::text)
+  )
 );
 
 create or replace function public.claim_jobs(

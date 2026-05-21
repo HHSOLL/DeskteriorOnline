@@ -440,7 +440,7 @@ export function BuilderPreviewPane({
           powerPreference: "high-performance",
           preserveDrawingBuffer: true
         }}
-        chromeTone="light"
+        chromeTone="dark"
         showHud={false}
         interactionMode="preview"
       />

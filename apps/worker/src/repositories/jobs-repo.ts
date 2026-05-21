@@ -37,6 +37,19 @@ export async function markJobSucceeded(jobId: string, result: Record<string, unk
   if (error) throw error;
 }
 
+export async function updateJobProgress(jobId: string, progress: number, details?: string | null) {
+  const { error } = await supabaseService
+    .from("jobs")
+    .update({
+      progress: Math.max(0, Math.min(100, Math.round(progress))),
+      details: details ?? null,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", jobId);
+
+  if (error) throw error;
+}
+
 export async function markJobFailed(jobId: string, payload: {
   errorCode?: string;
   error?: string;

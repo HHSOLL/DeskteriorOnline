@@ -1,0 +1,244 @@
+{
+  "name": "Meshy community CC0 selected GLB audit",
+  "generatedAt": "2026-05-18",
+  "sourcePages": [
+    "https://www.meshy.ai/tags/interior",
+    "https://www.meshy.ai/3d-models/019676c5-3501-72f7-b7de-88f2e8a0b264"
+  ],
+  "format": "glb",
+  "licensePolicy": "Use only records whose public Meshy metadata reports license=cc0.",
+  "assets": [
+    {
+      "slug": "chair-rodiondbulatoff",
+      "label": "Chair",
+      "pageUrl": "https://www.meshy.ai/3d-models/019676c5-3501-72f7-b7de-88f2e8a0b264",
+      "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019676c5-3501-72f7-b7de-88f2e8a0b264",
+      "taskId": "019676c5-3501-72f7-b7de-88f2e8a0b264",
+      "pageId": "019676c5-3501-72f7-b7de-88f2e8a0b264",
+      "source": "individual-model-page",
+      "license": "cc0",
+      "author": "rodiondbulatoff",
+      "objectPrompt": "chair",
+      "status": "SUCCEEDED",
+      "aiModel": "meshy-5",
+      "triangleCount": 9997,
+      "vertexCount": 9330,
+      "fileName": "chair-rodiondbulatoff.glb",
+      "relativePath": "assets/sources/meshy-community/selected-glb/chair-rodiondbulatoff.glb",
+      "byteLength": 1508716,
+      "sha256": "f729878cbc6e5526a05b5ca38239b594495d49cdcf8e7ca29831f301739c624f",
+      "glbMagic": "glTF",
+      "downloadedAt": "2026-05-18",
+      "notes": "Downloaded from Meshy public v1 task metadata model.glb signed URL. Stored as source-staged QA asset, not copied into runtime public assets.",
+      "bounds": {
+        "min": [
+          -0.43363,
+          -0.999,
+          -0.45527
+        ],
+        "max": [
+          0.43392,
+          0.99495,
+          0.45018
+        ],
+        "dimensions": [
+          0.86755,
+          1.99395,
+          0.90545
+        ]
+      },
+      "meshBytes": 418524,
+      "textures": [
+        {
+          "mimeType": "image/jpeg",
+          "resolution": "2048x2048",
+          "size": 1088331,
+          "gpuSize": 22369620
+        }
+      ]
+    },
+    {
+      "slug": "rustic-table",
+      "label": "Rustic Table",
+      "pageUrl": "https://www.meshy.ai/3d-models/019b215f-1b40-75b2-b039-bfbca510845b",
+      "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019b215c-907c-76e5-adf6-c115cfd71a1d",
+      "taskId": "019b215c-907c-76e5-adf6-c115cfd71a1d",
+      "pageId": "019b215f-1b40-75b2-b039-bfbca510845b",
+      "source": "interior-tag-page",
+      "license": "cc0",
+      "author": "Warface",
+      "objectPrompt": "Rustic Table",
+      "status": "SUCCEEDED",
+      "aiModel": "meshy-5.3",
+      "triangleCount": 9998,
+      "vertexCount": 9221,
+      "fileName": "rustic-table.glb",
+      "relativePath": "assets/sources/meshy-community/selected-glb/rustic-table.glb",
+      "byteLength": 8017724,
+      "sha256": "68b26b44176782e3a22c84b346aa1e4faf18227648c480e617d483ac58df4e98",
+      "glbMagic": "glTF",
+      "downloadedAt": "2026-05-18",
+      "notes": "Downloaded from Meshy public v1 task metadata model.glb signed URL. Stored as source-staged QA asset, not copied into runtime public assets.",
+      "bounds": {
+        "min": [
+          -0.91928,
+          -0.42555,
+          -0.95841
+        ],
+        "max": [
+          0.91895,
+          0.42706,
+          0.95846
+        ],
+        "dimensions": [
+          1.83823,
+          0.85261,
+          1.91687
+        ]
+      },
+      "meshBytes": 415048,
+      "textures": [
+        {
+          "mimeType": "image/jpeg",
+          "resolution": "2048x2048",
+          "size": 2740418,
+          "gpuSize": 22369620
+        },
+        {
+          "mimeType": "image/jpeg",
+          "resolution": "2048x2048",
+          "size": 1667446,
+          "gpuSize": 22369620
+        },
+        {
+          "mimeType": "image/jpeg",
+          "resolution": "2048x2048",
+          "size": 3192486,
+          "gpuSize": 22369620
+        }
+      ]
+    },
+    {
+      "slug": "rack-golden-arch",
+      "label": "Rack Golden Arch",
+      "pageUrl": "https://www.meshy.ai/3d-models/019b38d7-2c17-7e67-a949-17a00786dcdc",
+      "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019b38cf-8c16-70cf-9482-bb7c24237f5c",
+      "taskId": "019b38cf-8c16-70cf-9482-bb7c24237f5c",
+      "pageId": "019b38d7-2c17-7e67-a949-17a00786dcdc",
+      "source": "interior-tag-page",
+      "license": "cc0",
+      "author": "epix.asmr",
+      "objectPrompt": "Rack Golden Arch",
+      "status": "SUCCEEDED",
+      "aiModel": "meshy-5.3",
+      "triangleCount": 10000,
+      "vertexCount": 7717,
+      "fileName": "rack-golden-arch.glb",
+      "relativePath": "assets/sources/meshy-community/selected-glb/rack-golden-arch.glb",
+      "byteLength": 6478816,
+      "sha256": "db6574d23fd142970b64b6f3afc30a78386aae5302d52589b115feaba7e90654",
+      "glbMagic": "glTF",
+      "downloadedAt": "2026-05-18",
+      "notes": "Downloaded from Meshy public v1 task metadata model.glb signed URL. Stored as source-staged QA asset, not copied into runtime public assets.",
+      "bounds": {
+        "min": [
+          -0.95834,
+          -0.90076,
+          -0.49644
+        ],
+        "max": [
+          0.95811,
+          0.89934,
+          0.49584
+        ],
+        "dimensions": [
+          1.91645,
+          1.8001,
+          0.99228
+        ]
+      },
+      "meshBytes": 306944,
+      "textures": [
+        {
+          "mimeType": "image/png",
+          "resolution": "2048x2048",
+          "size": 2528567,
+          "gpuSize": 22369620
+        },
+        {
+          "mimeType": "image/png",
+          "resolution": "2048x2048",
+          "size": 2443917,
+          "gpuSize": 22369620
+        },
+        {
+          "mimeType": "image/png",
+          "resolution": "2048x2048",
+          "size": 1197646,
+          "gpuSize": 22369620
+        }
+      ]
+    },
+    {
+      "slug": "colorful-brick-wall",
+      "label": "Colorful Brick Wall",
+      "pageUrl": "https://www.meshy.ai/3d-models/019adb1c-3540-7272-86c5-d4d05a56ffbc",
+      "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019adb19-b5f2-774d-84dc-d032d1031d5e",
+      "taskId": "019adb19-b5f2-774d-84dc-d032d1031d5e",
+      "pageId": "019adb1c-3540-7272-86c5-d4d05a56ffbc",
+      "source": "interior-tag-page",
+      "license": "cc0",
+      "author": "crit",
+      "objectPrompt": "Colorful Brick Wall",
+      "status": "SUCCEEDED",
+      "aiModel": "meshy-5.3",
+      "triangleCount": 21035,
+      "vertexCount": 14384,
+      "fileName": "colorful-brick-wall.glb",
+      "relativePath": "assets/sources/meshy-community/selected-glb/colorful-brick-wall.glb",
+      "byteLength": 2029936,
+      "sha256": "8db2260d338d7d305632186e06091fdd05cbbb872a99818d461e2cb63c922e23",
+      "glbMagic": "glTF",
+      "downloadedAt": "2026-05-18",
+      "notes": "Downloaded from Meshy public v1 task metadata model.glb signed URL. Stored as source-staged QA asset, not copied into runtime public assets.",
+      "bounds": {
+        "min": [
+          -0.94693,
+          -0.9562,
+          -0.15399
+        ],
+        "max": [
+          0.94692,
+          0.95621,
+          0.15359
+        ],
+        "dimensions": [
+          1.89385,
+          1.91241,
+          0.30758
+        ]
+      },
+      "meshBytes": 586498,
+      "textures": [
+        {
+          "mimeType": "image/jpeg",
+          "resolution": "2048x2048",
+          "size": 455093,
+          "gpuSize": 22369620
+        },
+        {
+          "mimeType": "image/jpeg",
+          "resolution": "2048x2048",
+          "size": 573029,
+          "gpuSize": 22369620
+        },
+        {
+          "mimeType": "image/jpeg",
+          "resolution": "2048x2048",
+          "size": 413599,
+          "gpuSize": 22369620
+        }
+      ]
+    }
+  ]
+}

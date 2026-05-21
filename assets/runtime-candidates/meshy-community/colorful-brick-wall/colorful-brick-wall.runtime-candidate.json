@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "deskterior-runtime-candidate-v1",
+  "assetPack": "meshy-community-cc0-selected",
+  "slug": "colorful-brick-wall",
+  "label": "Colorful Brick Wall",
+  "source": {
+    "kind": "meshy_community_public_cc0",
+    "sourceGlb": "assets/sources/meshy-community/selected-glb/colorful-brick-wall.glb",
+    "pageUrl": "https://www.meshy.ai/3d-models/019adb1c-3540-7272-86c5-d4d05a56ffbc",
+    "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019adb19-b5f2-774d-84dc-d032d1031d5e",
+    "license": "CC0-1.0"
+  },
+  "files": {
+    "normalizedGlb": "assets/runtime-candidates/meshy-community/colorful-brick-wall/colorful-brick-wall.normalized.glb",
+    "thumbnail": "assets/runtime-candidates/meshy-community/colorful-brick-wall/colorful-brick-wall.thumbnail.webp",
+    "sidecar": "assets/runtime-candidates/meshy-community/colorful-brick-wall/colorful-brick-wall.runtime-candidate.json"
+  },
+  "dimensionsMm": {
+    "width": 1893.859,
+    "depth": 307.578,
+    "height": 1912.407
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "image_based",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 1,
+      "maxTriangleCount": 21035
+    }
+  },
+  "qa": {
+    "status": "candidate_requires_human_visual_review",
+    "warnings": [
+      "TRIANGLE_COUNT_OVER_REVIEW_BUDGET"
+    ],
+    "beforeDimensionsMm": {
+      "width": 1893.859,
+      "depth": 307.578,
+      "height": 1912.407
+    },
+    "afterDimensionsMm": {
+      "width": 1893.859,
+      "depth": 307.578,
+      "height": 1912.407
+    },
+    "triangles": 21035,
+    "vertices": 14384,
+    "materials": 1,
+    "images": [
+      {
+        "name": "Baked_BaseColor",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Baked_MetallicRoughness",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Baked_Normal",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_0.001",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_0.002",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_1",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_1.001",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_2",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_2.001",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Viewer Node",
+        "width": 256,
+        "height": 256
+      }
+    ],
+    "normalizedExportBytesBeforeMeshopt": 2031160,
+    "thumbnailBytes": 15196
+  }
+}

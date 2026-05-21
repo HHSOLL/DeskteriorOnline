@@ -27,11 +27,13 @@ const nextConfig = {
   images: {
     remotePatterns: supabaseRemotePattern
   },
-  webpack: (config) => {
-    config.resolve.fallback = {
-      ...(config.resolve.fallback || {}),
-      canvas: false
-    };
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...(config.resolve.fallback || {}),
+        canvas: false
+      };
+    }
     return config;
   }
 };

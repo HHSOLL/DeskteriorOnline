@@ -1,0 +1,16 @@
+{
+  "status": "review_pending_no_meshy_post_sent",
+  "reason": "User requested prompt/reference review before Meshy text-to-3D or image-to-3D generation.",
+  "textTo3dPromptCandidate": "Generic real-scale premium desktop accessory kit for a cozy 3D deskterior room, no logos, no exact product copy. Use measured proportions only: 32 inch thin OLED monitor with real stand, 50cm monitor light bar, 312mm compact low-profile keyboard with individual keycaps, 125mm asymmetric white productivity mouse with side buttons and scroll wheel, compact 100x175x141mm white desktop speakers with black fabric baffles, slim task lamp, broadcast microphone arm, small tray, mug, routed cables, PBR lacquer, graphite metal, rubber, woven fabric, smudged screen glass, optimized GLB topology.",
+  "negativePrompt": "brand logos, exact replica, exaggerated scale, toy-like proportions, melted keys, warped rows, illegible text labels, watermark, overdecorated sci-fi panels",
+  "intendedUse": "comparison candidate only before any public catalog promotion",
+  "referencePolicy": "Use public product pages for proportion and material study only; do not upload protected product imagery without review.",
+  "meshApiPreflight": {
+    "balanceEndpointReachable": true,
+    "balanceAvailable": true,
+    "providerPostSent": false,
+    "checkedAt": "2026-05-21T04:20:23.081Z",
+    "reason": "Meshy balance-only preflight attempted; no text-to-3D or image-to-3D provider POST sent.",
+    "statusCode": 200
+  }
+}

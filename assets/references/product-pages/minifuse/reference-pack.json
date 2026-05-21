@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:39.499Z",
+  "assetKey": "minifuse",
+  "sourceUrl": "https://www.arturia.com/store/audio-interfaces/minifuse-2",
+  "product": {
+    "title": "MiniFuse 2",
+    "sku": null,
+    "manufacturer": "Arturia",
+    "brand": "Arturia",
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": {
+      "width": 200,
+      "depth": 100,
+      "height": 43
+    },
+    "heightRangeMm": null
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-Arturia-Prototype-Reference",
+      "label": "Arturia public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "Arturia",
+    "canonicalProductUrl": "https://www.arturia.com/store/audio-interfaces/minifuse-2",
+    "dimensionSourceUrl": "https://www.arturia.com/store/audio-interfaces/minifuse-2",
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://medias.arturia.net/images/products/minifuse-2/catalog-image.png",
+        "required": false,
+        "license": "LicenseRef-Arturia-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/01.png",
+        "required": false,
+        "license": "LicenseRef-Arturia-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/03.png",
+        "required": false,
+        "license": "LicenseRef-Arturia-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/04.png",
+        "required": false,
+        "license": "LicenseRef-Arturia-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/02.png",
+        "required": false,
+        "license": "LicenseRef-Arturia-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://www.arturia.com/store/audio-interfaces/minifuse-2",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-Arturia-Prototype-Reference",
+      "label": "Arturia public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "dimension_verified",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://medias.arturia.net/images/products/minifuse-2/catalog-image.png",
+      "view": "front",
+      "source": "json_ld",
+      "score": 40
+    },
+    {
+      "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/01.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/03.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/04.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/products/minifuse-2/webstore/white/02.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://medias.arturia.net/images/products/minifuse-1/catalog-image.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://medias.arturia.net/images/products/minifuse-4/catalog-image.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/webstore/01_b4b05432d7.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/webstore/03_68a69c41f5.jpeg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://medias.arturia.net/cdn-cgi/image/quality=80/images/webstore/17247203_800_0a6ccc0b9c.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "MiniFuse 2",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "MiniFuse 2",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "MiniFuse 2",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": true,
+    "openGraphImageFound": true,
+    "htmlImageCount": 32,
+    "selectedImageCount": 10,
+    "dimensionSource": "html_text",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No SKU/model identifier found."
+    ]
+  }
+}

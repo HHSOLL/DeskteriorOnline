@@ -1,9 +1,9 @@
 "use client";
 
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { OrbitControls, OrthographicCamera, PerspectiveCamera } from "@react-three/drei";
 import { useFrame, useThree } from "@react-three/fiber";
 import { CapsuleCollider, type RapierRigidBody, RigidBody } from "@react-three/rapier";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { SceneInteractionMode } from "../../../lib/scene/render-quality";
 import { useEditorStore } from "../../../lib/stores/useEditorStore";
@@ -561,6 +561,25 @@ function WalkRig({
   );
 }
 
+function CameraPoseSync({
+  position,
+  target
+}: {
+  position: [number, number, number];
+  target: [number, number, number];
+}) {
+  const { camera, invalidate } = useThree();
+
+  useLayoutEffect(() => {
+    camera.position.set(...position);
+    camera.lookAt(target[0], target[1], target[2]);
+    camera.updateProjectionMatrix();
+    invalidate();
+  }, [camera, invalidate, position, target]);
+
+  return null;
+}
+
 export default function CameraRig({ interactionMode = "editor" }: { interactionMode?: SceneInteractionMode }) {
   const gl = useThree((state) => state.gl);
   const invalidate = useThree((state) => state.invalidate);
@@ -608,11 +627,14 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     topMode === "desk-precision" && precisionFocusAsset
       ? Math.max(0.42, precisionFocusAsset.position[1] + precisionExtent * 0.18)
       : Math.max(1.15, radius * 0.12);
-  const builderDistance = Math.max(4.8, radius * 1.45);
-  const builderHeight = Math.max(3.1, radius * 0.92);
-  const builderTargetY = Math.max(1.15, radius * 0.12);
-  const roomTopDistance = Math.max(5.6, radius * (interactionMode === "viewer-showcase" ? 1.34 : 1.42));
-  const roomTopHeight = Math.max(4.1, radius * (interactionMode === "viewer-showcase" ? 0.94 : 1.02));
+  const builderPresentationDistance = Math.max(4.4, radius * 1.22);
+  const builderHeight = Math.max(4.15, Math.min(5.4, radius * 0.86));
+  const builderTargetY = Math.max(0.98, radius * 0.13);
+  const builderCameraX = centerX + builderPresentationDistance * 1.02;
+  const builderCameraZ = centerZ + builderPresentationDistance * 0.72;
+  const builderZoom = Math.max(88, Math.min(148, 840 / radius));
+  const roomTopDistance = Math.max(5.05, radius * (interactionMode === "viewer-showcase" ? 1.26 : 1.34));
+  const roomTopHeight = Math.max(3.7, radius * (interactionMode === "viewer-showcase" ? 0.84 : 0.92));
   const precisionTopDistance = precisionFocusAsset
     ? Math.max(2.1, precisionExtent * 2.6)
     : Math.max(4.2, radius * 1.08);
@@ -621,7 +643,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
     : Math.max(3, radius * 0.72);
   const topOrbitDistance = topMode === "desk-precision" ? precisionTopDistance : roomTopDistance;
   const topOrbitHeight = topMode === "desk-precision" ? precisionTopHeight : roomTopHeight;
-  const topOrbitFov = topMode === "desk-precision" ? 34 : interactionMode === "viewer-showcase" ? 34 : 38;
+  const topOrbitFov = topMode === "desk-precision" ? 34 : interactionMode === "viewer-showcase" ? 34 : 36;
   const walkFarClip = Math.max(42, radius * 10);
   const walkFov = viewerPresentationPolish.walkFov;
   const walkMargin = Math.min(Math.max(0.6, radius * 0.14), Math.max(radius / 2 - 0.18, 0.6));
@@ -810,29 +832,37 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
   }
 
   if (viewMode === "builder-preview") {
+    const builderCameraPosition: [number, number, number] = [
+      builderCameraX,
+      builderHeight,
+      builderCameraZ
+    ];
+    const builderCameraTarget: [number, number, number] = [centerX, builderTargetY, centerZ];
+
     return (
       <>
-        <PerspectiveCamera
+        <OrthographicCamera
           makeDefault
-          fov={38}
           near={0.1}
           far={2000}
-          position={[centerX + builderDistance * 1.18, builderHeight + 1.45, centerZ + builderDistance * 1.18]}
+          zoom={builderZoom}
+          position={builderCameraPosition}
         />
+        <CameraPoseSync position={builderCameraPosition} target={builderCameraTarget} />
         <OrbitControls
           ref={controlsRef}
-          target={[centerX, builderTargetY, centerZ]}
+          target={builderCameraTarget}
           enabled={!isTransforming}
           enableRotate
           enablePan={false}
           enableZoom
           enableDamping
           onChange={() => invalidate()}
-          dampingFactor={0.09}
-          rotateSpeed={0.8}
-          zoomSpeed={0.95}
-          minPolarAngle={Math.PI * 0.22}
-          maxPolarAngle={Math.PI * 0.44}
+          dampingFactor={0.08}
+          rotateSpeed={0.72}
+          zoomSpeed={0.9}
+          minPolarAngle={Math.PI * 0.24}
+          maxPolarAngle={Math.PI * 0.46}
           minDistance={Math.max(3.2, radius * 0.85)}
           maxDistance={Math.max(16, radius * 3.2)}
         />
@@ -848,7 +878,11 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
           fov={topOrbitFov}
           near={0.1}
           far={2000}
-          position={[topTargetX + topOrbitDistance, topOrbitHeight, topTargetZ + topOrbitDistance]}
+          position={[
+            topTargetX + topOrbitDistance * (topMode === "desk-precision" ? 1 : 0.92),
+            topOrbitHeight,
+            topTargetZ + topOrbitDistance * (topMode === "desk-precision" ? 1 : 1.18)
+          ]}
         />
         <OrbitControls
           ref={controlsRef}
@@ -863,7 +897,7 @@ export default function CameraRig({ interactionMode = "editor" }: { interactionM
           rotateSpeed={0.74}
           zoomSpeed={0.92}
           minPolarAngle={topMode === "desk-precision" ? Math.PI * 0.16 : Math.PI * 0.2}
-          maxPolarAngle={topMode === "desk-precision" ? Math.PI * 0.34 : Math.PI * 0.4}
+          maxPolarAngle={topMode === "desk-precision" ? Math.PI * 0.34 : Math.PI * 0.38}
           minDistance={topMode === "desk-precision" ? Math.max(1.4, precisionExtent * 1.3) : Math.max(3.8, radius * 0.78)}
           maxDistance={topMode === "desk-precision" ? Math.max(9, precisionExtent * 6.2) : Math.max(18, radius * 3.2)}
         />

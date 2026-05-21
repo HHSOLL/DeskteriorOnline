@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "deskterior-open-license-qa-audit-v1",
+  "assetPack": "kenney-furniture-kit",
+  "auditedAt": "2026-05-18",
+  "sourceRoot": "assets/sources/open-license/kenney-furniture-kit/selected-glb",
+  "runtimeMode": "qa-api-staging",
+  "runtimeRoute": "/api/qa-assets/open-license/kenney-furniture-kit/[file]",
+  "publicCatalogStatus": "not-published",
+  "summary": {
+    "selectedForScene": 6,
+    "glbHeaderChecks": "6/6 passed",
+    "qaVerifier": "npm --workspace apps/web run verify:pc-assembly-workbench",
+    "qaResult": {
+      "assemblySteps": "38/38",
+      "roomSteps": "11/11",
+      "audioEvents": 50,
+      "uniqueColorBuckets": 285,
+      "luminanceStdDev": 59.66,
+      "cinematicUniqueColorBuckets": 396,
+      "cinematicLuminanceStdDev": 60.79,
+      "cinematicScreenshot": "output/playwright/pc-assembly-workbench-cinematic.png"
+    }
+  },
+  "assets": [
+    {
+      "file": "bookcaseOpen.glb",
+      "runtimeUrl": "/api/qa-assets/open-license/kenney-furniture-kit/bookcaseOpen.glb",
+      "usage": "shelf backing / room storage density",
+      "sizeKb": 18,
+      "triangles": 320,
+      "materials": 1,
+      "boundsM": [0.4, 0.88, 0.25],
+      "status": "qa-layer"
+    },
+    {
+      "file": "lampWall.glb",
+      "runtimeUrl": "/api/qa-assets/open-license/kenney-furniture-kit/lampWall.glb",
+      "usage": "practical wall light support layer",
+      "sizeKb": 5,
+      "triangles": 42,
+      "materials": 2,
+      "boundsM": [0.39, 0.16, 0.26],
+      "status": "qa-layer"
+    },
+    {
+      "file": "loungeSofaLong.glb",
+      "runtimeUrl": "/api/qa-assets/open-license/kenney-furniture-kit/loungeSofaLong.glb",
+      "usage": "sofa silhouette support layer",
+      "sizeKb": 13,
+      "triangles": 186,
+      "materials": 2,
+      "boundsM": [0.98, 0.46, 0.82],
+      "status": "qa-layer"
+    },
+    {
+      "file": "pottedPlant.glb",
+      "runtimeUrl": "/api/qa-assets/open-license/kenney-furniture-kit/pottedPlant.glb",
+      "usage": "room plant support layer",
+      "sizeKb": 7,
+      "triangles": 60,
+      "materials": 3,
+      "boundsM": [0.25, 0.54, 0.29],
+      "status": "qa-layer"
+    },
+    {
+      "file": "rugRounded.glb",
+      "runtimeUrl": "/api/qa-assets/open-license/kenney-furniture-kit/rugRounded.glb",
+      "usage": "living zone rug base",
+      "sizeKb": 11,
+      "triangles": 204,
+      "materials": 2,
+      "boundsM": [1.57, 0.01, 0.92],
+      "status": "qa-layer"
+    },
+    {
+      "file": "tableCoffeeGlass.glb",
+      "runtimeUrl": "/api/qa-assets/open-license/kenney-furniture-kit/tableCoffeeGlass.glb",
+      "usage": "coffee table geometry support layer",
+      "sizeKb": 9,
+      "triangles": 140,
+      "materials": 2,
+      "boundsM": [0.66, 0.23, 0.4],
+      "status": "qa-layer"
+    }
+  ],
+  "nextRequiredChecks": [
+    "Visual review at desktop and mobile camera crops before promoting beyond QA.",
+    "Blender pass for origins, pivots, material normalization, and style matching.",
+    "Create runtime package metadata only after a human accepts the final visual fit.",
+    "Keep Meshy generation gated behind prompt/reference-image approval."
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:41.712Z",
+  "assetKey": "cpm",
+  "sourceUrl": "https://www.yes24.com/product/goods/115621188",
+  "product": {
+    "title": "카멜 프리즘 CPM1610IQ 포터블 QHD모니터",
+    "sku": "CPM1610IQ",
+    "manufacturer": "카멜",
+    "brand": "카멜",
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": [
+      592,
+      4493
+    ]
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef---Prototype-Reference",
+      "label": "카멜 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "CPM1610IQ",
+    "manufacturer": "카멜",
+    "canonicalProductUrl": "https://www.yes24.com/product/goods/115621188",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_00.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_01.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_02.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_03.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_04.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://www.yes24.com/product/goods/115621188",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef---Prototype-Reference",
+      "label": "카멜 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_00.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_01.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_02.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_03.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_04.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_05.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_06.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_07.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_08.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    },
+    {
+      "url": "https://ai.esmplus.com/camel2/2019/CPM1610IQ/CPM1610IQ_09.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 160
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "카멜 프리즘 CPM1610IQ 포터블 QHD모니터",
+        "CPM1610IQ",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "카멜 프리즘 CPM1610IQ 포터블 QHD모니터",
+        "CPM1610IQ",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "카멜 프리즘 CPM1610IQ 포터블 QHD모니터",
+        "CPM1610IQ",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": true,
+    "openGraphImageFound": true,
+    "htmlImageCount": 76,
+    "selectedImageCount": 10,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release."
+    ]
+  }
+}

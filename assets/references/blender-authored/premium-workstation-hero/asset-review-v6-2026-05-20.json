@@ -1,0 +1,73 @@
+{
+  "asset": "p2s_premium_workstation_hero_v6",
+  "status": "standalone-generated-review-required",
+  "sourceBlend": "assets/blender/deskterior/p2s_premium_workstation_hero_v6.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_premium_workstation_hero_v6/p2s_premium_workstation_hero_v6.glb",
+  "previewImages": [
+    "assets/references/blender-authored/premium-workstation-hero/v6-previews/workstation-v6-isometric.png",
+    "assets/references/blender-authored/premium-workstation-hero/v6-previews/workstation-v6-tabletop-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v6-previews/workstation-v6-input-devices-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v6-previews/workstation-v6-monitor-audio-closeup.png"
+  ],
+  "atlasArtifacts": {
+    "basecolor": "assets/references/blender-authored/premium-workstation-hero/workstation-v6-basecolor-atlas.png",
+    "orm": "assets/references/blender-authored/premium-workstation-hero/workstation-v6-orm-atlas.png"
+  },
+  "runtimeSidecars": {
+    "colliders": "apps/web/public/assets/models/p2s_premium_workstation_hero_v6/p2s_premium_workstation_hero_v6.colliders.json",
+    "supportSurfaces": "apps/web/public/assets/models/p2s_premium_workstation_hero_v6/p2s_premium_workstation_hero_v6.support-surfaces.json"
+  },
+  "metrics": {
+    "nodes": 615,
+    "meshes": 609,
+    "materials": 64,
+    "triangles": 141480,
+    "textureImages": 4,
+    "glbBytes": 7976320,
+    "atlasAssignedMeshObjects": 212,
+    "activeUvAtlasMeshObjects": 212,
+    "bakedContactAoDecals": 8,
+    "detailUvMeshObjects": 182,
+    "lightmapUv2ReadyMeshObjects": 394
+  },
+  "desktopDetailPass": {
+    "detailObjectCount": 189,
+    "categories": {
+      "cables": 22,
+      "desk": 17,
+      "display": 7,
+      "keyboard": 49,
+      "lamp": 7,
+      "mic": 12,
+      "monitor": 16,
+      "mouse": 6,
+      "mug": 4,
+      "paper": 15,
+      "plant": 14,
+      "speaker": 20
+    },
+    "focus": [
+      "monitor bezels, rear ports, vents, VESA screws, and cable strain relief",
+      "keyboard legends, knob, USB-C recess, coiled cable, and mouse buttons/wheel/side buttons",
+      "speaker grille threads/driver cones, lamp diffuser/hinges/wire, mic spring bars/grille/clamp",
+      "desk plank seams, drawer pulls, underdesk cable tray, adhesive cable clips, routed rear cables",
+      "mug rim/coffee/handle, notebook layers/bookmark/sticky notes, planter rim/soil/separate leaves, tray pens"
+    ]
+  },
+  "iterationNotes": {
+    "v5DefectTargeted": "Desktop items were structurally correct but still too primitive at close camera distance.",
+    "v6Changes": [
+      "Added per-object tabletop micro-detail rather than changing the full room composition.",
+      "Preserved V5 UVAtlas sampling fix and V4 PC internal detail.",
+      "Added simple collider and support-surface sidecars for later runtime packaging."
+    ]
+  },
+  "stillRequires": [
+    "human visual approval against commercial references",
+    "hand-authored texture polish beyond generated/procedural maps",
+    "true renderer-baked GI/lightmap pass",
+    "exact manufacturer CAD/scanned product geometry if product fidelity becomes mandatory",
+    "runtime LOD/proxy GLB package before live catalog promotion",
+    "scene integration only after standalone approval"
+  ]
+}

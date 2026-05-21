@@ -178,7 +178,7 @@ export const SO_ONG_VIDEO_PRODUCTS = [
     finishColor: "White with red switch",
     finishMaterial: "Plastic shell and socket inserts",
     videoRole: "linear 4-outlet strip for cable/power detail",
-    visibleInStill: "secondary",
+    visibleInStill: "listed_only",
     placementSurface: "desktop_top",
     dimensionConfidence: "manufacturer_or_vendor_page"
   },
@@ -304,7 +304,7 @@ export const SO_ONG_VIDEO_PRODUCTS = [
     finishColor: "White plate",
     finishMaterial: "Plastic wall switch cover",
     videoRole: "small white wall detail on the right side of the room",
-    visibleInStill: "secondary",
+    visibleInStill: "listed_only",
     placementSurface: "wall",
     dimensionConfidence: "visual_estimate_pending_qa"
   },
@@ -402,7 +402,7 @@ export const SO_ONG_VIDEO_PRODUCTS = [
     finishColor: "White body / black LCD key face",
     finishMaterial: "Matte plastic shell, LCD keys, rubber base",
     videoRole: "small black-faced controller near the speaker and keyboard area",
-    visibleInStill: "primary",
+    visibleInStill: "listed_only",
     placementSurface: "desktop_top",
     dimensionConfidence: "manufacturer_or_vendor_page"
   },
@@ -450,7 +450,15 @@ export const SO_ONG_VIDEO_PRODUCTS = [
   }
 ] as const satisfies readonly SoOngVideoProduct[];
 
-export const SO_ONG_VIDEO_CATALOG_VARIANTS = SO_ONG_VIDEO_PRODUCTS.map((product) => ({
+export const SO_ONG_VIDEO_VISIBLE_PRODUCTS = SO_ONG_VIDEO_PRODUCTS.filter(
+  (product) => product.visibleInStill !== "listed_only"
+);
+
+export const SO_ONG_VIDEO_LISTED_ONLY_PRODUCTS = SO_ONG_VIDEO_PRODUCTS.filter(
+  (product) => product.visibleInStill === "listed_only"
+);
+
+export const SO_ONG_VIDEO_CATALOG_VARIANTS = SO_ONG_VIDEO_VISIBLE_PRODUCTS.map((product) => ({
   id: product.catalogItemId,
   label: `Reference prototype · ${product.label}`,
   category: product.catalogCategory,
@@ -478,34 +486,23 @@ export const SO_ONG_VIDEO_CATALOG_VARIANTS = SO_ONG_VIDEO_PRODUCTS.map((product)
 
 export const SO_ONG_VIDEO_SCENE_OBJECTS = [
   { id: "desk", catalogItemId: "p2s_desk_white_compact_120", positionMm: [0, 0, 735], yawDeg: 0 },
-  { id: "main-monitor", catalogItemId: "p2s_video_so_ong_tfg40q14wp_monitor", positionMm: [180, -120, 735], yawDeg: 0 },
-  { id: "portable-monitor", catalogItemId: "p2s_video_so_ong_cpm1610iq_portable_monitor", positionMm: [260, -310, 735], yawDeg: -4 },
-  { id: "portable-monitor-stand", catalogItemId: "p2s_video_so_ong_empathist_stand", positionMm: [260, -280, 735], yawDeg: -4 },
-  { id: "offrame-riser", catalogItemId: "p2s_video_so_ong_offrame_dual_monitor_riser", positionMm: [-820, 65, 735], yawDeg: 0 },
-  { id: "hyte-y70", catalogItemId: "p2s_video_so_ong_hyte_y70_snow_white", positionMm: [-820, 60, 855], yawDeg: 0 },
-  { id: "times-gate", catalogItemId: "p2s_video_so_ong_divoom_times_gate", positionMm: [-690, -20, 1325], yawDeg: 0 },
-  { id: "spacecraft", catalogItemId: "p2s_video_so_ong_sml_spacecraft", positionMm: [-1000, 70, 1335], yawDeg: 0 },
-  { id: "ivy", catalogItemId: "p2s_video_so_ong_ivy_planter", positionMm: [720, -260, 735], yawDeg: 0 },
-  { id: "mars-pro", catalogItemId: "p2s_video_so_ong_gravastar_mars_pro", positionMm: [-575, -310, 735], yawDeg: -12 },
-  { id: "audio-interface", catalogItemId: "p2s_video_so_ong_arturia_minifuse2", positionMm: [0, -360, 735], yawDeg: 0 },
-  { id: "diecast", catalogItemId: "p2s_video_so_ong_diecast_car", positionMm: [20, -230, 735], yawDeg: -5 },
-  { id: "reel-cable", catalogItemId: "p2s_video_so_ong_charging_reel_cable", positionMm: [-420, -360, 735], yawDeg: 0 },
+  { id: "main-monitor", catalogItemId: "p2s_video_so_ong_tfg40q14wp_monitor", positionMm: [310, -112, 735], yawDeg: 0 },
+  { id: "portable-monitor", catalogItemId: "p2s_video_so_ong_cpm1610iq_portable_monitor", positionMm: [270, -320, 735], yawDeg: -4 },
+  { id: "portable-monitor-stand", catalogItemId: "p2s_video_so_ong_empathist_stand", positionMm: [270, -282, 735], yawDeg: -4 },
+  { id: "offrame-riser", catalogItemId: "p2s_video_so_ong_offrame_dual_monitor_riser", positionMm: [-930, 65, 735], yawDeg: 0 },
+  { id: "hyte-y70", catalogItemId: "p2s_video_so_ong_hyte_y70_snow_white", positionMm: [-930, 60, 855], yawDeg: 0 },
+  { id: "times-gate", catalogItemId: "p2s_video_so_ong_divoom_times_gate", positionMm: [-680, -35, 1315], yawDeg: 0 },
+  { id: "spacecraft", catalogItemId: "p2s_video_so_ong_sml_spacecraft", positionMm: [-1120, 60, 1315], yawDeg: 0 },
+  { id: "ivy", catalogItemId: "p2s_video_so_ong_ivy_planter", positionMm: [780, -260, 735], yawDeg: 0 },
+  { id: "mars-pro", catalogItemId: "p2s_video_so_ong_gravastar_mars_pro", positionMm: [-580, -315, 735], yawDeg: -12 },
+  { id: "audio-interface", catalogItemId: "p2s_video_so_ong_arturia_minifuse2", positionMm: [-160, -370, 735], yawDeg: 0 },
+  { id: "diecast", catalogItemId: "p2s_video_so_ong_diecast_car", positionMm: [-20, -265, 790], yawDeg: -5 },
+  { id: "reel-cable", catalogItemId: "p2s_video_so_ong_charging_reel_cable", positionMm: [-440, -380, 735], yawDeg: 0 },
   { id: "square1-power-cube", catalogItemId: "p2s_video_so_ong_square1_power_cube", positionMm: [-1110, -410, 735], yawDeg: 0 },
-  { id: "ecolor-power-strip", catalogItemId: "p2s_video_so_ong_ecolor_power_strip", positionMm: [-760, 205, 735], yawDeg: 0 },
-  { id: "mat", catalogItemId: "p2s_video_so_ong_zionworks_synchronize_mat", positionMm: [40, -190, 739], yawDeg: 0 },
-  { id: "keyboard", catalogItemId: "p2s_video_so_ong_angry_miao_am_hatsu", positionMm: [20, -350, 745], yawDeg: 0 },
-  { id: "mouse", catalogItemId: "p2s_video_so_ong_razer_cobra_pro_white", positionMm: [500, -360, 745], yawDeg: 6 },
-  { id: "stream-deck-neo", catalogItemId: "p2s_video_so_ong_elgato_stream_deck_neo", positionMm: [-340, -310, 745], yawDeg: -5 },
-  { id: "left-speaker", catalogItemId: "p2s_video_so_ong_reproducer_epic5", positionMm: [-520, -40, 735], yawDeg: 0 },
-  { id: "right-speaker", catalogItemId: "p2s_video_so_ong_reproducer_epic5", positionMm: [920, -40, 735], yawDeg: 0 },
-  { id: "light-bar", catalogItemId: "p2s_monitor_light_bar_black", positionMm: [180, -110, 1240], yawDeg: 0 },
-  { id: "blind", catalogItemId: "p2s_video_so_ong_arachne_wood_blind", positionMm: [-820, 510, 900], yawDeg: 0 },
-  { id: "switch-cover", catalogItemId: "p2s_video_so_ong_sanro_switch_cover", positionMm: [1120, 510, 940], yawDeg: 0 },
-  { id: "ceiling-light", catalogItemId: "p2s_video_so_ong_hue_infuse_ceiling_light", positionMm: [0, 0, 2500], yawDeg: 0 },
-  { id: "movlabs-stand", catalogItemId: "p2s_video_so_ong_movlabs_stand", positionMm: [1460, -260, 0], yawDeg: -8 },
-  { id: "s32dg800", catalogItemId: "p2s_video_so_ong_s32dg800_monitor", positionMm: [1460, -260, 980], yawDeg: -8 },
-  { id: "bookshelf-planter", catalogItemId: "p2s_video_so_ong_bookshelf_planter", positionMm: [-1350, 280, 1510], yawDeg: 0 },
-  { id: "jekca-cat", catalogItemId: "p2s_video_so_ong_jekca_cat_block", positionMm: [1010, 170, 735], yawDeg: 16 },
-  { id: "plant-spray", catalogItemId: "p2s_video_so_ong_plant_guardian_spray", positionMm: [-1250, 250, 735], yawDeg: 0 },
-  { id: "atom-figure", catalogItemId: "p2s_video_so_ong_atom_60th_figure", positionMm: [-1060, 80, 1335], yawDeg: 8 }
+  { id: "mat", catalogItemId: "p2s_video_so_ong_zionworks_synchronize_mat", positionMm: [80, -210, 739], yawDeg: 0 },
+  { id: "keyboard", catalogItemId: "p2s_video_so_ong_angry_miao_am_hatsu", positionMm: [40, -365, 745], yawDeg: 0 },
+  { id: "mouse", catalogItemId: "p2s_video_so_ong_razer_cobra_pro_white", positionMm: [590, -365, 745], yawDeg: 6 },
+  { id: "left-speaker", catalogItemId: "p2s_video_so_ong_reproducer_epic5", positionMm: [-430, -50, 735], yawDeg: 0 },
+  { id: "right-speaker", catalogItemId: "p2s_video_so_ong_reproducer_epic5", positionMm: [1140, -45, 735], yawDeg: 0 },
+  { id: "light-bar", catalogItemId: "p2s_monitor_light_bar_black", positionMm: [310, -104, 1270], yawDeg: 0 }
 ] as const;

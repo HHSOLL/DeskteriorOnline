@@ -1,0 +1,126 @@
+{
+  "asset": "p2s_premium_workstation_hero_v8",
+  "status": "standalone-generated-review-required",
+  "sourceBlend": "assets/blender/deskterior/p2s_premium_workstation_hero_v8.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_premium_workstation_hero_v8/p2s_premium_workstation_hero_v8.glb",
+  "previewImages": [
+    "assets/references/blender-authored/premium-workstation-hero/v8-previews/workstation-v8-isometric.png",
+    "assets/references/blender-authored/premium-workstation-hero/v8-previews/workstation-v8-tabletop-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v8-previews/workstation-v8-input-devices-closeup.png",
+    "assets/references/blender-authored/premium-workstation-hero/v8-previews/workstation-v8-monitor-audio-closeup.png"
+  ],
+  "atlasArtifacts": {
+    "basecolor": "assets/references/blender-authored/premium-workstation-hero/workstation-v8-basecolor-atlas.png",
+    "orm": "assets/references/blender-authored/premium-workstation-hero/workstation-v8-orm-atlas.png"
+  },
+  "runtimeSidecars": {
+    "colliders": "apps/web/public/assets/models/p2s_premium_workstation_hero_v8/p2s_premium_workstation_hero_v8.colliders.json",
+    "supportSurfaces": "apps/web/public/assets/models/p2s_premium_workstation_hero_v8/p2s_premium_workstation_hero_v8.support-surfaces.json"
+  },
+  "metrics": {
+    "nodes": 716,
+    "meshes": 710,
+    "materials": 74,
+    "triangles": 160500,
+    "textureImages": 4,
+    "glbBytes": 9425872,
+    "atlasAssignedMeshObjects": 212,
+    "activeUvAtlasMeshObjects": 212,
+    "bakedContactAoDecals": 8,
+    "detailUvMeshObjects": 283,
+    "lightmapUv2ReadyMeshObjects": 495
+  },
+  "glbAudit": {
+    "nodes": 710,
+    "meshes": 710,
+    "materials": 49,
+    "images": 2,
+    "textures": 2,
+    "samplers": 1,
+    "extensionsUsed": [
+      "KHR_materials_emissive_strength"
+    ]
+  },
+  "desktopDetailPass": {
+    "detailObjectCount": 290,
+    "categories": {
+      "cables": 22,
+      "desk": 20,
+      "display": 46,
+      "keyboard": 71,
+      "lamp": 7,
+      "mic": 12,
+      "monitor": 17,
+      "mouse": 10,
+      "mug": 5,
+      "paper": 22,
+      "plant": 26,
+      "speaker": 32
+    }
+  },
+  "postExportAudit": {
+    "objects": 712,
+    "meshOrCurveObjects": 710,
+    "materials": 50,
+    "textureImages": 4,
+    "uvAtlasObjects": 212,
+    "activeUvAtlasObjects": 212,
+    "detailUvObjects": 283,
+    "lightmapUv2Objects": 495,
+    "unmaterialedObjects": [],
+    "missingExternalImages": []
+  },
+  "pixelRegressionCheck": {
+    "v7TabletopBaseline": {
+      "magentaRatio": 0.0,
+      "cyanRatio": 0.0004,
+      "darkRatio": 0.2174,
+      "warmRatio": 0.1036,
+      "highChromaEdgeRatio": 0.1076
+    },
+    "v8Tabletop": {
+      "magentaRatio": 0.0,
+      "cyanRatio": 0.0003,
+      "darkRatio": 0.221,
+      "warmRatio": 0.0893,
+      "highChromaEdgeRatio": 0.0742
+    },
+    "v8InputDevices": {
+      "magentaRatio": 0.0,
+      "cyanRatio": 0.0001,
+      "darkRatio": 0.1976,
+      "warmRatio": 0.0752,
+      "highChromaEdgeRatio": 0.0418
+    },
+    "v8MonitorAudio": {
+      "magentaRatio": 0.0,
+      "cyanRatio": 0.0109,
+      "darkRatio": 0.4954,
+      "warmRatio": 0.0238,
+      "highChromaEdgeRatio": 0.0332
+    },
+    "v8Isometric": {
+      "magentaRatio": 0.0,
+      "cyanRatio": 0.0013,
+      "darkRatio": 0.113,
+      "warmRatio": 0.0487,
+      "highChromaEdgeRatio": 0.0343
+    }
+  },
+  "iterationNotes": {
+    "v7DefectTargeted": "Desk props still read as schematic blocks at close range even after the tabletop seam fix.",
+    "v8Changes": [
+      "Added denser monitor UI layers, keyboard legends/fasteners, mouse seams/skates/logo, and speaker grille/status detail.",
+      "Added PC case top vents, fan hub highlights, glass screws, rear IO cluster, port marks, and PSU label detail.",
+      "Added desk cable grommet, drawer fastener detail, notebook ruled lines, pen clips, plant leaf veins, and mug inner rim shadow.",
+      "Kept V7 reduced tabletop seam treatment and V5 explicit UVAtlas sampling."
+    ]
+  },
+  "stillRequires": [
+    "human visual approval against commercial references",
+    "hand-authored texture polish beyond generated/procedural maps",
+    "true renderer-baked GI/lightmap pass",
+    "runtime LOD/proxy GLB package before live catalog promotion",
+    "room-scale lighting/context integration after standalone approval"
+  ]
+}

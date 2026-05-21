@@ -1,0 +1,23 @@
+[
+  {
+    "id": "qa-surface-materials",
+    "label": "Bruno room surface QA materials",
+    "finishColor": "Warm wood floor, warm/cool plaster walls, cream trim",
+    "finishMaterial": "Local Blender-authored procedural PBR helper maps. KTX2 runtime ORM sidecars are present; final UV bake still pending.",
+    "detailNotes": "QA candidate only. Not a release-ready catalog package and not Bruno Simon-level final material approval.",
+    "slotMaterials": [
+      {
+        "slot": "floorWood",
+        "materialType": "wood",
+        "qaStatus": "pending",
+        "referenceNote": "Packed ORM KTX2 sidecar exists; final UV-authored material package remains pending."
+      },
+      {
+        "slot": "plasterWall",
+        "materialType": "mixed",
+        "qaStatus": "pending",
+        "referenceNote": "Packed ORM KTX2 sidecar exists; final UV-authored material package remains pending."
+      }
+    ]
+  }
+]

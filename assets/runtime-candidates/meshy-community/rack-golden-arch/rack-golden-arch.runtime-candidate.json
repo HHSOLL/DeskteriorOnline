@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "deskterior-runtime-candidate-v1",
+  "assetPack": "meshy-community-cc0-selected",
+  "slug": "rack-golden-arch",
+  "label": "Rack Golden Arch",
+  "source": {
+    "kind": "meshy_community_public_cc0",
+    "sourceGlb": "assets/sources/meshy-community/selected-glb/rack-golden-arch.glb",
+    "pageUrl": "https://www.meshy.ai/3d-models/019b38d7-2c17-7e67-a949-17a00786dcdc",
+    "publicTaskApi": "https://api.meshy.ai/web/public/tasks/019b38cf-8c16-70cf-9482-bb7c24237f5c",
+    "license": "CC0-1.0"
+  },
+  "files": {
+    "normalizedGlb": "assets/runtime-candidates/meshy-community/rack-golden-arch/rack-golden-arch.normalized.glb",
+    "thumbnail": "assets/runtime-candidates/meshy-community/rack-golden-arch/rack-golden-arch.thumbnail.webp",
+    "sidecar": "assets/runtime-candidates/meshy-community/rack-golden-arch/rack-golden-arch.runtime-candidate.json"
+  },
+  "dimensionsMm": {
+    "width": 1916.446,
+    "depth": 992.28,
+    "height": 1800.096
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "image_based",
+      "ktx2Ready": false
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 1,
+      "maxTriangleCount": 10000
+    }
+  },
+  "qa": {
+    "status": "candidate_requires_human_visual_review",
+    "warnings": [],
+    "beforeDimensionsMm": {
+      "width": 1916.446,
+      "depth": 992.28,
+      "height": 1800.096
+    },
+    "afterDimensionsMm": {
+      "width": 1916.446,
+      "depth": 992.28,
+      "height": 1800.096
+    },
+    "triangles": 10000,
+    "vertices": 7717,
+    "materials": 1,
+    "images": [
+      {
+        "name": "Baked_BaseColor",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Baked_MetallicRoughness",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Baked_Normal",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_0",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_0.001",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_1",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Image_2",
+        "width": 2048,
+        "height": 2048
+      },
+      {
+        "name": "Viewer Node",
+        "width": 256,
+        "height": 256
+      }
+    ],
+    "normalizedExportBytesBeforeMeshopt": 6479128,
+    "thumbnailBytes": 11440
+  }
+}

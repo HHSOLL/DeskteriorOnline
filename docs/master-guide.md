@@ -7,8 +7,8 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 
 핵심 경로:
 1. `/` 시작하기 화면에서 `공간 선택` 또는 `공간 만들기` 진입점을 선택
-2. `/studio/select`에서 빈 공간 템플릿 또는 가구가 배치된 템플릿을 고르고 즉시 프로젝트를 만든다
-3. `/studio/builder`에서 맞춤형 방 생성 5단계(모양/치수/개구부/스타일/조명)를 거쳐 프로젝트를 만든다
+2. `/studio/select`에서 빈 공간 템플릿을 즉시 프로젝트로 만들거나, 가구가 배치된 템플릿을 `/studio/builder` 커스터마이징 흐름으로 보낸다
+3. `/studio/builder`에서 맞춤형 방 생성 5단계(모양/치수/개구부/스타일/조명)를 거쳐 프로젝트를 만들며, furnished seed가 있으면 3D preview에 같은 seed 자산을 표시한다
 4. `/project/[id]`에서 데스크테리어 배치/편집/저장
 5. 공유 모달에서 링크 발행
 6. `/shared/[token]`, `/gallery`, `/community`에서 읽기 전용 3D 뷰어로 조회
@@ -28,16 +28,19 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - 제품 메타데이터는 실측 규격(`dimensionsMm`)과 마감(`finishColor`, `finishMaterial`, `detailNotes`)을 유지해야 한다.
 - curated deskterior 제품 메타데이터는 `source/license/pivot/collisionProxy/textureSet/lodProfile` 계약을 manifest와 sceneDocument roundtrip에서 같이 유지해야 한다.
 - `lodProfile`는 문서용 필드에만 머물지 않고 room mode / desk precision / walk / builder preview 런타임 LOD 전환 거리 정책으로 실제 소비되어야 한다.
-- 반복된 `single_mesh` deskterior 자산은 read-only top/walk와 builder preview, editor `desk precision` top-view에서 instanced cluster로 묶을 수 있어야 하며, 선택 중이거나 `room mode` direct-drag 대상 자산은 개별 오브젝트 경로를 유지해야 한다.
+- 반복된 `single_mesh` deskterior 자산은 read-only top/walk와 editor `desk precision` top-view에서 instanced cluster로 묶을 수 있어야 하며, 선택 중이거나 `room mode` direct-drag 대상 자산은 개별 오브젝트 경로를 유지해야 한다. builder preview의 furnished starter는 구성 가독성을 우선해 instancing 대신 실측 기반 preview proxy를 사용할 수 있다.
 - dense-scene instanced cluster는 membership/finish가 바뀔 때만 mesh를 재생성하고, transform-only 변경은 instance matrix sync만으로 처리해야 한다.
 - 렌더 품질 사다리는 mode-aware tone mapping을 포함해야 하며, `room mode` / `viewer-shared` / 기본 walk-viewer는 ACES, `desk precision` / `builder preview` / `viewer-showcase`는 Neutral tone mapping을 사용한다.
 - 실사 강화 2차의 SSR은 `editor walk`와 `viewer-showcase`의 non-constrained profile에서만 보수적으로 허용하고, `viewer-shared`와 top-view/builder preview에는 적용하지 않는다.
+- 가구가 배치된 workspace starter는 compact isometric room diorama처럼 읽혀야 하며, 기존 catalog asset으로 desk/living/shelf/decor 밀도를 보여주되 외부 unlicensed reference code/assets 표현은 복제하지 않는다.
 - `sceneDocument` 저장 계약은 placement를 `unit="mm"` 정수 스냅샷으로 보관하고, meter float 좌표는 그 스냅샷에서 파생된 호환 필드로만 유지한다.
 - `desk precision mode`에서는 선택한 제품의 위치/회전을 `mm/deg` 기준 numeric inspector와 measurement overlay로 노출한다.
 - `desk precision mode`에서는 surface anchor 제품의 support asset / support surface / surface size / margin / top 높이를 surface lock 상태 카드로 노출한다.
 - `desk precision mode`에서는 surface-local 상대 위치를 확인할 수 있는 micro-view를 inspector와 overlay 양쪽에서 제공한다.
 - `desk precision mode`에서는 support surface 기준 `front(X/H)` / `side(Z/H)` orthographic helper view를 inspector와 overlay 양쪽에서 제공한다.
 - `desk precision mode`에서는 surface anchor 제품의 footprint, projected footprint, edge clearance를 inspector와 overlay 양쪽에서 같은 값으로 제공한다.
+- editor inspector는 선택한 catalog 제품을 catalog 후보로 교체할 수 있어야 하며, 후보는 category, anchor type, 치수 적합도, 제품군, 실측 metadata completeness, generated QA score를 기준으로 추천/호환/검토 순서로 정렬해야 한다. 교체 picker는 신뢰 가능한 catalog thumbnail 또는 치수 기반 mini isometric diorama preview와 fit label을 함께 보여줘야 하며, 교체는 같은 scene asset id, transform, scale, material override, support anchor를 유지해야 한다.
+- `/project/[id]?selectedAssetId=<asset-id>`는 저장된 자산이 존재할 때 해당 자산 선택 상태를 복원해 inspector/measurement QA와 deep link 진입을 안정화할 수 있다.
 - `SceneViewport` 기반 경로는 성능 측정 시 `deskterioronline:renderer-stats`와 `deskterioronline:interaction-latency` 브라우저 이벤트를 공용 telemetry 계약으로 사용한다.
 - `SceneViewport` 기반 경로는 telemetry가 켜져 있을 때 live performance budget HUD로 draw call / FPS floor / heap growth / interaction latency / BVH offload 경고를 즉시 노출해야 한다.
 - 성능 회귀 보고는 `window.__DESKTERIORONLINE_TELEMETRY_CAPTURE__`로 캡처한 JSON entry와 `perf:report:verify` CLI 검증을 기본 절차로 사용한다.
@@ -64,8 +67,8 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 ## 아키텍처 경계
 - Frontend: `apps/web` (active product surface)
 - Runtime foundation: `packages/scene-schema`, `packages/engine-core`, `packages/renderer-three`, `packages/placement-kernel`, `packages/interaction-engine`
-- API: `apps/api` (asset generation enqueue + health)
-- Worker: `apps/worker` (asset generation processing)
+- API: `apps/api` (image/product URL asset generation enqueue, private generated asset listing, health)
+- Worker: `apps/worker` (image asset generation and product URL private asset generation processing, optional Blender finalization, candidate QA)
 - Supabase: auth/storage/database
 - Asset pipeline: `assets/blender/deskterior`(source) + `apps/web/public/assets/models`(legacy fallback runtime) + `apps/web/public/assets/catalog/manifest.json`(catalog manifest)
 - Asset compiler alpha: `packages/asset-compiler`가 curated asset 정의, alpha runtime package descriptor, compiler command surface를 소유한다.
@@ -85,6 +88,8 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `GET /api/v1/showcase`
 - `GET /api/v1/public-scenes/[token]`
 - `POST /api/v1/assets/generate`
+- `GET /api/v1/assets`
+- `POST /api/v1/product-assets/generate`
 - `GET /api/v1/jobs/:jobId`
 
 ## 품질 게이트
@@ -100,12 +105,16 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `npm --workspace apps/web run verify:focus-placement`
 - `npm --workspace apps/web run verify:placement-kernel`
 - `npm --workspace apps/web run verify:render-quality`
+- `npm --workspace apps/web run verify:builder-performance`
+- `npm --workspace apps/web run verify:builder-preview-diorama`
 - `npm --workspace apps/web run verify:viewer-parity`
 - `npm --workspace apps/web run verify:inventory-ghost-placement`
 - `npm --workspace apps/web run verify:room-openings`
 - `npm --workspace apps/web run verify:material-presets`
 - `npm --workspace apps/web run verify:lighting-layout`
 - `npm --workspace apps/web run verify:asset-compiler`
+- `npm --workspace apps/web run verify:product-asset-generation`
+- `npm --workspace apps/web run verify:replacement-candidates`
 - `npm --workspace apps/web run verify:commercial-qa`
 
 ## 필수 참조 문서
@@ -113,6 +122,234 @@ DeskteriorOnline의 메인 제품은 **IKEA Kreativ 스타일 room-first 데스�
 - `docs/3d-visual-engine.md`
 - `docs/user-action-guide.md`
 - `docs/deployment.md`
+- `docs/product-url-private-asset-pipeline.md`
+
+## 2026-05-15 변경 동기화 (Cozy Diorama Workspace Starter)
+Added:
+- workspace furnished starter는 “사용자가 꾸밀 수 있는 나만의 방”을 첫 화면에서 보여주도록 dense creator-room 구성과 diagonal diorama framing을 기본 제품 기준에 추가한다.
+- `workspace-flex` starter의 가구 구성은 workstation/media/lounge/display cluster로 나뉘며, builder style step에서 사용자가 cluster를 켜고 끈 결과가 preview, URL restore, auth draft, 최종 생성 payload에 동일하게 반영되어야 한다.
+- `workspace-flex` builder style step은 cluster 개별 토글뿐 아니라 풀 룸/크리에이터 데스크/미디어 라운지/갤러리 스튜디오 preset을 제공해 사용자가 방의 목적과 밀도를 빠르게 바꿀 수 있어야 하며, preset도 동일한 `workspaceClusterIds` 상태와 URL/payload 경로를 재사용해야 한다.
+- editor inspector에서 선택 제품을 같은 카테고리 catalog 후보로 즉시 교체하는 커스터마이징 경로를 추가한다.
+- editor `selectedAssetId` query restore를 추가해 특정 제품 선택 상태로 바로 inspector를 열 수 있게 한다.
+- editor 선택 제품 교체 후보는 단순 category 나열이 아니라 anchor/치수/제품군/QA score 기반 compatibility ranking과 추천 badge를 가져야 한다.
+- editor 선택 제품과 교체 후보는 catalog text 기반 workstation/media/lounge/display/flex zone hint를 보여줘 사용자가 현재 물건이 어떤 방 구성 맥락에 속하는지 확인하고, 같은 존 후보와 전체 후보를 직접 전환해 검토할 수 있어야 한다.
+
+Updated:
+- builder preview/editor room top camera와 global light pass는 additional dynamic emitter 없이 warm key + cool fill contrast, dense starter composition을 우선한다.
+- builder preview starter camera는 orthographic isometric framing과 dark canvas backdrop을 사용하고, catalog GLB 단위/원점 차이에 흔들리지 않도록 dimensionsMm 기반 stylized proxy를 우선한다.
+- builder preview starter camera는 room corner 안쪽의 높은 top-down view가 아니라 room 바깥 대각선에서 낮게 내려다보는 compact presentation pose를 사용해 벽/가구/상판 소품이 한 화면에서 함께 읽히게 해야 한다.
+- builder preview proxy와 shell dressing은 catalog item 수를 부풀리지 않고도 rounded/beveled surface silhouette, monitor screen panels, keyboard/mouse/speaker/gamepad/game-console/mug micro-detail, media-console cabinet detail, desk/media/shelf surface dressing, rug, shelf books/boxes, sofa cushions, plant leaves, preview-only crown trim/framed wall panels 같은 lightweight detail filler를 포함해 starter room이 빈 box 집합처럼 보이지 않게 해야 한다.
+- `workspace-flex` starter staging은 back-wall desk cluster, side-wall TV/media-console zone, cutaway-side shelf, foreground lounge cluster로 구역을 나눠 같은 24개 asset이 넓게 흩어진 목록이 아니라 사용자가 꾸밀 수 있는 dense creator-room으로 읽히게 해야 한다.
+- cluster preset은 sceneDocument에 새 필드를 저장하지 않고 seed asset set 선택만 바꾸며, 사용자는 preset으로 큰 방향을 고른 뒤 기존 workstation/media/lounge/display 토글로 세부 구성을 조정할 수 있어야 한다.
+- builder preview는 추가 dynamic emitter 없이 renderer-only transparent tint warm/cool mood wash를 사용해 밝은 벽/바닥에서도 diorama mood contrast를 읽게 하며, 이 효과는 sceneDocument 저장 계약에 포함하지 않는다.
+- editor lighting preset은 warm/cool accent wash와 direct beam glow를 포함한 전체 시각 mood snapshot을 적용하고, inspector에서 accent/beam 값뿐 아니라 direct/indirect mode, direct fixture count, fixture color temperature를 room bounds 기준으로 수동 조정할 수 있어야 한다.
+- `workspace-flex` starter는 24개 catalog asset(desk/chair/shelf/sofa/coffee table/media console/TV/game console/side table/stool/plant/desk props/shelf decor)을 real-scale seed로 배치하고, surface prop은 support anchor로 책상/선반/콘솔/사이드테이블 위에 고정한다.
+- furnished template 선택은 로그인 전에도 builder 커스터마이징 경로로 진입할 수 있어야 하며, preview에서 본 seeded asset set과 최종 저장 asset set이 일치해야 한다.
+- builder preview는 닫힌 shell 외벽이 내부를 가리지 않도록 preview 전용 cutaway wall을 적용해 첫 프레임에서 floor + furniture + props가 보여야 한다.
+- 기존 public GLTF fallback 자산 중 sofa/media console/TV/game console/side table/plant/books/coffee table은 catalog item으로 노출되어 `workspace-flex` 24개 starter가 API catalog fetch 전에도 fallback 없이 재현되어야 한다.
+- editor 제품 교체는 delete/add가 아니라 `updateFurniture` 경로를 사용해 선택 상태와 snapshot history를 유지하고, 새 catalog item의 product/support metadata만 바꾼 뒤 anchor solver로 같은 위치를 재클램프해야 한다.
+- editor replacement visual picker는 같은 category 후보 중에서도 의자->소파처럼 footprint와 제품군이 크게 다른 후보가 최우선에 오지 않도록 compatibility score를 먼저 적용한다.
+- editor replacement ranking은 제품군/치수뿐 아니라 선택 제품의 room zone과 후보 room zone이 맞는지도 가벼운 신호로 사용해 이미 만든 방의 zone context를 유지해야 하며, inspector는 같은 존 우선 보기와 전체 보기 전환을 제공해야 한다.
+
+Removed/Deprecated:
+- sparse workspace starter를 제품의 커스터마이징 가능성을 설명하기에 충분한 기본값으로 취급하는 방식.
+- 사용자가 의미 있는 workspace 구성을 만들기 위해 workstation/media/lounge/display 토글 조합을 직접 추측해야 하는 방식.
+- furnished template 클릭 즉시 저장 프로젝트를 만들고, 사용자가 방 치수/재질/조명을 확인하기 전 editor로 보내는 방식.
+- media/lounge/display cluster가 catalog missing 상태에서 임의 fallback 제품으로 채워져 preview와 사용자가 선택한 구성 의미가 어긋나는 방식.
+- 선택 제품 교체를 삭제 후 새로 추가해 위치, support surface, selection, history가 끊겨도 허용하는 방식.
+- editor 교체 UI가 category/anchor/size만 보여주고 workstation/media/lounge/display 같은 방 구성 맥락을 숨기거나, 같은 존 후보를 따로 좁혀 보지 못하게 하는 방식.
+
+## 2026-05-16 변경 동기화 (Diorama Grounding Shadow)
+Added:
+- Contact shadow 정책은 `enableContactShadows` boolean만이 아니라 resolution/blur/opacity/scale/far/color/y offset을 함께 포함해 모드별로 검증되어야 한다.
+- builder preview는 dense starter room이 바닥과 분리되어 보이지 않도록 warm-tinted bounded contact shadow와 bounded dynamic shadow를 유지한다.
+- Clean Paint/Clean Plaster 기본 벽 preset은 dirty source texture가 아니라 clean color material과 clean thumbnail으로 첫 프레임 품질을 보장해야 한다.
+
+Updated:
+- editor top-view는 HDRI 없이 contact shadow만 유지하는 lightweight grounding profile을 사용하고, shared top viewer는 contact shadow를 끈다.
+- builder preview의 richer grounding은 SSR/bloom/post FX를 켜는 대체물이 아니며, `verify:render-quality`, `verify:builder-performance`, `verify:material-presets`가 같은 정책을 기준으로 판정해야 한다.
+- builder style step의 기본 벽 swatch와 runtime wall은 같은 clean paint impression을 제공해야 하며, `Matte White Paint`가 concrete/damaged wall처럼 렌더되면 회귀로 본다.
+
+Removed/Deprecated:
+- builder preview와 editor top-view가 shadow/contact shadow를 반드시 꺼야 성능 기준을 만족한다는 검증 가정.
+- clean default wall preset에 dirty diffuse map을 직접 노출해도 category/name만 clean이면 충분하다는 가정.
+
+## 2026-05-16 변경 동기화 (Builder Preview Ground Dressing)
+Added:
+- builder preview는 저장 `sceneDocument`를 늘리지 않는 renderer-only lounge rug, woven edge/thread detail, coffee-table tabletop props, sofa throw/seam detail을 사용해 furnished starter의 중심부가 비어 보이지 않게 해야 한다.
+- `verify:builder-performance`는 builder preview ground dressing이 `viewMode === "builder-preview"` 경로에만 붙어 있고, 시각 smoke에서 식별 가능한 `builder-preview-ground-dressing` 이름을 유지하는지 확인한다.
+
+Updated:
+- `workspace-flex` starter의 dense creator-room 기준은 seed asset 24개 표시뿐 아니라 lounge/coffee-table 주변의 floor anchoring과 tabletop object density까지 포함한다.
+- renderer-only detail은 catalog item 수, fixture 수, 저장 payload, instancing 정책을 변경하지 않는 visual filler로 유지한다.
+
+Removed/Deprecated:
+- coffee table 주변이 빈 바닥과 단순 table proxy만으로 충분히 dense diorama처럼 읽힌다는 기준.
+
+## 2026-05-16 변경 동기화 (Builder Preview Surface Dressing)
+Added:
+- builder preview는 저장 `sceneDocument`를 늘리지 않는 renderer-only desk/media-console/shelf surface dressing을 사용해 헤드폰, 케이블, 노트, 콘솔/리모컨, 작은 collectible silhouette이 첫 프레임에서 보이도록 해야 한다.
+- `verify:builder-performance`는 `BuilderPreviewSurfaceDressing`이 `viewMode === "builder-preview"` 경로에만 붙고, `builder-preview-surface-dressing`, `builder-preview-desk-surface-kit`, `builder-preview-media-console-surface-kit`, `builder-preview-shelf-collectibles` 식별자를 유지하는지 확인한다.
+
+Updated:
+- dense creator-room 기준은 lounge floor anchoring뿐 아니라 desk/media/shelf 상판의 작은 개인 소품 staging까지 포함한다.
+- surface dressing은 fixture/dynamic emitter를 추가하지 않는 proxy geometry/material detail로 유지한다.
+
+Removed/Deprecated:
+- workstation/media/shelf zone이 큰 furniture proxy와 seed prop만으로도 충분히 reference-style density를 만든다는 기준.
+
+## 2026-05-16 변경 동기화 (Builder Preview Wall Dressing)
+Added:
+- builder preview는 저장 `sceneDocument`를 늘리지 않는 renderer-only wall dressing으로 rear/side wall framed art, rear shelf decor, warm/cool LED strip geometry를 포함해야 한다.
+- `verify:builder-performance`는 `BuilderPreviewWallDressing`이 `viewMode === "builder-preview"` 경로에만 붙고, gallery/shelf/LED group marker와 dynamic emitter 미증가 조건을 확인한다.
+
+Updated:
+- compact diorama 품질 기준은 floor/surface dressing뿐 아니라 빈 벽면을 줄이는 vertical decor density까지 포함한다.
+- builder preview mood wash는 clean white wall에서도 읽히도록 warm/cool wall/floor tint 강도를 source guard로 고정한다.
+
+Removed/Deprecated:
+- 빈 matte white wall이 넓게 남아 있어도 가구 밀도만 충분하면 reference-style room으로 볼 수 있다는 기준.
+
+## 2026-05-16 변경 동기화 (Builder Preview Presentation Camera)
+Added:
+- builder preview는 `CameraRig`의 orthographic camera를 room 바깥 대각선에 두고 낮은 높이/상향 target/타이트한 zoom으로 synchronise해 top-down floor plan처럼 보이지 않게 해야 한다.
+- `verify:builder-performance`는 `OrthographicCamera`, `CameraPoseSync`, `builderPresentationDistance`, 낮은 `builderHeight`, 높은 `builderTargetY`, compact `builderZoom`, polar angle guard를 함께 확인한다.
+
+Updated:
+- compact diorama 품질 기준은 seed/dressing 개수뿐 아니라 첫 프레임 카메라가 벽면, 가구 높이, 상판 디테일을 동시에 보여주는지까지 포함한다.
+
+Removed/Deprecated:
+- builder preview 카메라가 방 내부 corner 근처의 높은 overhead pose를 써도 orthographic이면 충분히 diorama처럼 읽힌다는 기준.
+
+## 2026-05-16 변경 동기화 (Builder Preview Mood Lighting)
+Added:
+- builder preview direct-lighting 경로는 `builder-preview-mood-wash` renderer-only overlay를 유지해 warm floor/wall bleed와 cool wall/floor bleed가 실제 캔버스에서 보이도록 한다.
+- `verify:lighting-layout`는 mood wash가 builder preview에만 mount 되고, normal-blend tint 방식이며, 추가 point/spot/directional/ambient emitter를 만들지 않는지 확인한다.
+
+Updated:
+- builder preview의 global light scale은 flat ambient를 낮추고 warm key/cool fill 대비를 강화해 clean white wall에서도 color mood가 묻히지 않게 한다.
+- mood wash는 additive white blowout 대신 transparent tint overlay를 사용하되 floor overlay는 depth test를 유지하고 wall overlay만 wall mesh depth에 묻히지 않도록 별도 처리한다.
+
+Removed/Deprecated:
+- 밝은 wall/floor material 위에서 additive glow가 거의 보이지 않아도 warm/cool diorama contrast가 충분하다고 보는 기준.
+
+## 2026-05-16 변경 동기화 (Builder Preview Visual Smoke Gate)
+Added:
+- `verify:builder-preview-diorama`는 Playwright로 `/studio/builder?scenePreset=workspace-flex&seed=full`의 style/lighting builder preview를 열고 실제 WebGL canvas pixel을 샘플링해 빈 shell/black screen/flat monochrome 회귀를 잡아야 한다.
+- visual smoke는 `workspace-cluster-preset-media-lounge` 선택 후 URL `clusters=media,lounge`와 preview canvas가 함께 유지되는지 확인한다.
+- visual smoke 산출물은 `output/playwright/builder-preview-diorama-smoke.png`에 저장해 manual before/after evidence로도 쓸 수 있어야 한다.
+
+Updated:
+- builder preview 품질 게이트는 source contract(`verify:builder-performance`, `verify:lighting-layout`)만으로 끝내지 않고, 브라우저 첫 프레임의 canvas size, luminance contrast, color bucket diversity, warm/cool pixel ratio를 함께 확인한다.
+
+Removed/Deprecated:
+- renderer-only detail과 mood wash가 source에 존재하면 실제 브라우저 canvas에서 보이지 않아도 diorama 품질이 검증됐다고 보는 방식.
+
+## 2026-05-16 변경 동기화 (Editor Zone Customization Actions)
+Added:
+- editor inspector의 replacement 영역은 선택 자산의 inferred room zone만 보여주는 데 그치지 않고, 후보를 workstation/media/lounge/display/flex 존별로 요약하는 `존 커스터마이징` action rows를 제공해야 한다.
+- zone action row는 후보 수, 추천 후보 수 또는 평균 match, 대표 후보 label을 보여주고 클릭 시 해당 room zone 후보만 replacement grid에 표시해야 한다.
+
+Updated:
+- editor replacement affordance는 단일 제품 카드 교체에서 “현재 방의 존 맥락을 유지하거나 다른 존 스타일로 전환해 꾸미는” 흐름까지 포함한다.
+- 이 흐름은 sceneDocument schema, asset id, transform/support anchor 보존 계약을 변경하지 않고 replacement candidate metadata만 재사용한다.
+
+Removed/Deprecated:
+- 사용자가 전체 replacement grid를 직접 훑어 workstation/media/lounge/display 후보 분포와 꾸미기 방향을 추론해야 하는 방식.
+
+## 2026-05-16 변경 동기화 (Editor Zone Quick Apply)
+Added:
+- editor inspector의 `존 커스터마이징` action row는 후보 grid 필터링뿐 아니라 해당 zone의 대표 후보를 즉시 적용하는 quick apply 버튼을 제공해야 한다.
+- quick apply는 기존 selected-asset replacement 경로를 재사용해 같은 scene asset id, transform, material override, support anchor re-clamp, undo snapshot 의미를 유지해야 한다.
+
+Updated:
+- zone customization affordance는 “존 후보를 보기”에서 “워크존/미디어존/라운지/디스플레이 스타일로 선택 제품을 즉시 바꿔 보기”까지 포함한다.
+- replacement zone summary는 대표 후보 label뿐 아니라 대표 후보 catalog id를 함께 제공해 UI가 같은 후보를 안정적으로 적용할 수 있어야 한다.
+
+Removed/Deprecated:
+- zone action row가 필터 전용이라 사용자가 다시 후보 카드를 찾아 눌러야만 실제 커스터마이징이 가능한 방식.
+
+## 2026-05-16 변경 동기화 (Editor Placed Zone Overview)
+Added:
+- editor inspector의 `공간 요약`은 벽/바닥/제품 수만 보여주지 않고, 현재 배치된 제품을 workstation/media/lounge/display/flex room zone별로 요약하는 `배치 존` overview를 제공해야 한다.
+- overview row는 zone label, 배치 수, 대표 제품 label, 현재 선택 zone marker를 보여주고 클릭 시 해당 zone의 대표 제품을 선택해야 한다.
+
+Updated:
+- room customization의 시작점은 선택 제품 교체뿐 아니라 “현재 방이 어떤 zone 구성으로 꾸며졌는지”를 inspector에서 바로 파악하고 이동하는 흐름까지 포함한다.
+- 이 overview는 catalog metadata와 `inferReplacementRoomZone` 추론을 재사용하며, `sceneDocument` schema에는 별도 zone field를 추가하지 않는다.
+
+Removed/Deprecated:
+- 사용자가 canvas에서 제품을 직접 찾아 클릭해야만 workstation/media/lounge/display 구성을 파악하거나 zone별 꾸미기를 시작할 수 있다는 기준.
+
+## 2026-05-16 변경 동기화 (Editor Placed Zone Batch Replace)
+Added:
+- editor inspector의 `배치 존` overview는 zone별 대표 제품 선택뿐 아니라, 해당 zone의 독립 배치 제품을 같은 zone 맥락의 추천 후보로 일괄 교체하는 `교체` action을 제공해야 한다.
+- zone batch replace는 각 제품마다 기존 compatibility ranking을 다시 계산해 category/anchor/dimension/family/room-zone 적합도가 맞는 후보를 적용해야 한다.
+
+Updated:
+- zone-level customization은 단일 선택 제품 quick apply를 넘어, 사용자가 워크존/미디어존/라운지/디스플레이 구역의 분위기를 한 번에 바꿔 보는 흐름까지 포함한다.
+- batch replace는 기존 replacement update path를 재사용해 scene asset id, transform, scale, material override, support anchor re-clamp 의미를 유지해야 한다.
+- support surface를 제공하는 부모 가구도 후보 교체 후 하위 surface anchor 자산들이 같은 부모에 재고정된다는 anchor solver preflight가 통과할 때만 batch 대상에 포함한다.
+- support-carrier batch plan은 독립 자산을 먼저 교체하고 부모 가구를 마지막에 교체해 store-level dependent re-anchor가 최종 제품 규격 기준으로 한 번 더 수렴해야 한다.
+
+Removed/Deprecated:
+- zone overview가 대표 제품 선택까지만 제공하고, 사용자가 zone 안의 제품을 하나씩 찾아 반복 교체해야 하는 방식.
+- support surface 부모 가구를 항상 batch 대상에서 제외하고 단일 replacement 경로로만 바꾸게 하는 방식.
+
+## 2026-05-16 변경 동기화 (Editor Placed Zone Replacement Preview)
+Added:
+- `배치 존` overview는 각 zone의 `교체` action을 누르기 전에 대표 replacement 후보 label과 match percent를 row 안에서 보여줘야 한다.
+- placed zone summary는 대표 replacement 후보의 catalog id/label뿐 아니라 match percent와 preview family metadata를 함께 제공하고, inspector row는 그 preview family로 compact isometric proxy를 보여줘야 한다.
+- placed zone summary는 대표 replacement가 support-carrier 부모일 때 하위 surface anchor 유지 개수를 row 안에 노출해야 한다.
+
+Updated:
+- zone-level customization affordance는 “몇 개를 교체할 수 있는지”뿐 아니라 “어떤 후보로 방 분위기가 바뀌는지”를 누르기 전에 예측 가능한 흐름까지 포함한다.
+- 이 preview 정보는 catalog compatibility ranking에서 파생하며 `sceneDocument` schema와 저장 payload에는 별도 field를 추가하지 않는다.
+
+Removed/Deprecated:
+- batch replace 버튼만 있고 대표 교체 대상이 tooltip에만 숨어 있어 사용자가 결과를 누르기 전까지 알기 어려운 UI.
+
+## 2026-05-16 변경 동기화 (Editor Replacement Isometric Proxy)
+Added:
+- replacement card fallback은 평면 silhouette만 쓰지 않고 `previewScale`을 반영한 mini isometric proxy, floor footprint, warm/cool glow, family-specific detail을 함께 보여줘야 한다.
+- placed zone replacement preview는 compact isometric proxy QA id를 노출해 row 안에서도 대표 교체 후보의 가구 타입을 실행 전에 읽을 수 있어야 한다.
+- placed zone summary는 대표 replacement 후보의 `previewScale`까지 보존하고, compact row preview는 고정 비율 fallback보다 해당 후보의 width/depth/height 인상을 우선 사용해야 한다.
+- replacement card는 신뢰 가능한 전용 thumbnail이 없는 실제 `/assets/models/*.(glb|gltf)` 후보에 대해 demand-frameloop live model overlay를 시도하고, 실패 시 기존 isometric proxy가 그대로 남아야 한다.
+
+Updated:
+- 이번 pass는 scene schema, replacement ranking, batch update path를 바꾸지 않고 inspector visual feedback만 보강한다.
+- catalog thumbnail 신뢰 판정은 asset id 또는 catalog id와 thumbnail filename의 match를 기준으로 공유하며, 공용 placeholder thumbnail은 실제 후보 렌더처럼 노출하지 않는다.
+- `배치 존` row의 실행 전 preview도 card-level 후보와 같은 normalized dimension metadata를 공유해 keyboard/decor 같은 작은 surface prop과 desk/sofa 같은 큰 floor asset의 scale 차이를 잃지 않아야 한다.
+- live model preview는 inspector-only progressive enhancement이며 `sceneDocument`, support anchor, replacement update path, lighting fixture budget을 변경하지 않는다.
+
+Removed/Deprecated:
+- replacement 후보 fallback이 단일 평면 silhouette만 보여줘 후보의 footprint/depth와 방 꾸미기 결과를 충분히 예측하기 어려운 상태.
+- placed zone compact preview가 대표 후보 치수와 무관한 하드코딩 scale만 쓰는 상태.
+- shared thumbnail을 실제 후보별 render처럼 사용해 chair/sofa/decor가 desk thumbnail으로 보이는 상태.
+
+## 2026-05-16 변경 동기화 (Editor Room Mood Recipes)
+Added:
+- editor inspector는 `무드 레시피` quick action을 제공해 wall/floor/ceiling finish와 lighting preset을 한 번에 적용할 수 있어야 한다.
+- recipe는 기존 material index와 `LightingPresetId`만 조합하며 `sceneDocument` schema, asset placement, fixture count를 늘리지 않는다.
+
+Updated:
+- 방 커스터마이징 UX는 개별 wall/floor/lighting control뿐 아니라 Clean Gallery, Warm Studio, Soft Lounge, Walnut Media처럼 사용자가 즉시 분위기를 바꿔 볼 수 있는 bundled mood path를 포함한다.
+- recipe 적용은 기존 store setter와 lighting preset settings를 재사용하고 undo history에는 단일 `무드 레시피 적용` snapshot으로 남아야 한다.
+
+Removed/Deprecated:
+- 사용자가 고품질 room mood를 만들기 위해 벽/바닥/천장/조명 값을 각각 찾아 조합해야만 하는 editor UX.
+
+## 2026-05-16 변경 동기화 (Builder Room Mood Recipes)
+Added:
+- builder style step은 `무드 레시피` quick action을 제공해 프로젝트 생성 전 wall/floor finish와 existing lighting preset mood를 한 번에 preview에 적용할 수 있어야 한다.
+- builder recipe 선택은 URL `mood`와 auth draft에 유지되어 로그인 왕복 후에도 같은 preview mood로 복원되어야 한다.
+
+Updated:
+- room-first customization은 editor 진입 이후뿐 아니라 builder preview 단계에서 Clean Gallery, Warm Studio, Soft Lounge, Walnut Media 같은 bundled mood path를 제공해야 한다.
+- builder recipe는 기존 wall/floor material index와 builder lighting state를 재사용하며 `sceneDocument` schema, seed asset payload, dynamic fixture budget을 변경하지 않는다.
+
+Removed/Deprecated:
+- 사용자가 프로젝트를 만든 뒤 editor에서만 bundled room mood를 적용할 수 있고, builder preview에서는 벽/바닥/조명을 각각 따로 조합해야 한다는 UX.
 
 ## 2026-05-02 변경 동기화 (Interaction Engine Foundation)
 Added:
@@ -136,7 +373,10 @@ Added:
 - `RuntimeAsset`와 asset compiler package descriptor는 `sku`, `manufacturer`, `referencePack`, `visualFidelityScore`, `dimensionToleranceMm`, `materialQaStatus`, `releaseEligible`를 포함한 `commercialReadiness` 계약을 유지한다.
 - 실제 SKU hero catalog는 `referencePack`과 slot-level material QA가 통과된 asset만 paid-beta release eligible로 승격한다.
 - 제품 URL은 실제 SKU prototype reference 수집의 입력이 될 수 있지만, `asset:analyze-url` 산출물은 `prototype_reference_only`와 `releaseEligible=false`를 유지해야 한다.
-- 제품 URL 기반 private asset 제작은 `asset:factory`의 plan/QA/repair/private catalog entry 산출물을 거쳐야 하며, 기본 출력은 `private_prototype`과 `releaseEligible=false`를 유지한다.
+- 제품 URL 기반 private asset 제작은 `asset:factory`의 plan/QA/repair/private catalog entry 산출물 또는 runtime `PRODUCT_ASSET_GENERATION` job의 reference pack/finalizer/evaluator evidence를 거쳐야 하며, 기본 출력은 `private_prototype`과 `releaseEligible=false`를 유지한다.
+- Runtime product asset job은 provider GLB를 직접 공개 catalog에 넣지 않는다. `referencePack`, category profile, Blender finalizer report, candidate evaluation, `legalUse.mode=private_reference_only`가 Supabase `assets.meta`에 남아야 한다.
+- Runtime product asset provider 호출은 transient provider/network 오류에 대해 후보별 retry/backoff를 적용하고, 모든 후보가 실패한 뒤에만 job retry/dead-letter 경로로 이동해야 한다.
+- Meshy provider 호출은 기본적으로 token/credit budget guard를 통과해야 한다. `MESHY_BUDGET_REMAINING`과 `MESHY_BUDGET_COST_PER_TASK`가 없거나 worst-case retry 예약량이 잔여 budget을 넘으면 외부 provider POST 전에 실패해야 한다.
 - `/labs/qa` commercial snapshot은 actual SKU hero catalog gate, wall/floor texture library gate, SKU/reference/material QA row를 보여주는 운영 release dashboard 역할을 한다.
 - walkthrough/focus placement 기본 snap은 `5mm / 1deg`, fine override는 `1mm / 0.1deg`로 고정하며 HUD/저장 좌표는 placement kernel snap 결과를 따른다.
 
@@ -144,7 +384,7 @@ Updated:
 - 상용 판단 기준을 “예뻐 보이는 GLB”에서 “검증된 제품 패키지(referencePack + mm tolerance + material QA + release eligibility)”로 확장한다.
 - prototype asset 판단 기준은 “혼자 테스트 가능한가”와 “상용 노출 가능한가”를 분리하고, factory QA의 `ready_for_private_use`와 commercial readiness를 별도 gate로 읽는다.
 - room shell wall/floor texture set은 12개 이하의 PBR preset, source resolution, KTX2 runtime target, AI 후보 여부를 함께 관리한다.
-- 조명 preset은 `neutral-studio`, `home-reference`, `soft-evening`별 QA profile(HDRI/exposure/white balance/contact shadow)을 가진다.
+- 조명 preset은 `neutral-studio`, `home-reference`, `soft-evening`별 QA profile(HDRI/exposure/white balance/contact shadow)과 ambient/hemisphere/directional/environment blur/accent/beam snapshot을 가진다.
 
 Removed/Deprecated:
 - 이미지 생성 모델 결과를 실제 브랜드/SKU 최종 운영 asset으로 바로 승격하는 가정.
@@ -566,13 +806,15 @@ Removed/Deprecated:
 
 ## 2026-04-19 변경 동기화 (Render Cost Reallocation)
 Added:
-- builder preview와 `viewer-shared`는 lean light rig를 기본으로 사용하고, richer fill/bloom/shadow pass는 `desk precision` 또는 showcase/walk preset에서만 선택적으로 유지하는 규칙을 추가한다.
+- `viewer-shared`는 lean light rig를 기본으로 사용하고, richer fill/bloom/shadow pass는 `desk precision` 또는 showcase/walk preset에서만 선택적으로 유지하는 규칙을 추가한다.
+- builder preview는 shared viewer와 분리된 diorama profile로 관리하며, bounded dynamic shadow + warm-tinted contact shadow는 유지하고 SSR/bloom/post FX는 끈다.
 
 Updated:
-- shared viewer 품질 기준을 단순 “더 보수적” 수준에서 `no fill light + subtle post FX + constrained no shadow/bloom`으로 구체화한다.
+- shared viewer 품질 기준을 단순 “더 보수적” 수준에서 `no fill light + subtle post FX + constrained no shadow/contact shadow/bloom`으로 구체화한다.
 
 Removed/Deprecated:
 - shared viewer와 builder preview가 full walk/showcase와 같은 fill-light/bloom/shadow 패스를 기본으로 유지한다는 가정.
+- builder preview와 editor top-view가 contact shadow를 항상 꺼야 성능 기준을 만족한다는 과거 가정.
 
 ## 2026-04-19 변경 동기화 (Presence Lab Isolation)
 Added:
@@ -741,21 +983,21 @@ Removed/Deprecated:
 
 ## 2026-04-20 변경 동기화 (Scene Instancing Phase 1)
 Added:
-- read-only top/walk와 builder preview에서 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶는 운영 규칙을 추가한다.
+- read-only top/walk에서 반복된 `single_mesh` low/medium complexity deskterior 자산을 instanced cluster로 묶는 운영 규칙을 추가한다. builder preview instancing 기준은 2026-05-15 furnished starter proxy 기준으로 대체한다.
 - `verify:asset-instancing` 스크립트로 editable top mode 제외, selected 제외, dynamic light 제외, manual LOD 제외 정책을 회귀 검증하는 품질 게이트를 추가한다.
 
 Updated:
-- 원문 보고서 기준 남은 `instancing/LOD 운영화`를 “LOD policy 완료, read-only/builder instancing 1차 완료, editor-side/native pass만 남음” 상태로 갱신한다.
+- 원문 보고서 기준 남은 `instancing/LOD 운영화`를 “LOD policy 완료, read-only instancing 1차 완료, editor-side/native pass만 남음” 상태로 갱신한다.
 
 Removed/Deprecated:
-- 반복 자산이 있는 read-only/builder 장면도 항상 개별 mesh clone만 사용해야 한다는 가정.
+- 반복 자산이 있는 read-only 장면도 항상 개별 mesh clone만 사용해야 한다는 가정. builder preview starter는 2026-05-15 이후 개별 proxy 경로를 예외로 둔다.
 
 ## 2026-04-20 변경 동기화 (Editor Desk Precision Instancing)
 Added:
 - editor `desk precision` top-view에서 반복된 `single_mesh` low/medium complexity 자산을 instanced cluster로 유지하는 운영 규칙을 추가한다.
 
 Updated:
-- `instancing/LOD 운영화` 상태를 `read-only/builder instancing 1차 완료`에서 `editor desk precision instancing 포함` 상태로 확장한다.
+- `instancing/LOD 운영화` 상태를 `read-only instancing 1차 완료`에서 `editor desk precision instancing 포함` 상태로 확장한다.
 
 Removed/Deprecated:
 - editor top-view 전체가 instancing eligibility에서 항상 제외되어야 한다는 가정.
@@ -1329,3 +1571,708 @@ Removed/Deprecated:
 - 문/창문 위치가 UI 선택 상태로만 존재하고 opening payload validation 없이 다음 단계로 진행되는 방식.
 - direct lighting을 항상 3개 자동 배치로만 저장하는 방식.
 - 얼룩/낡은/industrial texture를 default wall preset으로 취급하는 방식.
+
+## 2026-05-15 변경 동기화 (Editor Lighting Fixture Controls)
+Added:
+- editor inspector의 조명 섹션은 builder 이후에도 direct/indirect mode를 전환하고, direct fixture count(1/2/3/4/6), color temperature(warm/neutral/cool), mini grid marker drag 위치를 조정할 수 있어야 한다.
+- editor direct fixture controls는 현재 room wall/scale에서 계산한 `lightingBoundsMm`를 사용해 500mm grid에 snap 된 `lighting.fixtures[]`만 저장해야 한다.
+- editor direct fixture detail controls는 fixture별 enabled, intensity, beamRadiusMm, spread를 같은 `lighting.fixtures[]` payload로 저장해 renderer/shared viewer와 같은 조명 계약을 유지해야 한다.
+
+Updated:
+- `verify:lighting-layout`는 builder lighting payload roundtrip뿐 아니라 editor inspector source contract(`editor-lighting-mode-controls`, `editor-direct-lighting-layout`, temperature controls, pointer drag commit, fixture detail controls)를 같이 검증한다.
+
+Removed/Deprecated:
+- 조명 fixture count/color/position/intensity/beam/spread 커스터마이징을 builder 5단계에서만 가능하다고 보는 방식.
+
+## 2026-05-16 변경 동기화 (Editor Room Styling Bundles)
+Added:
+- editor properties panel은 `workspace-flex` cluster preset을 재사용하는 room styling bundle quick actions를 제공한다.
+- styling bundle apply는 `buildEditorRoomStylingBundleAssets`를 통해 기존 asset을 중복 추가하지 않고, 누락된 workstation/media/lounge/display cluster asset만 하나의 merged asset update로 추가한다.
+- surface-anchored desk/shelf/media props는 기존 또는 새 support asset id로 재고정되어야 하며, bundle apply는 한 번의 history snapshot만 만든다.
+
+Updated:
+- “사용자가 방을 꾸민다”는 기준은 walk inventory의 개별 배치뿐 아니라 editor top/settings에서 dense room composition을 빠르게 보강하는 흐름까지 포함한다.
+- `verify:editor-styling-bundles`는 bundle dedupe, support anchor validity, inspector source contract, project editor wiring을 회귀 검증한다.
+
+Removed/Deprecated:
+- 이미 생성된 방에서 dense starter 구성을 얻으려면 사용자가 inventory에서 개별 item을 하나씩 찾아야 한다는 UX 가정.
+
+## 2026-05-16 변경 동기화 (Meshy Room Decor Prototype)
+Added:
+- `p2s_meshy_pastel_mascot_stack`를 Meshy text-to-3D preview/refine 기반 generated decor prototype으로 catalog에 추가한다.
+- standalone 생성 산출물은 GLB/proxy GLB/thumbnail/report를 각각 `apps/web/public/assets/models/`, `apps/web/public/assets/catalog/thumbnails/`, `assets/references/meshy-room-decor/`에 남겨 provenance와 QA evidence를 추적한다.
+- `workspace-flex` starter의 display shelf decor 슬롯은 기존 generic stand 대신 Meshy-generated collectible decor를 사용해 실제 generated/PBR 소품 품질을 첫 방 구성에 포함한다.
+- `verify:meshy-room-decor`는 파일 존재, catalog exposure, seed 연결, budget report, glTF validation error 0개를 검증한다.
+
+Updated:
+- Meshy-generated curated prototype은 상용 release-ready SKU가 아니라 visual QA용 internal catalog asset으로 취급하고, human visual QA와 release review 전까지 prototype metadata를 유지한다.
+- 사용자가 방을 꾸미는 기준은 renderer-only detail뿐 아니라 catalog에서 선택 가능한 generated GLB 소품을 포함한다.
+
+Removed/Deprecated:
+- reference-level 소품 품질 개선을 renderer-only primitive dressing만으로 충분하다고 보는 가정.
+
+## 2026-05-16 변경 동기화 (Generated Asset Surfacing)
+Added:
+- generated/prototype catalog item은 `getCatalogGenerationBadge` 계약으로 provider label, QA/review 상태, ready/review tone을 계산한다.
+- editor library/inventory card는 generated asset badge와 검수 상태를 함께 보여주고, 현재 필터 결과 안에서 generated asset만 좁혀 보는 `AI 생성` filter를 제공한다.
+- editor replacement card와 selected asset inspector는 Meshy/generated provenance와 `검수 필요` 상태를 노출해 사용자가 프로토타입 에셋을 인지한 채 교체/배치할 수 있어야 한다.
+- Blender finalizer thumbnail은 투명 black-card artifact와 과노출을 피하기 위해 opaque background, lower exposure, warm key/cool fill thumbnail render contract를 유지한다.
+- editor room styling bundle 버튼은 적용 전에 포함 asset 수와 generated provider/review 상태를 노출해야 하며, `workspace-flex` seed contract에서 생성형 catalog item을 계산해야 한다.
+- builder style step의 workspace cluster preset과 개별 cluster toggle도 프로젝트 생성 전에 generated provider/review 상태를 노출해야 한다.
+
+Updated:
+- generated asset QA는 catalog에 들어가는 것만이 아니라 사용자가 editor에서 찾고, preview하고, 검수 상태를 구분할 수 있는 UI affordance까지 포함한다.
+- `/project/[id]` inspector는 catalog를 받아 styling bundle preview를 만들고, display cluster가 포함된 bundle은 Meshy-generated decor 포함 여부를 표시한다.
+- 생성형 decor disclosure 계산은 `workspace-flex` seed helper를 공유해 builder preset, builder cluster toggle, editor bundle이 서로 다른 기준으로 drift하지 않아야 한다.
+
+Removed/Deprecated:
+- generated/prototype asset을 일반 catalog item처럼 숨겨 provenance와 review 상태를 사용자가 알 수 없게 하는 방식.
+- 사용자가 room styling bundle을 적용한 뒤에야 Meshy/generated prototype 포함 여부를 알 수 있는 방식.
+- room-first builder에서 프로젝트를 만들기 전에는 generated prototype 포함 여부를 알 수 없고, editor 진입 후에만 검수 상태가 드러나는 방식.
+
+## 2026-05-16 변경 동기화 (Render Source Provenance)
+Added:
+- furniture renderer는 real GLB, builder preview proxy, placeholder fallback, model-loading fallback, LOD proxy를 runtime object name과 `userData.furnitureRenderSource`로 구분한다.
+- generated Meshy asset은 catalog/badge provenance뿐 아니라 renderer provenance에서도 real GLB path인지 확인 가능해야 한다.
+- browser visual smoke는 `window.__DESKTERIORONLINE_FURNITURE_RENDER_SOURCES__`를 통해 visible furniture source와 catalog item ids를 수집하고, Meshy decor inclusion과 fallback 0개를 검증한다.
+- 실제 GLB 로드 완료 증거는 `window.__DESKTERIORONLINE_FURNITURE_GLB_LOADS__`에 mesh/material count와 bounds로 기록해 source intent와 로드 성공을 분리해 확인한다.
+- catalog replacement live preview는 `window.__DESKTERIORONLINE_CATALOG_LIVE_MODEL_PREVIEWS__` registry로 `real-glb-live-preview`, mesh/material count, bounds, generated provider/review state, source report path를 노출해야 한다.
+- `verify:meshy-live-preview`는 `/labs/qa/meshy-live-preview`에서 Meshy text-to-3D GLB가 live preview canvas에 실제 픽셀로 렌더되고 registry provenance가 일치하는지 확인한다.
+- `verify:meshy-editor-scene`은 `/labs/qa/meshy-editor-scene`에서 `workspace-flex` display cluster를 hidden cutaway top-view room scene으로 열고, Meshy decor가 forced real-GLB path에서 `real-glb`로 로드됐는지 registry와 canvas pixel로 확인한다.
+- `verify:meshy-editor-customization`은 `/labs/qa/meshy-editor-customization`에서 실제 inspector replacement card로 source decor를 Meshy-generated decor로 교체하고, 같은 scene asset id 유지, selected generated badge, forced real-GLB renderer load, manual save payload provenance를 함께 확인한다.
+
+Updated:
+- visual fidelity gate는 dense diorama composition, generated thumbnail, UI disclosure와 함께 fallback/proxy가 실제 generated GLB 품질로 오인되지 않는지 확인한다.
+- builder preview는 의도적으로 `builder-preview-proxy`를 쓰는 lightweight path지만, full preview 24개 source와 media-lounge 8개 source가 placeholder/model-loading fallback 없이 렌더되는지 browser QA evidence로 남겨야 한다.
+- editor/replacement card와 hidden full-room top-view scene의 실제 GLB 품질 증거는 builder preview proxy smoke와 분리해 live model preview registry, full-room GLB load registry, editor customization save payload, canvas pixel gate로 검증한다.
+
+Removed/Deprecated:
+- fallback geometry가 캔버스를 채우면 generated asset render fidelity도 충족한 것으로 보는 기준.
+- static catalog badge만 보이면 Meshy/generated GLB가 editor preview에서도 정상 렌더됐다고 보는 기준.
+- seeded room scene에 Meshy decor가 보이면 선택 제품 교체와 저장 payload provenance도 자동으로 검증됐다고 보는 기준.
+
+## 2026-05-17 변경 동기화 (PC Assembly Workbench)
+Added:
+- DeskteriorOnline은 PC tower를 단순 decor object가 아니라 별도 조립 가능한 deskterior feature로 확장할 수 있다. 첫 검증 표면은 `/labs/qa/pc-assembly-workbench` hidden QA route다.
+- PC assembly QA route는 현재 단일 케이스 option(`LIAN-LI O11D MINI V2 FLOW White`)을 먼저 선택한 뒤에만 조립 state machine을 시작한다.
+- PC assembly QA route는 Compuzone product `1336041` 견적을 source reference로 저장하고, CPU/GPU/메인보드/메모리/SSD/케이스/파워/케이스쿨러/쿨러 9개 부품 label과 slot을 payload에 남긴다.
+- PC assembly QA route는 준비/정전기 방지 -> 메인보드 박스 위 작업 -> AM5 소켓 레버/CPU 정렬/CPU 안착/retention 잠금 -> M.2 방열판 분리/SSD 삽입/나사/방열판 재장착 -> DDR5 래치/RAM A2/B2 체결 -> 케이스 패널 분리/스탠드오프/I/O 정렬/메인보드 이식/나사 체결 -> PSU 브래킷/PSU 장착 -> 24핀 ATX/CPU EPS 전원 연결 -> 수랭 브래킷/써멀/펌프/360mm 라디에이터/팬 연결 -> 케이스 팬 -> 프런트패널/USB/오디오 헤더 -> PCIe 슬롯 커버/GPU/GPU 보조전원 -> 케이블 정리/패널 닫기 -> 외부 케이블/첫 전원/BIOS POST 확인까지 38단계 순차 state machine으로 다룬다.
+- 조립이 끝난 PC tower는 같은 QA route에서 책상 위 배치, 모니터/키보드/마우스/마이크/램프, 선반 소품, 컬러 오브젝트 스택, 벽면 LED, TV 콘솔, 소파/러그, warm/cool room lighting까지 11단계 deskterior room setup state machine으로 이어진다.
+- 각 조립 단계는 WebAudio cue를 남긴다. 필수 cue family는 tool/part placement, metal latch, CPU seat, screw loosen/tighten, M.2 snap, RAM latch, glass panel slide, PSU rail thunk, cable plug, thermal paste press, cooler pump seat, fan snap, tiny header click, GPU latch, cable tie pull, panel close, boot chime, BIOS POST beep이다.
+- 케이스 선택과 room setup도 WebAudio cue를 남겨야 한다. 필수 추가 cue는 case choice confirm, desk placement thud, monitor stand click, desk tap, clamp tighten, lamp switch, decor place, object stack tap, LED chime, drawer close, cushion thump, room light swell이다.
+- `scripts/generate-meshy-compuzone-pc-build-kit.ts`는 해당 견적을 하나의 private prototype Meshy text-to-3D exploded PC build kit로 생성하고, GLB/proxy/thumbnail/report를 `apps/web/public/assets/models/compuzone_p2364w_pc_build_kit/`, `apps/web/public/assets/catalog/thumbnails/`, `assets/references/compuzone-p2364w-pc-build/`에 기록한다.
+- PC assembly final room preview는 Compuzone Meshy build kit GLB와 Meshy pastel mascot decor GLB를 실제 R3F scene에 로드하고, procedural rounded geometry는 desk, shelf, chair, sofa, media console, floor/wall thickness, warm/cool LED wash를 보강하는 QA-only diorama dressing으로 사용한다.
+- `window.__DESKTERIORONLINE_PC_ASSEMBLY_QA__`는 selected case, assembly steps, room setup steps, visual state booleans, `thermalPasteCoverage`, `audioEvents`, `savedPayload`, `flowComplete`, `checklistComplete`를 노출해야 한다.
+- `verify:pc-assembly-workbench`는 hidden route를 브라우저로 열어 케이스 선택, 38개 조립 단계, 11개 room setup 단계, 50개 sound cue registry, saved payload, canvas pixel variation, `output/playwright/pc-assembly-workbench.png`를 검증한다.
+
+Updated:
+- PC 조립은 기존 room-first editor의 핵심 흐름을 대체하지 않는다. 메인 제품 흐름은 room builder -> deskterior editor -> publish/share -> community viewer를 유지하되, PC assembly는 editor 안의 scoped mode로 통합한다.
+- PC assembly 상용화 기준은 furniture asset placement보다 높다. part slot compatibility, collision/snap, stateful assembly save, sound/accessibility preference, share/viewer parity가 모두 필요하다.
+- Meshy 또는 image-to-3D provider로 PC part prototype을 만들 수 있지만, release-ready SKU는 reference pack, license, dimensions, Blender finalizer, material QA, slot metadata를 통과한 뒤에만 가능하다. Compuzone 견적 기반 Meshy output은 private prototype/review-required 상태로만 취급한다.
+- Bruno Simon-inspired quality target은 asset/code 복제가 아니라 comparable cutaway density, readable toy-like bevels, real GLB placement, cinematic warm/cool lighting, and screenshot-based human QA로 정의한다.
+
+Removed/Deprecated:
+- PC case GLB를 catalog에 하나 추가하면 “PC 본체 커스터마이징”이 완료됐다고 보는 기준.
+- 조립 단계가 UI text나 checklist에만 있고 3D 상태, 오디오 이벤트, 저장 payload가 없는 방식.
+- 브랜드 견적 이미지를 그대로 상용 asset으로 복제하거나, Meshy output을 license/human QA 없이 release-ready catalog item으로 승격하는 방식.
+
+## 2026-05-17 변경 동기화 (PC Assembly Cinematic Room Evidence)
+Added:
+- `verify:pc-assembly-workbench`는 일반 workbench screenshot과 별도로 `output/playwright/pc-assembly-workbench-cinematic.png`를 남겨 final room diorama만 사람 눈으로 검토할 수 있어야 한다.
+- PC assembly final room preview는 Compuzone PC build kit, Meshy pastel mascot stack 외에 monitor, studio speaker, ivy planter GLB를 실제 scene에 로드해 desk/media/plant zones의 generated/prototype asset visibility를 함께 확인한다.
+
+Updated:
+- PC assembly visual target은 hidden QA route의 상태 검증에서 끝나지 않고, cinematic QA URL의 full-screen cutaway framing, room-scale PC desk placement, warm/cool wall wash, object grounding, frame fill을 함께 본다.
+- 현재 pass는 reference-inspired visual density를 높인 QA evidence이며, 상용 editor 통합 전에는 개별 PC part GLB, 정확한 snap/collision metadata, final material/light QA, authenticated save/share parity가 남아 있다.
+
+Removed/Deprecated:
+- 일반 UI가 포함된 screenshot만으로 final room visual quality를 판단하는 방식.
+
+## 2026-05-17 변경 동기화 (PC Assembly Cinematic Capture + Polish)
+Added:
+- PC assembly workbench verifier는 final state를 완료한 같은 hydrated page에서 full-screen capture CSS를 적용해 cinematic screenshot을 생성한다.
+- Final room QA scene은 staggered wood floor, baked-style floor shadows, right-wall entertainment detail, additional Meshy desk/room proxy props를 포함할 수 있다.
+
+Updated:
+- Bruno Simon-inspired target은 현재 hidden QA lab 기준으로 “상호작용 완주 + sound/payload evidence + cinematic screenshot visual density”까지 검증한다.
+- 상용 목표는 아직 별도다. QA lab polish가 통과해도 real editor integration, per-part PC GLB, snap/collision metadata, authenticated save/share parity, and art-directed light/material bake가 완료된 것으로 보지 않는다.
+
+Removed/Deprecated:
+- query navigation 기반 cinematic QA가 dev server chunk 404에 실패하면 전체 PC assembly QA가 실패하는 구조.
+
+## 2026-05-17 변경 동기화 (PC Assembly Cinematic Density + Framing)
+Added:
+- PC assembly QA final room은 PC tower readability, wall dressing, desk cable dressing, sofa fabric detail, baked-style wall/floor shadow, cinematic vignette를 함께 갖춘 screenshot evidence를 생성해야 한다.
+- Final screenshot review의 기본 증거는 `output/playwright/pc-assembly-workbench-cinematic.png`이며, 최신 polish pass는 `cinematicUniqueColorBuckets=407`, `cinematicLuminanceStdDev=68.42` 수준의 color/contrast evidence를 남긴다.
+
+Updated:
+- Bruno Simon-inspired 목표는 hidden QA lab 기준으로 direct clone이 아니라 compact cutaway density, visible PC build kit, warm/cool contrast, object grounding, and lower presentation camera를 반복 비교하는 기준으로 유지한다.
+- 현재 PC assembly room은 prototype/review-required 상태다. 제품 메인 경로 편입 전에는 per-part PC asset, sceneDocument extension, authenticated save/share parity, and commercial asset QA가 필요하다.
+
+Removed/Deprecated:
+- PC build kit이 final screenshot 안에 작게 묻혀 있어도 PC assembly/deskterior integration이 충분히 검증됐다고 보는 기준.
+
+## 2026-05-17 변경 동기화 (PC Assembly Cinematic 3/4 Showcase)
+Added:
+- PC assembly final-room evidence는 Compuzone build kit GLB와 prototype white showcase shell GLB를 함께 사용해 책상 위 PC 본체가 주요 deskterior object로 읽히는지 확인한다.
+- Final screenshot 기준은 3/4 cutaway framing, visible PC shell, desk accessory density, living-zone rug/sofa grounding, warm/cool lighting, soft baked-style patches까지 포함한다.
+- Verifier는 added shell GLB path를 room preview asset evidence에 포함하고, heavy GLB load 중 disabled room-step button을 조기 클릭하지 않도록 대기한다.
+
+Updated:
+- 최신 `verify:pc-assembly-workbench` evidence는 `cinematicUniqueColorBuckets=380`, `cinematicLuminanceStdDev=73.45`, 38 assembly steps, 11 room setup steps, 50 audio events, saved payload completion이다.
+- Prototype white shell은 visual QA 보강용이다. 상용 SKU/quote exactness는 별도 asset QA, license/reference pack, dimension review, snap/collision metadata를 요구한다.
+
+Removed/Deprecated:
+- final room이 정면 flat composition이어도 object count가 많으면 Bruno-inspired target에 충분하다고 보는 기준.
+
+## 2026-05-17 변경 동기화 (PC Assembly Cinematic PBR Decor + Miniature Framing)
+Added:
+- PC assembly final-room evidence may include non-PC PBR decor GLTFs for shelf/table detail, provided generated/prototype provenance remains separate from exact PC SKU requirements.
+- Final screenshot review must include softer floor/wall AO, right-wall media visibility, desk PC grounding, and miniature cutaway framing in addition to step/audio/payload completion.
+
+Updated:
+- Current hidden QA route evidence after the latest pass is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=244`, `cinematicLuminanceStdDev=52.1`.
+- The Bruno Simon-inspired quality target remains a human visual QA target, not an automated metric target. Metrics prove nonblank/color/contrast evidence only.
+
+Removed/Deprecated:
+- Treating every higher-detail GLTF as an automatic visual upgrade. Style fit, scale, opacity/depth behavior, and screenshot readability decide whether an asset stays.
+
+## 2026-05-17 변경 동기화 (PC Assembly Tower Detail Evidence)
+Added:
+- PC assembly QA final-room evidence must show the completed PC tower as a readable deskterior object, not just a present scene node. Acceptable prototype evidence can combine the quote-derived Meshy build kit with a clearly documented renderer-only detail overlay.
+- The current tower detail pass adds screenshot-visible internal/exterior PC cues and moves the gaming chair out of the main sightline.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=248`, `cinematicLuminanceStdDev=52.16`.
+- Meshy provider generation remains gated by real credentials and budget checks. Without `MESHY_API_KEY` and budget env, use existing generated assets/proxy GLBs and record the limitation instead of pretending new Meshy assets were produced.
+
+Removed/Deprecated:
+- Counting a proxy/generated PC kit as Bruno-level asset quality when it lacks screenshot-readable interior/exterior detail or is blocked by scene occlusion.
+
+## 2026-05-17 변경 동기화 (PC Assembly Cutaway Room Evidence)
+Added:
+- PC assembly final-room evidence now includes architectural cutaway depth: left return wall, top/corner rim, baseboards, ceiling ribs, and cove LEDs.
+- The room envelope itself is part of the Bruno-inspired quality target. A high-detail desk is insufficient if the surrounding room still reads as a flat backdrop.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=258`, `cinematicLuminanceStdDev=50.29`.
+- Visual QA should explicitly inspect whether new architecture details improve miniature-room depth without hiding the PC tower, shelf, or sofa foreground.
+
+Removed/Deprecated:
+- Treating room object density alone as equivalent to cutaway-room composition quality.
+
+## 2026-05-17 변경 동기화 (Open Cutaway Wall Evidence)
+Added:
+- PC assembly final-room evidence now treats open sightlines as part of Bruno-inspired cutaway quality. Side-wall architecture should frame the room without turning into a dominant flat slab.
+- Latest left wall treatment uses translucent paneling, uprights, rails, small wall art, and a mini shelf to preserve depth while exposing shelf/desk/sofa contents.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=279`, `cinematicLuminanceStdDev=51.98`.
+
+Removed/Deprecated:
+- Treating stronger wall mass as always better than open composition.
+
+## 2026-05-17 변경 동기화 (Camera + Lighting Balance Evidence)
+Added:
+- PC assembly final-room evidence now includes camera/light/post-FX review as a first-class quality gate for Bruno-inspired miniature room presentation.
+- Latest pass uses higher 3/4 framing, slimmer left cutaway wall treatment, reduced renderer exposure, and subtle Bloom/Vignette.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=397`, `cinematicLuminanceStdDev=72.38`.
+- Human review remains authoritative. Current state is improved evidence, not final Bruno-level commercial asset quality.
+
+Removed/Deprecated:
+- Declaring the target complete from automated visual metrics alone.
+
+## 2026-05-17 변경 동기화 (Desk PC Readability Evidence)
+Added:
+- PC assembly final-room evidence must reject generated/proxy asset layers when they visually harm the desk setup, room atmosphere, or readable assembled PC, even if the source asset exists and passes file checks.
+- Current desk-PC readability pass keeps Compuzone Meshy build-kit output as a subdued evidence layer and relies on authored renderer details for the visible desk PC case/interior silhouette.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=306`, `luminanceStdDev=64.57`, `cinematicUniqueColorBuckets=392`, `cinematicLuminanceStdDev=64.71`.
+- Human review remains authoritative: this is a cleaner, more readable Bruno-inspired prototype frame, not final commercial Bruno-level quality.
+
+Removed/Deprecated:
+- Using a non-quote showcase case GLB as a large visible overlay for the Compuzone/Lian-Li PC build result.
+
+## 2026-05-17 변경 동기화 (Solid Tower Material Balance Evidence)
+Added:
+- PC assembly final-room evidence must inspect whether the completed white PC case has readable depth, tempered-glass separation, and visible interior hardware, not only whether the tower is large and prominent.
+- Current pass adds a subdued material response and dark interior/side-volume layer so the desk PC reads as a solid assembled body in screenshot review.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=295`, `luminanceStdDev=65.11`, `cinematicUniqueColorBuckets=380`, `cinematicLuminanceStdDev=65.19`.
+- Human review remains authoritative: this is stronger prototype visual evidence, not final Bruno Simon room-level commercial asset quality.
+
+Removed/Deprecated:
+- Passing final-room visual QA when the white PC tower clips into a flat bright plane and hides its assembled internals.
+
+## 2026-05-17 변경 동기화 (PC System Configurator Foundation)
+Added:
+- Deskterior PC work must treat PC as a reusable configurator subsystem, not a one-off mesh in a lab scene.
+- `pc-system` owns catalog metadata, ordered assembly state, compatibility evaluation, physical fit evaluation, and anchor definitions. Room/editor surfaces should consume this module instead of duplicating hardcoded PC rules.
+- Saved PC assembly evidence must include system-level checks alongside visual completion: compatibility, fit, attachment anchors, and state-machine completion.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=291`, `luminanceStdDev=65.13`, `cinematicUniqueColorBuckets=379`, `cinematicLuminanceStdDev=65.30`.
+- Verifier now fails if the completed build does not expose passing compatibility/physical-fit status and a complete assembly state machine.
+- Product framing is Deskterior-first: PC assembly exists to make a user's desk setup and room more realistic, configurable, and shareable.
+
+Removed/Deprecated:
+- Adding PC support as a static room prop with no assembly state, part compatibility, or physical mounting rules.
+
+## 2026-05-17 변경 동기화 (Deskterior Asset-First PC Visual Gate)
+Added:
+- Deskterior PC work must support both flows as one product surface: prebuilt PC placement/customization and custom build assembly. The finished PC must become an assembled desk object that integrates with the setup without taking priority over furniture, room assets, lighting, and atmosphere.
+- The PC assembly QA route now records a combined proof path: 38 assembly steps, 11 room setup steps, 50 sound events, compatibility pass, physical-fit pass, save payload, and final cinematic screenshot.
+- Final-room review must check furniture/room asset quality, wall/window depth, desk PC readability, and room-light/RGB integration together.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=280`, `luminanceStdDev=65.30`, `cinematicUniqueColorBuckets=390`, `cinematicLuminanceStdDev=65.56`.
+- The product framing remains Deskterior-first. PC assembly is valuable because it lets the user assemble an important deskterior object inside a higher-quality room/desk scene, not because the PC should dominate the room composition or become an isolated mechanical simulator.
+
+Removed/Deprecated:
+- Treating "PC support" as a static mesh placement feature or as a standalone assembly game detached from the room/editor/save-share flow.
+
+## 2026-05-17 변경 동기화 (Room Asset Quality Priority)
+Added:
+- Deskterior visual quality is room/furniture/decor/lighting first. PC assembly is an important interaction layer inside that scene, not the primary visual subject.
+- QA lab visual passes should record when they improve furniture density, textile detail, wall material treatment, desk surface styling, and mood lighting.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=275`, `luminanceStdDev=64.66`, `cinematicUniqueColorBuckets=405`, `cinematicLuminanceStdDev=64.98`.
+- PC local RGB and Meshy layer visibility should be dampened if the completed tower visually overpowers the room.
+
+Removed/Deprecated:
+- Using PC brightness, scale, or centrality as a proxy for Deskterior quality.
+
+## 2026-05-17 변경 동기화 (Deskterior-First PC Visual Balance)
+Added:
+- PC assembly integration must preserve Deskterior-first visual hierarchy: room shell, furniture/decor asset quality, material depth, and lighting atmosphere are higher priority than making the PC tower the scene centerpiece.
+- PC tower review should check that the finished build remains directly assembled/configurable and desk-relevant, while its brightness/scale/RGB stays subordinate to the full deskterior composition.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=271`, `luminanceStdDev=61.14`, `cinematicUniqueColorBuckets=401`, `cinematicLuminanceStdDev=63.61`.
+- The current visual route uses a `RoomMaterialDepthPass` and reduced PC material/local light intensity to keep PC assembly as an important desk object rather than the room's central visual subject.
+
+Removed/Deprecated:
+- Framing PC assembly work as a PC-centered room presentation.
+- Passing visual QA when PC glow, pure-white case highlights, or RGB accents overpower the room/furniture/lighting mood.
+
+## 2026-05-17 변경 동기화 (Furniture Microdetail Evidence)
+Added:
+- Deskterior-first visual QA must treat desk/shelf/media/sofa/rug microdetails as first-class evidence when PC assembly is present. A directly assembled PC is important, but room/furniture/decor quality and lighting atmosphere remain the higher visual priority.
+- The PC assembly QA route now includes renderer-authored desk material grain/clutter, shelf labels/plants/camera, media-console detail, sofa textile piping/tufts/legs, rug fringe, and softened wall guide lines.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=273`, `luminanceStdDev=60.99`, `cinematicUniqueColorBuckets=394`, `cinematicLuminanceStdDev=63.53`.
+- Human review remains authoritative: the scene is denser and less PC-centered, but it is still verified prototype polish rather than final Bruno Simon room-level commercial asset quality.
+
+Removed/Deprecated:
+- Treating wall guide grids, PC glow, or object count alone as proof of Deskterior room quality.
+
+## 2026-05-17 변경 동기화 (Curated Furniture GLB Priority)
+Added:
+- Deskterior-first PC assembly work should prefer improving room/furniture/decor assets and lighting mood before adding PC visual weight.
+- Existing curated GLB furniture layers may be used in hidden QA routes when they improve final screenshot quality and remain separate from release-ready SKU approval.
+- PC remains an important directly assembled deskterior component, not the room centerpiece.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=274`, `luminanceStdDev=62.00`, `cinematicUniqueColorBuckets=407`, `cinematicLuminanceStdDev=63.32`.
+- Human review remains required: the current pass improves desk/sofa/media/coffee-table asset layers and reduces wall-grid/chair dominance, but it is still prototype visual polish.
+
+Removed/Deprecated:
+- Passing final room review because the PC assembly route is functionally complete while large room furniture still reads as unpolished procedural blocks.
+
+## 2026-05-18 변경 동기화 (Room Lighting Priority + PC Subordinate)
+Added:
+- Deskterior PC assembly review must explicitly preserve this hierarchy: room/furniture/decor asset quality and lighting atmosphere first, directly assembled PC as an important desk object second.
+- Latest final-room evidence should inspect practical lights, wall/ceiling material softness, subdued LED strips, desk/furniture layers, and whether the PC stays subordinate to the full deskterior composition.
+
+Updated:
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=286`, `luminanceStdDev=60.73`, `cinematicUniqueColorBuckets=388`, `cinematicLuminanceStdDev=60.94`.
+- Human review remains authoritative: the scene is less PC-centered and has stronger room-lighting cues, but it is still verified prototype polish rather than final Bruno Simon room-level commercial asset quality.
+
+Removed/Deprecated:
+- Treating PC centrality, PC brightness, or LED-line contrast as the visual target for Deskterior.
+- Approving a final-room pass without checking whether room/furniture assets, material response, and lighting mood improved.
+
+## 2026-05-18 변경 동기화 (Open Asset QA Staging)
+Added:
+- Open-license GLBs can enter hidden QA routes through an explicit QA-only staging path when provenance is recorded and files remain outside public catalog publication.
+- The first allowed QA staging path is `/api/qa-assets/open-license/kenney-furniture-kit/[file]`, serving an allowlist from `assets/sources/open-license/kenney-furniture-kit/selected-glb`.
+- Room/furniture/decor assets should receive this treatment before adding more PC visual prominence.
+
+Updated:
+- Latest hidden QA evidence after Kenney staging is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=285`, `luminanceStdDev=59.66`, `cinematicUniqueColorBuckets=396`, `cinematicLuminanceStdDev=60.79`.
+- QA staging is not catalog publication. Promotion still requires visual review, Blender/glTF inspection, pivot/material normalization, optimization, and runtime package metadata.
+
+Removed/Deprecated:
+- Copying newly downloaded GLB files directly into `apps/web/public/assets/models` as if they were release-ready assets.
+- Treating open-license availability as a quality pass. License clearance and Bruno-level visual quality remain separate gates.
+
+## 2026-05-18 변경 동기화 (Meshy Community QA Staging)
+Added:
+- Meshy community 공개 모델은 생성형 job이 아니라 기존 published model ingestion으로 취급한다. 사용 가능한 경우 public task metadata에서 GLB를 받아 source-staging하고, QA-only route로만 장면에 연결한다.
+- `assets/sources/meshy-community/selected-glb`와 `assets/references/meshy-community/download-audit-2026-05-18.json`를 Meshy community provenance 기준으로 둔다.
+- `apps/web/src/lib/qa/meshy-community-assets.ts`를 Meshy community QA route/workbench/verifier의 단일 registry로 둔다.
+- `assets/references/meshy-community/qa-registry-2026-05-18.json`는 QA route, runtime URL, scene placement, promotion blocker를 기록하는 reference artifact다.
+- PC assembly workbench final room은 Meshy community GLB를 room/furniture/decor 보강용으로만 사용한다. PC는 계속 deskterior의 중요한 조립 가능 요소이며 room centerpiece가 아니다.
+
+Updated:
+- Latest hidden QA evidence after Meshy community staging is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=314`, `luminanceStdDev=59.16`, `cinematicUniqueColorBuckets=415`, `cinematicLuminanceStdDev=60.11`.
+- Meshy community QA staging is not runtime catalog publication. Promotion still requires material/pivot normalization, optimization, package metadata, and human visual QA.
+- Meshy community route allowlist, visual placement, and verifier source file checks must remain registry-driven to avoid drift.
+
+Removed/Deprecated:
+- Treating Meshy's `.meshy` viewer binary as a runtime GLB.
+- Treating a public Meshy model as usable without license/provenance/audit evidence.
+
+## 2026-05-19 변경 동기화 (Meshy Community Runtime Candidates)
+Added:
+- Meshy community QA assets now have a conservative runtime-candidate staging lane under `assets/runtime-candidates/meshy-community/`.
+- `scripts/blender/normalize-meshy-community-assets.py` owns floor-centered pivot normalization, deterministic mesh/material names, thumbnail render, and per-asset candidate sidecar generation.
+- `verify:meshy-community-assets` verifies sidecar provenance, GLB v2 headers, Meshopt extension presence, normalized names, thumbnails, and writes `assets/references/meshy-community/optimization-report-2026-05-19.json`.
+
+Updated:
+- Meshy community candidates remain `not-published`. Candidate status means “usable for visual QA experiments,” not “catalog-ready.”
+- Candidate sidecars must preserve Meshy public page URL and public task API from `qa-registry-2026-05-18.json`.
+- Texture transcoding remains deferred until visual promotion; `ktx2Ready=false` is the correct state for these candidates.
+
+Removed/Deprecated:
+- Promoting source-staged GLBs without a runtime-candidate sidecar.
+- Treating Meshopt compression as a substitute for human visual QA, style fit review, or package metadata gates.
+
+## 2026-05-19 변경 동기화 (Authored Asset Loop for Bruno-Level Room Quality)
+Added:
+- DeskteriorOnline now has an explicit authored-asset loop in addition to open/Meshy acquisition: Blender script -> GLB candidate -> thumbnail -> review JSON -> hidden QA route/scene placement -> screenshot verifier -> human visual judgment.
+- The first authored candidate is `p2s_bruno_room_detail_kit`, generated by `scripts/blender/generate-bruno-room-detail-kit.py` and staged under both `assets/runtime-candidates/blender-authored/bruno-room-detail-kit/` and the QA public model path.
+- PC assembly workbench uses this candidate as a wall/decor density layer while preserving the product hierarchy: room/furniture/decor quality and atmosphere first, directly assembled PC as an important deskterior component second.
+
+Updated:
+- Latest hidden QA evidence after authored asset integration is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=332`, `luminanceStdDev=67.14`, `cinematicUniqueColorBuckets=417`, `cinematicLuminanceStdDev=64.73`.
+- The Meshy community brick wall is now an accent, not a primary wall material. The room should read through furniture silhouettes, object density, warm/cool lighting, and material depth rather than one dominant imported wall asset.
+- Bruno-level claims remain screenshot- and asset-review-driven. Passing automated metrics means “QA candidate works,” not “commercial final.”
+
+Removed/Deprecated:
+- Treating PC build functionality alone as sufficient completion for the Deskterior room experience.
+- Treating any single imported/generated GLB as a shortcut to commercial-grade room quality without comparison, normalization, and repeated visual QA.
+
+## 2026-05-19 변경 동기화 (Room Surface Authored Asset Loop)
+Added:
+- Bruno-inspired QA now has a second authored Blender lane for large room surfaces, not just wall/decor micro-props. The lane generates source `.blend`, runtime candidate GLB, public QA GLB, thumbnail, and review JSON.
+- `p2s_bruno_room_surface_kit` improves the PC assembly final room with textured floor planks, plaster overlays, trim, cove lights, and baked-shadow cards.
+- The PC assembly verifier now treats authored surface assets as first-class QA evidence alongside PC build kit, room detail kit, open-license GLBs, and Meshy community candidates.
+
+Updated:
+- Latest hidden QA evidence after the surface pass is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `uniqueColorBuckets=337`, `luminanceStdDev=67.79`, `cinematicUniqueColorBuckets=416`, `cinematicLuminanceStdDev=65.35`.
+- Internal browser review remains mandatory before accepting visual progress. The first generated surface kit blocked the camera; that failure was fixed before the Playwright verifier evidence was recorded.
+- Deskterior visual priority is unchanged: room/furniture/decor asset quality and lighting atmosphere first, directly assembled PC as an important deskterior element second.
+
+Removed/Deprecated:
+- Relying on flat procedural room-shell blocks as the long-term visual foundation for Bruno-level QA.
+- Allowing authored surface assets to introduce opaque ceilings or strong wall grids that reduce the cutaway-room feel.
+
+## 2026-05-19 변경 동기화 (Authored Furniture Candidate Contract)
+Added:
+- Large room/furniture GLBs may be project-authored by Blender scripts when the full chain is present: script, source `.blend`, runtime candidate GLB, public QA GLB, thumbnail, review JSON, scene integration, and verifier assertions.
+- The current contract instance is `p2s_bruno_furniture_hero_kit`, integrated only as a hidden QA/final-room workbench layer.
+
+Updated:
+- Runtime QA candidate status is lower than public catalog publication. Candidate approval requires the automated evidence plus human screenshot review and explicit remaining-gap notes.
+- The PC assembly workbench is now the integration test for three authored visual lanes: room detail kit, room surface kit, and furniture hero kit. These layers must stay loosely coupled from the core PC assembly state machine.
+- Commercial readiness requires asset-package metadata, material/texture split, KTX2/mesh optimization, LOD/proxy/collider planning, and reference comparison. Passing `verify:pc-assembly-workbench` only proves the QA scene still works.
+
+Removed/Deprecated:
+- Hardwiring large visual assets into the room/editor without a review artifact and verifier coverage.
+- Treating Bruno Simon-inspired visual direction as a single asset task; it is an iterative loop across asset craft, lighting, camera, material response, and browser screenshot QA.
+
+## 2026-05-19 변경 동기화 (Furniture Hero Kit Material Gate)
+Added:
+- Project-authored furniture candidates must expose material-map evidence in their review report before they can be discussed as commercial promotion candidates.
+- The current minimum report fields for the furniture hero lane are `asset.textureSet.authoredMaps`, `generatedPbrMapCount`, `ktx2Ready`, `metrics.textureCount`, and `comparisonReview.commercialBenchmarkRubric`.
+
+Updated:
+- `verify:pc-assembly-workbench` now treats furniture material-map evidence as part of the room/furniture/decor quality gate, alongside PC assembly state-machine evidence.
+- The latest verified hidden QA pass completed 38 PC assembly steps and 11 room setup steps, with 50 audio events and cinematic screenshot evidence.
+- This remains QA-candidate evidence only. Bruno-inspired visual direction requires repeated Blender/browser review loops and does not become commercial-ready until optimization, baked lighting, package metadata, and human art review gates are satisfied.
+
+Removed/Deprecated:
+- Calling a furniture GLB “상용 수준” because it is visible in the room screenshot.
+- Letting semi-transparent staging layers visually stand in for finished furniture.
+
+## 2026-05-19 변경 동기화 (Bruno Benchmark Evidence Contract)
+Added:
+- Bruno-inspired room/furniture progress must keep a benchmark evidence pair: JSON ledger plus contact sheet. Current pair:
+  - `assets/references/blender-authored/bruno-furniture-hero-kit/benchmark-ledger-2026-05-19.json`
+  - `output/visual-qa/bruno-room-asset-benchmark-contact-sheet.png`
+- `verify:pc-assembly-workbench` must fail if the benchmark ledger/contact sheet is missing or if the ledger does not record blocker ranking and next iteration order.
+
+Updated:
+- The PC assembly workbench now verifies both interaction completeness and room/furniture visual QA artifacts. Passing the workbench means the QA scene is stable, not that the room is commercial-ready.
+- Current furniture hero candidate evidence is `193 objects`, `18 embedded textures`, `42,956 triangles`, and explicit `not-commercial-ready` benchmark status.
+
+Removed/Deprecated:
+- Reporting Bruno-level visual progress without a comparison artifact and explicit remaining-gap ledger.
+- Embedding unlicensed commercial reference imagery in repo QA boards.
+
+## 2026-05-19 변경 동기화 (Cinematic Lighting Evidence Contract)
+Added:
+- PC assembly final-room evidence must include highlight/glare metrics for cinematic captures: `cinematicBrightPixelRatio` and `cinematicClippedHighlightRatio`.
+- The QA scene may use a named renderer contact-occlusion layer, but that layer must remain distinguishable from true baked AO/lightmap assets.
+
+Updated:
+- Latest verified hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=375`, `cinematicLuminanceStdDev=62.52`, `cinematicBrightPixelRatio=0.033`, and `cinematicClippedHighlightRatio=0.019`.
+- The current Bruno benchmark remains `not-commercial-ready`. The remaining priority order is foreground furniture topology, true baked AO/contact-shadow lightmap, surface normal/roughness/AO maps, runtime packaging metadata, then PC part/cable model upgrades.
+
+Removed/Deprecated:
+- Treating low glare metrics as final commercial lighting quality without baked lighting, material review, and human visual QA.
+
+## 2026-05-19 변경 동기화 (Foreground Furniture Evidence Contract)
+Added:
+- Furniture hero kit regeneration must update both the asset review JSON and Bruno benchmark ledger before visual progress is reported.
+- Foreground furniture evidence should name the actual asset metrics and the human-visible blocker that remains.
+
+Updated:
+- Latest furniture hero evidence is `249 objects`, `22 materials`, `18 embedded textures`, `53,940 triangles`, `11,234,844 bytes`.
+- Latest verified hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=376`, `cinematicLuminanceStdDev=62.36`, `cinematicBrightPixelRatio=0.032`, and `cinematicClippedHighlightRatio=0.019`.
+- Current state remains `not-commercial-ready`; foreground furniture is improved but still blocked by primitive-derived silhouettes.
+
+Removed/Deprecated:
+- Reporting older furniture metrics after a Blender regeneration pass.
+- Calling added foreground detail a commercial topology pass when the underlying sofa/table forms are still primitive-derived.
+
+## 2026-05-19 변경 동기화 (Surface Shading Evidence Contract)
+Added:
+- Surface-kit visual progress must now report explicit texture roles: `baseColor`, `normal`, `roughness`, `ambientOcclusion`, and `contactShadowLightmap`.
+- Authored contact-shadow evidence must be recorded in review JSON with zone metadata, not only inferred from a runtime JSX overlay.
+- The current surface review contract records 7 floor contact zones and 4 wall contact zones.
+
+Updated:
+- Latest surface kit evidence is `123 objects`, `11 materials`, `15 embedded textures`, `12,118 triangles`, and `9,124,460 bytes`.
+- Latest verified hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=375`, `cinematicLuminanceStdDev=62.42`, `cinematicBrightPixelRatio=0.033`, and `cinematicClippedHighlightRatio=0.019`.
+- Codex internal browser review is part of the visual evidence loop, but a visible canvas still does not imply commercial-ready quality.
+
+Removed/Deprecated:
+- Treating renderer contact-shadow overlays as equivalent to authored asset lightmaps.
+- Treating procedural helper maps as final UV-baked commercial material work.
+
+## 2026-05-19 변경 동기화 (Foreground Curvature Evidence Contract)
+Added:
+- Furniture hero kit review reports must include `asset.bespokeCurvaturePass` when claiming a foreground topology improvement. The field records mesh families, sofa targets, coffee-table targets, and that human art review remains required.
+- `verify:pc-assembly-workbench` now validates the bespoke curvature metadata in addition to object/material/texture/triangle gates.
+- Foreground furniture topology progress may move a gate from blocked to partial only when the GLB is regenerated, benchmark ledger is updated, and the final room is rechecked in a browser.
+
+Updated:
+- Latest furniture hero evidence is `252 objects`, `22 materials`, `18 embedded textures`, `54,822 triangles`, and `11,131,040 bytes`.
+- Latest verified hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=375`, `cinematicLuminanceStdDev=62.45`, `cinematicBrightPixelRatio=0.033`, and `cinematicClippedHighlightRatio=0.019`.
+- Internal browser review found the foreground curvature pass visibly improves sofa/coffee-table box-read, but the scene remains `not-commercial-ready` because wall grid/reveal artifacts, procedural material depth, true GI/bake absence, and runtime packaging gaps remain.
+
+Removed/Deprecated:
+- Calling a foreground furniture pass complete because bevel modifiers and small details increased object count.
+- Reporting Bruno Simon-level quality without the browser screenshot and explicit blocker ledger agreeing with the claim.
+
+## 2026-05-19 변경 동기화 (Wall/Floor Line Discipline Contract)
+Added:
+- Room-surface quality claims must distinguish subtle material/reveal cues from visible grid artifacts. Surface kit review can use `wallRevealCleanupPass`, but it must keep `gridOverlayRisk` explicit until browser review clears the scene.
+- QA workbench visual evidence must include both automated screenshot metrics and Codex internal browser inspection for wall/floor/ceiling line dominance.
+
+Updated:
+- Latest surface kit evidence is `127 objects`, `12 materials`, `16 embedded textures`, `12,126 triangles`, and `10,547,540 bytes`.
+- Latest wall reveal cleanup evidence records `lineOpacityAfter=0.085` and 4 soft wall-wash zones.
+- Latest verified hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=379`, `cinematicLuminanceStdDev=62.37`, `cinematicBrightPixelRatio=0.033`, and `cinematicClippedHighlightRatio=0.019`.
+
+Removed/Deprecated:
+- Letting floor seams, ceiling ribs, or cove LED strips dominate the screenshot as “detail.”
+- Treating a browser-visible final room as commercial-ready when the benchmark ledger still says `not-commercial-ready`.
+
+## 2026-05-19 변경 동기화 (Surface Bounce Evidence Contract)
+Added:
+- Surface-kit review reports may use `asset.artDirectedGiPass` for local Blender-authored bounce evidence, but the field must explicitly state whether it is physically baked and whether a path-traced bake remains required.
+- The current contract requires `artDirectedBounceLightmap` in `textureSet.authoredMaps`, at least 5 floor bounce zones, and at least 4 wall bounce zones before the pass counts as lighting/bake progress.
+- Benchmark and verifier evidence must keep Meshy/provider usage separate from local Blender-authored bounce cards.
+
+Updated:
+- Latest surface kit evidence is `136 objects`, `13 materials`, `17 embedded textures`, `12,144 triangles`, and `11,880,204 bytes`.
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=378`, `cinematicLuminanceStdDev=62.31`, `cinematicBrightPixelRatio=0.033`, and `cinematicClippedHighlightRatio=0.019`.
+- Codex internal browser review saved `output/playwright/pc-assembly-workbench-codex-browser.png`; it is required visual evidence, not a commercial-ready approval.
+
+Removed/Deprecated:
+- Reporting a hand-authored bounce-card pass as true GI.
+- Treating a richer surface-kit GLB as catalog-ready before KTX2/ORM packaging, split asset metadata, collider/proxy/LOD sidecars, and human art review are complete.
+
+## 2026-05-19 변경 동기화 (Surface Cycles AO Evidence Contract)
+Added:
+- Surface-kit lighting/bake progress can now count a physically baked AO probe only when `asset.cyclesAoBakePass` proves Blender Cycles executed the bake and records sample count, receiver surface, blocker proxies, and remaining GI gaps.
+- The current required fields are `engine=CYCLES`, `bakeType=AO`, `samples>=32`, `physicallyBakedAo=true`, `pathTracedGi=false`, `stillRequiresPathTracedGi=true`, and `stillRequiresFinalUvBake=true`.
+- `verify:pc-assembly-workbench` must validate `cyclesAoBakeLightmap` alongside `baseColor`, `normal`, `roughness`, `ambientOcclusion`, `contactShadowLightmap`, and `artDirectedBounceLightmap`.
+
+Updated:
+- Latest surface kit evidence is `137 objects`, `14 materials`, `18 embedded textures`, `12,146 triangles`, and `12,088,420 bytes`.
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=378`, `cinematicLuminanceStdDev=62.37`, `cinematicBrightPixelRatio=0.033`, and `cinematicClippedHighlightRatio=0.019`.
+- The current Bruno benchmark remains `not-commercial-ready`; Cycles AO reduces the lighting evidence gap but does not clear commercial material, package, catalog, or human art-review gates.
+
+Removed/Deprecated:
+- Reporting authored bounce cards as the only AO/bake progress after a Cycles bake probe exists.
+- Treating a single transparent floor AO projection as final GI, final UV bake, release-ready material packaging, or Bruno Simon-level completion.
+
+## 2026-05-19 변경 동기화 (Surface Packed ORM Package Contract)
+Added:
+- Surface package progress must distinguish packed ORM PNG sidecars from KTX2 runtime-ready texture packages.
+- Review JSON must record `asset.texturePackagingPass.packageStatus`, `packedOrmMapCount`, `packedOrmChannels`, sidecar file list, `ktx2Ready`, and the remaining runtime transcode/final UV bake flags.
+- `verify:pc-assembly-workbench` must validate the package manifest and sidecar channel semantics before counting the pass as material-packaging progress.
+
+Updated:
+- Latest surface kit evidence is `137 objects`, `14 materials`, `21 embedded/generated textures`, `12,146 triangles`, and `12,088,404 bytes`.
+- Latest hidden QA evidence is `stepCount=38`, `roomStepCount=11`, `audioEvents=50`, `saved=true`, `cinematicUniqueColorBuckets=378`, `cinematicLuminanceStdDev=62.37`, `cinematicBrightPixelRatio=0.033`, and `cinematicClippedHighlightRatio=0.019`.
+- Codex internal browser review saved `output/playwright/pc-assembly-workbench-codex-browser.png` with a visible final-room render. This is visual evidence only; the benchmark remains `not-commercial-ready`.
+
+Removed/Deprecated:
+- Reporting the surface kit as having no ORM package work after packed ORM sidecars exist.
+- Treating PNG sidecars as release-ready KTX2, final UV bake, split catalog package, or commercial-quality approval.
+
+## 2026-05-19 변경 동기화 (Runtime Sidecar Indexing + Visual Clarity Boundary)
+Added:
+- Runtime package descriptors can record texture sidecar packages through `texturePackages` and `files.texturePackageManifest`.
+- Bruno surface sidecar publication must upsert `p2s_bruno_room_surface_kit` into `apps/web/public/assets/catalog/runtime-packages.json` with `texturePackageStatus=orm-png-sidecar-ready-ktx2-pending`, `texturePackageCount=1`, `ktx2Ready=false`, and `releaseEligible=false`.
+- Visual clarity improvements to the QA workbench must preserve assembly state-machine semantics and remain render-only unless a separate interaction task explicitly changes assembly behavior.
+
+Updated:
+- The current sidecar pipeline publishes three ORM PNG maps into `/assets/models/p2s_bruno_room_surface_kit/textures/` and a public manifest at `/assets/models/p2s_bruno_room_surface_kit/texture-package-2026-05-19.json`.
+- `verify:pc-assembly-workbench` is now the integration gate for assembly flow, room placement flow, sound events, runtime surface sidecar metadata, and final cinematic metrics.
+- The latest browser-visible final room is sharper after DPR/MSAA/material-response tuning, but the benchmark status remains `not-commercial-ready`.
+
+Removed/Deprecated:
+- Hiding material/package gaps behind renderer post FX or bloom.
+- Reporting a QA runtime descriptor as a commercial catalog package before KTX2, final UV bake, true LOD/proxy/collider split, and human art review are complete.
+
+## 2026-05-19 변경 동기화 (Bruno Surface KTX2 Promotion Rule)
+Added:
+- Bruno surface ORM runtime packages can report `texturePackageStatus=ktx2-ready` only when the public manifest and runtime descriptor list `.ktx2` sidecars for all packed ORM maps.
+- The accepted local encoder path is `basisu`, `ktx`, or `toktx`; CI/release lanes must run the matching encode/check scripts before claiming runtime texture readiness.
+- `verify:pc-assembly-workbench` must remain tolerant of the older pending state but strict in both directions: pending requires `ktx2Path=null`, ready requires every `.ktx2` file to exist.
+
+Updated:
+- The current `p2s_bruno_room_surface_kit` runtime package is now KTX2-ready for the packed ORM sidecars and still `releaseEligible=false`.
+- Commercial readiness remains blocked by final UV-authored material bake, true GI/lightmap approval, split LOD/proxy/collider packages, stronger mesh topology, and human visual review.
+
+Removed/Deprecated:
+- Treating missing `toktx` as a permanent blocker when another validated KTX2 encoder is available.
+- Treating KTX2-ready ORM delivery as equivalent to Bruno Simon-level room quality.
+
+## 2026-05-19 변경 동기화 (Runtime-Bound Surface ORM Evidence)
+Added:
+- Bruno surface package promotion now has a second gate after KTX2 file validation: the browser scene must prove the package is consumed by actual GLB materials.
+- QA evidence must distinguish `TEXCOORD_1` source readiness from runtime-generated fallback UVs. Three.js exposes this source channel as `uv1`.
+- `verify:pc-assembly-workbench` is the current integration gate for this evidence because it covers PC assembly state, room placement, audio, saved payload, cinematic screenshot metrics, and Bruno surface material binding in one route.
+
+Updated:
+- Current passing evidence: `brunoSurfaceOrmConsumed=true`, roles `floorWoodOrm`, `plasterWallOrm`, `trimOrm`, enhanced materials `surface_subtle_plaster_reveal`, `surface_uv_plaster_warm_cool_pbr`, `surface_uv_trim_satin_warm_pbr`, `surface_uv_wood_plank_oiled_pbr`, `aoUv2Ready=89`, and `uv2Patched=0`.
+- Commercial readiness remains blocked by final UV-authored material bake, path-traced/art-directed GI approval, stronger furniture/decor topology, split LOD/proxy/collider packages, and human art QA.
+
+Removed/Deprecated:
+- Reporting KTX2 package readiness as complete while runtime materials still use only base GLB embedded colors/textures.
+- Reporting UV fallback count as source asset readiness.
+
+## 2026-05-19 변경 동기화 (Furniture Hero Runtime Ownership)
+Added:
+- The authored Bruno furniture hero kit is now the owner of the final lounge foreground when active. Runtime fallback/procedural furniture must not duplicate the main sofa/table masses in the completed cinematic room.
+- `verify:pc-assembly-workbench` must preserve the authored-hero overlap control contract: centralized `authoredFurnitureHeroActive`, `suppressLounge` on community furniture, and `SofaArea` receiving `authoredHeroActive`.
+- Blender-authored furniture reports must keep `stillRequiresHumanArtReview=true` until a licensed/open benchmark comparison and human art pass clear commercial promotion.
+
+Updated:
+- Current furniture hero candidate uses project-authored Blender geometry with expanded rounded topology and remains under QA budget at `56,408` triangles.
+- Current full-route proof still passes the assembly trainer contract: `38` PC assembly steps, `11` room setup steps, `50` sound events, saved payload, compatibility/fit checks, and browser-visible Bruno surface ORM material binding.
+- The quality state is better aligned with the desired direction but still classified as `not-commercial-ready`.
+
+Removed/Deprecated:
+- Using duplicated fallback lounge meshes as visual-density evidence after the authored hero kit is present.
+- Claiming Bruno Simon-level quality without final baked material/lighting assets, catalog package splits, LOD/proxy/collider sidecars, and human art QA.
+
+## 2026-05-19 변경 동기화 (Cinematic Lighting Guardrail)
+Added:
+- Final PC assembly room lighting must remain profile-driven through `cinematicRoomLightingProfile`; future visual passes should tune the profile instead of scattering light values.
+- The integration gate for this route must prove both product behavior and image quality: PC assembly steps, room setup steps, audio events, saved payload, surface ORM material binding, and cinematic exposure metrics.
+- Local QA automation must tolerate transient Next dev reloads by waiting for a stable QA registry before interaction.
+
+Updated:
+- Current passing route evidence: `38` assembly steps, `11` room setup steps, `50` sound events, `brunoSurfaceOrmConsumed=true`, `aoUv2Ready=89`, `uv2Patched=0`, `bright=0.028`, and `clipped=0.013`.
+- Commercial readiness remains blocked by asset and bake quality, not by the exposure guardrail.
+
+Removed/Deprecated:
+- Treating a first-created QA registry as interaction-ready during dev reloads.
+- Raising global light/exposure to compensate for unfinished geometry, materials, or baked lighting.
+
+## 2026-05-19 변경 동기화 (Furniture Asset Authorship Priority)
+Added:
+- Bruno-inspired room quality work now treats large GLB source authorship as the active blocker ahead of additional lighting/exposure tuning.
+- When the furniture kit is near budget, quality improvements should replace primitive-derived large forms with continuous authored mesh surfaces before adding decorative micro-objects.
+- The latest furniture hero kit must stay under the `65,000` triangle QA budget while preserving runtime KTX2 ORM consumption evidence.
+
+Updated:
+- Current furniture hero candidate metrics are `292 objects`, `22 materials`, `22 textures`, `63,714 triangles`, and `triangleBudgetStatus=pass`.
+- The latest full-route QA still proves the product behavior contract: `38` PC assembly steps, `11` room setup steps, `50` sound events, saved payload, surface/furniture ORM material binding, and cinematic screenshot metrics.
+- The quality state is improved but still `not-commercial-ready`; the remaining work is stronger source GLBs, UV/tangent/material bake work, split packages, and human art QA.
+
+Removed/Deprecated:
+- Treating extra primitive detail density as a substitute for commercial-grade source mesh topology.
+- Claiming Bruno Simon-level quality from a visible browser screenshot while benchmark status remains `not-commercial-ready`.
+
+## 2026-05-19 변경 동기화 (Foreground Asset Quality Priority)
+Added:
+- The room-quality priority is now explicit: large visible assets must be fixed at the source GLB level before more lighting/post-FX tuning is treated as progress.
+- Foreground upholstery rear surfaces must use continuous authored mesh shells with UV/material evidence when visible in the cinematic composition.
+- Runtime texture package metadata and source review metadata must stay synchronized after KTX2 encoding so asset QA does not overstate or understate readiness.
+
+Updated:
+- Current furniture hero candidate metrics are `282 objects`, `22 materials`, `22 textures`, `63,896 triangles`, `triangleBudgetStatus=pass`, and `11,300,956 bytes`.
+- The latest full-route QA proves the product behavior contract and material package consumption, but the benchmark status remains `not-commercial-ready`.
+- Next planning should treat desk, shelf/books, media console, PC case, dense desk props, and remaining seating forms as higher ROI than further micro-detailing the current monolithic furniture kit.
+
+Removed/Deprecated:
+- Using a visible screenshot with passing automated metrics as final quality approval when large source assets still read procedural.
+- Letting stale asset-review metadata contradict generated runtime texture packages.
+
+## 2026-05-21 변경 동기화 (Desk Prop Real-Scale Asset Gate)
+Added:
+- Hero-visible desktop accessories must use measured product-class proportions before visual polish is considered meaningful.
+- The active desk accessory QA candidate is `p2s_commercial_desk_accessory_kit_v2`, generated from `scripts/blender/generate-commercial-desk-accessory-kit-v2.py`.
+- Runtime/review packages must record `realScaleReferenceMm`, self-authored license status, Meshy prompt-review gate status, and meshopt byte reduction evidence.
+
+Updated:
+- `/labs/qa/pc-assembly-workbench` points completed desktop setup to `/assets/models/p2s_commercial_desk_accessory_kit_v2/p2s_commercial_desk_accessory_kit_v2.glb`.
+- Commercial desk prop readiness is now blocked by browser scene review, KTX2/LOD/collider split, Meshy/open-source candidate comparison after prompt approval, and human art approval rather than by missing v2 GLB generation.
+
+Removed/Deprecated:
+- Treating V1 accessory scale as acceptable for current room-quality QA.
+- Interpreting “actual product quality” as copying protected logos or exact branded geometry; use dimensions, construction hierarchy, and material response as reference while keeping project-authored generic geometry.
+
+## 2026-05-21 변경 동기화 (Mechanical Keyboard Interaction Gate)
+Added:
+- Hero-visible keyboard work must separate source asset quality from interaction/audio quality: GLB geometry, runtime press targets, switch metadata, and sound profile state are all required for a mechanical-keyboard claim.
+- The active keyboard QA candidate is `p2s_mechanical_keyboard_switch_lab_v1`, generated from `scripts/blender/generate-mechanical-keyboard-switch-lab-v1.py`.
+- Switch references must remain generic and data-backed: red/blue/brown profile force and travel may use official switch spec pages, but branded logos/CAD/exact protected geometry must not be copied.
+
+Updated:
+- `/labs/qa/pc-assembly-workbench` now loads the standalone keyboard GLB when the keyboard step is active and exposes selectable red/blue/brown WebAudio press cues.
+- QA must preserve `keyboardSwitchProfile`, `keyboardSwitchEvents`, and saved interaction payload state separately from the existing PC assembly sound events.
+
+Removed/Deprecated:
+- Treating a static keyboard prop as sufficient once the product goal asks for actual switch feel/sound simulation.
+- Treating synthesized WebAudio cue quality as final commercial audio approval before recorded sound layers and human audio QA exist.
+
+## 2026-05-21 변경 동기화 (ABKO AR108G Reference Keyboard Gate)
+Added:
+- The active product-reference keyboard candidate is `p2s_abko_ar108g_sage_green_keyboard_v1`, generated from `scripts/blender/generate-abko-ar108g-sage-green-keyboard-v1.py`.
+- Product-reference assets must keep source URL, reference image set, release eligibility, known gaps, and interaction metadata in the runtime/review package.
+- The Compuzone ABKO AR108G reference is private/prototype-only until manufacturer, CAD, legend/decal, and trademark clearance are resolved.
+
+Updated:
+- `/labs/qa/pc-assembly-workbench` loads the ABKO AR108G reference keyboard GLB for the keyboard step and defaults the switch profile to the product-page blue switch `50G` spec.
+- QA must prove `pressTargets >= 100`, material slot evidence, product URL preservation, `releaseEligible=false`, saved `keyboardSwitchProfile`, and recorded keyboard switch events.
+- Visual review now prioritizes product-class keyboard silhouette and material response over exposed internal switch samples.
+
+Removed/Deprecated:
+- Treating `p2s_mechanical_keyboard_switch_lab_v1` as the current product-reference visual candidate.
+- Equating “same as the product” with copied protected brand geometry or logos; use private reference metadata and self-authored prototype geometry until licensing exists.

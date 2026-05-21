@@ -1,0 +1,35 @@
+{
+  "asset": "p2s_premium_workstation_hero",
+  "status": "standalone-generated-review-required",
+  "sourceBlend": "assets/blender/deskterior/p2s_premium_workstation_hero.blend",
+  "publicGlb": "apps/web/public/assets/models/p2s_premium_workstation_hero/p2s_premium_workstation_hero.glb",
+  "metrics": {
+    "nodes": 159,
+    "meshes": 157,
+    "materials": 31,
+    "triangles": 55076
+  },
+  "visualScope": [
+    "desk",
+    "monitor",
+    "secondary display",
+    "keyboard",
+    "mouse",
+    "microphone arm",
+    "desk lamp",
+    "desk mat",
+    "notebook",
+    "mug",
+    "planter",
+    "speakers",
+    "managed cables",
+    "white glass PC tower"
+  ],
+  "stillRequires": [
+    "human art review",
+    "final UV unwrap and texture atlas",
+    "baked AO/GI/lightmap",
+    "LOD/proxy/collider package",
+    "licensed/open commercial reference comparison"
+  ]
+}

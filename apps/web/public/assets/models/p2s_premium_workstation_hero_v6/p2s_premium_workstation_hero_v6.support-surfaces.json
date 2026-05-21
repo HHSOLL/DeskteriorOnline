@@ -1,0 +1,41 @@
+{
+  "assetId": "p2s_premium_workstation_hero_v6",
+  "supportSurfaces": [
+    {
+      "id": "desktop",
+      "type": "horizontal",
+      "center": [
+        -0.18,
+        0.188,
+        0.1
+      ],
+      "size": [
+        2.2,
+        0.66
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "id": "pc_top",
+      "type": "horizontal",
+      "center": [
+        1.24,
+        0.8,
+        -0.08
+      ],
+      "size": [
+        0.5,
+        0.38
+      ],
+      "normal": [
+        0,
+        1,
+        0
+      ]
+    }
+  ]
+}

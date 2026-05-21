@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "deskterior-texture-package-v1",
+  "assetSlug": "p2s-bruno-furniture-hero-kit",
+  "packageStatus": "orm-png-sidecar-ready-ktx2-pending",
+  "packedOrmMapCount": 4,
+  "packedOrmChannels": {
+    "r": "ambientOcclusion",
+    "g": "roughness",
+    "b": "metallic",
+    "a": "constantOne"
+  },
+  "ormSidecarFormat": "PNG",
+  "ktx2Ready": false,
+  "ktx2TranscodeAttempted": false,
+  "toktxAvailable": false,
+  "basisuAvailable": true,
+  "stillRequiresRuntimeKtx2Transcode": true,
+  "stillRequiresFinalUvBake": true,
+  "manifest": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/texture-package-2026-05-19.json",
+  "packedOrmMaps": [
+    {
+      "role": "furnitureWoodOrm",
+      "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_oiled_walnut_orm_1k.png",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color",
+      "metallic": 0.02
+    },
+    {
+      "role": "furnitureFabricOrm",
+      "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_bluegrey_fabric_orm_1k.png",
+      "resolution": [
+        1024,
+        1024
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color",
+      "metallic": 0.0
+    },
+    {
+      "role": "furnitureLacquerOrm",
+      "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_warm_lacquer_orm_512.png",
+      "resolution": [
+        512,
+        512
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color",
+      "metallic": 0.03
+    },
+    {
+      "role": "furnitureSpeakerOrm",
+      "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_speaker_grille_orm_512.png",
+      "resolution": [
+        512,
+        512
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color",
+      "metallic": 0.04
+    }
+  ],
+  "promotionBoundary": "Furniture ORM sidecar package evidence only; KTX2 transcode, final UV bake, meshopt, collider, and catalog split packaging remain blocked"
+}

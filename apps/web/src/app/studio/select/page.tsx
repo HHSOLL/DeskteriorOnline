@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense, useEffect, useMemo, useState, type ReactNode } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import {
   BedDouble,
@@ -14,11 +14,7 @@ import {
   Sofa,
   ToyBrick
 } from "lucide-react";
-import { AuthPopup } from "../../../components/overlay/AuthPopup";
-import { fetchAssetCatalog } from "../../../lib/api/catalog";
 import { createStudioProject } from "../../../lib/api/project";
-import { DEFAULT_CATALOG, buildProjectAssetSummary } from "../../../lib/builder/catalog";
-import { buildSeededSceneAssets } from "../../../lib/builder/seeded-assets";
 import {
   EMPTY_ROOM_TEMPLATE_CARDS,
   FURNISHED_ROOM_TEMPLATE_CARDS,
@@ -158,14 +154,38 @@ function TemplateCard({ title, areaLabel, preview, onSelect, isLaunching }: Temp
   );
 }
 
+function buildBuilderCustomizePath(card: EmptyRoomTemplateCard | FurnishedRoomTemplateCard) {
+  const query = new URLSearchParams({
+    intent: "template",
+    step: "density" in card ? "style" : "shape",
+    templateId: card.templateId,
+    width: String(card.width),
+    depth: String(card.depth),
+    wall: String(card.wallMaterialIndex),
+    floor: String(card.floorMaterialIndex),
+    lighting: "direct",
+    projectName: "projectName" in card ? card.projectName : card.title
+  });
+
+  if (typeof card.nookWidth === "number") {
+    query.set("nookWidth", String(card.nookWidth));
+  }
+  if (typeof card.nookDepth === "number") {
+    query.set("nookDepth", String(card.nookDepth));
+  }
+  if ("density" in card) {
+    query.set("seed", card.density);
+    query.set("scenePreset", card.id);
+  }
+
+  return `/studio/builder?${query.toString()}`;
+}
+
 function StudioSelectPageContent() {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const { session } = useAuthStore();
   const isAuthenticated = Boolean(session?.user);
-  const [catalogSnapshot, setCatalogSnapshot] = useState(DEFAULT_CATALOG);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [launchingId, setLaunchingId] = useState<string | null>(null);
   const [visibleEmptyCount, setVisibleEmptyCount] = useState(DEFAULT_VISIBLE_COUNT);
   const [visibleFurnishedCount, setVisibleFurnishedCount] = useState(DEFAULT_VISIBLE_COUNT);
@@ -174,24 +194,6 @@ function StudioSelectPageContent() {
   const density = resolveDensity(searchParams.get("density"));
   const category = resolveCategory(searchParams.get("category"));
   const isFurnished = mode === "furnished";
-
-  useEffect(() => {
-    let active = true;
-
-    fetchAssetCatalog()
-      .then((catalog) => {
-        if (!active) return;
-        setCatalogSnapshot(catalog);
-      })
-      .catch(() => {
-        if (!active) return;
-        setCatalogSnapshot(DEFAULT_CATALOG);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
 
   useEffect(() => {
     setVisibleEmptyCount(DEFAULT_VISIBLE_COUNT);
@@ -217,11 +219,14 @@ function StudioSelectPageContent() {
   const hasMoreFurnished = visibleFurnishedCards.length > renderedFurnishedCards.length;
   const hasVisibleFurnishedCards = visibleFurnishedCards.length > 0;
 
-  const currentPath = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
-
   const launchTemplate = async (card: EmptyRoomTemplateCard | FurnishedRoomTemplateCard) => {
+    if ("density" in card) {
+      router.push(buildBuilderCustomizePath(card));
+      return;
+    }
+
     if (!isAuthenticated) {
-      setIsAuthOpen(true);
+      router.push(buildBuilderCustomizePath(card));
       return;
     }
 
@@ -235,21 +240,14 @@ function StudioSelectPageContent() {
         nookDepth: card.nookDepth
       });
       const roomShell = deriveBlankRoomShell(baseScene);
-      const seedPreset = "density" in card ? card.density : "none";
-      const starterTemplateId = "density" in card ? card.id : null;
-      const seededAssets =
-        seedPreset === "none"
-          ? []
-          : buildSeededSceneAssets(catalogSnapshot, roomShell, seedPreset, starterTemplateId);
-      const description =
-        "density" in card ? "템플릿에서 바로 시작한 가구 배치 공간" : "템플릿에서 바로 시작한 빈 공간";
+      const description = "템플릿에서 바로 시작한 빈 공간";
 
       const project = await createStudioProject({
-        name: "projectName" in card ? card.projectName : card.title,
+        name: card.title,
         description,
         scene: {
           roomShell,
-          assets: seededAssets,
+          assets: [],
           materials: {
             wallIndex: card.wallMaterialIndex,
             floorIndex: card.floorMaterialIndex
@@ -263,10 +261,10 @@ function StudioSelectPageContent() {
             accentIntensity: 0.82,
             beamOpacity: 0.18
           },
-          assetSummary: seededAssets.length > 0 ? buildProjectAssetSummary(catalogSnapshot, seededAssets) : null,
-          projectName: "projectName" in card ? card.projectName : card.title,
+          assetSummary: null,
+          projectName: card.title,
           projectDescription: description,
-          message: seedPreset === "none" ? "빈 공간 템플릿으로 시작" : "가구 템플릿으로 시작"
+          message: "빈 공간 템플릿으로 시작"
         }
       });
 
@@ -447,7 +445,6 @@ function StudioSelectPageContent() {
         </div>
       </div>
 
-      <AuthPopup isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} nextPath={currentPath} />
     </>
   );
 }

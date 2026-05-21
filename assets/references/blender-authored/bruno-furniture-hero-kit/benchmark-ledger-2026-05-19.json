@@ -1,0 +1,197 @@
+{
+  "schemaVersion": "deskterior-bruno-room-asset-benchmark-v1",
+  "generatedAt": "2026-05-19T14:41:36.881Z",
+  "objective": "Create an evidence-backed iteration gate for moving the PC assembly room from QA candidate toward Bruno Simon-inspired commercial room quality.",
+  "status": "not-commercial-ready",
+  "contactSheet": "output/visual-qa/bruno-room-asset-benchmark-contact-sheet.png",
+  "visualMetrics": {
+    "finalRoomBrightPixelRatio": 0.044,
+    "finalRoomClippedHighlightRatio": 0.026
+  },
+  "comparisonPolicy": {
+    "noUnlicensedCommercialImagesEmbedded": true,
+    "benchmarkUse": "Commercial and Bruno Simon references are used as qualitative targets only; this board embeds only local authored/open/community evidence paths.",
+    "meshyProviderGeneration": "not-used-in-this-pass"
+  },
+  "inputs": {
+    "finalRoomScreenshot": "output/playwright/pc-assembly-workbench-cinematic.png",
+    "furnitureHeroReview": "assets/references/blender-authored/bruno-furniture-hero-kit/asset-review-2026-05-19.json",
+    "surfaceKitReview": "assets/references/blender-authored/bruno-room-surface-kit/asset-review-2026-05-19.json",
+    "detailKitReview": "assets/references/blender-authored/bruno-room-detail-kit/asset-review-2026-05-19.json"
+  },
+  "currentMetrics": {
+    "furnitureHero": {
+      "dimensionsM": [
+        6.3606,
+        3.769,
+        2.5033
+      ],
+      "objectCount": 328,
+      "materialCount": 22,
+      "textureCount": 22,
+      "triangleCount": 64048,
+      "triangleBudget": 65000,
+      "triangleBudgetStatus": "pass",
+      "runtimeBytes": 11161248,
+      "publicBytes": 11161248
+    },
+    "surfaceKit": {
+      "dimensionsM": [
+        7.054,
+        4.142,
+        2.68
+      ],
+      "objectCount": 152,
+      "materialCount": 18,
+      "textureCount": 21,
+      "triangleCount": 13554,
+      "runtimeBytes": 12095920,
+      "publicBytes": 12095920
+    },
+    "detailKit": {
+      "dimensionsM": [
+        1.93,
+        0.3885,
+        1.21
+      ],
+      "objectCount": 90,
+      "materialCount": 14,
+      "triangleCount": 20712,
+      "runtimeBytes": 1179300,
+      "publicBytes": 1179300
+    }
+  },
+  "panels": [
+    {
+      "id": "current-cinematic-room",
+      "title": "Current final room",
+      "subtitle": "Latest browser screenshot from the PC assembly workbench after full build and room styling.",
+      "imagePath": "/Users/sol/Desktop/deskteriorOnline/output/playwright/pc-assembly-workbench-cinematic.png",
+      "role": "current-result",
+      "evidence": "Warm/cool contrast is preserved and highlight washout is now tracked: bright 0.044, clipped 0.026."
+    },
+    {
+      "id": "furniture-hero-kit",
+      "title": "Furniture hero GLB",
+      "subtitle": "Furniture: objects 328, materials 22, textures 22, tris 64048",
+      "imagePath": "/Users/sol/Desktop/deskteriorOnline/assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/p2s_bruno_furniture_hero_kit.thumbnail.webp",
+      "role": "authored-asset",
+      "evidence": "Project-authored Blender furniture layer with baseColor/normal/roughness/ambientOcclusion/packedOrm helper maps, 4 packed ORM sidecars, and rounded_rect_slab/soft_horizontal_upholstery_surface/soft_vertical_upholstery_surface/soft_rear_upholstery_shell/vertical_tapered_cylinder/soft_lip_ellipsoid/under_shadow_curve/desk_integrated_wire_grommet/shelf_layered_lacquer_board/media_console_slatted_front topology pass; still not split into selectable catalog SKUs."
+    },
+    {
+      "id": "surface-kit",
+      "title": "Room surface GLB",
+      "subtitle": "Surface: objects 152, materials 18, textures 21, tris 13554",
+      "imagePath": "/Users/sol/Desktop/deskteriorOnline/assets/runtime-candidates/blender-authored/bruno-room-surface-kit/p2s_bruno_room_surface_kit.thumbnail.webp",
+      "role": "authored-asset",
+      "evidence": "Wood floor, plaster, trim, cove LEDs, baseColor/normal/roughness/ambientOcclusion/contactShadowLightmap/artDirectedBounceLightmap/cyclesAoBakeLightmap/packedOrm maps, and 7 floor contact zones improve room read. The new art-directed bounce pass adds 5 floor + 4 wall bounce zones. Cycles AO bake uses 48 samples across 7 blocker proxies. Wall reveal opacity is now 0.085 with 6 soft-wash zones. ORM sidecars: 3 maps; still lacks path-traced GI/KTX2 packaging."
+    },
+    {
+      "id": "detail-kit",
+      "title": "Wall detail GLB",
+      "subtitle": "Detail: objects 90, materials 14, textures 0, tris 20712",
+      "imagePath": "/Users/sol/Desktop/deskteriorOnline/assets/runtime-candidates/blender-authored/bruno-room-detail-kit/p2s_bruno_room_detail_kit.thumbnail.webp",
+      "role": "authored-asset",
+      "evidence": "Pegboard, shelves, books, cable details, camera, leaves, and LED bars increase lived-in density; botanical and micro-surface quality remain stylized."
+    },
+    {
+      "id": "meshy-community-reference",
+      "title": "Meshy/open candidate board",
+      "subtitle": "Locally staged public/community runtime candidates used for asset-quality comparison, not provider generation.",
+      "imagePath": "/Users/sol/Desktop/deskteriorOnline/output/meshy-community/runtime-candidates-contact-sheet.webp",
+      "role": "open-community-reference",
+      "evidence": "Useful for quick silhouette/material variety comparison; individual licenses still need release audit before catalog promotion."
+    },
+    {
+      "id": "so-ong-asset-reference",
+      "title": "Product asset comparison board",
+      "subtitle": "Existing input-vs-generated asset QA board from the So Ong desk setup pipeline.",
+      "imagePath": "/Users/sol/Desktop/deskteriorOnline/assets/references/video-scenes/so-ong-space-2026-05-desk-setup/so-ong-meshy-asset-comparison-board.png",
+      "role": "reference-board",
+      "evidence": "Shows the level of asset-by-asset input/render evidence expected before moving a room pack toward commercial catalog use."
+    }
+  ],
+  "benchmarkGates": [
+    {
+      "gate": "room composition",
+      "target": "cutaway room reads as a finished deskterior scene from the first screenshot",
+      "currentStatus": "partial",
+      "evidence": "The browser screenshot has wall/surface/furniture/detail layers, and glare is now measured at clipped=0.026.",
+      "nextAction": "Remove leftover staging primitives, tune camera crop, and continue reducing central practical light glare without flattening contrast."
+    },
+    {
+      "gate": "furniture topology",
+      "target": "sofa, coffee table, shelf, desk, and media console have bespoke silhouettes, bevels, seams, legs, backs, and scale detail",
+      "currentStatus": "partial",
+      "evidence": "The furniture kit now has 328 authored objects, 64048 triangles, and records 17 sofa + 9 coffee-table curved topology targets.",
+      "nextAction": "Use internal-browser screenshot review to decide whether another sculpt pass or a full high-poly/UV furniture rebuild is required."
+    },
+    {
+      "gate": "material response",
+      "target": "wood, fabric, lacquer, glass, screen, wall, and floor surfaces each react plausibly under warm/cool lighting",
+      "currentStatus": "partial",
+      "evidence": "Furniture helper maps include baseColor, normal, roughness, ambientOcclusion, packedOrm roles with 4 packed ORM sidecars; surface kit reports baseColor, normal, roughness, ambientOcclusion, contactShadowLightmap, artDirectedBounceLightmap, cyclesAoBakeLightmap, packedOrm roles with 21 embedded textures and 3 packed ORM sidecars.",
+      "nextAction": "Replace procedural helper maps with art-directed UV bakes, reduce flat fabric blocks, and keep KTX2 sidecar freshness under QA."
+    },
+    {
+      "gate": "lighting and bake",
+      "target": "scene has authored contact shadows, soft bounce, practical lights, and minimal runtime-only flatness",
+      "currentStatus": "partial",
+      "evidence": "Runtime glare is lower, the named cinematic contact-occlusion pass is wired, and the surface GLB now carries 7 floor + 4 wall contact-shadow lightmap zones plus 6 wall soft-wash zones and 5 floor + 4 wall art-directed bounce zones. It also has a CYCLES AO probe from 7 blocker proxies. It is still not a path-traced GI pass.",
+      "nextAction": "Promote the AO probe into true baked AO/GI UV textures, then reduce runtime-only shadow overlays."
+    },
+    {
+      "gate": "asset pipeline",
+      "target": "assets are split, selectable, optimized, licensed, documented, and ready for catalog/runtime LOD",
+      "currentStatus": "blocked",
+      "evidence": "Current GLB kits are QA layers with reports, surface ORM sidecars (orm-png-sidecar-ready-ktx2-pending), and furniture ORM sidecars (ktx2-ready). Furniture runtime KTX2 can be produced, but there is still no meshopt package, collider sidecar, LOD ladder, or catalog split metadata.",
+      "nextAction": "Split kits into catalog-ready assets and add proxy, collider, KTX2/meshopt, release eligibility, and provenance records."
+    },
+    {
+      "gate": "PC assembly integration",
+      "target": "PC build is a believable deskterior sub-flow without overpowering room/furniture quality",
+      "currentStatus": "pass-for-qa",
+      "evidence": "38 assembly steps, 11 room setup steps, attachment/compatibility/fit checks, audio events, and saved payload are verified.",
+      "nextAction": "Upgrade PC part GLBs and cable routing once the room/furniture visual base is stronger."
+    }
+  ],
+  "weakestAreas": [
+    {
+      "rank": 1,
+      "area": "foreground furniture silhouette",
+      "whyItBlocksCommercialQuality": "The sofa and coffee-table zone is closest to the camera. Bespoke rounded topology reduces the box-read, but it still needs human screenshot review against approved furniture references.",
+      "nextBlenderIteration": "Either refine the curved cushion/table meshes with stronger underside/contact shaping or move to a full high-poly sculpt, UV unwrap, and decimated runtime proxy."
+    },
+    {
+      "rank": 2,
+      "area": "lighting bake and wall softness",
+      "whyItBlocksCommercialQuality": "Glare is measured and reduced, authored surface contact/bounce zones exist, a Cycles AO probe exists, and wall reveal lines are softer, but the scene still lacks a path-traced global illumination texture pass.",
+      "nextBlenderIteration": "Promote the Cycles AO probe and hand-authored bounce atlas into true AO/GI UV atlases, keep wall guide lines below grid visibility, rebalance emissive practicals, and keep clipped highlight ratio under the QA threshold."
+    },
+    {
+      "rank": 3,
+      "area": "surface material depth",
+      "whyItBlocksCommercialQuality": "Floor/wall and furniture normal/roughness/AO/ORM helper maps exist now, but they are procedural package evidence and not yet real UV-unwrapped commercial texture bakes.",
+      "nextBlenderIteration": "Promote the ORM sidecars into art-directed UV bakes, keep KTX2 transcode checks in CI, and compare them against high-quality room-pack references."
+    },
+    {
+      "rank": 4,
+      "area": "runtime asset packaging",
+      "whyItBlocksCommercialQuality": "A single dense kit is acceptable for QA, but a product editor needs selectable assets, collider metadata, LODs, KTX2, meshopt, and provenance.",
+      "nextBlenderIteration": "Split furniture/surface/detail kits into catalog-sized runtime packages with proxy GLBs, colliders, release gates, and source metadata."
+    },
+    {
+      "rank": 5,
+      "area": "reference-driven iteration evidence",
+      "whyItBlocksCommercialQuality": "Commercial quality cannot be claimed from a screenshot alone; every visual pass needs a before/after board and gap ledger.",
+      "nextBlenderIteration": "Keep this contact sheet updated after each asset generation pass and promote only when visual blockers are closed."
+    }
+  ],
+  "nextIterationOrder": [
+    "internal-browser visual review of foreground furniture curvature and next sculpt decision",
+    "internal-browser visual review of the Cycles AO probe plus art-directed bounce atlas, then true path-traced GI bake for desk, sofa, shelf, and media zones",
+    "surface/furniture final UV bake and KTX2 freshness checks from the packed ORM sidecars",
+    "kit splitting and runtime packaging metadata",
+    "PC part model upgrade and cable detail pass"
+  ]
+}

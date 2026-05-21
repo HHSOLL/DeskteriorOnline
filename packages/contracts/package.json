@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./assets": "./src/assets.ts"
+    "./assets": "./src/assets.ts",
+    "./product-assets": "./src/product-assets.ts"
   },
   "dependencies": {
     "zod": "^4.2.1"

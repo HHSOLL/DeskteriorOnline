@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchAssetCatalog } from "../../lib/api/catalog";
 import {
   DEFAULT_CATALOG,
@@ -16,6 +16,12 @@ export function useAssetCatalog() {
   const [catalog, setCatalog] = useState<LibraryCatalogItem[]>(DEFAULT_CATALOG);
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<LibraryCatalogCategoryId>("all");
+
+  const refreshCatalog = useCallback(async () => {
+    const items = await fetchAssetCatalog();
+    setCatalog(items);
+    return items;
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -61,6 +67,7 @@ export function useAssetCatalog() {
     filteredItems,
     featuredItems,
     spotlightItem,
-    hasActiveFilters: activeCategory !== "all" || query.trim().length > 0
+    hasActiveFilters: activeCategory !== "all" || query.trim().length > 0,
+    refreshCatalog
   };
 }

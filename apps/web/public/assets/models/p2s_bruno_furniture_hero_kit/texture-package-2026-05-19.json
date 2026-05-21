@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "deskterior-runtime-texture-package-v1",
+  "generatedAt": "2026-05-19T14:40:49.081Z",
+  "assetKey": "p2s_bruno_furniture_hero_kit",
+  "sourceManifestPath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/texture-package-2026-05-19.json",
+  "packageStatus": "ktx2-ready",
+  "ktx2Ready": true,
+  "ktx2TranscodeAttempted": true,
+  "toktxAvailable": false,
+  "basisuAvailable": true,
+  "stillRequiresRuntimeKtx2Transcode": false,
+  "stillRequiresFinalUvBake": true,
+  "channels": {
+    "r": "ambientOcclusion",
+    "g": "roughness",
+    "b": "metallic",
+    "a": "constantOne"
+  },
+  "maps": [
+    {
+      "role": "furnitureWoodOrm",
+      "sourcePath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_oiled_walnut_orm_1k.png",
+      "publicPath": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_oiled_walnut_orm_1k.png",
+      "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_oiled_walnut_orm_1k.ktx2",
+      "required": true,
+      "exists": true,
+      "resolution": [
+        1024,
+        1024
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color"
+    },
+    {
+      "role": "furnitureFabricOrm",
+      "sourcePath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_bluegrey_fabric_orm_1k.png",
+      "publicPath": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_bluegrey_fabric_orm_1k.png",
+      "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_bluegrey_fabric_orm_1k.ktx2",
+      "required": true,
+      "exists": true,
+      "resolution": [
+        1024,
+        1024
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color"
+    },
+    {
+      "role": "furnitureLacquerOrm",
+      "sourcePath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_warm_lacquer_orm_512.png",
+      "publicPath": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_warm_lacquer_orm_512.png",
+      "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_warm_lacquer_orm_512.ktx2",
+      "required": true,
+      "exists": true,
+      "resolution": [
+        512,
+        512
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color"
+    },
+    {
+      "role": "furnitureSpeakerOrm",
+      "sourcePath": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_speaker_grille_orm_512.png",
+      "publicPath": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_speaker_grille_orm_512.png",
+      "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_speaker_grille_orm_512.ktx2",
+      "required": true,
+      "exists": true,
+      "resolution": [
+        512,
+        512
+      ],
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "colorSpace": "Non-Color"
+    }
+  ],
+  "promotionBoundary": "Furniture ORM PNG sidecars are present; KTX2 transcode, final UV bake, and release catalog approval remain blocked."
+}

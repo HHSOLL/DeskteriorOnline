@@ -3,6 +3,8 @@ export type LightingSettingsSnapshot = {
   hemisphereIntensity: number;
   directionalIntensity: number;
   environmentBlur: number;
+  accentIntensity: number;
+  beamOpacity: number;
 };
 
 export type LightingPresetId = "home-reference" | "neutral-studio" | "soft-evening";
@@ -29,7 +31,9 @@ export const HOME_REFERENCE_LIGHTING: LightingSettingsSnapshot = {
   ambientIntensity: 0.44,
   hemisphereIntensity: 0.54,
   directionalIntensity: 1.24,
-  environmentBlur: 0.14
+  environmentBlur: 0.14,
+  accentIntensity: 0.96,
+  beamOpacity: 0.24
 };
 
 export const LIGHTING_PRESETS: LightingPreset[] = [
@@ -56,7 +60,9 @@ export const LIGHTING_PRESETS: LightingPreset[] = [
       ambientIntensity: 0.34,
       hemisphereIntensity: 0.42,
       directionalIntensity: 1.02,
-      environmentBlur: 0.1
+      environmentBlur: 0.1,
+      accentIntensity: 0.52,
+      beamOpacity: 0.07
     },
     qaProfile: {
       hdri: "studio-softbox-2k",
@@ -76,7 +82,9 @@ export const LIGHTING_PRESETS: LightingPreset[] = [
       ambientIntensity: 0.46,
       hemisphereIntensity: 0.6,
       directionalIntensity: 0.86,
-      environmentBlur: 0.24
+      environmentBlur: 0.24,
+      accentIntensity: 0.78,
+      beamOpacity: 0.12
     },
     qaProfile: {
       hdri: "warm-interior-2k",
@@ -91,6 +99,14 @@ export const LIGHTING_PRESETS: LightingPreset[] = [
 ];
 
 const PRESET_MATCH_TOLERANCE = 0.02;
+const PRESET_MATCH_FIELDS: Array<keyof LightingSettingsSnapshot> = [
+  "ambientIntensity",
+  "hemisphereIntensity",
+  "directionalIntensity",
+  "environmentBlur",
+  "accentIntensity",
+  "beamOpacity"
+];
 
 export function getLightingPreset(id: LightingPresetId) {
   return LIGHTING_PRESETS.find((preset) => preset.id === id) ?? null;
@@ -100,16 +116,10 @@ export function inferLightingPresetId(
   lighting: LightingSettingsSnapshot
 ): LightingPresetId | null {
   for (const preset of LIGHTING_PRESETS) {
-    const deltaAmbient = Math.abs(preset.settings.ambientIntensity - lighting.ambientIntensity);
-    const deltaHemisphere = Math.abs(preset.settings.hemisphereIntensity - lighting.hemisphereIntensity);
-    const deltaDirectional = Math.abs(preset.settings.directionalIntensity - lighting.directionalIntensity);
-    const deltaBlur = Math.abs(preset.settings.environmentBlur - lighting.environmentBlur);
-    if (
-      deltaAmbient <= PRESET_MATCH_TOLERANCE &&
-      deltaHemisphere <= PRESET_MATCH_TOLERANCE &&
-      deltaDirectional <= PRESET_MATCH_TOLERANCE &&
-      deltaBlur <= PRESET_MATCH_TOLERANCE
-    ) {
+    const isPresetMatch = PRESET_MATCH_FIELDS.every(
+      (field) => Math.abs(preset.settings[field] - lighting[field]) <= PRESET_MATCH_TOLERANCE
+    );
+    if (isPresetMatch) {
       return preset.id;
     }
   }

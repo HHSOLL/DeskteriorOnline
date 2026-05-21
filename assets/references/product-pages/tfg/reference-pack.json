@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:42.189Z",
+  "assetKey": "tfg",
+  "sourceUrl": "https://www.enuri.com/detail.jsp?modelno=79398839",
+  "product": {
+    "title": "한성컴퓨터 TFG40Q14WP IPS 게이밍 리얼 144 울트라와이드 USB Type-C",
+    "sku": "TFG40Q14WP",
+    "manufacturer": "한성컴퓨터",
+    "brand": "한성컴퓨터",
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": [
+      2062,
+      3700
+    ]
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef---Prototype-Reference",
+      "label": "한성컴퓨터 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "TFG40Q14WP",
+    "manufacturer": "한성컴퓨터",
+    "canonicalProductUrl": "https://www.enuri.com/detail.jsp?modelno=79398839",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://photo3.enuri.info/data/images/service/middle/79398000/79398839.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://img.enuri.info/images/rev/gnb/@ban_sr_270x290.png",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://img.enuri.info/images/common/noimg_re@s500.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://img.danuri.io/catalog-image/117/611/015/3bcd2ed12db941bfb61f8871a973ea22.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://img.danuri.io/catalog-image/117/611/015/bd72d657fcbe4a49b28c506e62d76f74.jpg",
+        "required": false,
+        "license": "LicenseRef---Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://www.enuri.com/detail.jsp?modelno=79398839",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef---Prototype-Reference",
+      "label": "한성컴퓨터 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://photo3.enuri.info/data/images/service/middle/79398000/79398839.jpg",
+      "view": "front",
+      "source": "json_ld",
+      "score": 20
+    },
+    {
+      "url": "https://img.enuri.info/images/rev/gnb/@ban_sr_270x290.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://img.enuri.info/images/common/noimg_re@s500.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://img.danuri.io/catalog-image/117/611/015/3bcd2ed12db941bfb61f8871a973ea22.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://img.danuri.io/catalog-image/117/611/015/bd72d657fcbe4a49b28c506e62d76f74.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://img.enuri.info/images/rev/qr_enuri_app_v2.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://img.enuri.info/images/home/thum_none.jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "한성컴퓨터 TFG40Q14WP IPS 게이밍 리얼 144 울트라와이드 USB Type-C",
+        "TFG40Q14WP",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "한성컴퓨터 TFG40Q14WP IPS 게이밍 리얼 144 울트라와이드 USB Type-C",
+        "TFG40Q14WP",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "한성컴퓨터 TFG40Q14WP IPS 게이밍 리얼 144 울트라와이드 USB Type-C",
+        "TFG40Q14WP",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": true,
+    "openGraphImageFound": true,
+    "htmlImageCount": 20,
+    "selectedImageCount": 7,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release."
+    ]
+  }
+}

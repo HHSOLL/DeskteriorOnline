@@ -129,7 +129,7 @@ export function ProjectEditorHeader({
               })}
             </div>
 
-            {canShowPanels ? (
+            {canShowPanels && viewMode === "walk" ? (
               <>
                 <button
                   type="button"

@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "deskterior-meshy-community-optimization-report-v1",
+  "generatedAt": "2026-05-19",
+  "sourceNormalizationReport": "assets/references/meshy-community/normalization-report-2026-05-19.json",
+  "candidateCount": 4,
+  "optimizer": "gltf-transform meshopt",
+  "compressionPolicy": "medium level, texture transcoding deferred until visual promotion gate",
+  "publicCatalogStatus": "not-published",
+  "results": [
+    {
+      "slug": "chair-rodiondbulatoff",
+      "sourceBytes": 1508716,
+      "normalizedExportBytesBeforeMeshopt": 1448572,
+      "optimizedBytes": 1233876,
+      "thumbnailBytes": 4878,
+      "meshoptExtension": true,
+      "warnings": []
+    },
+    {
+      "slug": "rustic-table",
+      "sourceBytes": 8017724,
+      "normalizedExportBytesBeforeMeshopt": 7957364,
+      "optimizedBytes": 7743740,
+      "thumbnailBytes": 8498,
+      "meshoptExtension": true,
+      "warnings": []
+    },
+    {
+      "slug": "rack-golden-arch",
+      "sourceBytes": 6478816,
+      "normalizedExportBytesBeforeMeshopt": 6479128,
+      "optimizedBytes": 6290460,
+      "thumbnailBytes": 11440,
+      "meshoptExtension": true,
+      "warnings": []
+    },
+    {
+      "slug": "colorful-brick-wall",
+      "sourceBytes": 2029936,
+      "normalizedExportBytesBeforeMeshopt": 2031160,
+      "optimizedBytes": 1661624,
+      "thumbnailBytes": 15196,
+      "meshoptExtension": true,
+      "warnings": [
+        "TRIANGLE_COUNT_OVER_REVIEW_BUDGET"
+      ]
+    }
+  ]
+}

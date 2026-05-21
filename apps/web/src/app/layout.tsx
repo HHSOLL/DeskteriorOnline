@@ -1,11 +1,8 @@
 import type { ReactNode } from "react";
 import "../lib/server/runtime-polyfills";
 import "../styles/globals.css";
-import { Inter } from "next/font/google";
 import { SonnerToaster } from "../components/sonner-toaster";
 import { LoadingOverlay } from "../components/overlay/LoadingOverlay";
-
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata = {
   title: "DeskteriorOnline | 룸 빌더 · 3D 뷰어",
@@ -23,7 +20,7 @@ import { PremiumNavbar } from "../components/navigation/PremiumNavbar";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ko" className={inter.variable}>
+    <html lang="ko">
       <body className="bg-[#fdfdfc] text-[#1a1a1a] font-sans antialiased selection:bg-black/5">
         <LoadingOverlay />
         <SonnerToaster />

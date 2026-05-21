@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:42.886Z",
+  "assetKey": "sml",
+  "sourceUrl": "http://shop.stickymonsterlab.com/shop/shopdetail.html?branduid=1303229",
+  "product": {
+    "title": "SML WARS SS 001 SPACECRAFT VER.",
+    "sku": null,
+    "manufacturer": "SML WARS SS 001 SPACECRAFT VER.",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": [
+      512,
+      7692
+    ]
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-SML-WARS-SS-001-SPACECRAFT-VER--Prototype-Reference",
+      "label": "SML WARS SS 001 SPACECRAFT VER. public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "SML WARS SS 001 SPACECRAFT VER.",
+    "canonicalProductUrl": "http://shop.stickymonsterlab.com/shop/shopdetail.html?branduid=1303229",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(1).jpg",
+        "required": false,
+        "license": "LicenseRef-SML-WARS-SS-001-SPACECRAFT-VER--Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(2).jpg",
+        "required": false,
+        "license": "LicenseRef-SML-WARS-SS-001-SPACECRAFT-VER--Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(3).jpg",
+        "required": false,
+        "license": "LicenseRef-SML-WARS-SS-001-SPACECRAFT-VER--Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(4).jpg",
+        "required": false,
+        "license": "LicenseRef-SML-WARS-SS-001-SPACECRAFT-VER--Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(5).jpg",
+        "required": false,
+        "license": "LicenseRef-SML-WARS-SS-001-SPACECRAFT-VER--Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "http://shop.stickymonsterlab.com/shop/shopdetail.html?branduid=1303229",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-SML-WARS-SS-001-SPACECRAFT-VER--Prototype-Reference",
+      "label": "SML WARS SS 001 SPACECRAFT VER. public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(1).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(2).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(3).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(4).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(5).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(6).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(7).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(8).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(9).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    },
+    {
+      "url": "http://shop.stickymonsterlab.com/design/smlsales/img/product/SS001(10).jpg",
+      "view": "front",
+      "source": "html_image",
+      "score": 40
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "SML WARS SS 001 SPACECRAFT VER.",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "SML WARS SS 001 SPACECRAFT VER.",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "SML WARS SS 001 SPACECRAFT VER.",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": true,
+    "openGraphImageFound": false,
+    "htmlImageCount": 40,
+    "selectedImageCount": 10,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

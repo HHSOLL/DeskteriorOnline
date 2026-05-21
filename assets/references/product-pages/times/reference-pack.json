@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:34.919Z",
+  "assetKey": "times",
+  "sourceUrl": "https://divoom.com/products/time-gate",
+  "product": {
+    "title": "Divoom Times Gate | Pixel Art Informative Display",
+    "sku": null,
+    "manufacturer": "Divoom Times Gate | Pixel Art Informative Display",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": {
+      "width": 283,
+      "depth": 47,
+      "height": 97
+    },
+    "heightRangeMm": null
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-Divoom-Times-Gate-Pixel-Art-Informative-Display-Prototype-Reference",
+      "label": "Divoom Times Gate | Pixel Art Informative Display public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "Divoom Times Gate | Pixel Art Informative Display",
+    "canonicalProductUrl": "https://divoom.com/products/time-gate",
+    "dimensionSourceUrl": "https://divoom.com/products/time-gate",
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "http://divoom.com/cdn/shop/files/ebf94caeef5f4c89422c6c9bb7aa53a8_786ac76e-8737-4c03-ade6-d97192c18bbb.png?v=1775554152",
+        "required": false,
+        "license": "LicenseRef-Divoom-Times-Gate-Pixel-Art-Informative-Display-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://divoom.com/cdn/shop/files/Times_Gate_00c82b52-5d4d-47b4-9d35-c39838cfe7e4.jpg?v=1775554152&width=100",
+        "required": false,
+        "license": "LicenseRef-Divoom-Times-Gate-Pixel-Art-Informative-Display-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://divoom.com/cdn/shop/files/ebf94caeef5f4c89422c6c9bb7aa53a8_786ac76e-8737-4c03-ade6-d97192c18bbb.png?v=1775554152&width=100",
+        "required": false,
+        "license": "LicenseRef-Divoom-Times-Gate-Pixel-Art-Informative-Display-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://divoom.com/cdn/shop/files/Divoomtimegate.png?v=1775554152&width=100",
+        "required": false,
+        "license": "LicenseRef-Divoom-Times-Gate-Pixel-Art-Informative-Display-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://divoom.com/cdn/shop/files/026e3fc678332825c729c5edf871c808.png?v=1775554152&width=100",
+        "required": false,
+        "license": "LicenseRef-Divoom-Times-Gate-Pixel-Art-Informative-Display-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://divoom.com/products/time-gate",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-Divoom-Times-Gate-Pixel-Art-Informative-Display-Prototype-Reference",
+      "label": "Divoom Times Gate | Pixel Art Informative Display public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "dimension_verified",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "http://divoom.com/cdn/shop/files/ebf94caeef5f4c89422c6c9bb7aa53a8_786ac76e-8737-4c03-ade6-d97192c18bbb.png?v=1775554152",
+      "view": "front",
+      "source": "open_graph",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/Times_Gate_00c82b52-5d4d-47b4-9d35-c39838cfe7e4.jpg?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/ebf94caeef5f4c89422c6c9bb7aa53a8_786ac76e-8737-4c03-ade6-d97192c18bbb.png?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/Divoomtimegate.png?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/026e3fc678332825c729c5edf871c808.png?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/5_2cea0739-04a0-4d61-8112-49f1de0d8d09.jpg?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/4_1_1_1.png?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/gamingroomdecor.jpg?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/lecpixelartdisplay_daaf9942-3706-428d-9745-bfba3863706d.jpg?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://divoom.com/cdn/shop/files/pinktimesgatecute.jpg?v=1775554152&width=100",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "Divoom Times Gate | Pixel Art Informative Display",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "Divoom Times Gate | Pixel Art Informative Display",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "Divoom Times Gate | Pixel Art Informative Display",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 338,
+    "selectedImageCount": 10,
+    "dimensionSource": "html_text",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No SKU/model identifier found."
+    ]
+  }
+}

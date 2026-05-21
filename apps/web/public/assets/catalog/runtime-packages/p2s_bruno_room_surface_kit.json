@@ -1,0 +1,363 @@
+{
+  "schemaVersion": "asset-package-alpha-v2",
+  "generatedAt": "2026-05-19T12:44:56.710Z",
+  "key": "p2s_bruno_room_surface_kit",
+  "packageKind": "curated_asset",
+  "baseAssetKey": null,
+  "manifestId": "p2s_bruno_room_surface_kit",
+  "label": "Bruno Room Surface Kit QA Candidate",
+  "assetId": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+  "sourcePath": "assets/blender/deskterior/p2s_bruno_room_surface_kit.blend",
+  "runtimePath": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+  "dimensionsMm": {
+    "width": 7054,
+    "depth": 4142,
+    "height": 2680
+  },
+  "scaleLocked": true,
+  "contractMetadata": {
+    "source": {
+      "kind": "deskterioronline_blender",
+      "name": "DeskteriorOnline Bruno room surface QA kit",
+      "path": "assets/blender/deskterior/p2s_bruno_room_surface_kit.blend",
+      "url": null
+    },
+    "license": {
+      "spdx": "LicenseRef-DeskteriorOnline-Prototype-QA",
+      "label": "DeskteriorOnline local Blender-authored QA candidate",
+      "requiresAttribution": false
+    },
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "collisionProxy": {
+      "kind": "box",
+      "derivesFrom": "dimensionsMm"
+    },
+    "textureSet": {
+      "workflow": "pbr_metallic_roughness",
+      "authored": "procedural",
+      "ktx2Ready": true
+    },
+    "lodProfile": {
+      "strategy": "single_mesh",
+      "levelCount": 1,
+      "maxDrawCalls": 48,
+      "maxTriangleCount": 25000
+    }
+  },
+  "supportProfile": null,
+  "authoring": {
+    "attachmentPoints": {
+      "mode": "none",
+      "reason": "Surface kit is a QA room-envelope layer, not a directly mountable catalog object."
+    }
+  },
+  "runtimeAsset": {
+    "assetId": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+    "productId": "p2s_bruno_room_surface_kit",
+    "units": "mm",
+    "dimensionsMm": {
+      "width": 7054,
+      "depth": 4142,
+      "height": 2680
+    },
+    "scaleLocked": true,
+    "pivot": {
+      "x": "center",
+      "y": "floor",
+      "z": "center"
+    },
+    "sourceProvenance": {
+      "method": "manual",
+      "manufacturer": "DeskteriorOnline",
+      "license": "LicenseRef-DeskteriorOnline-Prototype-QA",
+      "attributionRequired": false
+    },
+    "runtime": {
+      "lods": [
+        {
+          "id": "lod0",
+          "level": 0,
+          "model": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+          "triangleCount": 13554,
+          "drawCallBudget": 48
+        }
+      ],
+      "proxy": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+      "defaultLod": 0,
+      "triangleBudget": 25000,
+      "textureBudgetMb": 48
+    },
+    "colliders": [
+      {
+        "id": "bounds-box",
+        "kind": "box",
+        "sizeMm": {
+          "width": 7054,
+          "depth": 4142,
+          "height": 2680
+        },
+        "centerMm": [
+          0,
+          1340,
+          0
+        ]
+      }
+    ],
+    "supportSurfaces": [],
+    "attachmentPoints": [],
+    "materialVariants": [
+      {
+        "id": "qa-surface-materials",
+        "label": "Bruno room surface QA materials",
+        "finishColor": "Warm wood floor, warm/cool plaster walls, cream trim",
+        "finishMaterial": "Local Blender-authored procedural PBR helper maps. KTX2 runtime ORM sidecars are present; final UV bake still pending.",
+        "detailNotes": "QA candidate only. Not a release-ready catalog package and not Bruno Simon-level final material approval.",
+        "slotMaterials": [
+          {
+            "slot": "floorWood",
+            "materialType": "wood",
+            "qaStatus": "pending",
+            "referenceNote": "Packed ORM KTX2 sidecar exists; final UV-authored material package remains pending."
+          },
+          {
+            "slot": "plasterWall",
+            "materialType": "mixed",
+            "qaStatus": "pending",
+            "referenceNote": "Packed ORM KTX2 sidecar exists; final UV-authored material package remains pending."
+          }
+        ]
+      }
+    ],
+    "commercialReadiness": {
+      "tier": "draft",
+      "sku": "p2s_bruno_room_surface_kit",
+      "manufacturer": "DeskteriorOnline",
+      "referencePack": {
+        "sku": "p2s_bruno_room_surface_kit",
+        "manufacturer": "DeskteriorOnline",
+        "canonicalProductUrl": null,
+        "dimensionSourceUrl": null,
+        "referenceImages": [],
+        "finishReferences": [],
+        "license": {
+          "spdx": "LicenseRef-DeskteriorOnline-Prototype-QA",
+          "label": "DeskteriorOnline local Blender-authored QA candidate",
+          "requiresAttribution": false
+        },
+        "status": "candidate",
+        "notes": "Local Blender-authored QA candidate for Bruno-inspired room iteration. Not a commercial catalog release."
+      },
+      "visualFidelityScore": 0.72,
+      "dimensionToleranceMm": 0,
+      "dimensionTolerancePercent": 0,
+      "supportSurfaceToleranceMm": 0,
+      "footprintToleranceMm": 0,
+      "materialQaStatus": "pending",
+      "releaseEligible": false
+    },
+    "qaStatus": {
+      "status": "warning",
+      "measuredBoundsMm": {
+        "width": 7054,
+        "depth": 4142,
+        "height": 2680
+      },
+      "dimensionErrorMm": {
+        "width": 0,
+        "depth": 0,
+        "height": 0
+      },
+      "validatorVersion": "bruno-room-runtime-package-alpha-v1",
+      "issues": [
+        {
+          "code": "FINAL_UV_BAKE_PENDING",
+          "severity": "warning",
+          "message": "Surface material package still requires final UV-authored AO/GI/ORM atlases."
+        }
+      ]
+    }
+  },
+  "commercialReadiness": {
+    "tier": "draft",
+    "sku": "p2s_bruno_room_surface_kit",
+    "manufacturer": "DeskteriorOnline",
+    "referencePack": {
+      "sku": "p2s_bruno_room_surface_kit",
+      "manufacturer": "DeskteriorOnline",
+      "canonicalProductUrl": null,
+      "dimensionSourceUrl": null,
+      "referenceImages": [],
+      "finishReferences": [],
+      "license": {
+        "spdx": "LicenseRef-DeskteriorOnline-Prototype-QA",
+        "label": "DeskteriorOnline local Blender-authored QA candidate",
+        "requiresAttribution": false
+      },
+      "status": "candidate",
+      "notes": "Local Blender-authored QA candidate for Bruno-inspired room iteration. Not a commercial catalog release."
+    },
+    "visualFidelityScore": 0.72,
+    "dimensionToleranceMm": 0,
+    "dimensionTolerancePercent": 0,
+    "supportSurfaceToleranceMm": 0,
+    "footprintToleranceMm": 0,
+    "materialQaStatus": "pending",
+    "releaseEligible": false
+  },
+  "files": {
+    "sourceBlend": {
+      "path": "assets/blender/deskterior/p2s_bruno_room_surface_kit.blend",
+      "required": true,
+      "exists": true
+    },
+    "runtimeModel": {
+      "path": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+      "required": true,
+      "exists": true
+    },
+    "proxyModel": {
+      "path": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+      "required": false,
+      "exists": true
+    },
+    "colliders": {
+      "path": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.colliders.json",
+      "required": true,
+      "exists": true
+    },
+    "supportSurfaces": {
+      "path": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.support-surfaces.json",
+      "required": false,
+      "exists": true
+    },
+    "attachmentPoints": {
+      "path": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.attachment-points.json",
+      "required": false,
+      "exists": true
+    },
+    "materialVariants": {
+      "path": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.material-variants.json",
+      "required": true,
+      "exists": true
+    },
+    "qaReport": {
+      "path": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.qa-report.json",
+      "required": true,
+      "exists": true
+    },
+    "thumbnail": {
+      "path": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.thumbnail.webp",
+      "required": false,
+      "exists": false
+    },
+    "texturePackageManifest": {
+      "path": "/assets/models/p2s_bruno_room_surface_kit/texture-package-2026-05-19.json",
+      "required": true,
+      "exists": true
+    }
+  },
+  "runtime": {
+    "lods": [
+      {
+        "level": 0,
+        "path": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb"
+      }
+    ],
+    "proxyPath": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.glb",
+    "collidersPath": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.colliders.json",
+    "supportSurfacesPath": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.support-surfaces.json",
+    "attachmentPointsPath": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.attachment-points.json",
+    "materialVariantsPath": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.material-variants.json",
+    "qaReportPath": "/assets/catalog/runtime-packages/p2s_bruno_room_surface_kit.qa-report.json",
+    "thumbnailPath": "/assets/models/p2s_bruno_room_surface_kit/p2s_bruno_room_surface_kit.thumbnail.webp"
+  },
+  "texturePackages": [
+    {
+      "kind": "packed_orm",
+      "status": "ktx2-ready",
+      "manifestPath": "/assets/models/p2s_bruno_room_surface_kit/texture-package-2026-05-19.json",
+      "sourceManifestPath": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/texture-package-2026-05-19.json",
+      "ktx2Ready": true,
+      "ktx2TranscodeAttempted": true,
+      "toktxAvailable": false,
+      "stillRequiresRuntimeKtx2Transcode": false,
+      "stillRequiresFinalUvBake": true,
+      "channels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "maps": [
+        {
+          "role": "floorWoodOrm",
+          "sourcePath": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_floor_plank_orm_1k.png",
+          "publicPath": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_floor_plank_orm_1k.png",
+          "ktx2Path": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_floor_plank_orm_1k.ktx2",
+          "required": true,
+          "exists": true,
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color"
+        },
+        {
+          "role": "plasterWallOrm",
+          "sourcePath": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_plaster_warm_cool_orm_1k.png",
+          "publicPath": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_plaster_warm_cool_orm_1k.png",
+          "ktx2Path": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_plaster_warm_cool_orm_1k.ktx2",
+          "required": true,
+          "exists": true,
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color"
+        },
+        {
+          "role": "trimOrm",
+          "sourcePath": "assets/runtime-candidates/blender-authored/bruno-room-surface-kit/textures/surface_trim_warm_orm_512.png",
+          "publicPath": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_trim_warm_orm_512.png",
+          "ktx2Path": "/assets/models/p2s_bruno_room_surface_kit/textures/surface_trim_warm_orm_512.ktx2",
+          "required": true,
+          "exists": true,
+          "resolution": [
+            512,
+            512
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color"
+        }
+      ],
+      "promotionBoundary": "KTX2 runtime ORM sidecars are present; final UV bake and release catalog approval remain blocked."
+    }
+  ],
+  "qa": {
+    "status": "warning",
+    "warnings": [
+      "Surface material package still requires final UV-authored AO/GI/ORM atlases."
+    ]
+  }
+}

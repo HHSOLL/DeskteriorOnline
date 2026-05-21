@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:04:21.115Z",
+  "assetKey": "reel",
+  "sourceUrl": "https://ko.aliexpress.com/item/1005006883909886.html?aff_fcid=d1cffde485da466ea367650a979909a6-1778673860655-04773-_onOxqJd&tt=CPS_NORMAL&aff_fsk=_onOxqJd&aff_platform=shareComponent-detail&sk=_onOxqJd&aff_trace_key=d1cffde485da466ea367650a979909a6-1778673860655-04773-_onOxqJd&terminal_id=79b07ed179664afeb6fc3e79cf37f3b6&afSmartRedirect=y&gatewayAdapt=glo2kor",
+  "product": {
+    "title": "PZOZ c to c 고속충전 케이블 충전케이블 디지털 디스플레이 PD 100W C to C 개폐식 케이블, USB to C 타입 라이트닝 마이크로 고속 충전 케이블, 데이터 와이어, 아이폰 16 용 c타입 케이블 c타입 고속충전 케이블 충전케이블 c타입 고속충전케이블 충전기케이블 usb c 케이블 아이폰 샤오미 고속충전 케이블 c타입 충전케이블 충전 케이블 초고속 충전 케이블 충전케이블 - AliExpress 202192403",
+    "sku": null,
+    "manufacturer": "PZOZ c to c 고속충전 케이블 충전케이블 디지털 디스플레이 PD 100W C to C 개폐식 케이블, USB to C 타입 라이트닝 마이크로 고속 충전 케이블, 데이터 와이어, 아이폰 16 용 c타입 케이블 c타입 고속충전 케이블 충전케이블 c타입 고속충전케이블 충전기케이블 usb c 케이블 아이폰 샤오미 고속충전 케이블 c타입 충전케이블 충전 케이블 초고속 충전 케이블 충전케이블 - AliExpress 202192403",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": [
+      2010,
+      2025
+    ]
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-PZOZ-c-to-c-PD-100W-C-to-C-USB-to-C-16-c-c-c-usb-c-c-AliExpress-202192403-Prototype-Reference",
+      "label": "PZOZ c to c 고속충전 케이블 충전케이블 디지털 디스플레이 PD 100W C to C 개폐식 케이블, USB to C 타입 라이트닝 마이크로 고속 충전 케이블, 데이터 와이어, 아이폰 16 용 c타입 케이블 c타입 고속충전 케이블 충전케이블 c타입 고속충전케이블 충전기케이블 usb c 케이블 아이폰 샤오미 고속충전 케이블 c타입 충전케이블 충전 케이블 초고속 충전 케이블 충전케이블 - AliExpress 202192403 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "PZOZ c to c 고속충전 케이블 충전케이블 디지털 디스플레이 PD 100W C to C 개폐식 케이블, USB to C 타입 라이트닝 마이크로 고속 충전 케이블, 데이터 와이어, 아이폰 16 용 c타입 케이블 c타입 고속충전 케이블 충전케이블 c타입 고속충전케이블 충전기케이블 usb c 케이블 아이폰 샤오미 고속충전 케이블 c타입 충전케이블 충전 케이블 초고속 충전 케이블 충전케이블 - AliExpress 202192403",
+    "canonicalProductUrl": "https://ko.aliexpress.com/item/1005006883909886.html?aff_fcid=d1cffde485da466ea367650a979909a6-1778673860655-04773-_onOxqJd&tt=CPS_NORMAL&aff_fsk=_onOxqJd&aff_platform=shareComponent-detail&sk=_onOxqJd&aff_trace_key=d1cffde485da466ea367650a979909a6-1778673860655-04773-_onOxqJd&terminal_id=79b07ed179664afeb6fc3e79cf37f3b6&afSmartRedirect=y&gatewayAdapt=glo2kor",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://ae01.alicdn.com/kf/S6ecffd6d18c44816803f94738821032fJ.jpg",
+        "required": false,
+        "license": "LicenseRef-PZOZ-c-to-c-PD-100W-C-to-C-USB-to-C-16-c-c-c-usb-c-c-AliExpress-202192403-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://ko.aliexpress.com/item/1005006883909886.html?aff_fcid=d1cffde485da466ea367650a979909a6-1778673860655-04773-_onOxqJd&tt=CPS_NORMAL&aff_fsk=_onOxqJd&aff_platform=shareComponent-detail&sk=_onOxqJd&aff_trace_key=d1cffde485da466ea367650a979909a6-1778673860655-04773-_onOxqJd&terminal_id=79b07ed179664afeb6fc3e79cf37f3b6&afSmartRedirect=y&gatewayAdapt=glo2kor",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-PZOZ-c-to-c-PD-100W-C-to-C-USB-to-C-16-c-c-c-usb-c-c-AliExpress-202192403-Prototype-Reference",
+      "label": "PZOZ c to c 고속충전 케이블 충전케이블 디지털 디스플레이 PD 100W C to C 개폐식 케이블, USB to C 타입 라이트닝 마이크로 고속 충전 케이블, 데이터 와이어, 아이폰 16 용 c타입 케이블 c타입 고속충전 케이블 충전케이블 c타입 고속충전케이블 충전기케이블 usb c 케이블 아이폰 샤오미 고속충전 케이블 c타입 충전케이블 충전 케이블 초고속 충전 케이블 충전케이블 - AliExpress 202192403 public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://ae01.alicdn.com/kf/S6ecffd6d18c44816803f94738821032fJ.jpg",
+      "view": "front",
+      "source": "open_graph",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "PZOZ c to c 고속충전 케이블 충전케이블 디지털 디스플레이 PD 100W C to C 개폐식 케이블, USB to C 타입 라이트닝 마이크로 고속 충전 케이블, 데이터 와이어, 아이폰 16 용 c타입 케이블 c타입 고속충전 케이블 충전케이블 c타입 고속충전케이블 충전기케이블 usb c 케이블 아이폰 샤오미 고속충전 케이블 c타입 충전케이블 충전 케이블 초고속 충전 케이블 충전케이블 - AliExpress 202192403",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "PZOZ c to c 고속충전 케이블 충전케이블 디지털 디스플레이 PD 100W C to C 개폐식 케이블, USB to C 타입 라이트닝 마이크로 고속 충전 케이블, 데이터 와이어, 아이폰 16 용 c타입 케이블 c타입 고속충전 케이블 충전케이블 c타입 고속충전케이블 충전기케이블 usb c 케이블 아이폰 샤오미 고속충전 케이블 c타입 충전케이블 충전 케이블 초고속 충전 케이블 충전케이블 - AliExpress 202192403",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "PZOZ c to c 고속충전 케이블 충전케이블 디지털 디스플레이 PD 100W C to C 개폐식 케이블, USB to C 타입 라이트닝 마이크로 고속 충전 케이블, 데이터 와이어, 아이폰 16 용 c타입 케이블 c타입 고속충전 케이블 충전케이블 c타입 고속충전케이블 충전기케이블 usb c 케이블 아이폰 샤오미 고속충전 케이블 c타입 충전케이블 충전 케이블 초고속 충전 케이블 충전케이블 - AliExpress 202192403",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 0,
+    "selectedImageCount": 1,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

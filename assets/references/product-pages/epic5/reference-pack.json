@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "product-url-reference-alpha-v1",
+  "createdAt": "2026-05-13T12:03:40.580Z",
+  "assetKey": "epic5",
+  "sourceUrl": "https://www.reproduceraudiolabs.com/epic5se.html",
+  "product": {
+    "title": "Epic 5 Special Edition Near-field Studio Monitor - Product Overview",
+    "sku": null,
+    "manufacturer": "Epic 5 Special Edition Near-field Studio Monitor - Product Overview",
+    "brand": null,
+    "price": null,
+    "priceCurrency": null,
+    "options": [],
+    "dimensionsMm": null,
+    "heightRangeMm": null
+  },
+  "legalUse": {
+    "mode": "prototype_reference_only",
+    "releaseEligible": false,
+    "license": {
+      "spdx": "LicenseRef-Epic-5-Special-Edition-Near-field-Studio-Monitor-Product-Overview-Prototype-Reference",
+      "label": "Epic 5 Special Edition Near-field Studio Monitor - Product Overview public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "warning": "Public product pages can guide a prototype rebuild, but they do not grant production texture, CAD, trademark, or product-design usage rights."
+  },
+  "referencePack": {
+    "sku": "UNKNOWN-SKU",
+    "manufacturer": "Epic 5 Special Edition Near-field Studio Monitor - Product Overview",
+    "canonicalProductUrl": "https://www.reproduceraudiolabs.com/epic5se.html",
+    "dimensionSourceUrl": null,
+    "referenceImages": [
+      {
+        "view": "front",
+        "url": "https://www.reproduceraudiolabs.com/uploads/1/3/2/5/132534932/mj-headshot2-09_orig.png",
+        "required": false,
+        "license": "LicenseRef-Epic-5-Special-Edition-Near-field-Studio-Monitor-Product-Overview-Prototype-Reference"
+      },
+      {
+        "view": "front",
+        "url": "https://www.reproduceraudiolabs.com/uploads/1/3/2/5/132534932/published/1199691953108760-3gtwgchhiyqjinnntnbv-height640.png?1610123227",
+        "required": false,
+        "license": "LicenseRef-Epic-5-Special-Edition-Near-field-Studio-Monitor-Product-Overview-Prototype-Reference"
+      }
+    ],
+    "finishReferences": [
+      {
+        "finishId": "default",
+        "label": "product-page finish",
+        "sourceUrl": "https://www.reproduceraudiolabs.com/epic5se.html",
+        "materialType": "mixed"
+      }
+    ],
+    "license": {
+      "spdx": "LicenseRef-Epic-5-Special-Edition-Near-field-Studio-Monitor-Product-Overview-Prototype-Reference",
+      "label": "Epic 5 Special Edition Near-field Studio Monitor - Product Overview public product page reference, prototype-only rebuild",
+      "requiresAttribution": true
+    },
+    "status": "reference_collected",
+    "notes": "Generated from a public product URL for prototype reference only. Release eligibility requires manufacturer CAD, material references, and explicit product-design/asset usage rights."
+  },
+  "referenceImages": [
+    {
+      "url": "https://www.reproduceraudiolabs.com/uploads/1/3/2/5/132534932/mj-headshot2-09_orig.png",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    },
+    {
+      "url": "https://www.reproduceraudiolabs.com/uploads/1/3/2/5/132534932/published/1199691953108760-3gtwgchhiyqjinnntnbv-height640.png?1610123227",
+      "view": "front",
+      "source": "html_image",
+      "score": 20
+    }
+  ],
+  "materialHints": [
+    {
+      "slot": "DeskWood",
+      "materialType": "wood",
+      "label": "light laminate wood grain",
+      "evidence": [
+        "Epic 5 Special Edition Near-field Studio Monitor - Product Overview",
+        "top/side laminate finish inferred from product title"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskMetal",
+      "materialType": "metal",
+      "label": "satin warm-grey panel and graphite frame",
+      "evidence": [
+        "Epic 5 Special Edition Near-field Studio Monitor - Product Overview",
+        "motion desk frame/panel product imagery requires metal/plastic separation"
+      ],
+      "qaStatus": "pending"
+    },
+    {
+      "slot": "DeskPlastic",
+      "materialType": "plastic",
+      "label": "matte black sensor/cable channel plastic",
+      "evidence": [
+        "Epic 5 Special Edition Near-field Studio Monitor - Product Overview",
+        "control strip and cable channel visible in detail reference"
+      ],
+      "qaStatus": "pending"
+    }
+  ],
+  "extraction": {
+    "jsonLdProductFound": false,
+    "openGraphImageFound": true,
+    "htmlImageCount": 6,
+    "selectedImageCount": 2,
+    "dimensionSource": "not_found",
+    "ocrAttempted": false,
+    "ocrAvailable": false,
+    "ocrTextSample": null,
+    "warnings": [
+      "No machine-readable dimensions found; use manufacturer CAD/specs or a vision/OCR pass before release.",
+      "No SKU/model identifier found."
+    ]
+  }
+}

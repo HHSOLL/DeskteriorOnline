@@ -1,0 +1,294 @@
+{
+  "schemaVersion": "deskterior-blender-authored-asset-review-v1",
+  "asset": {
+    "slug": "p2s-bruno-furniture-hero-kit",
+    "intent": "large furniture material and silhouette quality layer for the PC assembly room workbench",
+    "source": "Blender procedural authoring by Codex with generated PBR helper maps; no Bruno Simon source asset copied",
+    "license": "project-owned prototype asset pending catalog release review",
+    "textureSet": {
+      "authoredMaps": [
+        "baseColor",
+        "normal",
+        "roughness",
+        "ambientOcclusion",
+        "packedOrm"
+      ],
+      "generatedPbrMapCount": 20,
+      "mapFamilies": [
+        "wood",
+        "fabric",
+        "warm_lacquer",
+        "speaker_grille"
+      ],
+      "textureResolution": {
+        "wood": "1024x1024",
+        "fabric": "1024x1024",
+        "warmLacquer": "512x512",
+        "speakerGrille": "512x512"
+      },
+      "ktx2Ready": true,
+      "packedOrmMapCount": 4,
+      "packedOrmReady": true,
+      "uvStrategy": "procedural object-space atlas candidate; not final hand-unwrapped production UVs",
+      "ktx2MapCount": 4
+    },
+    "texturePackagingPass": {
+      "packageStatus": "ktx2-ready",
+      "packedOrmMapCount": 4,
+      "packedOrmChannels": {
+        "r": "ambientOcclusion",
+        "g": "roughness",
+        "b": "metallic",
+        "a": "constantOne"
+      },
+      "ormSidecarFormat": "PNG",
+      "ktx2Ready": true,
+      "ktx2TranscodeAttempted": true,
+      "toktxAvailable": false,
+      "basisuAvailable": true,
+      "stillRequiresRuntimeKtx2Transcode": false,
+      "stillRequiresFinalUvBake": true,
+      "manifest": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/texture-package-2026-05-19.json",
+      "packedOrmMaps": [
+        {
+          "role": "furnitureWoodOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_oiled_walnut_orm_1k.png",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.02
+        },
+        {
+          "role": "furnitureFabricOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_bluegrey_fabric_orm_1k.png",
+          "resolution": [
+            1024,
+            1024
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0
+        },
+        {
+          "role": "furnitureLacquerOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_warm_lacquer_orm_512.png",
+          "resolution": [
+            512,
+            512
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.03
+        },
+        {
+          "role": "furnitureSpeakerOrm",
+          "path": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures/hero_uv_speaker_grille_orm_512.png",
+          "resolution": [
+            512,
+            512
+          ],
+          "channels": {
+            "r": "ambientOcclusion",
+            "g": "roughness",
+            "b": "metallic",
+            "a": "constantOne"
+          },
+          "colorSpace": "Non-Color",
+          "metallic": 0.04
+        }
+      ],
+      "promotionBoundary": "Furniture ORM sidecar package has runtime KTX2 outputs; final UV bake, meshopt, collider, LOD, catalog split, and release approval remain blocked",
+      "runtimeKtx2Manifest": "apps/web/public/assets/models/p2s_bruno_furniture_hero_kit/texture-package-2026-05-19.json",
+      "runtimeKtx2Maps": [
+        {
+          "role": "furnitureWoodOrm",
+          "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_oiled_walnut_orm_1k.ktx2"
+        },
+        {
+          "role": "furnitureFabricOrm",
+          "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_bluegrey_fabric_orm_1k.ktx2"
+        },
+        {
+          "role": "furnitureLacquerOrm",
+          "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_warm_lacquer_orm_512.ktx2"
+        },
+        {
+          "role": "furnitureSpeakerOrm",
+          "ktx2Path": "/assets/models/p2s_bruno_furniture_hero_kit/textures/hero_uv_speaker_grille_orm_512.ktx2"
+        }
+      ]
+    },
+    "bespokeCurvaturePass": {
+      "authoredAt": "2026-05-19",
+      "meshFamilies": [
+        "rounded_rect_slab",
+        "soft_horizontal_upholstery_surface",
+        "soft_vertical_upholstery_surface",
+        "soft_rear_upholstery_shell",
+        "vertical_tapered_cylinder",
+        "soft_lip_ellipsoid",
+        "under_shadow_curve",
+        "desk_integrated_wire_grommet",
+        "shelf_layered_lacquer_board",
+        "media_console_slatted_front"
+      ],
+      "sofaMeshes": [
+        "hero_sofa_bespoke_curved_base",
+        "hero_sofa_continuous_crowned_seat_surface",
+        "hero_sofa_continuous_quilted_back_surface",
+        "hero_sofa_cushion_center_recessed_welt",
+        "hero_sofa_back_integrated_*_welt_*",
+        "hero_sofa_integrated_seat_soft_button_*",
+        "hero_sofa_back_pressed_fabric_button_*",
+        "hero_sofa_left_arm_bespoke_rolled_block",
+        "hero_sofa_right_arm_bespoke_rolled_block",
+        "hero_sofa_rear_continuous_wrapped_upholstery_shell",
+        "hero_sofa_rear_*_piped_welt",
+        "hero_sofa_rear_subtle_vertical_tailored_welt_*",
+        "hero_sofa_rear_soft_corner_pinched_fold_*",
+        "hero_sofa_throw_blanket_draped_soft_panel",
+        "hero_sofa_throw_tassel_knot_*",
+        "hero_sofa_*_pillow_soft_sculpt",
+        "hero_sofa_pillow_corner_pinched_*"
+      ],
+      "coffeeTableMeshes": [
+        "hero_coffee_table_bespoke_top_satin",
+        "hero_coffee_table_bespoke_lower_shadow_shelf",
+        "hero_coffee_table_rounded_inset_top_panel",
+        "hero_coffee_table_smoked_rounded_glass_inlay",
+        "hero_coffee_table_*_tray_lip",
+        "hero_coffee_table_*_rounded_apron",
+        "hero_coffee_table_tapered_round_leg_*",
+        "hero_coffee_table_recessed_drawer_front",
+        "hero_coffee_table_glass_reflection_streak_*"
+      ],
+      "deskMeshes": [
+        "hero_desk_rounded_oiled_wood_worktop",
+        "hero_desk_round_wire_grommet_black_ring",
+        "hero_desk_tapered_round_leg_*",
+        "hero_desk_soft_lacquer_drawer_front_*",
+        "hero_desk_front_recessed_shadow_line",
+        "hero_desk_back_cable_raceway_shadow",
+        "hero_desk_loose_cable_segment_*"
+      ],
+      "shelfMeshes": [
+        "hero_shelf_rounded_warm_side_post_*",
+        "hero_shelf_rounded_lacquer_board_*",
+        "hero_shelf_center_soft_lacquer_cabinet",
+        "hero_shelf_book_top_highlight_*",
+        "hero_shelf_woven_storage_box_lower",
+        "hero_shelf_woven_box_vertical_thread_*"
+      ],
+      "mediaConsoleMeshes": [
+        "hero_media_console_rounded_lacquer_body",
+        "hero_media_console_inset_wood_drawer",
+        "hero_media_console_fine_slatted_front_*",
+        "hero_media_console_short_round_leg_*",
+        "hero_media_console_front_round_leg_*"
+      ],
+      "commercialIntent": "reduce primitive-box readability across the high-visibility furniture layer by replacing sofa, coffee-table, desk, shelf, and media-console block proxies with named rounded source meshes and localized detail while staying inside the QA triangle budget",
+      "stillRequiresHumanArtReview": true
+    }
+  },
+  "outputs": {
+    "blend": "assets/blender/deskterior/p2s_bruno_furniture_hero_kit.blend",
+    "runtimeGlb": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/p2s_bruno_furniture_hero_kit.glb",
+    "publicGlb": "apps/web/public/assets/models/p2s_bruno_furniture_hero_kit/p2s_bruno_furniture_hero_kit.glb",
+    "thumbnail": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/p2s_bruno_furniture_hero_kit.thumbnail.webp",
+    "texturePackageManifest": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/texture-package-2026-05-19.json",
+    "publicTexturePackageManifest": "apps/web/public/assets/models/p2s_bruno_furniture_hero_kit/texture-package-2026-05-19.json",
+    "texturePackageDirectory": "assets/runtime-candidates/blender-authored/bruno-furniture-hero-kit/textures"
+  },
+  "metrics": {
+    "dimensionsM": [
+      6.3606,
+      3.769,
+      2.5033
+    ],
+    "objectCount": 328,
+    "materialCount": 22,
+    "textureCount": 22,
+    "triangleCount": 64048,
+    "triangleBudget": 65000,
+    "triangleBudgetStatus": "pass",
+    "runtimeBytes": 11161248,
+    "publicBytes": 11161248
+  },
+  "comparisonReview": {
+    "commercialBenchmarkRubric": [
+      {
+        "gate": "PBR material response",
+        "candidateStatus": "partial-pass",
+        "evidence": "baseColor, normal, roughness, AO, and packed ORM helper maps are generated for four major furniture material families",
+        "remainingGap": "helper maps are procedural sidecars and not baked from high-poly sculpt/detail or hand-painted reference passes"
+      },
+      {
+        "gate": "geometry silhouette and bevel quality",
+        "candidateStatus": "partial-pass",
+        "evidence": "foreground sofa base, continuous crowned seat surface, continuous quilted back surface, continuous wrapped rear shell, pillows, throw blanket, rolled arms, rear tailored welts/folds, front cushion bulges, coffee-table top, inset panels, glass inlay, tray lips, aprons, drawer front, lower shelf, desk rounded wood worktop, wire grommet, round legs, soft drawer fronts, shelf rounded posts/boards/cabinet/storage box, media console rounded body, inset drawer, slatted face, and round legs now use explicit rounded or grid-sculpted mesh topology instead of only bevelled cubes",
+        "remainingGap": "this is a bespoke foreground curvature pass but still not a full high-poly sculpt, hand-retopologized SKU, or UV-unwrapped production furniture pack"
+      },
+      {
+        "gate": "room-scale composition support",
+        "candidateStatus": "pass-for-qa",
+        "evidence": "desk, shelf, media console, sofa, rug, and coffee table zones ship as one scale-aligned runtime layer",
+        "remainingGap": "needs split package metadata before catalog promotion so individual objects can be selected, swapped, and LOD-managed"
+      },
+      {
+        "gate": "runtime optimization",
+        "candidateStatus": "partial-pass",
+        "evidence": "triangle budget is tracked, the GLB is embeddable in the QA route, and a furniture packed-ORM PNG sidecar manifest is emitted",
+        "remainingGap": "KTX2 transcode must run after generation, and there is still no meshopt, decimated proxy, collider sidecar, catalog split, or LOD ladder yet"
+      },
+      {
+        "gate": "lighting and bake parity",
+        "candidateStatus": "fail-for-commercial",
+        "evidence": "thumbnail and workbench screenshot are generated for visual inspection",
+        "remainingGap": "no true baked lightmap/GI pass; current appearance still depends on runtime lighting and post stack"
+      },
+      {
+        "gate": "license and provenance",
+        "candidateStatus": "pass-for-internal-prototype",
+        "evidence": "asset is project-authored and explicitly not copied from Bruno Simon or paid asset packs",
+        "remainingGap": "commercial promotion still requires a human-reviewed benchmark board against approved licensed/open furniture assets"
+      }
+    ],
+    "commercialPatternsApplied": [
+      "large furniture surfaces use authored GLB geometry rather than only React block proxies",
+      "wood, lacquer, fabric, and speaker grille use generated baseColor/normal/roughness/AO helper maps with bevelled mesh edges",
+      "wood, lacquer, fabric, and speaker grille also emit packed ORM sidecar maps for runtime material response QA",
+      "foreground sofa now uses continuous grid-sculpted seat, back, and rear upholstery surfaces with UVs, crown/depression shaping, integrated welts, soft buttons, rounded base, pillow, throw, rolled-arm, rear tailored welt/fold details, side stitch meshes, seam piping, outer welt piping, throw threads, tassel knots, round legs, floor glides, and tufting details",
+      "coffee table now uses custom rounded top/lower shelf/inset/glass/tray-lip/apron/drawer-front meshes, tapered round legs, thinner shelf construction, crossbars, foot levelers, visible lower slats, screw caps, glass reflection streaks, books, remote buttons, mug liquid, and controller thumbstick detail",
+      "desk now uses a rounded oiled-wood worktop, recessed shadow lines, a black wire grommet, tapered round legs, soft lacquer drawer fronts, a visible under-tray, mat weave strips, and loose cable segments instead of one large rectangular slab",
+      "shelf now uses rounded warm side posts, rounded lacquer boards, underside shadow lines, front lips, an inset cabinet, book highlights, a woven lower storage box, plant, and camera detail",
+      "media console now uses a rounded lacquer body, inset wood drawer, fine slatted front, long reveal line, and round legs so the TV zone no longer reads as a single white cuboid",
+      "object names preserve zone and material role for future split/LOD/catalog promotion"
+    ],
+    "knownGapsBeforeCommercialPromotion": [
+      "PBR maps are procedural helper maps, not baked high-poly detail or hand-authored production texture sets",
+      "foreground sofa and coffee table now have bespoke rounded topology, but the full furniture set is still stylized for QA composition and not licensed as final commercial catalog SKU content",
+      "no decimated proxy, LOD ladder, final UV bake, meshopt package, or collider sidecar yet; packed ORM sidecars are present but still need KTX2/runtime promotion",
+      "needs visual comparison against approved paid/commercial/open room furniture packs before release promotion",
+      "not a true baked-lightmap asset; lighting integration is still hybrid runtime/post pass"
+    ],
+    "currentGrade": "runtime QA candidate, not final commercial catalog asset"
+  }
+}

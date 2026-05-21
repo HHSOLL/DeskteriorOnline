@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "deskterior-blender-authored-asset-review-v1",
+  "asset": {
+    "slug": "p2s-bruno-room-detail-kit",
+    "intent": "wall shelf / pegboard / micro decor density kit for Bruno-inspired cutaway room mood",
+    "source": "Blender procedural authoring by Codex; no Bruno Simon source asset copied",
+    "license": "project-owned prototype asset pending product license review"
+  },
+  "outputs": {
+    "runtimeGlb": "assets/runtime-candidates/blender-authored/bruno-room-detail-kit/p2s_bruno_room_detail_kit.glb",
+    "publicGlb": "apps/web/public/assets/models/p2s_bruno_room_detail_kit/p2s_bruno_room_detail_kit.glb",
+    "thumbnail": "assets/runtime-candidates/blender-authored/bruno-room-detail-kit/p2s_bruno_room_detail_kit.thumbnail.webp"
+  },
+  "metrics": {
+    "dimensionsM": [
+      1.93,
+      0.3885,
+      1.21
+    ],
+    "objectCount": 90,
+    "materialCount": 14,
+    "triangleCount": 20712,
+    "runtimeBytes": 1179300,
+    "publicBytes": 1179300
+  },
+  "comparisonReview": {
+    "commercialPatternsApplied": [
+      "bevelled hard edges instead of raw cubes",
+      "separate rough wood, lacquer, paper, graphite, ceramic, leaf, and emissive materials",
+      "micro-scale shelf labels, peg holes, cables, camera lens, plant leaves, and LED bars",
+      "single wall-mounted composition with predictable origin for room placement"
+    ],
+    "knownGapsBeforeCommercialPromotion": [
+      "no baked ambient occlusion texture atlas yet",
+      "no hand-painted normal/roughness maps yet",
+      "plant leaves are procedural ellipsoids, not botanical mesh scans",
+      "needs visual comparison against paid/commercial references before public catalog promotion"
+    ],
+    "currentGrade": "runtime QA candidate, not final commercial catalog asset"
+  }
+}

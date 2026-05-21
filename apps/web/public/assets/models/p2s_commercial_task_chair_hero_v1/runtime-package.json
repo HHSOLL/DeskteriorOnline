@@ -1,0 +1,46 @@
+{
+  "assetKey": "p2s_commercial_task_chair_hero_v1",
+  "version": "2026-05-21",
+  "source": {
+    "kind": "blender_authored_generic",
+    "license": "self-authored; third-party pages used only as non-copied visual references",
+    "releaseEligible": false,
+    "reviewRequired": true
+  },
+  "dimensionsMm": {
+    "width": 880,
+    "depth": 880,
+    "height": 1540
+  },
+  "pivot": {
+    "origin": "floor-center",
+    "unit": "meters"
+  },
+  "collisionProxy": {
+    "type": "box",
+    "sizeMm": [
+      880,
+      880,
+      1540
+    ]
+  },
+  "textureSet": {
+    "authored": "procedural_pbr_from_blender",
+    "baseColor": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_charcoal_fabric_basecolor_1k.png",
+    "roughness": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_charcoal_fabric_roughness_1k.png",
+    "height": "apps/web/public/assets/models/p2s_commercial_task_chair_hero_v1/textures/commercial_task_chair_charcoal_fabric_height_1k.png",
+    "imageModelStatus": "not-used-in-this-run-openai-api-key-not-present-in-local-env"
+  },
+  "lodProfile": {
+    "complexity": "medium",
+    "maxTriangleCount": 45000,
+    "targetDrawCalls": 8
+  },
+  "optimization": {
+    "pipeline": "gltf-transform dedup + prune + meshopt",
+    "applied": true,
+    "glbBytesBefore": 7149788,
+    "glbBytesAfter": 5525212
+  },
+  "runtimeUrl": "/assets/models/p2s_commercial_task_chair_hero_v1/p2s_commercial_task_chair_hero_v1.glb"
+}

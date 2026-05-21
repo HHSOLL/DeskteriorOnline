@@ -30,6 +30,8 @@ import * as THREE from "three";
 import { WebGPURenderer } from "three/webgpu";
 import { getScaleGateMessage, parseScaleInfo } from "../../../../lib/ai/scaleInfo";
 import { fetchProjectSceneBootstrap } from "../../../../lib/api/project";
+import { fetchJobStatus } from "../../../../lib/api/jobs";
+import { enqueueProductAssetGeneration } from "../../../../features/product-assets/generate-from-url";
 import {
   buildProjectAssetSummary,
   findCatalogItem,
@@ -38,6 +40,17 @@ import {
   toCatalogProductSnapshot,
   type LibraryCatalogItem
 } from "../../../../lib/builder/catalog";
+import {
+  buildEditorRoomStylingBundleAssets,
+  type EditorRoomStylingBundleId,
+  type WorkspaceFlexClusterId
+} from "../../../../lib/builder/editor-styling-bundles";
+import {
+  buildPlacedAssetZoneSummary,
+  buildReplacementCatalogCandidates,
+  inferReplacementRoomZone,
+  type ReplacementRoomZoneId
+} from "../../../../lib/builder/replacement-candidates";
 import { builderFloorFinishes, builderWallFinishes } from "../../../../lib/builder/templates";
 import {
   toSceneStorePatch,
@@ -47,7 +60,9 @@ import {
 import { resolveTopViewInteractionPolicy } from "../../../../lib/editor/top-view-policy";
 import { constrainPlacementToAnchor, inferAnchorTypeForCatalogItem } from "../../../../lib/scene/anchors";
 import { normalizeSceneAnchorType } from "../../../../lib/scene/anchor-types";
+import { computeLightingBoundsMm } from "../../../../lib/scene/lighting-layout";
 import { getLightingPreset, type LightingPresetId } from "../../../../lib/scene/lighting-presets";
+import type { RoomMoodRecipeApplication } from "../../../../lib/scene/room-mood-recipes";
 import {
   formatSupportSurfaceLabel,
   resolveSupportSurfaceLock
@@ -61,6 +76,7 @@ import {
   requestWalkViewportFocus
 } from "../../../../lib/runtime/walk-keyboard";
 import { cancelRuntimeAssetPreview } from "../../../../lib/runtime/runtime-asset-bridge";
+import type { SceneAsset } from "../../../../lib/stores/useSceneStore";
 
 const STARTER_SET_OFFSETS: Array<[number, number]> = [
   [-2.2, -1.2],
@@ -96,11 +112,16 @@ function requiresSurfaceFocusPlacement(anchorType: ReturnType<typeof inferAnchor
   );
 }
 
+function isSurfaceAnchoredAsset(asset: SceneAsset) {
+  return requiresSurfaceFocusPlacement(normalizeSceneAnchorType(asset.anchorType));
+}
+
 export default function ProjectEditorPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
   const projectId = params.id as string;
+  const selectedAssetIdParam = searchParams.get("selectedAssetId");
 
   const viewMode = useEditorStore((state) => state.viewMode);
   const topMode = useEditorStore((state) => state.topMode);
@@ -135,7 +156,7 @@ export default function ProjectEditorPage() {
     setScene,
     resetScene
   } = useShellStore();
-  const { assets, addFurniture, updateFurniture, removeFurniture } = useAssetStore();
+  const { assets, setAssets, addFurniture, updateFurniture, removeFurniture } = useAssetStore();
   const { selectedAssetId, setSelectedAssetId } = useSelectionStore();
   const { entranceId, setEntranceId } = useCameraStore();
   const { initializeHistory, recordSnapshot } = usePublishStore();
@@ -165,8 +186,10 @@ export default function ProjectEditorPage() {
     filteredItems: filteredLibraryCatalog,
     featuredItems: featuredLibraryCatalog,
     spotlightItem: librarySpotlightItem,
-    hasActiveFilters: libraryHasActiveFilters
+    hasActiveFilters: libraryHasActiveFilters,
+    refreshCatalog
   } = useAssetCatalog();
+  const [isProductAssetGenerating, setIsProductAssetGenerating] = useState(false);
 
   useEffect(() => {
     const supportsWebGPU = typeof navigator !== "undefined" && Boolean((navigator as any).gpu);
@@ -214,6 +237,41 @@ export default function ProjectEditorPage() {
       }
     };
   }, [preferWebGPU, setIsWebGPUReady]);
+
+  const waitForProductAssetJob = useCallback(async (jobId: string) => {
+    for (let attempt = 0; attempt < 80; attempt += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      const job = await fetchJobStatus(jobId);
+      if (job.status === "succeeded") {
+        return job;
+      }
+      if (job.status === "failed" || job.status === "dead_letter") {
+        throw new Error(job.error || job.details || "상품 링크 에셋 생성에 실패했습니다.");
+      }
+    }
+    throw new Error("상품 링크 에셋 생성 시간이 초과되었습니다. 작업 상태를 다시 확인해 주세요.");
+  }, []);
+
+  const generateProductAssetFromUrl = useCallback(
+    async (productUrl: string) => {
+      if (isProductAssetGenerating) return;
+      setIsProductAssetGenerating(true);
+      try {
+        const job = await enqueueProductAssetGeneration({
+          productUrl,
+          providerMode: "auto",
+          maxCandidates: 4
+        });
+        toast.success("상품 링크 에셋 생성을 시작했습니다.");
+        await waitForProductAssetJob(job.jobId);
+        await refreshCatalog();
+        toast.success("생성된 private asset을 인벤토리에 추가했습니다.");
+      } finally {
+        setIsProductAssetGenerating(false);
+      }
+    },
+    [isProductAssetGenerating, refreshCatalog, waitForProductAssetJob]
+  );
 
   const applyMappedScene = useCallback(
     (mapped: SceneDocumentBootstrap) => {
@@ -340,9 +398,162 @@ export default function ProjectEditorPage() {
     () => assets.find((asset) => asset.id === selectedAssetId) ?? null,
     [assets, selectedAssetId]
   );
+  useEffect(() => {
+    if (!selectedAssetIdParam || selectedAssetId === selectedAssetIdParam) return;
+    if (assets.some((asset) => asset.id === selectedAssetIdParam)) {
+      setSelectedAssetId(selectedAssetIdParam);
+    }
+  }, [assets, selectedAssetId, selectedAssetIdParam, setSelectedAssetId]);
   const selectedCatalogItem = useMemo(
     () => (selectedAsset ? findCatalogItem(libraryCatalog, selectedAsset) : null),
     [libraryCatalog, selectedAsset]
+  );
+  const replacementCatalogItems = useMemo(
+    () =>
+      buildReplacementCatalogCandidates({
+        items: libraryCatalog,
+        selectedAsset,
+        selectedCatalogItem
+      }),
+    [libraryCatalog, selectedAsset, selectedCatalogItem]
+  );
+  const supportCarrierAssetIds = useMemo(
+    () =>
+      new Set(
+        assets
+          .map((asset) => asset.supportAssetId)
+          .filter((id): id is string => typeof id === "string" && id.length > 0)
+      ),
+    [assets]
+  );
+  const supportDependentsByAssetId = useMemo(() => {
+    const nextDependents = new Map<string, SceneAsset[]>();
+    assets.forEach((asset) => {
+      if (!asset.supportAssetId || !isSurfaceAnchoredAsset(asset)) return;
+      const dependents = nextDependents.get(asset.supportAssetId) ?? [];
+      dependents.push(asset);
+      nextDependents.set(asset.supportAssetId, dependents);
+    });
+    return nextDependents;
+  }, [assets]);
+  const buildProjectedReplacementAsset = useCallback(
+    (targetAsset: SceneAsset, item: LibraryCatalogItem): SceneAsset => {
+      const productSnapshot = toCatalogProductSnapshot(item);
+      const supportProfile = item.supportProfile ?? null;
+      const anchorType = normalizeSceneAnchorType(targetAsset.anchorType ?? inferAnchorTypeForCatalogItem(item));
+      const anchoredPlacement = constrainPlacementToAnchor(
+        {
+          position: targetAsset.position,
+          rotation: targetAsset.rotation,
+          anchorType,
+          supportAssetId: targetAsset.supportAssetId
+        },
+        {
+          ...anchorContext,
+          activeAssetId: targetAsset.id,
+          activeAsset: {
+            id: targetAsset.id,
+            assetId: item.assetId,
+            catalogItemId: item.id,
+            product: productSnapshot,
+            supportProfile,
+            scale: targetAsset.scale
+          }
+        }
+      );
+
+      return {
+        ...targetAsset,
+        assetId: item.assetId,
+        catalogItemId: item.id,
+        product: productSnapshot,
+        supportProfile,
+        anchorType: anchoredPlacement.anchorType,
+        supportAssetId: anchoredPlacement.supportAssetId,
+        position: anchoredPlacement.position,
+        rotation: anchoredPlacement.rotation
+      };
+    },
+    [anchorContext]
+  );
+  const doesProjectedSupportPreserveDependents = useCallback(
+    (supportAssetId: string, projectedAssets: SceneAsset[]) => {
+      const dependents = projectedAssets.filter(
+        (asset) => asset.supportAssetId === supportAssetId && isSurfaceAnchoredAsset(asset)
+      );
+      if (dependents.length === 0) return true;
+
+      return dependents.every((dependent) => {
+        const anchoredDependent = constrainPlacementToAnchor(
+          {
+            position: dependent.position,
+            rotation: dependent.rotation,
+            anchorType: dependent.anchorType,
+            supportAssetId: supportAssetId
+          },
+          {
+            ...anchorContext,
+            sceneAssets: projectedAssets,
+            activeAssetId: dependent.id
+          }
+        );
+        return anchoredDependent.supportAssetId === supportAssetId;
+      });
+    },
+    [anchorContext]
+  );
+  const canReplacementPreserveSupportCascade = useCallback(
+    (targetAsset: SceneAsset, item: LibraryCatalogItem) => {
+      const dependents = supportDependentsByAssetId.get(targetAsset.id) ?? [];
+      if (dependents.length === 0) return true;
+      const projectedAssets = assets.map((asset) =>
+        asset.id === targetAsset.id ? buildProjectedReplacementAsset(targetAsset, item) : asset
+      );
+      return doesProjectedSupportPreserveDependents(targetAsset.id, projectedAssets);
+    },
+    [
+      assets,
+      buildProjectedReplacementAsset,
+      doesProjectedSupportPreserveDependents,
+      supportDependentsByAssetId
+    ]
+  );
+  const findZoneReplacementCandidateForAsset = useCallback(
+    (asset: SceneAsset, catalogItem: LibraryCatalogItem | null, zoneId: ReplacementRoomZoneId) =>
+      buildReplacementCatalogCandidates({
+        items: libraryCatalog,
+        selectedAsset: asset,
+        selectedCatalogItem: catalogItem,
+        limit: 12
+      }).find(
+        (candidate) =>
+          (candidate.roomZone.id === zoneId || candidate.roomZone.id === "flex" || zoneId === "flex") &&
+          canReplacementPreserveSupportCascade(asset, candidate.item)
+      ),
+    [canReplacementPreserveSupportCascade, libraryCatalog]
+  );
+  const placedAssetZoneSummaries = useMemo(
+    () =>
+      buildPlacedAssetZoneSummary(
+        assets.map((asset) => {
+          const catalogItem = findCatalogItem(libraryCatalog, asset);
+          const zone = inferReplacementRoomZone(catalogItem, asset.assetId);
+          const replacementCandidate = findZoneReplacementCandidateForAsset(asset, catalogItem, zone.id);
+          return {
+            id: asset.id,
+            label: catalogItem?.label ?? formatAssetIdLabel(asset.assetId),
+            zone,
+            isSelected: asset.id === selectedAssetId,
+            supportDependentCount: supportDependentsByAssetId.get(asset.id)?.length ?? 0,
+            replacementItemId: replacementCandidate?.item.id ?? null,
+            replacementLabel: replacementCandidate?.item.label ?? null,
+            replacementMatchPercent: replacementCandidate?.matchPercent ?? null,
+            replacementPreviewFamily: replacementCandidate?.previewFamily ?? null,
+            replacementPreviewScale: replacementCandidate?.previewScale ?? null
+          };
+        })
+      ),
+    [assets, findZoneReplacementCandidateForAsset, libraryCatalog, selectedAssetId, supportDependentsByAssetId]
   );
   const selectedSupportAsset = useMemo(
     () =>
@@ -611,7 +822,7 @@ export default function ProjectEditorPage() {
         }
       );
 
-      updateFurniture(id, {
+      updateFurniture(targetAsset.id, {
         ...updates,
         anchorType: anchoredPlacement.anchorType,
         supportAssetId: anchoredPlacement.supportAssetId,
@@ -621,6 +832,102 @@ export default function ProjectEditorPage() {
       recordSnapshot("제품 편집");
     },
     [anchorContext, assets, recordSnapshot, updateFurniture]
+  );
+
+  const replaceSceneAssetWithCatalogItem = useCallback(
+    (targetAsset: SceneAsset, item: LibraryCatalogItem) => {
+      const projectedAsset = buildProjectedReplacementAsset(targetAsset, item);
+
+      updateFurniture(targetAsset.id, {
+        assetId: projectedAsset.assetId,
+        catalogItemId: projectedAsset.catalogItemId,
+        product: projectedAsset.product,
+        supportProfile: projectedAsset.supportProfile,
+        anchorType: projectedAsset.anchorType,
+        supportAssetId: projectedAsset.supportAssetId,
+        position: projectedAsset.position,
+        rotation: projectedAsset.rotation,
+        scale: targetAsset.scale,
+        materialId: targetAsset.materialId
+      });
+    },
+    [buildProjectedReplacementAsset, updateFurniture]
+  );
+
+  const replaceAssetFromInspector = useCallback(
+    (id: string, item: LibraryCatalogItem) => {
+      const targetAsset = assets.find((asset) => asset.id === id);
+      if (!targetAsset) return;
+
+      replaceSceneAssetWithCatalogItem(targetAsset, item);
+      setSelectedAssetId(id);
+      recordSnapshot("제품 교체");
+      toast.success(`${item.label}로 교체했습니다.`);
+    },
+    [assets, recordSnapshot, replaceSceneAssetWithCatalogItem, setSelectedAssetId]
+  );
+
+  const applyPlacedZoneReplacements = useCallback(
+    (zoneId: ReplacementRoomZoneId) => {
+      const zoneSummary = placedAssetZoneSummaries.find((summary) => summary.zone.id === zoneId);
+      const rawReplacementPlans = assets
+        .map((asset) => {
+          const catalogItem = findCatalogItem(libraryCatalog, asset);
+          const currentZone = inferReplacementRoomZone(catalogItem, asset.assetId);
+          if (currentZone.id !== zoneId) return null;
+          const candidate = findZoneReplacementCandidateForAsset(asset, catalogItem, zoneId);
+          return candidate ? { asset, item: candidate.item } : null;
+        })
+        .filter((plan): plan is { asset: SceneAsset; item: LibraryCatalogItem } => plan !== null);
+
+      const projectedAssets = assets.map((asset) => {
+        const plan = rawReplacementPlans.find((candidate) => candidate.asset.id === asset.id);
+        return plan ? buildProjectedReplacementAsset(asset, plan.item) : asset;
+      });
+      const replacementPlans = rawReplacementPlans
+        .filter(
+          (plan) =>
+            !supportCarrierAssetIds.has(plan.asset.id) ||
+            doesProjectedSupportPreserveDependents(plan.asset.id, projectedAssets)
+        )
+        .sort((left, right) => {
+          const leftIsCarrier = supportCarrierAssetIds.has(left.asset.id);
+          const rightIsCarrier = supportCarrierAssetIds.has(right.asset.id);
+          if (leftIsCarrier !== rightIsCarrier) return leftIsCarrier ? 1 : -1;
+          return 0;
+        });
+
+      if (replacementPlans.length === 0) {
+        toast.info("이 존에 바로 교체할 추천 후보가 없습니다.", {
+          description: "하위 surface anchor를 같은 부모에 유지할 수 있는 후보가 있을 때만 일괄 교체합니다."
+        });
+        return;
+      }
+
+      const carrierReplacementCount = replacementPlans.filter((plan) =>
+        supportCarrierAssetIds.has(plan.asset.id)
+      ).length;
+      replacementPlans.forEach((plan) => replaceSceneAssetWithCatalogItem(plan.asset, plan.item));
+      setSelectedAssetId(replacementPlans[0]?.asset.id ?? null);
+      recordSnapshot("존 추천 교체");
+      toast.success(`${zoneSummary?.zone.label ?? "선택 존"} 추천 교체`, {
+        description: `${replacementPlans.length}개 제품을 같은 zone 맥락의 추천 후보로 교체했습니다.${
+          carrierReplacementCount > 0 ? ` 부모 가구 ${carrierReplacementCount}개는 하위 surface anchor를 재고정했습니다.` : ""
+        }`
+      });
+    },
+    [
+      assets,
+      buildProjectedReplacementAsset,
+      doesProjectedSupportPreserveDependents,
+      findZoneReplacementCandidateForAsset,
+      libraryCatalog,
+      placedAssetZoneSummaries,
+      recordSnapshot,
+      replaceSceneAssetWithCatalogItem,
+      setSelectedAssetId,
+      supportCarrierAssetIds
+    ]
   );
 
   const removeAssetFromInspector = useCallback(
@@ -671,8 +978,92 @@ export default function ProjectEditorPage() {
     },
     [recordSnapshot, setLighting]
   );
+  const applyRoomMoodRecipe = useCallback(
+    (recipe: RoomMoodRecipeApplication) => {
+      const preset = getLightingPreset(recipe.lightingPresetId);
+      if (!preset) return;
+      setWallMaterialIndex(recipe.wallMaterialIndex);
+      setFloorMaterialIndex(recipe.floorMaterialIndex);
+      setCeilingMaterialIndex(recipe.ceilingMaterialIndex);
+      setLighting(preset.settings);
+      recordSnapshot(`무드 레시피 적용: ${recipe.label}`);
+    },
+    [
+      recordSnapshot,
+      setCeilingMaterialIndex,
+      setFloorMaterialIndex,
+      setLighting,
+      setWallMaterialIndex
+    ]
+  );
 
   const hasSceneGeometry = walls.length > 0 || floors.length > 0;
+  const lightingBoundsMm = useMemo(
+    () => computeLightingBoundsMm(walls, scale),
+    [scale, walls]
+  );
+  const editorRoomShell = useMemo(
+    () => ({
+      scale,
+      scaleInfo,
+      walls,
+      openings,
+      floors,
+      ceilings,
+      rooms,
+      cameraAnchors,
+      navGraph,
+      entranceId
+    }),
+    [
+      cameraAnchors,
+      ceilings,
+      entranceId,
+      floors,
+      navGraph,
+      openings,
+      rooms,
+      scale,
+      scaleInfo,
+      walls
+    ]
+  );
+  const applyRoomStylingBundle = useCallback(
+    (
+      bundleId: EditorRoomStylingBundleId,
+      clusterIds: readonly WorkspaceFlexClusterId[],
+      label: string
+    ) => {
+      const result = buildEditorRoomStylingBundleAssets({
+        catalog: libraryCatalog,
+        roomShell: editorRoomShell,
+        existingAssets: assets,
+        clusterIds
+      });
+
+      if (result.addedAssets.length === 0) {
+        toast.info(`${label} 번들이 이미 배치되어 있습니다.`, {
+          description: "기존 배치 제품을 유지하고 중복 asset은 추가하지 않았습니다."
+        });
+        return;
+      }
+
+      setAssets(result.nextAssets);
+      setSelectedAssetId(result.addedAssets[0]?.id ?? null);
+      recordSnapshot(`스타일링 번들 적용: ${label}`);
+      toast.success(`${label} 번들을 추가했습니다.`, {
+        description: `${result.addedAssets.length}개 제품을 배치하고 ${result.skippedAssets.length}개 기존 제품은 유지했습니다.`
+      });
+    },
+    [
+      assets,
+      editorRoomShell,
+      libraryCatalog,
+      recordSnapshot,
+      setAssets,
+      setSelectedAssetId
+    ]
+  );
   const canEnter3D = hasSceneGeometry && !getScaleGateMessage(scale, scaleInfo);
   const isSceneVisible = hasSceneGeometry && (viewMode === "top" || viewMode === "walk");
   const showLaunchState = !hasSceneGeometry;
@@ -695,7 +1086,11 @@ export default function ProjectEditorPage() {
   const normalizedProjectName = projectNameDraft.trim();
   const activePanel = panels.assets ? "assets" : panels.properties ? "properties" : null;
   const visiblePanel: "assets" | "properties" | null =
-    activePanel === "assets" && isWalkInventoryAvailable ? "assets" : null;
+    activePanel === "assets" && isWalkInventoryAvailable
+      ? "assets"
+      : activePanel === "properties" && isSceneVisible && viewMode === "top"
+        ? "properties"
+        : null;
   const topModeNotice = "상단뷰는 확인 전용입니다. 제품 배치는 워크뷰에서 I 키로 인벤토리를 열어 진행합니다.";
   const persistedAssets = useMemo(
     () =>
@@ -770,7 +1165,7 @@ export default function ProjectEditorPage() {
       return;
     }
     if (viewMode === "top") {
-      setPanels({ assets: false, properties: false });
+      setPanels({ assets: false });
       return;
     }
     setPanels({ properties: false });
@@ -944,7 +1339,7 @@ export default function ProjectEditorPage() {
         onTitleChange={setProjectNameDraft}
         onTitleCommit={() => setProjectNameDraft((current) => current.trim())}
         viewMode={viewMode}
-        canShowPanels={isWalkInventoryAvailable}
+        canShowPanels={isSceneVisible}
         activePanel={visiblePanel}
         onBack={() => router.push("/studio")}
         onShowAssets={toggleAssetPanel}
@@ -1017,10 +1412,12 @@ export default function ProjectEditorPage() {
                                   hasActiveFilters={libraryHasActiveFilters}
                                   placedItemKeys={placedItemKeys}
                                   showStarterSet={false}
+                                  isGeneratingProductAsset={isProductAssetGenerating}
                                   onQueryChange={setLibraryQuery}
                                   onCategoryChange={setLibraryCategory}
                                   onAddStarterSet={addStarterSetToScene}
                                   onAddItem={addCatalogItemToScene}
+                                  onGenerateProductAsset={generateProductAssetFromUrl}
                                 />
                               ) : visiblePanel === "properties" ? (
                                 <BuilderInspectorPanel
@@ -1034,11 +1431,15 @@ export default function ProjectEditorPage() {
                                   floorMaterialIndex={floorMaterialIndex}
                                   ceilingMaterialIndex={ceilingMaterialIndex}
                                   lighting={lighting}
+                                  lightingBoundsMm={lightingBoundsMm}
                                   wallsCount={walls.length}
                                   floorsCount={floors.length}
                                   assetsCount={assets.length}
+                                  placedZoneSummaries={placedAssetZoneSummaries}
+                                  catalogItems={libraryCatalog}
                                   selectedAsset={selectedAsset}
                                   selectedAssetMeta={selectedCatalogItem}
+                                  replacementItems={replacementCatalogItems}
                                   surfaceLockInfo={selectedSurfaceLockInfo}
                                   onTransformModeChange={setTransformMode}
                                   onTransformSpaceChange={setTransformSpace}
@@ -1048,6 +1449,11 @@ export default function ProjectEditorPage() {
                                   onLightingChange={applyLightingSetting}
                                   onLightingCommit={commitLightingSetting}
                                   onApplyLightingPreset={applyLightingPreset}
+                                  onApplyRoomMoodRecipe={applyRoomMoodRecipe}
+                                  onApplyRoomStylingBundle={applyRoomStylingBundle}
+                                  onReplaceAsset={replaceAssetFromInspector}
+                                  onSelectPlacedAsset={setSelectedAssetId}
+                                  onApplyPlacedZoneReplacements={applyPlacedZoneReplacements}
                                   onUpdateAsset={updateAssetFromInspector}
                                   onRemoveAsset={removeAssetFromInspector}
                                   formatAssetLabel={formatAssetIdLabel}
