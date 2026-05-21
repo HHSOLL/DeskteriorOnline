@@ -3,6 +3,8 @@ import type {
   ProductCollisionProxyMetadata,
   ProductContractMetadata,
   ProductDimensionsMm,
+  GeneratedAssetSidecarsMetadata,
+  GeneratedRuntimeAssetMetadata,
   ProductLicenseMetadata,
   ProductLodProfileMetadata,
   ProductPhysicalMetadata,
@@ -160,6 +162,12 @@ export type SceneAsset = {
     options?: string | null;
     externalUrl?: string | null;
     thumbnail?: string | null;
+    generationStrategy?: string | null;
+    runtimePackage?: Record<string, unknown> | null;
+    runtimeAsset?: GeneratedRuntimeAssetMetadata | null;
+    sidecars?: GeneratedAssetSidecarsMetadata | null;
+    interactionAnchors?: unknown[];
+    attachmentPoints?: unknown[];
   } & ProductPhysicalMetadata &
     ProductContractMetadata | null;
   anchorType?: SceneAnchorType;

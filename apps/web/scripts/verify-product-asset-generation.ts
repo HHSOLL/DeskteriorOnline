@@ -28,6 +28,14 @@ const productContracts = read("packages/contracts/src/product-assets.ts");
 assert(productContracts.includes("ProductAssetGenerationRequestSchema"), "product asset request contract missing");
 assert(productContracts.includes("z.literal(\"private\")"), "product asset visibility must be private-only");
 assert(productContracts.includes("UserAssetCatalogItemSchema"), "private generated asset catalog item contract missing");
+assert(productContracts.includes("GeneratedAssetSidecarsSchema"), "private generated asset contract must expose sidecar URLs");
+assert(productContracts.includes("runtimeAsset"), "private generated asset contract must expose runtime metadata");
+
+const webPackage = read("apps/web/package.json");
+assert(
+  webPackage.includes("\"@deskterioronline/contracts\""),
+  "web package must declare contracts dependency so Vercel can resolve product asset route imports"
+);
 
 const webProductRoute = read("apps/web/src/app/api/v1/product-assets/generate/route.ts");
 assert(webProductRoute.includes("/v1/product-assets/generate"), "web product asset route must proxy to API product-assets path");
@@ -50,6 +58,9 @@ const apiAssetsRepo = read("apps/api/src/repositories/assets-repo.ts");
 assert(apiAssetsRepo.includes("createSignedUrl"), "generated asset listing must prefer signed storage URLs");
 assert(apiAssetsRepo.includes(".eq(\"owner_id\", ownerId)"), "generated asset listing must be scoped to the owner");
 assert(apiAssetsRepo.includes(".eq(\"is_public\", false)"), "generated asset listing must return private generated assets only");
+assert(apiAssetsRepo.includes("resolveSignedSidecars"), "generated asset listing must sign CAD/runtime sidecar URLs");
+assert(apiAssetsRepo.includes("runtimePackage"), "generated asset listing must expose runtime package metadata");
+assert(apiAssetsRepo.includes("supportProfile"), "generated asset listing must expose support surfaces to the editor");
 
 const workerClaim = read("apps/worker/src/queue/claim-next-job.ts");
 assert(workerClaim.includes("PRODUCT_ASSET_GENERATION"), "worker claim list must include product asset jobs");
@@ -172,6 +183,10 @@ assert(categoryProfiles.includes("desk_mat"), "category profiles must cover low-
 assert(categoryProfiles.includes("monitor_arm"), "category profiles must cover monitor arms");
 assert(categoryProfiles.includes("motherboard"), "category profiles must cover motherboard assets");
 assert(categoryProfiles.includes("pc_case_radiator_mount"), "PC case profile must expose radiator mount metadata");
+assert(
+  !categoryProfiles.includes("pc\\s*case|computer\\s*case|case|"),
+  "PC case classifier must not use a bare case regex before fan/radiator/PSU checks"
+);
 
 const blenderScript = read("scripts/blender/finalize-product-asset.py");
 assert(blenderScript.includes("apply_dimensions"), "Blender finalizer must apply official product dimensions");
@@ -180,10 +195,11 @@ assert(blenderScript.includes("render_thumbnail"), "Blender finalizer must rende
 assert(blenderScript.includes("maxErrorPercent"), "Blender finalizer must write dimension QA evidence");
 
 const workerAssetRepo = read("apps/worker/src/repositories/assets-repo.ts");
-assert(workerAssetRepo.includes("meta: payload.meta"), "generated asset registration must preserve product metadata");
+assert(workerAssetRepo.includes("const meta = mergeSidecarUploadsIntoMeta"), "generated asset registration must preserve product metadata");
 assert(workerAssetRepo.includes("thumbnail_path"), "generated asset registration must persist thumbnail storage path");
 assert(workerAssetRepo.includes("createSignedUrl(storagePath"), "worker generated asset result must avoid public-only URLs");
 assert(workerAssetRepo.includes("sidecars"), "generated asset registration must preserve CAD/runtime sidecar uploads");
+assert(workerAssetRepo.includes("sidecarUploads"), "generated asset registration must persist uploaded sidecar storage paths in metadata");
 
 const catalogApi = read("apps/web/src/lib/api/catalog.ts");
 assert(catalogApi.includes("/api/v1/assets"), "editor catalog fetch must merge user generated assets");
@@ -205,6 +221,14 @@ assert(projectPage.includes("fetchJobStatus"), "project editor must poll generat
 
 const catalogNormalizer = read("apps/web/src/lib/builder/catalog.ts");
 assert(catalogNormalizer.includes("qualityScore"), "catalog normalizer must preserve generated asset quality score");
+assert(catalogNormalizer.includes("runtimeAsset"), "catalog normalizer must preserve generated runtime metadata");
+assert(catalogNormalizer.includes("sidecars"), "catalog normalizer must preserve generated sidecar URLs");
+
+const runtimeBridge = read("apps/web/src/lib/runtime/legacy-scene-runtime.ts");
+assert(
+  runtimeBridge.includes("normalizeGeneratedRuntimeAsset"),
+  "runtime bridge must consume generated runtime sidecars from catalog product snapshots"
+);
 
 const schema = read("schema.sql");
 const migration = read("supabase/migrations/20260512120000_product_asset_generation_jobs.sql");

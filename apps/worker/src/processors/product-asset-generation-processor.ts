@@ -281,6 +281,11 @@ function buildCadAssetMeta(input: {
     runtimeAsset: {
       units: "mm",
       dimensionsMm: runtimeAsset.dimensionsMm ?? draft.product.dimensionsMm,
+      colliders: Array.isArray(runtimeAsset.colliders) ? runtimeAsset.colliders : [],
+      supportSurfaces: Array.isArray(runtimeAsset.supportSurfaces) ? runtimeAsset.supportSurfaces : [],
+      attachmentPoints: Array.isArray(runtimeAsset.attachmentPoints) ? runtimeAsset.attachmentPoints : [],
+      interactionAnchors: Array.isArray(runtimeAsset.interactionAnchors) ? runtimeAsset.interactionAnchors : [],
+      materialVariants: Array.isArray(runtimeAsset.materialVariants) ? runtimeAsset.materialVariants : [],
       scaleLocked: input.categoryProfile.scaleLocked,
       pivot: {
         x: "center",

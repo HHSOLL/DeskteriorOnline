@@ -22,6 +22,70 @@ function sanitizeFileName(fileName: string) {
   return fileName.replace(/\s+/g, "-").toLowerCase().replace(/[^a-z0-9._-]/g, "");
 }
 
+function readRecord(value: unknown) {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
+function sidecarKeyForSuffix(suffix: string) {
+  switch (suffix) {
+    case "model.py":
+      return "modelSource";
+    case "model.step":
+      return "step";
+    case "runtime-package.json":
+      return "runtimePackage";
+    case "colliders.json":
+      return "colliders";
+    case "support-surfaces.json":
+      return "supportSurfaces";
+    case "attachment-points.json":
+      return "attachmentPoints";
+    case "interaction-anchors.json":
+      return "interactionAnchors";
+    case "material-variants.json":
+      return "materialVariants";
+    case "qa-report.json":
+      return "qaReport";
+    default:
+      return suffix.replace(/\.[a-z0-9]+$/i, "").replace(/[^a-z0-9]+(.)/gi, (_, character: string) =>
+        character.toUpperCase()
+      );
+  }
+}
+
+function mergeSidecarUploadsIntoMeta(
+  meta: Record<string, unknown>,
+  sidecarUploads: Array<{ suffix: string; path: string; contentType: string }>
+) {
+  if (sidecarUploads.length === 0) return meta;
+
+  const generation = readRecord(meta.generation) ?? {};
+  const runtimeAsset = readRecord(meta.runtimeAsset) ?? {};
+  const existingSidecars = readRecord(runtimeAsset.sidecars) ?? {};
+  const sidecarIndex = sidecarUploads.reduce<Record<string, unknown>>(
+    (accumulator, upload) => {
+      accumulator[sidecarKeyForSuffix(upload.suffix)] = upload;
+      return accumulator;
+    },
+    { all: sidecarUploads }
+  );
+
+  return {
+    ...meta,
+    generation: {
+      ...generation,
+      sidecarUploads
+    },
+    runtimeAsset: {
+      ...runtimeAsset,
+      sidecars: {
+        ...existingSidecars,
+        ...sidecarIndex
+      }
+    }
+  };
+}
+
 export async function createGeneratedAsset(payload: CreateGeneratedAssetPayload) {
   const assetId = crypto.randomUUID();
   const safeName = sanitizeFileName(payload.fileName) || "generated-asset.glb";
@@ -62,6 +126,14 @@ export async function createGeneratedAsset(payload: CreateGeneratedAssetPayload)
       };
     })
   );
+  const baseMeta = payload.meta ?? {
+    schemaVersion: 1,
+    unit: "m",
+    extra: {
+      provider: payload.provider
+    }
+  };
+  const meta = mergeSidecarUploadsIntoMeta(baseMeta, sidecarUploads);
 
   const insert = await supabaseService.from("assets").insert({
     id: assetId,
@@ -72,13 +144,7 @@ export async function createGeneratedAsset(payload: CreateGeneratedAssetPayload)
     tags: payload.tags ?? ["generated", payload.provider],
     glb_path: storagePath,
     thumbnail_path: thumbnailPath,
-    meta: payload.meta ?? {
-      schemaVersion: 1,
-      unit: "m",
-      extra: {
-        provider: payload.provider
-      }
-    },
+    meta,
     is_public: false
   });
   if (insert.error) throw insert.error;

@@ -17,6 +17,28 @@ export const ProductAssetGenerationEnqueueResponseSchema = z.object({
   status: z.literal("queued")
 });
 
+export const GeneratedAssetSidecarSchema = z.object({
+  suffix: z.string().min(1),
+  path: z.string().min(1),
+  contentType: z.string().min(1),
+  url: z.string().url().nullable()
+});
+
+export const GeneratedAssetSidecarsSchema = z
+  .object({
+    all: z.array(GeneratedAssetSidecarSchema),
+    modelSource: GeneratedAssetSidecarSchema.optional(),
+    step: GeneratedAssetSidecarSchema.optional(),
+    runtimePackage: GeneratedAssetSidecarSchema.optional(),
+    colliders: GeneratedAssetSidecarSchema.optional(),
+    supportSurfaces: GeneratedAssetSidecarSchema.optional(),
+    attachmentPoints: GeneratedAssetSidecarSchema.optional(),
+    interactionAnchors: GeneratedAssetSidecarSchema.optional(),
+    materialVariants: GeneratedAssetSidecarSchema.optional(),
+    qaReport: GeneratedAssetSidecarSchema.optional()
+  })
+  .passthrough();
+
 export const UserAssetCatalogItemSchema = z.object({
   id: z.string().uuid(),
   label: z.string().min(1),
@@ -35,7 +57,14 @@ export const UserAssetCatalogItemSchema = z.object({
   qualityScore: z.number().min(0).max(1).nullable(),
   externalUrl: z.string().url().nullable(),
   brand: z.string().nullable(),
-  description: z.string().nullable()
+  description: z.string().nullable(),
+  generationStrategy: z.string().min(1).nullable().optional(),
+  runtimePackage: z.record(z.string(), z.unknown()).nullable().optional(),
+  runtimeAsset: z.record(z.string(), z.unknown()).nullable().optional(),
+  sidecars: GeneratedAssetSidecarsSchema.nullable().optional(),
+  supportProfile: z.record(z.string(), z.unknown()).nullable().optional(),
+  interactionAnchors: z.array(z.unknown()).optional(),
+  attachmentPoints: z.array(z.unknown()).optional()
 });
 
 export const UserAssetsListResponseSchema = z.object({
@@ -45,5 +74,7 @@ export const UserAssetsListResponseSchema = z.object({
 export type ProductAssetProviderMode = z.infer<typeof ProductAssetProviderModeSchema>;
 export type ProductAssetGenerationRequest = z.infer<typeof ProductAssetGenerationRequestSchema>;
 export type ProductAssetGenerationEnqueueResponse = z.infer<typeof ProductAssetGenerationEnqueueResponseSchema>;
+export type GeneratedAssetSidecar = z.infer<typeof GeneratedAssetSidecarSchema>;
+export type GeneratedAssetSidecars = z.infer<typeof GeneratedAssetSidecarsSchema>;
 export type UserAssetCatalogItem = z.infer<typeof UserAssetCatalogItemSchema>;
 export type UserAssetsListResponse = z.infer<typeof UserAssetsListResponseSchema>;

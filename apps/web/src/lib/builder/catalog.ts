@@ -76,6 +76,28 @@ export type ProductContractMetadata = {
   lodProfile: ProductLodProfileMetadata | null;
 };
 
+export type GeneratedAssetSidecarMetadata = {
+  suffix: string;
+  path: string;
+  contentType: string;
+  url: string | null;
+};
+
+export type GeneratedAssetSidecarsMetadata = {
+  all: GeneratedAssetSidecarMetadata[];
+  modelSource?: GeneratedAssetSidecarMetadata;
+  step?: GeneratedAssetSidecarMetadata;
+  runtimePackage?: GeneratedAssetSidecarMetadata;
+  colliders?: GeneratedAssetSidecarMetadata;
+  supportSurfaces?: GeneratedAssetSidecarMetadata;
+  attachmentPoints?: GeneratedAssetSidecarMetadata;
+  interactionAnchors?: GeneratedAssetSidecarMetadata;
+  materialVariants?: GeneratedAssetSidecarMetadata;
+  qaReport?: GeneratedAssetSidecarMetadata;
+};
+
+export type GeneratedRuntimeAssetMetadata = Record<string, unknown>;
+
 export type LibraryCatalogItem = {
   id: string;
   label: string;
@@ -92,6 +114,12 @@ export type LibraryCatalogItem = {
   externalUrl: string | null;
   brand: string | null;
   qualityScore?: number | null;
+  generationStrategy?: string | null;
+  runtimePackage?: Record<string, unknown> | null;
+  runtimeAsset?: GeneratedRuntimeAssetMetadata | null;
+  sidecars?: GeneratedAssetSidecarsMetadata | null;
+  interactionAnchors?: unknown[];
+  attachmentPoints?: unknown[];
   supportProfile?: AssetSupportProfile | null;
 } & ProductPhysicalMetadata &
   ProductContractMetadata;
@@ -105,6 +133,12 @@ export type CatalogProductSnapshot = {
   options: string | null;
   externalUrl: string | null;
   thumbnail: string | null;
+  generationStrategy?: string | null;
+  runtimePackage?: Record<string, unknown> | null;
+  runtimeAsset?: GeneratedRuntimeAssetMetadata | null;
+  sidecars?: GeneratedAssetSidecarsMetadata | null;
+  interactionAnchors?: unknown[];
+  attachmentPoints?: unknown[];
 } & ProductPhysicalMetadata &
   ProductContractMetadata;
 
@@ -1136,6 +1170,10 @@ function normalizeCatalogText(value: unknown) {
   return normalized.length > 0 ? normalized : null;
 }
 
+function normalizeCatalogRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
 function normalizeCatalogPrice(value: unknown) {
   if (typeof value === "number" && Number.isFinite(value)) {
     return String(value);
@@ -1205,6 +1243,52 @@ function normalizeCatalogUrl(value: unknown) {
     return normalized;
   }
   return null;
+}
+
+function normalizeGeneratedAssetSidecar(value: unknown): GeneratedAssetSidecarMetadata | null {
+  const record = normalizeCatalogRecord(value);
+  const suffix = normalizeCatalogText(record?.suffix);
+  const path = normalizeCatalogText(record?.path);
+  const contentType = normalizeCatalogText(record?.contentType);
+  const url = normalizeCatalogUrl(record?.url);
+  return suffix && path && contentType ? { suffix, path, contentType, url } : null;
+}
+
+function normalizeGeneratedAssetSidecars(value: unknown): GeneratedAssetSidecarsMetadata | null {
+  const record = normalizeCatalogRecord(value);
+  if (!record) return null;
+
+  const all = Array.isArray(record.all)
+    ? record.all
+        .map(normalizeGeneratedAssetSidecar)
+        .filter((sidecar): sidecar is GeneratedAssetSidecarMetadata => sidecar !== null)
+    : [];
+  const sidecars = {
+    all
+  } as GeneratedAssetSidecarsMetadata;
+
+  for (const key of [
+    "modelSource",
+    "step",
+    "runtimePackage",
+    "colliders",
+    "supportSurfaces",
+    "attachmentPoints",
+    "interactionAnchors",
+    "materialVariants",
+    "qaReport"
+  ] as const) {
+    const sidecar = normalizeGeneratedAssetSidecar(record[key]);
+    if (sidecar) {
+      sidecars[key] = sidecar;
+    }
+  }
+
+  return all.length > 0 ? sidecars : null;
+}
+
+function normalizeCatalogUnknownArray(value: unknown) {
+  return Array.isArray(value) ? value : [];
 }
 
 function normalizeCatalogImagePath(value: unknown) {
@@ -1394,6 +1478,10 @@ function normalizeCatalogItem(item: unknown): LibraryCatalogItem | null {
   const categoryId = resolveCategoryId(record);
   const meta = CATEGORY_META[categoryId];
   const dimensionsMm = normalizeCatalogDimensionsMm(record.dimensionsMm);
+  const sidecars = normalizeGeneratedAssetSidecars(record.sidecars);
+  const runtimePackage = normalizeCatalogRecord(record.runtimePackage);
+  const runtimeAsset = normalizeCatalogRecord(record.runtimeAsset);
+  const generationStrategy = normalizeCatalogText(record.generationStrategy);
 
   return {
     id: record.id,
@@ -1415,6 +1503,12 @@ function normalizeCatalogItem(item: unknown): LibraryCatalogItem | null {
     brand: normalizeCatalogText(record.brand) ?? normalizeCatalogText(record.vendor),
     qualityScore:
       typeof record.qualityScore === "number" && Number.isFinite(record.qualityScore) ? record.qualityScore : null,
+    generationStrategy,
+    runtimePackage,
+    runtimeAsset,
+    sidecars,
+    interactionAnchors: normalizeCatalogUnknownArray(record.interactionAnchors),
+    attachmentPoints: normalizeCatalogUnknownArray(record.attachmentPoints),
     dimensionsMm,
     finishColor: normalizeCatalogText(record.finishColor),
     finishMaterial: normalizeCatalogText(record.finishMaterial),
@@ -1458,6 +1552,12 @@ export function toCatalogProductSnapshot(item: LibraryCatalogItem): CatalogProdu
     options: item.options,
     externalUrl: item.externalUrl,
     thumbnail: item.thumbnail,
+    generationStrategy: item.generationStrategy ?? null,
+    runtimePackage: item.runtimePackage ?? null,
+    runtimeAsset: item.runtimeAsset ?? null,
+    sidecars: item.sidecars ?? null,
+    interactionAnchors: item.interactionAnchors ?? [],
+    attachmentPoints: item.attachmentPoints ?? [],
     dimensionsMm: item.dimensionsMm,
     finishColor: item.finishColor,
     finishMaterial: item.finishMaterial,

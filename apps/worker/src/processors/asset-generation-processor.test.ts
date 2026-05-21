@@ -113,6 +113,22 @@ test("product asset generation strategy routes hard-surface products away from i
   assert.equal(deskDecision.strategy, "cad_parametric");
   assert.equal(strategyUsesProvider(deskDecision), false);
 
+  const caseFanProfile = resolveProductAssetCategoryProfile({ title: "Lian Li UNI FAN SL-INF 120mm case fan" });
+  const caseFanDecision = resolveProductAssetGenerationStrategy({ categoryProfile: caseFanProfile, title: "case fan" });
+  assert.equal(caseFanProfile.key, "fan");
+  assert.equal(caseFanDecision.strategy, "cad_parametric");
+  assert.equal(strategyUsesProvider(caseFanDecision), false);
+
+  const radiatorProfile = resolveProductAssetCategoryProfile({ title: "360mm AIO radiator for PC case" });
+  const radiatorDecision = resolveProductAssetGenerationStrategy({ categoryProfile: radiatorProfile, title: "360mm radiator" });
+  assert.equal(radiatorProfile.key, "radiator");
+  assert.equal(radiatorDecision.strategy, "cad_parametric");
+
+  const pcCaseProfile = resolveProductAssetCategoryProfile({ title: "HYTE Y70 Snow White PC case" });
+  const pcCaseDecision = resolveProductAssetGenerationStrategy({ categoryProfile: pcCaseProfile, title: "HYTE Y70 PC case" });
+  assert.equal(pcCaseProfile.key, "pc_case");
+  assert.equal(pcCaseDecision.strategy, "cad_parametric");
+
   const keyboardProfile = resolveProductAssetCategoryProfile({ title: "full size mechanical keyboard" });
   const keyboardDecision = resolveProductAssetGenerationStrategy({ categoryProfile: keyboardProfile, title: "keyboard" });
   assert.equal(keyboardDecision.strategy, "cad_parametric");

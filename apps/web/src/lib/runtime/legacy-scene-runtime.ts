@@ -38,6 +38,158 @@ export type SceneStoreRuntimeInput = {
   lighting: LightingSettings;
 };
 
+function readRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
+function readNumber(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function readVector2Mm(value: unknown): [number, number] | null {
+  if (Array.isArray(value) && value.length >= 2) {
+    const x = readNumber(value[0]);
+    const y = readNumber(value[1]);
+    return x !== null && y !== null ? [x, y] : null;
+  }
+
+  const record = readRecord(value);
+  const x = readNumber(record?.x);
+  const y = readNumber(record?.y);
+  return x !== null && y !== null ? [x, y] : null;
+}
+
+function readVector3Mm(value: unknown): [number, number, number] | null {
+  if (Array.isArray(value) && value.length >= 3) {
+    const x = readNumber(value[0]);
+    const y = readNumber(value[1]);
+    const z = readNumber(value[2]);
+    return x !== null && y !== null && z !== null ? [x, y, z] : null;
+  }
+
+  const record = readRecord(value);
+  const x = readNumber(record?.x);
+  const y = readNumber(record?.y);
+  const z = readNumber(record?.z);
+  return x !== null && y !== null && z !== null ? [x, y, z] : null;
+}
+
+function normalizeGeneratedDimensionsMm(value: unknown) {
+  const record = readRecord(value);
+  const width = readNumber(record?.width);
+  const depth = readNumber(record?.depth);
+  const height = readNumber(record?.height);
+  return width !== null && depth !== null && height !== null ? { width, depth, height } : null;
+}
+
+function normalizeGeneratedCollider(value: unknown) {
+  const record = readRecord(value);
+  const id = typeof record?.id === "string" && record.id.length > 0 ? record.id : null;
+  const kind = record?.kind;
+  if (!id || kind !== "box") return null;
+  const sizeMm = normalizeGeneratedDimensionsMm(record.sizeMm);
+  const centerMm = readVector3Mm(record.centerMm);
+  return sizeMm && centerMm ? { id, kind: "box" as const, sizeMm, centerMm } : null;
+}
+
+function normalizeGeneratedSupportSurface(value: unknown): SupportSurface | null {
+  const record = readRecord(value);
+  const id = typeof record?.id === "string" && record.id.length > 0 ? record.id : null;
+  const type =
+    record?.type === "floor" ||
+    record?.type === "wall" ||
+    record?.type === "desktop_top" ||
+    record?.type === "shelf_top" ||
+    record?.type === "desk_edge" ||
+    record?.type === "desk_underside" ||
+    record?.type === "monitor_back" ||
+    record?.type === "pegboard"
+      ? record.type
+      : null;
+  const localFrame = readRecord(record?.localFrame);
+  const boundsMm = readRecord(record?.boundsMm);
+  const originMm = readVector3Mm(localFrame?.originMm);
+  const tangentU = readVector3Mm(localFrame?.tangentU);
+  const tangentV = readVector3Mm(localFrame?.tangentV);
+  const normal = readVector3Mm(localFrame?.normal);
+  const min = readVector2Mm(boundsMm?.min);
+  const max = readVector2Mm(boundsMm?.max);
+  if (!id || !type || !originMm || !tangentU || !tangentV || !normal || !min || !max) {
+    return null;
+  }
+
+  const allowedAttachments = Array.isArray(record?.allowedAttachments)
+    ? record.allowedAttachments
+        .filter((entry): entry is string => typeof entry === "string")
+        .map((entry) => (entry === "under_desk_mount" ? "underside_screw" : entry))
+    : ["place_on_surface"];
+
+  return {
+    id,
+    type,
+    localFrame: {
+      originMm,
+      tangentU,
+      tangentV,
+      normal
+    },
+    boundsMm: { min, max },
+    allowedAttachments: allowedAttachments as SupportSurface["allowedAttachments"],
+    ...(typeof record.thicknessMm === "number" ? { thicknessMm: record.thicknessMm } : {}),
+    ...(typeof record.loadCapacityKg === "number" ? { loadCapacityKg: record.loadCapacityKg } : {})
+  };
+}
+
+function normalizeGeneratedAttachmentPoint(value: unknown): AttachmentPoint | null {
+  const record = readRecord(value);
+  const id = typeof record?.id === "string" && record.id.length > 0 ? record.id : null;
+  const type = typeof record?.type === "string" && record.type.length > 0 ? record.type : null;
+  const localPositionMm = readVector3Mm(record?.localPositionMm);
+  const localNormal = readVector3Mm(record?.localNormal);
+  const localTangent = readVector3Mm(record?.localTangent);
+  const compatibleWith = Array.isArray(record?.compatibleWith)
+    ? record.compatibleWith.filter((entry): entry is string => typeof entry === "string")
+    : [];
+  if (!id || !type || !localPositionMm || !localNormal || !localTangent) return null;
+
+  return {
+    id,
+    type: type as AttachmentPoint["type"],
+    localPositionMm,
+    localNormal,
+    localTangent,
+    compatibleWith,
+    constraints: readRecord(record?.constraints) ?? {}
+  };
+}
+
+function normalizeGeneratedMaterialVariant(value: unknown): RuntimeAsset["materialVariants"][number] | null {
+  const record = readRecord(value);
+  const id = typeof record?.id === "string" && record.id.length > 0 ? record.id : null;
+  const label = typeof record?.label === "string" && record.label.length > 0 ? record.label : null;
+  return id && label ? ({ ...record, id, label } as RuntimeAsset["materialVariants"][number]) : null;
+}
+
+function normalizeGeneratedRuntimeAsset(asset: SceneAsset) {
+  const runtimeAsset = readRecord(asset.product?.runtimeAsset);
+  if (!runtimeAsset) return null;
+
+  return {
+    colliders: (Array.isArray(runtimeAsset.colliders) ? runtimeAsset.colliders : [])
+      .map(normalizeGeneratedCollider)
+      .filter((collider): collider is NonNullable<ReturnType<typeof normalizeGeneratedCollider>> => collider !== null),
+    supportSurfaces: (Array.isArray(runtimeAsset.supportSurfaces) ? runtimeAsset.supportSurfaces : [])
+      .map(normalizeGeneratedSupportSurface)
+      .filter((surface): surface is SupportSurface => surface !== null),
+    attachmentPoints: (Array.isArray(runtimeAsset.attachmentPoints) ? runtimeAsset.attachmentPoints : [])
+      .map(normalizeGeneratedAttachmentPoint)
+      .filter((attachment): attachment is AttachmentPoint => attachment !== null),
+    materialVariants: (Array.isArray(runtimeAsset.materialVariants) ? runtimeAsset.materialVariants : [])
+      .map(normalizeGeneratedMaterialVariant)
+      .filter((variant): variant is RuntimeAsset["materialVariants"][number] => variant !== null)
+  };
+}
+
 function mapRuntimeAssets(assets: SceneAsset[]): RuntimeAsset[] {
   return assets.flatMap((asset) => {
     if (!asset.product?.dimensionsMm) {
@@ -51,8 +203,14 @@ function mapRuntimeAssets(assets: SceneAsset[]): RuntimeAsset[] {
     const runtimeAssetId = asset.catalogItemId ?? asset.assetId;
     const inferredAttachmentPoints = inferCatalogAttachmentPoints(asset);
     const inferredSupportSurfaces = inferCatalogSupportSurfaces(asset);
-    const publishedSupportSurfaces = publishedRuntimeAsset?.supportSurfaces ?? [];
-    const publishedAttachmentPoints = publishedRuntimeAsset?.attachmentPoints ?? [];
+    const generatedRuntimeAsset = normalizeGeneratedRuntimeAsset(asset);
+    const generatedSupportSurfaces = generatedRuntimeAsset?.supportSurfaces ?? [];
+    const generatedAttachmentPoints = generatedRuntimeAsset?.attachmentPoints ?? [];
+    const publishedSupportSurfaces = generatedSupportSurfaces.length > 0
+      ? generatedSupportSurfaces
+      : publishedRuntimeAsset?.supportSurfaces ?? [];
+    const publishedAttachmentPoints =
+      generatedAttachmentPoints.length > 0 ? generatedAttachmentPoints : publishedRuntimeAsset?.attachmentPoints ?? [];
     const authoredSupportSurfaces = inferredSupportSurfaces.length > 0
       ? [...publishedSupportSurfaces, ...inferredSupportSurfaces]
       : publishedSupportSurfaces;
@@ -98,16 +256,19 @@ function mapRuntimeAssets(assets: SceneAsset[]): RuntimeAsset[] {
           triangleBudget: asset.product.lodProfile?.maxTriangleCount ?? 0,
           textureBudgetMb: asset.product.textureSet?.ktx2Ready ? 24 : 48
         },
-        colliders: publishedRuntimeAsset?.colliders ?? (asset.product.collisionProxy
-          ? [
-              {
-                id: `${asset.id}:box`,
-                kind: "box",
-                sizeMm: asset.product.dimensionsMm,
-                centerMm: [0, Math.round(asset.product.dimensionsMm.height / 2), 0]
-              }
-            ]
-          : []),
+        colliders: generatedRuntimeAsset?.colliders.length
+          ? generatedRuntimeAsset.colliders
+          : (publishedRuntimeAsset?.colliders ??
+            (asset.product.collisionProxy
+              ? [
+                  {
+                    id: `${asset.id}:box`,
+                    kind: "box",
+                    sizeMm: asset.product.dimensionsMm,
+                    centerMm: [0, Math.round(asset.product.dimensionsMm.height / 2), 0]
+                  }
+                ]
+              : [])),
         supportSurfaces:
           authoredSupportSurfaces.length > 0
             ? authoredSupportSurfaces
@@ -145,7 +306,9 @@ function mapRuntimeAssets(assets: SceneAsset[]): RuntimeAsset[] {
             allowedAttachments: surface.allowedAttachments ?? ["place_on_surface", "edge_clamp"]
           })) ?? [],
         attachmentPoints: authoredAttachmentPoints,
-        materialVariants: publishedRuntimeAsset?.materialVariants ?? [
+        materialVariants: generatedRuntimeAsset?.materialVariants.length
+          ? (generatedRuntimeAsset.materialVariants as RuntimeAsset["materialVariants"])
+          : publishedRuntimeAsset?.materialVariants ?? [
           {
             id: "default",
             label: asset.product.name

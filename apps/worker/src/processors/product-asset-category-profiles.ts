@@ -296,10 +296,11 @@ function matchEvidence(evidence: string): ProductAssetCategoryKey {
   if (/desk\s*mat|deskmat|매트|synchronize/.test(evidence)) return "desk_mat";
   if (/motherboard|mainboard|메인보드|b650|x670|z790|matx|atx\s*board/.test(evidence)) return "motherboard";
   if (/graphics\s*card|gpu|rtx|radeon|geforce|그래픽카드|그래픽\s*카드/.test(evidence)) return "gpu";
-  if (/pc\s*case|computer\s*case|case|hyte|y70|케이스/.test(evidence)) return "pc_case";
   if (/power\s*supply|psu|파워서플라이|파워\s*서플라이/.test(evidence)) return "psu";
-  if (/radiator|라디에이터|수랭|aio/.test(evidence)) return "radiator";
-  if (/\bfan\b|쿨링팬|case\s*fan|uni\s*fan/.test(evidence)) return "fan";
+  if (/\b\d{2,3}\s*mm\s*(?:aio\s*)?radiator|radiator(?!\s*mount)|라디에이터|수랭|aio/.test(evidence)) return "radiator";
+  if (/\b\d{2,3}\s*mm\s*fan|쿨링팬|케이스\s*팬|시스템\s*팬|case\s*fan|uni\s*fan/.test(evidence)) return "fan";
+  if (/pc\s*case|computer\s*case|tower\s*case|chassis|hyte|y70|케이스/.test(evidence)) return "pc_case";
+  if (/\bfan\b(?!\s*mount)/.test(evidence)) return "fan";
   if (/monitor|display|screen|모니터|디스플레이|s32|tfg|cpm/.test(evidence)) return "monitor";
   if (/speaker|스피커|reproducer|epic|gravastar|mars/.test(evidence)) return "speaker";
   if (/keyboard|키보드|hatsu|angry\s*miao/.test(evidence)) return "keyboard";

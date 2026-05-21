@@ -502,3 +502,18 @@ Removed/Deprecated:
 - Sending all product URL assets through image-to-3D providers by default.
 - Treating provider GLB + Blender scale/finalizer output as enough for desks, keyboards, PC cases, PSU/fan/radiator parts, GPU, or motherboard assembly use.
 - Treating CAD-first output as photo-real product completion without Blender material/UV/decal polish and licensing review.
+
+## 2026-05-22 변경 동기화 (Generated Asset Runtime Sidecar Catalog Wiring)
+Added:
+- CAD-first product URL assets now persist uploaded runtime sidecar paths in private asset metadata instead of returning them only from the worker.
+- The private generated asset listing signs runtime package, collider, support-surface, attachment-point, interaction-anchor, material-variant, QA, CAD source, and STEP sidecars for the requesting owner.
+- Editor catalog items preserve generated `runtimeAsset`, signed `sidecars`, `interactionAnchors`, and `attachmentPoints`, and the runtime bridge can use generated support/collider/attachment metadata for placement and assembly behavior.
+
+Updated:
+- Category profile matching treats `case fan` and 120mm fan products as `fan`, AIO/radiator products as `radiator`, and PC enclosures as `pc_case`; broad bare `case` matching is no longer a safe classifier.
+- The web package must declare its local contracts dependency so product asset API routes compile in Vercel preview builds.
+- `verify:product-asset-generation` now checks sidecar persistence/exposure, catalog preservation, runtime sidecar consumption, and the case fan routing guard.
+
+Removed/Deprecated:
+- Treating sidecar upload as complete when the DB row and editor catalog cannot recover the sidecar locations.
+- Treating hybrid/manual/library STEP strategy labels as completed Blender/CAD execution; build123d/OCP export, official STEP ingest, Blender polish, and multi-view render QA remain follow-up work.

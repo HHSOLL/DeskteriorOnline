@@ -3288,3 +3288,23 @@ Removed/Deprecated:
 
 Follow-up Risk:
 - 현재 CAD-first POC는 source/sidecar/runtime package 구조를 잠그는 1차 구현이다. 실제 build123d execution, true STEP validation, CAD-to-GLB tessellation quality, Blender material/UV polish, storage-side sidecar URL consumption in editor runtime, and multi-view render comparison remain follow-up work.
+
+## 2026-05-22 변경 동기화 (Generated Asset Sidecar Runtime Wiring)
+Added:
+- Worker `createGeneratedAsset`가 CAD/runtime sidecar upload 결과를 `assets.meta.generation.sidecarUploads`와 `assets.meta.runtimeAsset.sidecars`에 저장한다.
+- API private asset listing이 owner-scoped signed sidecar URLs, `runtimePackage`, `runtimeAsset`, generated support profile, interaction anchors, and attachment points를 반환한다.
+- Web catalog/store/runtime bridge가 generated `runtimeAsset`와 sidecar metadata를 보존하고, runtime placement에서 generated support surfaces, colliders, attachment points, material variants를 소비한다.
+- `case fan`, 120mm fan, AIO/radiator product routing 회귀 테스트를 worker test에 추가했다.
+
+Updated:
+- Vercel preview failure 원인이었던 `@deskterioronline/contracts/product-assets` module resolution은 `apps/web/package.json`의 workspace dependency 선언으로 해결한다.
+- `verify:product-asset-generation`는 sidecar path persistence, signed sidecar exposure, catalog preservation, runtime bridge consumption, and non-bare `case` classification guard를 검증한다.
+- Product URL CAD-first sidecar runtime consumption은 더 이상 전부 follow-up이 아니지만, interaction anchor execution UI, true STEP export, and Blender visual QA는 별도 단계로 남는다.
+
+Removed/Deprecated:
+- sidecar upload 목록을 worker 반환값에만 두고 DB/catalog/runtime에서 잃어버리는 구조.
+- `case` 단어 하나로 case fan 또는 radiator product를 `pc_case`로 분류하는 방식.
+
+Follow-up Risk:
+- 아직 실제 build123d/OCP STEP export, official STEP ingest, CAD-to-GLB tessellation, Blender material/UV/decal polish queue, hybrid mouse/GPU/motherboard detail pass, live Supabase signed sidecar fetch smoke, and multi-view render comparison이 남아 있다.
+- 새 커밋 푸시 후 Vercel은 module resolution 수정으로 다시 빌드되어야 하며, 원격 deploy status는 새 run 결과를 확인해야 한다.
