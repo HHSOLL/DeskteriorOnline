@@ -483,3 +483,22 @@ Updated:
 Removed/Deprecated:
 - Recording local Blender upholstery-shell work as Meshy provider output or community asset acquisition.
 - Treating KTX2 metadata synchronization as proof of commercial material approval or Bruno Simon-level completion.
+
+## 2026-05-21 변경 동기화 (Hybrid Product Asset Factory)
+Added:
+- Product URL asset generation now resolves a `generationStrategy` after URL/reference extraction and category profiling.
+- Allowed strategies are `cad_parametric`, `procedural_template`, `library_step_part`, `image_to_3d`, `hybrid_cad_blender`, and `manual_blender_required`.
+- Desk, shelf, monitor arm, cable tray, keyboard, PC case, PSU, fan, and radiator products route to CAD-first generation instead of Meshy/Tripo image-to-3D.
+- Mouse, GPU, motherboard, and monitor products route to hybrid CAD/Blender/manual-review paths because exact consumer-product shells, shrouds, decals, and material zones are not solved by CAD alone.
+- Plant/decor/generic organic objects remain eligible for image-to-3D, but stay private and review-required.
+- CAD-first output must keep source-controlled build123d/Python source, STEP placeholder/export target, runtime GLB, runtime package, collider, support-surface, attachment-point, interaction-anchor, material-variant, and QA sidecars. Until a build123d/OCP CAD worker is present, QA must mark true STEP export as pending.
+
+Updated:
+- The worker now runs the generation strategy router before provider configuration; provider calls are allowed only for `image_to_3d`.
+- Candidate QA for CAD-first assets tracks dimension tolerance, collider alignment, support surface coverage, attachment anchor count, interaction anchor validity, material slot coverage, and pending multi-view render review.
+- Product URL assets continue to write owner-scoped private rows only and keep `legalUse.mode=private_reference_only` plus `releaseEligible=false`.
+
+Removed/Deprecated:
+- Sending all product URL assets through image-to-3D providers by default.
+- Treating provider GLB + Blender scale/finalizer output as enough for desks, keyboards, PC cases, PSU/fan/radiator parts, GPU, or motherboard assembly use.
+- Treating CAD-first output as photo-real product completion without Blender material/UV/decal polish and licensing review.

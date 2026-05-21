@@ -2276,3 +2276,21 @@ Updated:
 Removed/Deprecated:
 - Treating `p2s_mechanical_keyboard_switch_lab_v1` as the current product-reference visual candidate.
 - Equating “same as the product” with copied protected brand geometry or logos; use private reference metadata and self-authored prototype geometry until licensing exists.
+
+## 2026-05-21 변경 동기화 (Hybrid Asset Factory Strategy)
+Added:
+- Product URL private generation must select a `generationStrategy` in addition to `categoryProfile`.
+- Generation strategies are `cad_parametric`, `procedural_template`, `library_step_part`, `image_to_3d`, `hybrid_cad_blender`, and `manual_blender_required`.
+- CAD-first assets must preserve source-controlled CAD/Python, STEP placeholder/export target, runtime GLB, runtime package, collider, support-surface, attachment-point, interaction-anchor, material-variant, and QA sidecars. True STEP export remains pending until the worker can run build123d/OCP.
+- The first CAD-first POC contract covers one parametric desk, one pressable keyboard with at least 5 key anchors, and one PC case shell with motherboard, PSU, GPU, fan, and radiator anchors.
+
+Updated:
+- Desks, shelves, monitor arms, cable trays, keyboard housings/key grids, PC cases, PSUs, fans, and radiators route to CAD-first generation.
+- Mouse, GPU, motherboard, monitor, and brand hero products route to hybrid/manual-review paths rather than raw image-to-3D.
+- Decor, plants, figures, cups, books, and similar non-structural objects may still use image-to-3D as private review-required candidates.
+- CAD-first QA is based on mm-scale dimensions, support/collider/attachment/interaction metadata, material slots, and multi-view review instead of file size or average thumbnail color alone.
+
+Removed/Deprecated:
+- Treating Meshy/Tripo-style image-to-3D as the default product asset generator for hard-surface deskterior and PC assembly assets.
+- Promoting product URL generated assets to public/static catalog entries or `releaseEligible=true`.
+- Calling CAD-generated structure photo-real before Blender material/UV/decal polish and licensed product evidence exist.

@@ -3266,3 +3266,25 @@ Removed/Deprecated:
 
 Follow-up Risk:
 - 현재 모델은 reference-prototype이다. 완전 상용 수준까지는 공식 치수, licensed legend/decal, 더 정확한 row profile, recorded blue-switch WAV layer, LOD/collider split, browser scene side-by-side QA가 필요하다.
+
+## 2026-05-21 변경 동기화 (Hybrid Product Asset Factory Router)
+Added:
+- `apps/worker/src/processors/product-asset-generation-strategy.ts`를 추가해 product URL reference 분석 후 `generationStrategy`를 결정한다.
+- `apps/worker/src/processors/product-asset-cad-generator.ts`를 추가해 CAD-first private runtime package POC를 생성한다.
+- CAD-first POC는 build123d/Python source, STEP placeholder, runtime GLB, runtime package, collider, support surface, attachment point, interaction anchor, material variant, QA sidecar를 worker workdir에 생성하고 private asset upload sidecar로 등록한다.
+- Worker test가 desk, keyboard, PC case POC를 검증한다: desk는 `desktop_top`, keyboard는 5개 이상 interaction anchor, PC case는 5개 이상 assembly attachment anchor를 가져야 한다.
+
+Updated:
+- `product-asset-generation-processor`는 provider 호출 전 category profile과 generation strategy를 먼저 결정한다.
+- `image_to_3d` 전략에서만 Meshy/Tripo provider path를 사용한다.
+- Desk/shelf/monitor arm/cable tray/keyboard/PC case/PSU/fan/radiator는 `cad_parametric`로, mouse/GPU/motherboard/monitor는 `hybrid_cad_blender`로, decor/plant/generic은 `image_to_3d`로 라우팅한다.
+- `createGeneratedAsset`는 CAD/runtime sidecar upload 목록을 받아 private asset result에 보존한다.
+- `verify:product-asset-generation`는 strategy router, CAD generator, sidecar, structural QA, private/reference-only release boundary를 정적 계약으로 검증한다.
+
+Removed/Deprecated:
+- Product URL 기반 hard-surface asset을 모두 image-to-3D provider 후보로 보내는 방식.
+- Blender finalizer가 스케일/피벗/thumbnail만 맞춘 provider output을 조립 가능한 제품 자산으로 간주하는 방식.
+- 파일 크기/평균 색상/thumbnail 중심 QA를 hard-surface 제품 구조 품질의 주된 기준으로 삼는 방식.
+
+Follow-up Risk:
+- 현재 CAD-first POC는 source/sidecar/runtime package 구조를 잠그는 1차 구현이다. 실제 build123d execution, true STEP validation, CAD-to-GLB tessellation quality, Blender material/UV polish, storage-side sidecar URL consumption in editor runtime, and multi-view render comparison remain follow-up work.

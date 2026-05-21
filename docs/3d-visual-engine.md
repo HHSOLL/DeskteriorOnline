@@ -2111,3 +2111,19 @@ Updated:
 Removed/Deprecated:
 - Using the exposed-switch lab asset as the current product-reference keyboard evidence.
 - Treating a branded product reference as public-release-safe before manufacturer/CAD/decal/license clearance.
+
+## 2026-05-21 변경 동기화 (CAD-First Runtime Metadata Gate)
+Added:
+- CAD-first product URL assets must render as runtime GLB candidates but keep Python/CAD source and STEP export targets as source-primary artifacts. If build123d/OCP is unavailable, runtime QA must expose STEP export as pending instead of treating the placeholder as validated CAD.
+- Hard-surface runtime packages must include colliders, support surfaces, attachment points, interaction anchors where applicable, material variants, and QA sidecars.
+- Desk CAD assets must expose `desktop_top`, `desk_edge`, and `desk_underside` support surfaces.
+- Keyboard CAD assets must expose key press interaction anchors; the POC minimum is 5 press targets.
+- PC case CAD assets must expose motherboard tray, PSU bay, GPU/PCIe, fan, and radiator anchors.
+
+Updated:
+- Visual QA for generated product assets now starts with structural metadata validity: mm dimensions, collider bounds, support/attachment/interaction anchors, and material slot coverage.
+- Blender finalizer/material pass remains required for PBR polish, bevel hierarchy, glass/screen/fabric/wood/metal material response, decals, thumbnails, and LOD/proxy refinement.
+
+Removed/Deprecated:
+- Judging generated hard-surface assets only by thumbnail similarity, file byte size, or single GLB existence.
+- Treating CAD-first geometry as final visual quality before multi-view render review and manual art approval.

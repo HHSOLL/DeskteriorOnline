@@ -1,10 +1,19 @@
 export type ProductAssetCategoryKey =
+  | "desk"
+  | "shelf"
+  | "monitor_arm"
+  | "cable_tray"
   | "monitor"
   | "speaker"
   | "keyboard"
   | "mouse"
   | "desk_mat"
   | "pc_case"
+  | "psu"
+  | "fan"
+  | "radiator"
+  | "gpu"
+  | "motherboard"
   | "audio_interface"
   | "lighting"
   | "plant"
@@ -23,6 +32,61 @@ export type ProductAssetCategoryProfile = {
 };
 
 const PROFILES: Record<ProductAssetCategoryKey, ProductAssetCategoryProfile> = {
+  desk: {
+    key: "desk",
+    catalogCategory: "furniture",
+    preferredPlacement: "floor",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "place_on_floor", compatibleSurfaces: ["floor"] },
+      hardSurface: true,
+      expectedSupportSurfaces: ["desktop_top", "desk_edge", "desk_underside"]
+    },
+    materialTargets: ["desktop slab", "leg or side-panel supports", "frame rails", "cable grommet or tray"],
+    repairDirectives: [
+      "preserve official tabletop footprint",
+      "author desktop_top, desk_edge, and desk_underside support surfaces",
+      "keep floor contact points aligned to collider bounds"
+    ]
+  },
+  shelf: {
+    key: "shelf",
+    catalogCategory: "furniture",
+    preferredPlacement: "floor",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "place_on_floor", compatibleSurfaces: ["floor"] },
+      hardSurface: true,
+      expectedSupportSurfaces: ["shelf_top"]
+    },
+    materialTargets: ["vertical panels", "shelf boards", "edge bands", "hardware"],
+    repairDirectives: ["preserve rectangular shelf levels", "author usable shelf_top support surfaces"]
+  },
+  monitor_arm: {
+    key: "monitor_arm",
+    catalogCategory: "electronics",
+    preferredPlacement: "desktop",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "edge_clamp", compatibleSurfaces: ["desktop", "desk_edge"] },
+      attachments: [{ type: "vesa_mount", patternMm: [75, 100], optional: false }],
+      articulation: "monitor_arm"
+    },
+    materialTargets: ["desk clamp", "arm links", "hinge cylinders", "VESA plate"],
+    repairDirectives: ["keep clamp and VESA plate separate", "preserve hinge axes for later articulation"]
+  },
+  cable_tray: {
+    key: "cable_tray",
+    catalogCategory: "utility",
+    preferredPlacement: "desktop",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "under_desk_mount", compatibleSurfaces: ["desk_underside"] },
+      hardSurface: true
+    },
+    materialTargets: ["tray body", "mounting ears", "screw holes"],
+    repairDirectives: ["preserve mounting hole spacing", "keep tray open volume clear"]
+  },
   monitor: {
     key: "monitor",
     catalogCategory: "electronics",
@@ -94,6 +158,66 @@ const PROFILES: Record<ProductAssetCategoryKey, ProductAssetCategoryProfile> = {
     },
     materialTargets: ["painted metal frame", "tempered glass", "RGB fans", "internal hardware planes"],
     repairDirectives: ["keep transparent glass panels separated", "do not collapse case into a solid cube"]
+  },
+  psu: {
+    key: "psu",
+    catalogCategory: "electronics",
+    preferredPlacement: "desktop",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "pc_case_psu_bay", compatibleSurfaces: ["psu_bay"] },
+      expectedDetails: ["fan_grille", "iec_power_socket", "modular_ports"]
+    },
+    materialTargets: ["metal box shell", "fan grille", "power socket", "modular cable port panel"],
+    repairDirectives: ["preserve PSU rectangular envelope", "keep cable port face identifiable"]
+  },
+  fan: {
+    key: "fan",
+    catalogCategory: "electronics",
+    preferredPlacement: "desktop",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "pc_case_fan_mount", compatibleSurfaces: ["fan_mount", "radiator_mount"] },
+      expectedDetails: ["square frame", "circular hub", "mounting holes"]
+    },
+    materialTargets: ["fan frame", "hub", "blade ring", "mount holes"],
+    repairDirectives: ["preserve 120mm/140mm mounting square", "keep airflow axis explicit"]
+  },
+  radiator: {
+    key: "radiator",
+    catalogCategory: "electronics",
+    preferredPlacement: "desktop",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "pc_case_radiator_mount", compatibleSurfaces: ["radiator_mount"] },
+      expectedDetails: ["fin stack", "end tanks", "fan screw rails"]
+    },
+    materialTargets: ["fin stack", "end tanks", "screw rails"],
+    repairDirectives: ["preserve radiator length and fan spacing", "keep tube ports identifiable"]
+  },
+  gpu: {
+    key: "gpu",
+    catalogCategory: "electronics",
+    preferredPlacement: "desktop",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "pcie_x16", compatibleSurfaces: ["motherboard_pcie_slot"] },
+      expectedDetails: ["pcie_fingers", "cooler_shroud", "display_io_bracket"]
+    },
+    materialTargets: ["PCB edge", "cooler shroud", "fan discs", "I/O bracket"],
+    repairDirectives: ["use CAD proxy for envelope and slots", "defer brand shroud fidelity to Blender/manual pass"]
+  },
+  motherboard: {
+    key: "motherboard",
+    catalogCategory: "electronics",
+    preferredPlacement: "desktop",
+    scaleLocked: true,
+    runtimeMetadata: {
+      support: { preferredAttachment: "pc_case_motherboard_tray", compatibleSurfaces: ["motherboard_tray"] },
+      expectedDetails: ["standoff holes", "CPU socket", "DIMM slots", "M.2 slots", "PCIe slots"]
+    },
+    materialTargets: ["PCB plane", "CPU socket", "DIMM slots", "PCIe slots", "I/O block"],
+    repairDirectives: ["model board envelope and major connector blocks only", "move fine silkscreen/detail to decals or textures"]
   },
   audio_interface: {
     key: "audio_interface",
@@ -167,15 +291,24 @@ const PROFILES: Record<ProductAssetCategoryKey, ProductAssetCategoryProfile> = {
 };
 
 function matchEvidence(evidence: string): ProductAssetCategoryKey {
+  if (/monitor\s*arm|모니터\s*암|vesa\s*arm|arm\s*mount/.test(evidence)) return "monitor_arm";
+  if (/cable\s*tray|wire\s*tray|케이블\s*트레이|선정리\s*트레이/.test(evidence)) return "cable_tray";
+  if (/desk\s*mat|deskmat|매트|synchronize/.test(evidence)) return "desk_mat";
+  if (/motherboard|mainboard|메인보드|b650|x670|z790|matx|atx\s*board/.test(evidence)) return "motherboard";
+  if (/graphics\s*card|gpu|rtx|radeon|geforce|그래픽카드|그래픽\s*카드/.test(evidence)) return "gpu";
+  if (/pc\s*case|computer\s*case|case|hyte|y70|케이스/.test(evidence)) return "pc_case";
+  if (/power\s*supply|psu|파워서플라이|파워\s*서플라이/.test(evidence)) return "psu";
+  if (/radiator|라디에이터|수랭|aio/.test(evidence)) return "radiator";
+  if (/\bfan\b|쿨링팬|case\s*fan|uni\s*fan/.test(evidence)) return "fan";
   if (/monitor|display|screen|모니터|디스플레이|s32|tfg|cpm/.test(evidence)) return "monitor";
   if (/speaker|스피커|reproducer|epic|gravastar|mars/.test(evidence)) return "speaker";
   if (/keyboard|키보드|hatsu|angry\s*miao/.test(evidence)) return "keyboard";
   if (/mouse|마우스|cobra|razer/.test(evidence)) return "mouse";
-  if (/mat|desk\s*mat|deskmat|매트|synchronize/.test(evidence)) return "desk_mat";
-  if (/pc\s*case|case|hyte|y70|케이스/.test(evidence)) return "pc_case";
   if (/audio\s*interface|minifuse|arturia|오디오/.test(evidence)) return "audio_interface";
   if (/lamp|light|lighting|ceiling|hue|조명|방등|인퓨즈/.test(evidence)) return "lighting";
   if (/plant|planter|화분|ivy/.test(evidence)) return "plant";
+  if (/desk|table|책상|데스크|fursys|퍼시스/.test(evidence)) return "desk";
+  if (/shelf|rack|선반|수납장/.test(evidence)) return "shelf";
   if (/desk|table|chair|shelf|책상|의자|선반|fursys|퍼시스/.test(evidence)) return "furniture";
   if (/figure|clock|diecast|spacecraft|cat|spray|switch|피규어|시계/.test(evidence)) return "decor";
   return "generic";

@@ -23,8 +23,14 @@ import {
   resolveProductAssetCategoryProfile,
   type ProductAssetCategoryProfile
 } from "./product-asset-category-profiles";
+import { generateCadParametricProductAsset, type ProductAssetCadPackage } from "./product-asset-cad-generator";
 import { evaluateProductAssetCandidate, type ProductAssetEvaluation } from "./product-asset-evaluator";
 import { finalizeProductAssetCandidate, type ProductAssetFinalizerReport } from "./product-asset-finalizer";
+import {
+  resolveProductAssetGenerationStrategy,
+  strategyUsesProvider,
+  type ProductAssetGenerationStrategyDecision
+} from "./product-asset-generation-strategy";
 
 const ProductAssetJobPayloadSchema = ProductAssetGenerationRequestSchema.extend({
   ownerId: z.string().uuid(),
@@ -100,6 +106,15 @@ function buildFileName(payload: ProductAssetJobPayload, title: string | null, sk
   return payload.fileName?.trim() || [sku, title].filter(Boolean).join(" ").slice(0, 80) || "product-generated-asset";
 }
 
+function sanitizeCadOutputName(fileName: string) {
+  return fileName
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || "cad-product-asset";
+}
+
 function buildCandidateQueue(
   providers: AssetProviderConfig[],
   images: Array<{ url: string; score: number }>,
@@ -124,6 +139,7 @@ function scoreCandidate(input: { imageScore: number; bufferBytes: number }) {
 function buildProviderPrompt(input: {
   draft: Awaited<ReturnType<typeof analyzeProductUrlReference>>["draft"];
   categoryProfile: ProductAssetCategoryProfile;
+  strategyDecision: ProductAssetGenerationStrategyDecision;
 }) {
   const product = input.draft.product;
   const dimensions = product.dimensionsMm
@@ -135,6 +151,7 @@ function buildProviderPrompt(input: {
     `SKU: ${product.sku ?? "unknown"}. Manufacturer: ${product.manufacturer ?? "unknown"}.`,
     `Official dimensions: ${dimensions}.`,
     `Category profile: ${input.categoryProfile.key}.`,
+    `Generation strategy: ${input.strategyDecision.strategy}.`,
     `Required material zones: ${input.categoryProfile.materialTargets.join(", ")}.`,
     `Repair priorities: ${input.categoryProfile.repairDirectives.join(", ")}.`,
     "Keep the mesh scale-locked, floor-centered, and avoid adding unrelated scene props."
@@ -145,6 +162,7 @@ function buildAssetMeta(input: {
   payload: ProductAssetJobPayload;
   selected: FinalizedCandidateResult;
   categoryProfile: ProductAssetCategoryProfile;
+  strategyDecision: ProductAssetGenerationStrategyDecision;
   candidateCount: number;
   providerCandidates: string[];
   draft: Awaited<ReturnType<typeof analyzeProductUrlReference>>["draft"];
@@ -165,6 +183,8 @@ function buildAssetMeta(input: {
     },
     generation: {
       pipeline: "product_url_private_asset_v1",
+      strategy: input.strategyDecision.strategy,
+      strategyReason: input.strategyDecision.reason,
       providerCandidates: input.providerCandidates,
       selectedProvider: selected.provider,
       selectedReferenceImage: selected.imageUrl,
@@ -192,6 +212,7 @@ function buildAssetMeta(input: {
       referenceImageCount: draft.referenceImages.length,
       candidateEvaluation: selected.evaluation,
       finalizerReport: selected.finalizerReport,
+      strategyDecision: input.strategyDecision,
       warnings: [
         ...draft.extraction.warnings,
         ...(selected.evaluation?.warnings ?? []),
@@ -201,6 +222,133 @@ function buildAssetMeta(input: {
     materialTargets: input.categoryProfile.materialTargets,
     repairDirectives: input.categoryProfile.repairDirectives,
     referencePack: draft.referencePack,
+    legalUse: {
+      mode: "private_reference_only",
+      releaseEligible: false
+    }
+  };
+}
+
+function buildCadPrivateReadiness(cadPackage: ProductAssetCadPackage) {
+  const structuralQa = cadPackage.structuralQa as { status?: string; multiViewRenderReview?: { passed?: boolean } };
+  if (structuralQa.status === "failed") return 0.46;
+  if (structuralQa.multiViewRenderReview?.passed) return 0.84;
+  return 0.78;
+}
+
+function buildCadAssetMeta(input: {
+  payload: ProductAssetJobPayload;
+  cadPackage: ProductAssetCadPackage;
+  categoryProfile: ProductAssetCategoryProfile;
+  strategyDecision: ProductAssetGenerationStrategyDecision;
+  draft: Awaited<ReturnType<typeof analyzeProductUrlReference>>["draft"];
+}) {
+  const { draft, cadPackage } = input;
+  const runtimePackage = cadPackage.runtimePackage as { runtimeAsset?: Record<string, unknown> };
+  const runtimeAsset = runtimePackage.runtimeAsset ?? {};
+  const qualityScore = buildCadPrivateReadiness(cadPackage);
+  const warnings = [
+    ...draft.extraction.warnings,
+    "TRUE_STEP_EXPORT_PENDING",
+    "MULTI_VIEW_RENDER_REVIEW_PENDING",
+    ...(input.strategyDecision.manualReviewRequired ? ["BLENDER_POLISH_REQUIRED"] : [])
+  ];
+
+  return {
+    schemaVersion: 3,
+    unit: "m",
+    source: {
+      kind: "product_url",
+      url: draft.sourceUrl,
+      title: draft.product.title,
+      sku: draft.product.sku,
+      manufacturer: draft.product.manufacturer
+    },
+    generation: {
+      pipeline: "product_url_hybrid_asset_factory_v1",
+      strategy: input.strategyDecision.strategy,
+      strategyReason: input.strategyDecision.reason,
+      cadFirst: input.strategyDecision.cadFirst,
+      providerAllowed: input.strategyDecision.providerAllowed,
+      selectedProvider: input.strategyDecision.strategy,
+      providerCandidates: [],
+      candidateCount: 1,
+      qualityScore,
+      evaluation: "cad_structural_runtime_package_qa_v1",
+      expectedArtifacts: input.strategyDecision.expectedArtifacts,
+      artifactPaths: input.cadPackage.localArtifacts
+    },
+    runtimeAsset: {
+      units: "mm",
+      dimensionsMm: runtimeAsset.dimensionsMm ?? draft.product.dimensionsMm,
+      scaleLocked: input.categoryProfile.scaleLocked,
+      pivot: {
+        x: "center",
+        y: "floor",
+        z: "center"
+      },
+      categoryProfile: input.categoryProfile.key,
+      generationStrategy: input.strategyDecision.strategy,
+      placement: input.categoryProfile.runtimeMetadata,
+      sidecars: {
+        runtimePackage: "runtime-package.json",
+        colliders: "colliders.json",
+        supportSurfaces: "support-surfaces.json",
+        attachmentPoints: "attachment-points.json",
+        interactionAnchors: "interaction-anchors.json",
+        materialVariants: "material-variants.json",
+        qaReport: "qa-report.json"
+      }
+    },
+    qa: {
+      status: "needs_review",
+      visualFidelityScore: qualityScore,
+      structuralQa: cadPackage.structuralQa,
+      strategyDecision: input.strategyDecision,
+      dimensionSource: draft.extraction.dimensionSource,
+      referenceImageCount: draft.referenceImages.length,
+      runtimePackage: cadPackage.runtimePackage,
+      warnings
+    },
+    materialTargets: input.categoryProfile.materialTargets,
+    repairDirectives: input.categoryProfile.repairDirectives,
+    referencePack: draft.referencePack,
+    legalUse: {
+      mode: "private_reference_only",
+      releaseEligible: false
+    }
+  };
+}
+
+function buildManualAssetBrief(input: {
+  payload: ProductAssetJobPayload;
+  categoryProfile: ProductAssetCategoryProfile;
+  strategyDecision: ProductAssetGenerationStrategyDecision;
+  draft: Awaited<ReturnType<typeof analyzeProductUrlReference>>["draft"];
+}) {
+  return {
+    schemaVersion: "product-url-manual-asset-brief-v1",
+    status: "manual_blender_required",
+    productUrl: input.payload.productUrl,
+    product: input.draft.product,
+    categoryProfile: input.categoryProfile,
+    generationStrategy: input.strategyDecision,
+    referencePack: input.draft.referencePack,
+    requiredArtifacts: [
+      "licensed or manufacturer CAD/STEP when available",
+      "Blender source file with material zones",
+      "runtime GLB and thumbnail",
+      "collider/support/attachment/interaction sidecars where applicable",
+      "multi-view render review",
+      "commercial license review before any public catalog exposure"
+    ],
+    qaGates: [
+      "dimensions within 5mm or 1%",
+      "support/collider/attachment metadata aligned to runtime bounds",
+      "material slot coverage for visible product zones",
+      "manual product-silhouette review against licensed references",
+      "releaseEligible remains false until rights and commercial QA are cleared"
+    ],
     legalUse: {
       mode: "private_reference_only",
       releaseEligible: false
@@ -285,7 +433,97 @@ export async function processProductAssetGenerationJob(job: JobRow) {
       ocrImages: false
     });
 
+    const categoryProfile = resolveProductAssetCategoryProfile({
+      title: reference.draft.product.title,
+      sku: reference.draft.product.sku,
+      manufacturer: reference.draft.product.manufacturer,
+      categoryHint: payload.categoryHint
+    });
+    const fileName = buildFileName(payload, reference.draft.product.title, reference.draft.product.sku);
+    const strategyDecision = resolveProductAssetGenerationStrategy({
+      categoryProfile,
+      title: reference.draft.product.title,
+      sku: reference.draft.product.sku,
+      manufacturer: reference.draft.product.manufacturer,
+      categoryHint: payload.categoryHint
+    });
     const selectedImages = selectProviderReferenceImages(reference.draft.referenceImages, payload.maxCandidates);
+
+    if (!strategyUsesProvider(strategyDecision)) {
+      if (strategyDecision.strategy === "manual_blender_required") {
+        const brief = buildManualAssetBrief({ payload, categoryProfile, strategyDecision, draft: reference.draft });
+        await markJobSucceeded(job.id, {
+          schemaVersion: "product-asset-generation-result-v2",
+          status: "manual_blender_required",
+          asset: null,
+          referencePack: reference.draft.referencePack,
+          selectedImages,
+          generation: {
+            strategy: strategyDecision.strategy,
+            strategyReason: strategyDecision.reason,
+            providerSkipped: true,
+            manualAssetBrief: brief
+          },
+          legalUse: {
+            mode: "private_reference_only",
+            releaseEligible: false
+          }
+        });
+        return;
+      }
+
+      await updateJobProgress(job.id, 36, `Generating ${strategyDecision.strategy} CAD-first private runtime package.`);
+      const cadPackage = await generateCadParametricProductAsset({
+        outputDir: path.join(env.ASSET_GENERATION_WORKDIR, job.id, "cad-generated", sanitizeCadOutputName(fileName)),
+        fileName,
+        draft: reference.draft,
+        categoryProfile,
+        decision: strategyDecision
+      });
+
+      await updateJobProgress(job.id, 82, "Registering private CAD-generated asset.");
+      const asset = await createGeneratedAsset({
+        ownerId: payload.ownerId,
+        fileName,
+        provider: cadPackage.strategy,
+        buffer: cadPackage.glbBuffer,
+        thumbnailBuffer: cadPackage.thumbnailBuffer,
+        sidecars: cadPackage.sidecars,
+        description: `Private CAD-first product URL asset generated from ${reference.draft.product.title ?? payload.productUrl}`,
+        category: categoryProfile.catalogCategory,
+        tags: ["generated", "product-url", cadPackage.strategy, categoryProfile.key, categoryProfile.catalogCategory].filter(Boolean),
+        meta: buildCadAssetMeta({
+          payload,
+          cadPackage,
+          categoryProfile,
+          strategyDecision,
+          draft: reference.draft
+        })
+      });
+
+      await markJobSucceeded(job.id, {
+        schemaVersion: "product-asset-generation-result-v2",
+        status: "needs_review",
+        asset,
+        referencePack: reference.draft.referencePack,
+        selectedImages,
+        generation: {
+          strategy: strategyDecision.strategy,
+          strategyReason: strategyDecision.reason,
+          providerSkipped: true,
+          cadArtifacts: cadPackage.localArtifacts,
+          sidecars: asset.sidecars,
+          structuralQa: cadPackage.structuralQa,
+          qualityScore: buildCadPrivateReadiness(cadPackage)
+        },
+        legalUse: {
+          mode: "private_reference_only",
+          releaseEligible: false
+        }
+      });
+      return;
+    }
+
     if (selectedImages.length === 0) {
       await markJobFailed(job.id, {
         errorCode: "PRODUCT_REFERENCE_IMAGES_MISSING",
@@ -314,13 +552,6 @@ export async function processProductAssetGenerationJob(job: JobRow) {
     const finalizedCandidates: FinalizedCandidateResult[] = [];
     const providerErrors: string[] = [];
     const providerBudgetErrors: string[] = [];
-    const categoryProfile = resolveProductAssetCategoryProfile({
-      title: reference.draft.product.title,
-      sku: reference.draft.product.sku,
-      manufacturer: reference.draft.product.manufacturer,
-      categoryHint: payload.categoryHint
-    });
-    const fileName = buildFileName(payload, reference.draft.product.title, reference.draft.product.sku);
 
     for (const [index, candidate] of queue.entries()) {
       await updateJobProgress(
@@ -329,7 +560,13 @@ export async function processProductAssetGenerationJob(job: JobRow) {
         `Generating product asset candidate ${index + 1}/${queue.length}.`
       );
       try {
-        candidates.push(await generateCandidate(candidate.provider, candidate.image, buildProviderPrompt({ draft: reference.draft, categoryProfile })));
+        candidates.push(
+          await generateCandidate(
+            candidate.provider,
+            candidate.image,
+            buildProviderPrompt({ draft: reference.draft, categoryProfile, strategyDecision })
+          )
+        );
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         providerErrors.push(`${candidate.provider.key}: ${message}`);
@@ -389,6 +626,7 @@ export async function processProductAssetGenerationJob(job: JobRow) {
         payload,
         selected,
         categoryProfile,
+        strategyDecision,
         candidateCount: finalizedCandidates.length,
         providerCandidates: providers.map((provider) => provider.key),
         draft: reference.draft

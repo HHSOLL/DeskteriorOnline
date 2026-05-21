@@ -2257,3 +2257,19 @@ Updated:
 Removed/Deprecated:
 - `p2s_mechanical_keyboard_switch_lab_v1`를 최신 키보드 visual QA evidence로 보는 절차.
 - 라이선스가 정리되지 않은 브랜드 reference asset을 public catalog/release-ready로 판단하는 절차.
+
+## 2026-05-21 변경 동기화 (Hybrid Asset Factory 검수 절차)
+Added:
+- Product URL asset generation QA는 이제 category profile뿐 아니라 `generationStrategy`를 확인한다.
+- `npm --workspace apps/worker test` 실행 시 desk/keyboard/PC case CAD-first POC가 sidecar와 anchor 계약을 생성하는지 확인한다.
+- `npm --workspace apps/web run verify:product-asset-generation` 실행 시 전략 라우터, CAD generator, sidecar upload, structural QA, `private_reference_only`, `releaseEligible=false` 계약을 확인한다.
+
+Updated:
+- 상품 링크로 책상/키보드/PC case/PSU/fan/radiator를 생성하면 provider GLB 품질보다 CAD source, STEP export status, runtime package, collider/support/attachment/interaction sidecar가 있는지 먼저 본다. `cadStepExport.status=pending_build123d_execution`이면 구조 POC로만 보고 true STEP 검증 전에는 제품 CAD 완료로 승인하지 않는다.
+- Keyboard POC는 최소 5개 key press anchor, PC case POC는 motherboard/PSU/GPU/fan/radiator anchor, desk POC는 desktop support surface를 확인한다.
+- Decor/plant 계열은 image-to-3D를 계속 허용하지만 검수 필요 badge와 private generated asset boundary를 유지한다.
+
+Removed/Deprecated:
+- 모든 상품 URL을 Meshy/Tripo provider로 보내고 결과 GLB만 확인하는 검수 절차.
+- Hard-surface product asset을 file size, thumbnail color, finalizer success만으로 승인하는 절차.
+- Product URL generated asset을 public catalog 또는 release-ready asset으로 해석하는 절차.

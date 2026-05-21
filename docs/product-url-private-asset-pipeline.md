@@ -11,10 +11,10 @@ The runtime contract is:
 productUrl
 -> reference pack
 -> selected reference images/specs
--> provider candidates
--> provider retry/backoff
--> Blender finalizer
--> candidate evaluator
+-> category profile
+-> generation strategy router
+-> CAD-first package OR provider candidates OR manual asset brief
+-> structural QA and/or provider retry/finalizer/evaluator
 -> Supabase private assets row
 -> editor generated catalog item
 ```
@@ -30,6 +30,8 @@ productUrl
 | Worker queue can claim product jobs | `apps/worker/src/queue/claim-next-job.ts` |
 | Worker dispatches product jobs | `apps/worker/src/worker.ts` |
 | URL analysis reuses asset compiler reference extraction | `apps/worker/src/processors/product-asset-generation-processor.ts`, `packages/asset-compiler/src/product-url-reference.ts` |
+| Strategy router before provider calls | `apps/worker/src/processors/product-asset-generation-strategy.ts` |
+| CAD-first hard-surface POC package generation | `apps/worker/src/processors/product-asset-cad-generator.ts` |
 | Provider candidate generation and async model URL polling | `apps/worker/src/processors/asset-generation-processor.ts` |
 | Provider transient retry/backoff | `withAssetProviderRetry` in `apps/worker/src/processors/asset-generation-processor.ts` |
 | Category-specific placement/material repair profiles | `apps/worker/src/processors/product-asset-category-profiles.ts` |
@@ -52,6 +54,7 @@ Generated product URL assets must keep these fields in `assets.meta`:
 - `source.url`
 - `source.title`, `source.sku`, `source.manufacturer` when available
 - `generation.pipeline = "product_url_private_asset_v1"`
+- `generation.strategy`
 - `generation.selectedProvider`
 - `generation.qualityScore`
 - `runtimeAsset.units = "mm"`
@@ -61,6 +64,7 @@ Generated product URL assets must keep these fields in `assets.meta`:
 - `runtimeAsset.placement`
 - `qa.candidateEvaluation`
 - `qa.finalizerReport`
+- CAD-first outputs additionally keep `qa.structuralQa`, `runtimeAsset.sidecars`, and uploaded sidecar evidence for runtime package/colliders/support surfaces/attachment points/interaction anchors/material variants/QA report.
 - `referencePack`
 - `legalUse.mode = "private_reference_only"`
 - `legalUse.releaseEligible = false`
@@ -139,6 +143,21 @@ This pipeline is complete for private/prototype generation when:
 10. Save/share/viewer paths consume the asset as a private runtime asset without mutating the public catalog.
 
 Commercial exposure is out of scope. Public catalog promotion still requires CAD/licensing/material QA and a separate release gate.
+
+## Generation Strategy Policy
+
+The worker chooses one of these strategies after URL/reference extraction:
+
+| Strategy | Default use |
+| --- | --- |
+| `cad_parametric` | desks, shelves, monitor arms, cable trays, keyboard housings/key arrays, PC cases, PSUs, fans, radiators |
+| `procedural_template` | hard-surface fallback when exact product evidence is weak |
+| `library_step_part` | official/manufacturer CAD or STEP evidence is available |
+| `image_to_3d` | decor, plants, figures, cups, books, and other non-structural organic/loose props |
+| `hybrid_cad_blender` | mouse, GPU, motherboard, monitor, and similar products needing CAD envelopes plus Blender detail/material passes |
+| `manual_blender_required` | brand/SKU hero fidelity that cannot be responsibly automated |
+
+Only `image_to_3d` may call Meshy/Tripo providers. CAD-first outputs are private runtime candidates with source/STEP export targets/sidecars; they are not true STEP-validated or photo-real product completion until build123d/OCP export, Blender material/UV/decal polish, multi-view review, and license checks pass.
 
 ## Local Meshy Smoke Result
 

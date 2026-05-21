@@ -4,9 +4,14 @@ import { supabaseService } from "../services/supabase";
 type CreateGeneratedAssetPayload = {
   ownerId: string;
   fileName: string;
-  provider: "triposr" | "meshy";
+  provider: "triposr" | "meshy" | "cad_parametric" | "procedural_template" | "library_step_part" | "hybrid_cad_blender";
   buffer: ArrayBuffer;
   thumbnailBuffer?: Buffer | null;
+  sidecars?: Array<{
+    suffix: string;
+    buffer: Buffer;
+    contentType: string;
+  }>;
   description?: string;
   category?: string;
   tags?: string[];
@@ -40,6 +45,23 @@ export async function createGeneratedAsset(payload: CreateGeneratedAssetPayload)
       });
     if (thumbnailUpload.error) throw thumbnailUpload.error;
   }
+
+  const sidecarUploads = await Promise.all(
+    (payload.sidecars ?? []).map(async (sidecar) => {
+      const suffix = sanitizeFileName(sidecar.suffix) || "sidecar.json";
+      const sidecarPath = `${payload.ownerId}/generated/${assetId}-${safeName.replace(/\.glb$/i, "") || "generated-asset"}.${suffix}`;
+      const upload = await supabaseService.storage.from(env.ASSET_STORAGE_BUCKET).upload(sidecarPath, sidecar.buffer, {
+        contentType: sidecar.contentType,
+        upsert: true
+      });
+      if (upload.error) throw upload.error;
+      return {
+        suffix,
+        path: sidecarPath,
+        contentType: sidecar.contentType
+      };
+    })
+  );
 
   const insert = await supabaseService.from("assets").insert({
     id: assetId,
@@ -81,6 +103,7 @@ export async function createGeneratedAsset(payload: CreateGeneratedAssetPayload)
           : null,
     label: payload.fileName || "Generated Asset",
     description: payload.description ?? `Generated via ${payload.provider}`,
-    category: payload.category ?? "Custom"
+    category: payload.category ?? "Custom",
+    sidecars: sidecarUploads
   };
 }
