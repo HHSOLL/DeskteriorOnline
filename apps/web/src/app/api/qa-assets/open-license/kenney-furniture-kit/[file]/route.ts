@@ -20,6 +20,15 @@ const SELECTED_GLB_ROOT = path.join(
   REPO_ROOT,
   "assets/sources/open-license/kenney-furniture-kit/selected-glb"
 );
+const ASSET_PATH_BY_FILE: Record<string, string> = {
+  "bookcaseClosedWide.glb": path.join(SELECTED_GLB_ROOT, "bookcaseClosedWide.glb"),
+  "bookcaseOpen.glb": path.join(SELECTED_GLB_ROOT, "bookcaseOpen.glb"),
+  "lampWall.glb": path.join(SELECTED_GLB_ROOT, "lampWall.glb"),
+  "loungeSofaLong.glb": path.join(SELECTED_GLB_ROOT, "loungeSofaLong.glb"),
+  "pottedPlant.glb": path.join(SELECTED_GLB_ROOT, "pottedPlant.glb"),
+  "rugRounded.glb": path.join(SELECTED_GLB_ROOT, "rugRounded.glb"),
+  "tableCoffeeGlass.glb": path.join(SELECTED_GLB_ROOT, "tableCoffeeGlass.glb")
+};
 
 export async function GET(_request: Request, { params }: { params: { file: string } }) {
   const file = decodeURIComponent(params.file);
@@ -27,8 +36,8 @@ export async function GET(_request: Request, { params }: { params: { file: strin
     return NextResponse.json({ error: "Unknown QA asset." }, { status: 404 });
   }
 
-  const assetPath = path.join(SELECTED_GLB_ROOT, file);
-  if (!assetPath.startsWith(`${SELECTED_GLB_ROOT}${path.sep}`)) {
+  const assetPath = ASSET_PATH_BY_FILE[file];
+  if (!assetPath || !assetPath.startsWith(`${SELECTED_GLB_ROOT}${path.sep}`)) {
     return NextResponse.json({ error: "Invalid QA asset path." }, { status: 400 });
   }
 

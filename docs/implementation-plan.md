@@ -3295,15 +3295,18 @@ Added:
 - API private asset listing이 owner-scoped signed sidecar URLs, `runtimePackage`, `runtimeAsset`, generated support profile, interaction anchors, and attachment points를 반환한다.
 - Web catalog/store/runtime bridge가 generated `runtimeAsset`와 sidecar metadata를 보존하고, runtime placement에서 generated support surfaces, colliders, attachment points, material variants를 소비한다.
 - `case fan`, 120mm fan, AIO/radiator product routing 회귀 테스트를 worker test에 추가했다.
+- Vercel preview packaging guard로 QA-only GLB routes가 explicit file map을 사용하게 해 `.nft` trace에서 `.git`과 대형 unrelated asset/public trees를 제외한다.
 
 Updated:
 - Vercel preview failure 원인이었던 `@deskterioronline/contracts/product-assets` module resolution은 `apps/web/package.json`의 workspace dependency 선언으로 해결한다.
 - `verify:product-asset-generation`는 sidecar path persistence, signed sidecar exposure, catalog preservation, runtime bridge consumption, and non-bare `case` classification guard를 검증한다.
 - Product URL CAD-first sidecar runtime consumption은 더 이상 전부 follow-up이 아니지만, interaction anchor execution UI, true STEP export, and Blender visual QA는 별도 단계로 남는다.
+- Vercel failure triage는 module resolution 이후 serverless function packaging으로 이어질 수 있으므로, build logs의 `Max serverless function size`와 route `.nft.json` 파일 수를 함께 확인한다.
 
 Removed/Deprecated:
 - sidecar upload 목록을 worker 반환값에만 두고 DB/catalog/runtime에서 잃어버리는 구조.
 - `case` 단어 하나로 case fan 또는 radiator product를 `pc_case`로 분류하는 방식.
+- QA source GLB route에서 request param을 디렉터리 path join에 직접 넣어 Next output tracing이 repository root를 포괄하게 만드는 방식.
 
 Follow-up Risk:
 - 아직 실제 build123d/OCP STEP export, official STEP ingest, CAD-to-GLB tessellation, Blender material/UV/decal polish queue, hybrid mouse/GPU/motherboard detail pass, live Supabase signed sidecar fetch smoke, and multi-view render comparison이 남아 있다.

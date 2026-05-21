@@ -11,6 +11,12 @@ export const runtime = "nodejs";
 
 const REPO_ROOT = path.resolve(process.cwd(), "../..");
 const SELECTED_GLB_ROOT = path.join(REPO_ROOT, MESHY_COMMUNITY_SOURCE_ROOT_RELATIVE);
+const ASSET_PATH_BY_FILE: Record<string, string> = {
+  "chair-rodiondbulatoff.glb": path.join(SELECTED_GLB_ROOT, "chair-rodiondbulatoff.glb"),
+  "colorful-brick-wall.glb": path.join(SELECTED_GLB_ROOT, "colorful-brick-wall.glb"),
+  "rack-golden-arch.glb": path.join(SELECTED_GLB_ROOT, "rack-golden-arch.glb"),
+  "rustic-table.glb": path.join(SELECTED_GLB_ROOT, "rustic-table.glb")
+};
 
 export async function GET(_request: Request, { params }: { params: { file: string } }) {
   const file = decodeURIComponent(params.file);
@@ -18,8 +24,8 @@ export async function GET(_request: Request, { params }: { params: { file: strin
     return NextResponse.json({ error: "Unknown QA asset." }, { status: 404 });
   }
 
-  const assetPath = path.join(SELECTED_GLB_ROOT, file);
-  if (!assetPath.startsWith(`${SELECTED_GLB_ROOT}${path.sep}`)) {
+  const assetPath = ASSET_PATH_BY_FILE[file];
+  if (!assetPath || !assetPath.startsWith(`${SELECTED_GLB_ROOT}${path.sep}`)) {
     return NextResponse.json({ error: "Invalid QA asset path." }, { status: 400 });
   }
 

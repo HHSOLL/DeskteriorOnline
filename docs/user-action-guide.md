@@ -2279,13 +2279,16 @@ Added:
 - Product URL CAD-first asset 검수 시 private asset API 응답에 `sidecars`, `runtimePackage`, `runtimeAsset`, `supportProfile`, `attachmentPoints`, `interactionAnchors`가 유지되는지 확인한다.
 - Editor catalog에 들어온 generated asset은 `runtimeAsset.supportSurfaces`, `runtimeAsset.colliders`, `runtimeAsset.attachmentPoints`가 scene runtime까지 전달되는지 확인한다.
 - `npm --workspace apps/web run verify:product-asset-generation`는 sidecar 저장/서명/카탈로그 보존/runtime bridge 소비와 case fan routing guard를 함께 검사한다.
+- Vercel preview 실패가 `Max serverless function size`로 나오면 `/api/qa-assets/...` route의 `.nft.json` trace가 `.git` 또는 전체 asset/public tree를 포함하는지 먼저 확인한다.
 
 Updated:
 - `case fan`, `120mm fan`, `UNI FAN` 류 상품은 `fan`으로, AIO/radiator 상품은 `radiator`로, 실제 PC enclosure는 `pc_case`로 분류되는지 먼저 본다.
 - Vercel preview에서 product asset route가 실패하면 `@deskterioronline/contracts/product-assets` workspace dependency 선언 여부를 우선 확인한다.
 - generated sidecar가 runtime에 전달돼도 `cadStepExport.status=pending_build123d_execution`이면 true CAD/STEP 완료가 아니라 private structural POC로 판정한다.
+- QA-only GLB route는 allowlisted file map으로만 staged source GLB를 읽어야 하며, route handler가 request param으로 source directory를 동적으로 훑는 구조면 배포 차단 리스크로 본다.
 
 Removed/Deprecated:
 - sidecar 파일이 storage에 올라갔다는 사실만으로 editor/runtime 통합 완료로 판단하는 절차.
 - case fan/radiator를 PC case로 잘못 분류한 상태에서 PC assembly anchor 품질을 평가하는 절차.
 - signed sidecar/runtime metadata wiring을 Blender visual polish 또는 multi-view render QA 완료로 해석하는 절차.
+- Vercel build가 compile success를 냈다는 이유만으로 deploy ready로 판단하는 절차. Output deploy 단계에서 serverless function size failure가 날 수 있다.

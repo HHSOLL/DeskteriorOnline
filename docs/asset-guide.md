@@ -182,12 +182,14 @@ Updated:
 - 다음 단계는 Blender/glTF inspector에서 scale, origin, pivot, material count, visual fit을 검수한 뒤 proxy/full runtime package와 catalog metadata를 만든다.
 - QA-only API는 public catalog나 storage-backed release URL을 대체하지 않는다. 시각 검증을 통과한 자산만 별도 runtime package 메타데이터와 최적화 산출물로 승격한다.
 - Meshy community route, workbench placement, verifier는 같은 TS registry에서 파일 목록을 읽어 allowlist drift를 막는다.
+- QA-only route handler는 allowlist 파일명을 명시적 파일 경로 map으로 변환해야 한다. Request param을 source directory에 직접 `path.join`하면 Next/Vercel output tracing이 `.git`이나 대형 asset tree를 serverless function에 포함할 수 있다.
 - Meshy에서 사용자가 새로 생성하는 text-to-3D/image-to-3D는 사전 prompt/reference 검수를 유지하지만, 이미 공개된 커뮤니티 CC0 GLB 다운로드는 provenance와 metadata 확인 후 QA staging에 넣을 수 있다.
 
 Removed/Deprecated:
 - 라이선스와 provenance가 기록되지 않은 GLB를 final-room QA나 public catalog에 바로 연결하는 방식.
 - Meshy text-to-3D 또는 image-to-3D job을 사용자 검수 없이 실행하는 방식. Meshy 후보 프롬프트와 reference image 정책은 `assets/references/meshy-preapproval/deskterior-pc-room-assets-2026-05-18.md`에서 먼저 검토한다.
 - `assets/sources/open-license`의 원본 GLB를 정식 runtime asset처럼 취급하는 방식. 이 경로는 source/provenance staging이다.
+- QA source route가 repository root를 통째로 trace하게 두고 Vercel preview를 통과한 것으로 간주하는 방식.
 - Meshy public page의 `.meshy` viewer binary를 GLB로 오인하거나 runtime asset으로 직접 로드하는 방식.
 
 ## 2026-05-19 Meshy Community Runtime Candidate 메모

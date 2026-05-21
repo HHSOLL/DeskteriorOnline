@@ -2300,13 +2300,16 @@ Added:
 - Product URL CAD-first sidecar upload paths must be persisted in private `assets.meta` and exposed only through owner-scoped signed URLs.
 - Generated private catalog items may carry `generationStrategy`, `runtimePackage`, `runtimeAsset`, signed `sidecars`, support profile data, interaction anchors, and attachment points.
 - The runtime bridge can consume generated `runtimeAsset` colliders, support surfaces, attachment points, and material variants for private CAD assets before any public catalog promotion.
+- QA-only asset routes that read staged GLBs from repository sources must use explicit file maps so Next/Vercel output tracing includes only the allowlisted GLBs, not `.git`, `apps/web/public`, or unrelated asset trees.
 
 Updated:
 - Category profiling must classify case fans and 120mm fan products as `fan`, AIO/radiator products as `radiator`, and PC enclosures as `pc_case` without relying on a broad bare `case` match.
 - Web/API package boundaries must declare contract dependencies explicitly so Vercel can resolve `@deskterioronline/contracts/product-assets` during preview builds.
 - Generated sidecar consumption is now a private-runtime integration requirement, while true build123d/OCP STEP export, CAD-to-GLB tessellation, Blender material polish, hybrid Blender queues, and multi-view render review remain separate quality gates.
+- Vercel preview readiness includes checking `.nft` traces for QA GLB routes after any source-staging route change.
 
 Removed/Deprecated:
 - Treating uploaded sidecars as useful if their storage paths never reach the editor catalog or runtime bridge.
 - Letting generic `case` keyword matching steal case fan/radiator products from their assembly categories.
 - Treating the current sidecar/runtime bridge as proof of photo-real visual quality or true STEP validation.
+- Serving QA GLBs through dynamic directory reads that cause serverless functions to package the repository and exceed Vercel function limits.

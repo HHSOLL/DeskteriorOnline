@@ -2127,3 +2127,16 @@ Updated:
 Removed/Deprecated:
 - Judging generated hard-surface assets only by thumbnail similarity, file byte size, or single GLB existence.
 - Treating CAD-first geometry as final visual quality before multi-view render review and manual art approval.
+
+## 2026-05-22 변경 동기화 (QA Asset Route Trace Gate)
+Added:
+- QA-only GLB serving routes for staged source assets must use explicit allowlisted file maps so production output tracing packages only the intended GLBs.
+- Vercel deploy QA must inspect `.nft.json` traces when `/api/qa-assets/...` routes change; trace output must not include `.git`, `apps/web/public`, or unrelated asset/source trees.
+
+Updated:
+- The Meshy community QA route now traces only the 4 approved community GLBs.
+- The Kenney QA route keeps an allowlisted response set and avoids dynamic source-directory traversal during output tracing.
+
+Removed/Deprecated:
+- Treating `readFile(path.join(sourceRoot, params.file))` as acceptable for production deploy when `sourceRoot` is outside `apps/web`.
+- Calling a Vercel preview healthy just because `next build` compiled; deploy output can still fail if a serverless function package exceeds Vercel size limits.
